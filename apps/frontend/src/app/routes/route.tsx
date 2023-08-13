@@ -2,12 +2,15 @@ import { Navigate } from 'react-router-dom';
 import dashboardRoute from './dashboard/dashboardRoute';
 import App from '../app';
 import settingRoute from './setting/settingRoute';
+import loadable from '@loadable/component';
+import Loading from '../../components/Loading/Loading';
+const Login = loadable(() => import('../views/login/Login'), {
+  fallback: <Loading />,
+});
 
 const route = () => {
   return [
     {
-      // Go to default page
-      // If the link missing language, add it back, default en
       path: '/',
       element: <App />,
       children: [
@@ -18,6 +21,10 @@ const route = () => {
           element: <Navigate to={`/`} replace />,
         },
       ],
+    },
+    {
+      path: '/login',
+      element: <Login />,
     },
     {
       path: '*',

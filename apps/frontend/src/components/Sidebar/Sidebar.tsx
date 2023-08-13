@@ -149,12 +149,14 @@ const Sidebar = (props: Props) => {
               <span className="hidden md:block">Settings</span>
             </ListItem>
           </NavLink>
-          <ListItem>
-            <ListItemPrefix>
-              <PowerIcon className="w-5 h-5" />
-            </ListItemPrefix>
-            <span className="hidden md:block">Log Out</span>
-          </ListItem>
+          <NavLink to={'/login'}>
+            <ListItem>
+              <ListItemPrefix>
+                <PowerIcon className="w-5 h-5" />
+              </ListItemPrefix>
+              <span className="hidden md:block">Log Out</span>
+            </ListItem>
+          </NavLink>
         </List>
       </Scrollbars>
 

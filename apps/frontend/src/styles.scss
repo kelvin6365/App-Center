@@ -3,5 +3,11 @@
 @tailwind utilities;
 /* You can add global styles to this file, and also import other style files */
 html {
-  @apply bg-gray-100;
+  @apply bg-gray-100 h-screen;
+  body{
+    @apply h-full;
+    #root{
+      @apply h-full;
+    }
+  }
 }
