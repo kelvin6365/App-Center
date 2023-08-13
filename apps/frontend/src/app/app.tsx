@@ -35,7 +35,7 @@ export function App() {
 
   useEffect(() => {
     if (location?.pathname === '/' || location == null) {
-      navigate('/apps', { replace: true });
+      navigate('/login', { replace: true });
     }
   }, [location, navigate]);
 
