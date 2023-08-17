@@ -41,3 +41,4 @@ Thumbs.db
 
 #Backend
 /apps/backend/.env
+/apps/frontend/.env.production

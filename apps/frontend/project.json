@@ -14,10 +14,12 @@
       },
       "configurations": {
         "development": {
-          "mode": "development"
+          "mode": "development",
+          "envFile": [".env.development"]
         },
         "production": {
-          "mode": "production"
+          "mode": "production",
+          "envFile": [".env.production"]
         }
       }
     },

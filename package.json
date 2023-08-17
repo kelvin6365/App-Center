@@ -22,6 +22,7 @@
     "class-transformer": "^0.5.1",
     "class-validator": "^0.14.0",
     "classnames": "^2.3.2",
+    "env-cmd": "^10.1.0",
     "flowbite": "^1.8.1",
     "flowbite-react": "^0.5.0",
     "image-thumbnail": "^1.0.15",

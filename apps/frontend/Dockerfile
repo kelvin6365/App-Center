@@ -4,7 +4,8 @@ COPY ./dist/apps/frontend .
 RUN yarn install
 
 FROM nginx:alpine AS react-nx-ui
-COPY nginx.conf /etc/nginx/nginx.conf
+COPY apps/frontend/default.conf /etc/nginx/conf.d/default.conf
 WORKDIR /usr/share/nginx/html
-COPY --from=react-nx-base /app/dist/apps/react-nx-docker .
+COPY --from=build /app .
 
+CMD ["nginx", "-g", "daemon off;"]
