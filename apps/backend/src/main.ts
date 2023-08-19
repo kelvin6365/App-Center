@@ -4,17 +4,19 @@
  */
 
 import { Logger, ValidationPipe, VersioningType } from '@nestjs/common';
-import { NestFactory } from '@nestjs/core';
-import { ServerModule } from './app/server.module';
-import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { ConfigService } from '@nestjs/config';
-import { isMatchPassword } from './app/common/util/password.util';
+import { NestFactory } from '@nestjs/core';
+import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
+import { ServerModule } from './app/server.module';
 
 async function bootstrap() {
   const app = await NestFactory.create(ServerModule);
   const globalPrefix = 'api';
   app.setGlobalPrefix(globalPrefix);
-  app.enableCors();
+  app.enableCors({
+    origin: ['http://localhost'],
+    credentials: true,
+  });
   app.enableVersioning({
     type: VersioningType.URI,
   });

@@ -80,9 +80,9 @@ class API {
       withCredentials: true,
       headers: {
         'Content-Type': 'application/json',
-        // ...(process.env.NODE_ENV === 'development' && {
-        'Access-Control-Allow-Origin': '*',
-        // }),
+        ...(process.env.NODE_ENV === 'development' && {
+          'Access-Control-Allow-Origin': '*',
+        }),
       },
     });
 
