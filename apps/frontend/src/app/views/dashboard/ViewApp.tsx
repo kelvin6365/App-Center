@@ -45,24 +45,6 @@ const ViewApp = () => {
 
   const tableRef = useRef<any>(null);
 
-  // //Call API to get app version tags
-  // const fetchAppVersionTags = useCallback(async (appId: string) => {
-  //   if (appId == null) {
-  //     return;
-  //   }
-  //   try {
-  //     const res = await API.app.getAppVersionTags(appId);
-  //     const { data }: { data: AppVersionTag[] } = res.data;
-  //     setAppVersionTags(data);
-  //     setSelectedTags(data);
-  //   } catch (error) {
-  //     console.log(error);
-  //     if (axios.isAxiosError(error)) {
-  //       toast.error(error.response?.data?.status?.displayMessage.toString());
-  //     }
-  //   }
-  // }, []);
-
   //get app
   const fetchApp = useCallback(async (appId: string) => {
     try {
