@@ -34,7 +34,10 @@ jobs:
 
       - name: Build Frontend container image
         if: steps.filter.outputs.frontend == 'true'
-        run: docker build -f ./apps/frontend/Dockerfile . -t registry.digitalocean.com/registry.digitalocean.com/two-rocks-studio/app-center/frontend:$(echo $GITHUB_SHA | head -c7)
+        run: docker build -f ./apps/frontend/Dockerfile . -t registry.digitalocean.com/two-rocks-studio/app-center/frontend:$(echo $GITHUB_SHA | head -c7)
+      - name: Build Backend container image
+        if: steps.filter.outputs.backend == 'true'
+        run: docker build -f ./apps/backend/Dockerfile . -t registry.digitalocean.com/two-rocks-studio/app-center/backend:$(echo $GITHUB_SHA | head -c7)
 
       - name: Log in to DigitalOcean Container Registry with short-lived credentials
         if: ${{ steps.filter.outputs.frontend == 'true' || steps.filter.outputs.backend == 'true' }}
@@ -42,4 +45,7 @@ jobs:
 
       - name: Push frontend image to DigitalOcean Container Registry
         if: steps.filter.outputs.frontend == 'true'
-        run: docker push registry.digitalocean.com/registry.digitalocean.com/two-rocks-studio/app-center/frontend:$(echo $GITHUB_SHA | head -c7)
+        run: docker push registry.digitalocean.com/two-rocks-studio/app-center/frontend:$(echo $GITHUB_SHA | head -c7)
+      - name: Push backend image to DigitalOcean Container Registry
+        if: steps.filter.outputs.backend == 'true'
+        run: docker push registry.digitalocean.com/two-rocks-studio/app-center/backend:$(echo $GITHUB_SHA | head -c7)
