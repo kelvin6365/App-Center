@@ -24,6 +24,11 @@ export class ResponseCode {
     'Fail to install',
     'Fail to install'
   );
+  static readonly STATUS_1014_INVALID_INSTALL_PASSWORD = new ResponseStatus(
+    1014,
+    'Fail to install',
+    'Invalid install password'
+  );
   static readonly STATUS_9000_BAD_REQUEST = new ResponseStatus(
     9000,
     'Bad Request',

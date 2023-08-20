@@ -1,7 +1,7 @@
-import { Column, Entity, JoinColumn, OneToOne } from 'typeorm';
+import { Column, Entity, OneToOne } from 'typeorm';
 import { BaseEntity } from '../../../database/entities/base.entity';
-import { FileStatus } from '../enum/file.status.enum';
 import { AppVersion } from '../../app/entities/app.version.entity';
+import { FileStatus } from '../enum/file.status.enum';
 
 @Entity('files')
 export class File extends BaseEntity {
@@ -25,4 +25,7 @@ export class File extends BaseEntity {
 
   @OneToOne(() => AppVersion, (appVersion) => appVersion.file)
   appVersion: AppVersion;
+
+  @Column({ default: false })
+  isPublic: boolean;
 }

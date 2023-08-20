@@ -291,6 +291,18 @@ export class AppController {
     return new AppResponse(await this.appService.getApiKey(id));
   }
 
+  //get app by id
+  @Get(':id/install')
+  @ApiParam({ name: 'id', required: true })
+  @ApiResponseSchema(HttpStatus.OK, 'OK')
+  async getAppForPublicInstallPage(
+    @Param('id', new ParseUUIDPipe()) id: string
+  ) {
+    return new AppResponse(
+      await this.appService.findById(id, false, true, true)
+    );
+  }
+
   //Get App by ID for installing
   @Post(':id/version/:versionId/install')
   @ApiParam({ name: 'id', required: true })

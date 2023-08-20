@@ -102,14 +102,21 @@ export class AppService {
   async findById(
     id: string,
     withDeleted = false,
-    errorIfNotFound = false
+    errorIfNotFound = false,
+    forPublicInstallPage = false
   ): Promise<AppDTO> {
     const app = await this.appRepository.findById(id, withDeleted);
     if (!app && errorIfNotFound) {
       throw new AppException(ResponseCode.STATUS_1011_NOT_FOUND);
     }
     return new AppDTO(
-      app,
+      forPublicInstallPage
+        ? {
+            name: app.name,
+            description: app.description,
+            iconFileId: app.iconFileId,
+          }
+        : app,
       app.iconFileId
         ? this.configService.get('services.file.fileAPI') + app.iconFileId
         : null
@@ -268,7 +275,7 @@ export class AppService {
       throw new AppException(ResponseCode.STATUS_1011_NOT_FOUND);
     }
     if (!(await isMatchPassword(password, version.installPassword))) {
-      throw new AppException(ResponseCode.STATUS_1013_FAIL_TO_INSTALL);
+      throw new AppException(ResponseCode.STATUS_1014_INVALID_INSTALL_PASSWORD);
     }
     const app = await this.appRepository.findById(appId);
     const appVersionTags =
@@ -291,9 +298,12 @@ export class AppService {
           tags: appVersionTags,
         },
         version.fileId
-          ? this.configService.get('services.file.fileAPI') +
-            version.fileId +
-            '&download=true'
+          ? this.configService.get('services.file.publicAPI') +
+            '/v1/app/' +
+            app.id +
+            '/version/' +
+            version.id +
+            '/install'
           : null
       )
     );
@@ -308,7 +318,7 @@ export class AppService {
       throw new AppException(ResponseCode.STATUS_1011_NOT_FOUND);
     }
     if (!(await isMatchPassword(password, version.installPassword))) {
-      throw new AppException(ResponseCode.STATUS_1013_FAIL_TO_INSTALL);
+      throw new AppException(ResponseCode.STATUS_1014_INVALID_INSTALL_PASSWORD);
     }
     const app = await this.appRepository.findById(version.appId);
     if (!app) {

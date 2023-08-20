@@ -10,6 +10,9 @@ const Login = loadable(() => import('../views/login/Login'), {
 const Install = loadable(() => import('../views/install/Install'), {
   fallback: <Loading />,
 });
+const NotFound = loadable(() => import('../views/404/404'), {
+  fallback: <Loading />,
+});
 
 const route = () => {
   return [
@@ -32,6 +35,10 @@ const route = () => {
     {
       path: '/login',
       element: <Login />,
+    },
+    {
+      path: '/404',
+      element: <NotFound />,
     },
     {
       path: '*',

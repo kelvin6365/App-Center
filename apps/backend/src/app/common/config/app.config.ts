@@ -21,6 +21,7 @@ export default () => ({
       endpoint: process.env.BUCKET_ENDPOINT,
       region: process.env.BUCKET_REGION,
       fileAPI: process.env.FILE_API,
+      publicAPI: process.env.PUBLIC_API,
     },
   },
   static: {},

@@ -13,6 +13,11 @@ class API {
       GET_API_KET: (appId: string) => string;
       UPLOAD_APP_VERSION: (appId: string) => string;
       DELETE_VERSION: (appId: string, versionId: string) => string;
+      PUBLIC_INSTALL_PAGE_APP_DETAILS: (appId: string) => string;
+      PUBLIC_INSTALL_PAGE_APP_VERSIONS: (
+        appId: string,
+        versionId: string
+      ) => string;
     };
     SETTING: {
       GET_ALL_SETTINGS: string;
@@ -62,6 +67,12 @@ class API {
       }
     ) => Promise<any>;
     deleteVersion: (appId: string, versionId: string) => Promise<any>;
+    publicInstallPageAppDetails: (appId: string) => Promise<any>;
+    publicInstallPageAppVersion: (
+      appId: string,
+      versionId: string,
+      installPassword: string
+    ) => Promise<any>;
   };
   static setting: {
     getAllSettings: () => Promise<any>;
@@ -132,6 +143,10 @@ class API {
         UPLOAD_APP_VERSION: (appId: string) => `/v1/app/${appId}/version`,
         DELETE_VERSION: (appId: string, versionId: string) =>
           `/v1/app/${appId}/version/${versionId}`,
+        PUBLIC_INSTALL_PAGE_APP_DETAILS: (appId: string) =>
+          `/v1/app/${appId}/install`,
+        PUBLIC_INSTALL_PAGE_APP_VERSIONS: (appId: string, versionId: string) =>
+          `/v1/app/${appId}/version/${versionId}/install`,
       },
       SETTING: {
         GET_ALL_SETTINGS: '/v1/setting',
@@ -245,6 +260,21 @@ class API {
       deleteVersion: (appId: string, versionId: string) => {
         return this.apiInstance.delete(
           this.API_PATH.APP.DELETE_VERSION(appId, versionId)
+        );
+      },
+      publicInstallPageAppDetails: (appId: string) => {
+        return this.apiInstance.get(
+          this.API_PATH.APP.PUBLIC_INSTALL_PAGE_APP_DETAILS(appId)
+        );
+      },
+      publicInstallPageAppVersion: (
+        appId: string,
+        versionId: string,
+        password: string
+      ) => {
+        return this.apiInstance.post(
+          this.API_PATH.APP.PUBLIC_INSTALL_PAGE_APP_VERSIONS(appId, versionId),
+          { password }
         );
       },
     };

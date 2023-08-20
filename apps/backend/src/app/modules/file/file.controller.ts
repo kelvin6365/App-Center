@@ -1,11 +1,11 @@
-import { Controller, Get, ParseBoolPipe, Query, Res } from '@nestjs/common';
+import { Controller, Get, Query, Res } from '@nestjs/common';
+import { ApiTags } from '@nestjs/swagger';
 import { Response } from 'express';
-import { FileService } from './file.service';
-import { Public } from '../../common/decorator/public';
 import { Readable } from 'typeorm/platform/PlatformTools';
+import { Public } from '../../common/decorator/public';
 import { AppResponse } from '../../common/response/app.response';
 import { ResponseCode } from '../../common/response/response.code';
-import { ApiTags } from '@nestjs/swagger';
+import { FileService } from './file.service';
 
 @ApiTags('File')
 @Controller({ path: 'file', version: ['1'] })
@@ -24,6 +24,11 @@ export class FileController {
       return res
         .status(400)
         .json(new AppResponse(null, ResponseCode.STATUS_1011_NOT_FOUND));
+    }
+    if (!file.isPublic) {
+      return res
+        .status(400)
+        .json(new AppResponse(null, ResponseCode.STATUS_8000_UNAUTHORIZED));
     }
     if (!s3Item) {
       return res
