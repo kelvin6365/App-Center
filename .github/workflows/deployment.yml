@@ -27,3 +27,19 @@ jobs:
       - name: Build Backend
         if: steps.filter.outputs.backend == 'true'
         run: yarn nx build backend
+      - name: Install doctl
+        uses: digitalocean/action-doctl@v2
+        with:
+          token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
+
+      - name: Build Frontend container image
+        if: steps.filter.outputs.frontend == 'true'
+        run: docker build -f ./apps/frontend/Dockerfile . -t registry.digitalocean.com/registry.digitalocean.com/two-rocks-studio/app-center/frontend:$(echo $GITHUB_SHA | head -c7)
+
+      - name: Log in to DigitalOcean Container Registry with short-lived credentials
+        if: ${{ steps.filter.outputs.frontend == 'true' || steps.filter.outputs.backend == 'true' }}
+        run: doctl registry login --expiry-seconds 1200
+
+      - name: Push frontend image to DigitalOcean Container Registry
+        if: steps.filter.outputs.frontend == 'true'
+        run: docker push registry.digitalocean.com/registry.digitalocean.com/two-rocks-studio/app-center/frontend:$(echo $GITHUB_SHA | head -c7)
