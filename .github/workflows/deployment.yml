@@ -1,0 +1,24 @@
+name: Deploy
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+    - uses: tony84727/changed-file-filter@v0.2.0
+      id: filter
+      with:
+        filters: |
+          frontend:
+            - 'apps/frontend/**'
+          backend:
+            - 'apps/backend/**'
+    - name: Build Frontend
+      if: steps.filter.outputs.frontend == 'true'
+      run: echo "Build Frontend"
+    - name: Build Backend
+      if: steps.filter.outputs.backend == 'true'
+      run: echo "Build Backend"
