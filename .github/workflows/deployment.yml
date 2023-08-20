@@ -2,6 +2,9 @@ name: Deploy
 
 on:
   workflow_dispatch:
+  push:
+    branches:
+      - 'main'
 
 jobs:
   build:
@@ -16,9 +19,11 @@ jobs:
               - 'apps/frontend/**'
             backend:
               - 'apps/backend/**'
+      - uses: nrwl/nx-set-shas@v3
+        if: ${{ steps.filter.outputs.frontend == 'true' || steps.filter.outputs.backend == 'true' }}
       - name: Build Frontend
         if: steps.filter.outputs.frontend == 'true'
-        run: echo "Build Frontend"
+        run: npx nx build frontend
       - name: Build Backend
         if: steps.filter.outputs.backend == 'true'
-        run: echo "Build Backend"
+        run: npx nx build backend
