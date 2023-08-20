@@ -81,20 +81,37 @@ const DeleteAppVersionDialog = ({ title, onClose, open, version }: Props) => {
         <form
           id="form"
           onSubmit={handleSubmit(onSubmit)}
-          className="max-w-screen-sm mx-auto mt-8 mb-2"
+          className="max-w-screen-sm mx-auto mt-8 mb-8"
         >
           <input {...register('id')} hidden />
           <input {...register('versionId')} hidden />
+          <div className="flex">
+            <div className="m-auto">
+              <h2 className="text-xl font-bold text-red-500">
+                Are your sure to delete this version?{' '}
+              </h2>
+              <br />
+              <div className="text-left">
+                <p className="grid grid-cols-2 text-lg font-bold ">
+                  <p>Name:</p> <p>{version?.name}</p>
+                </p>
+                <p className="grid grid-cols-2 text-lg font-bold ">
+                  <p>Description:</p> <p>{version?.description}</p>
+                </p>
+              </div>
+            </div>
+          </div>
         </form>
       </DialogBody>
-      <DialogFooter>
+      <DialogFooter className="justify-center">
         <Button
           variant="gradient"
           type="submit"
           form="form"
+          className="!to-red-500 !from-red-500 !shadow-red-500/20"
           disabled={isSubmitting}
         >
-          <span>Done</span>
+          <span>Confirm to Delete</span>
         </Button>
       </DialogFooter>
     </Dialog>
