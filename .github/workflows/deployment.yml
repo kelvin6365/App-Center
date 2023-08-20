@@ -19,13 +19,11 @@ jobs:
               - 'apps/frontend/**'
             backend:
               - 'apps/backend/**'
-      - uses: nrwl/nx-set-shas@v3
-        if: ${{ steps.filter.outputs.frontend == 'true' || steps.filter.outputs.backend == 'true' }}
       - run: yarn install
         if: ${{ steps.filter.outputs.frontend == 'true' || steps.filter.outputs.backend == 'true' }}
       - name: Build Frontend
         if: steps.filter.outputs.frontend == 'true'
-        run: npx nx build frontend
+        run: yarn nx build frontend
       - name: Build Backend
         if: steps.filter.outputs.backend == 'true'
-        run: npx nx build backend
+        run: yarn nx build backend
