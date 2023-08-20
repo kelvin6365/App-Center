@@ -69,6 +69,7 @@ export class FileService {
       )}`;
       //Origin
       const successUploadFile = await this.save(
+        true,
         filePath,
         file.mimetype,
         file.buffer,
@@ -144,6 +145,7 @@ export class FileService {
   }
 
   async save(
+    isPublic: boolean,
     path: string,
     contentType: string,
     media: Buffer,
@@ -184,6 +186,7 @@ export class FileService {
 
       this.logger.log(`[FileService] Upload Success Path : ${path}`);
       const newFile: File = new File();
+      newFile.isPublic = isPublic;
       newFile.key = path;
       newFile.type = type;
       newFile.status = FileStatus.SUCCESS;
