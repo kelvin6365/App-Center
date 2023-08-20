@@ -25,11 +25,11 @@ export class FileController {
         .status(400)
         .json(new AppResponse(null, ResponseCode.STATUS_1011_NOT_FOUND));
     }
-    if (!file.isPublic) {
-      return res
-        .status(400)
-        .json(new AppResponse(null, ResponseCode.STATUS_8000_UNAUTHORIZED));
-    }
+    // if (!file.isPublic) {
+    //   return res
+    //     .status(400)
+    //     .json(new AppResponse(null, ResponseCode.STATUS_8000_UNAUTHORIZED));
+    // }
     if (!s3Item) {
       return res
         .status(400)
