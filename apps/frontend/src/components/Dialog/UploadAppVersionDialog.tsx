@@ -47,12 +47,15 @@ const UploadAppVersionDialog = ({ title, onClose, open, app }: Props) => {
       const apiKeyResult = await API.app.getAPIKey(app.id);
       const { data: apiKey } = apiKeyResult.data;
       const res = await API.app.uploadAppVersion(app.id, {
-        name: values.name,
-        description: values.description,
+        name: values.name.trim(),
+        description: values.description.trim(),
         file: values.file[0] ?? null,
         apiKey: apiKey,
-        tags: values.tags,
-        installPassword: values.installPassword,
+        tags: values.tags
+          .split(',')
+          .map((tag) => tag.trim())
+          .join(','),
+        installPassword: values.installPassword.trim(),
       });
       const { status }: { data: any; status: any } = res.data;
       console.log(status);
@@ -101,7 +104,8 @@ const UploadAppVersionDialog = ({ title, onClose, open, app }: Props) => {
               {...register('name', {
                 required: 'Version Name is required',
               })}
-              label="App Name*"
+              label="Version Name*"
+              placeholder={'eg: v1.0.0'}
               errors={errors}
               loading={isSubmitting}
             />
@@ -110,6 +114,7 @@ const UploadAppVersionDialog = ({ title, onClose, open, app }: Props) => {
                 required: 'Version Description is required',
               })}
               label="Description*"
+              placeholder={"eg: 'Version 1.0.0'"}
               errors={errors}
               loading={isSubmitting}
             />
@@ -120,6 +125,7 @@ const UploadAppVersionDialog = ({ title, onClose, open, app }: Props) => {
                 required: 'Tags is required',
               })}
               label="Tags*"
+              placeholder={'eg: Android,UAT,APK'}
               errors={errors}
               loading={isSubmitting}
             />

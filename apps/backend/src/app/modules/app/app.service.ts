@@ -16,7 +16,8 @@ import { CreateAppVersionDTO } from './dto/create.app.version.dto';
 import { App } from './entities/app.entity';
 import { AppVersion } from './entities/app.version.entity';
 import { AppVersionTag } from './entities/app.version.tag.entity';
-import { hashPassword } from '../../common/util/password.util';
+import { hashPassword, isMatchPassword } from '../../common/util/password.util';
+import { InstallAppDTO } from './dto/install.app.dto';
 
 @Injectable()
 export class AppService {
@@ -98,8 +99,15 @@ export class AppService {
   }
 
   //get app by id
-  async findById(id: string, withDeleted = false): Promise<AppDTO> {
+  async findById(
+    id: string,
+    withDeleted = false,
+    errorIfNotFound = false
+  ): Promise<AppDTO> {
     const app = await this.appRepository.findById(id, withDeleted);
+    if (!app && errorIfNotFound) {
+      throw new AppException(ResponseCode.STATUS_1011_NOT_FOUND);
+    }
     return new AppDTO(
       app,
       app.iconFileId
@@ -247,5 +255,81 @@ export class AppService {
     } else {
       throw new AppException(ResponseCode.STATUS_1011_NOT_FOUND);
     }
+  }
+
+  //get app for install
+  async getInstallApp(
+    appId: string,
+    appVersionId: string,
+    password: string
+  ): Promise<InstallAppDTO> {
+    const version = await this.appVersionRepository.getAppVersion(appVersionId);
+    if (!version || version?.appId !== appId) {
+      throw new AppException(ResponseCode.STATUS_1011_NOT_FOUND);
+    }
+    if (!(await isMatchPassword(password, version.installPassword))) {
+      throw new AppException(ResponseCode.STATUS_1013_FAIL_TO_INSTALL);
+    }
+    const app = await this.appRepository.findById(appId);
+    const appVersionTags =
+      await this.appVersionTagRepository.getAllTagsByAppVersionId(version.id);
+    return new InstallAppDTO(
+      new AppDTO(
+        {
+          id: app.id,
+          name: app.name,
+          description: app.description,
+          iconFileId: app.iconFileId,
+        },
+        app.iconFileId
+          ? this.configService.get('services.file.fileAPI') + app.iconFileId
+          : null
+      ),
+      new AppVersionDTO(
+        {
+          ...version,
+          tags: appVersionTags,
+        },
+        version.fileId
+          ? this.configService.get('services.file.fileAPI') +
+            version.fileId +
+            '&download=true'
+          : null
+      )
+    );
+  }
+
+  async validateInstallPassword(
+    appVersionId: string,
+    password: string
+  ): Promise<AppVersion> {
+    const version = await this.appVersionRepository.getAppVersion(appVersionId);
+    if (!version) {
+      throw new AppException(ResponseCode.STATUS_1011_NOT_FOUND);
+    }
+    if (!(await isMatchPassword(password, version.installPassword))) {
+      throw new AppException(ResponseCode.STATUS_1013_FAIL_TO_INSTALL);
+    }
+    const app = await this.appRepository.findById(version.appId);
+    if (!app) {
+      throw new AppException(ResponseCode.STATUS_1011_NOT_FOUND);
+    }
+    return version;
+  }
+
+  //delete app version
+  async deleteAppVersion(
+    appId: string,
+    appVersionId: string
+  ): Promise<boolean> {
+    const app = await this.appRepository.findById(appId);
+    if (!app) {
+      throw new AppException(ResponseCode.STATUS_1011_NOT_FOUND);
+    }
+    await this.appVersionRepository.deleteAppVersion(
+      appVersionId,
+      '00000000-0000-0000-0000-000000000000'
+    );
+    return true;
   }
 }

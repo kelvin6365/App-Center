@@ -10,6 +10,7 @@ export interface AppVersion {
   updatedAt: string;
   tags: AppVersionTag[];
   file: File;
+  appId: string;
 }
 
 export interface AppVersionTag {

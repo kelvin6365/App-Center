@@ -19,7 +19,11 @@ export class ResponseCode {
   );
   static readonly STATUS_1012_FAIL_TO_CREATE = (message) =>
     new ResponseStatus(1012, 'Fail to create', message.toString());
-
+  static readonly STATUS_1013_FAIL_TO_INSTALL = new ResponseStatus(
+    1013,
+    'Fail to install',
+    'Fail to install'
+  );
   static readonly STATUS_9000_BAD_REQUEST = new ResponseStatus(
     9000,
     'Bad Request',

@@ -1,35 +1,39 @@
-import { Card, IconButton, Typography } from '@material-tailwind/react';
+import {
+  Card,
+  IconButton,
+  Spinner,
+  Typography,
+} from '@material-tailwind/react';
 import axios from 'axios';
 import classNames from 'classnames';
 import { Tooltip } from 'flowbite-react';
-import { useCallback, useEffect, useState } from 'react';
-import { BiLogoPlayStore, BiEdit, BiLogoGitlab } from 'react-icons/bi';
-import { FaKey, FaCloudUploadAlt } from 'react-icons/fa';
+import { useCallback, useEffect, useRef, useState } from 'react';
+import { BiEdit, BiLogoGitlab, BiLogoPlayStore } from 'react-icons/bi';
+import { BsGit } from 'react-icons/bs';
+import { FaCloudUploadAlt, FaKey } from 'react-icons/fa';
 import { GrAppleAppStore } from 'react-icons/gr';
 import { IoIosCopy } from 'react-icons/io';
-import { SiPostman, SiJirasoftware, SiConfluence } from 'react-icons/si';
+import { SiConfluence, SiJirasoftware, SiPostman } from 'react-icons/si';
 import { TiTick } from 'react-icons/ti';
-import { BsGit } from 'react-icons/bs';
+import { LazyLoadImage } from 'react-lazy-load-image-component';
 import { useParams } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import DefaultBreadcrumb from '../../../components/Breadcrumb/DefaultBreadcrumb';
-import Tag from '../../../components/Chip/Tag';
+import EditAppDialog from '../../../components/Dialog/EditAppDialog';
+import GitLabCIDialog from '../../../components/Dialog/GitLabCIDialog';
 import PostmanDialog from '../../../components/Dialog/PostmanDialog';
 import QRCodeDialog from '../../../components/Dialog/QRCodeDialog';
+import UploadAppVersionDialog from '../../../components/Dialog/UploadAppVersionDialog';
 import AppVersionTable from '../../../components/Table/AppVersionTable';
 import API from '../../util/api';
 import { App } from '../../util/type/App';
-import { AppVersion, AppVersionTag } from '../../util/type/AppVersion';
 import { maskingString } from '../../util/util';
-import { LazyLoadImage } from 'react-lazy-load-image-component';
-import EditAppDialog from '../../../components/Dialog/EditAppDialog';
-import GitLabCIDialog from '../../../components/Dialog/GitLabCIDialog';
-import UploadAppVersionDialog from '../../../components/Dialog/UploadAppVersionDialog';
 
 const ViewApp = () => {
   const { appId } = useParams();
   const [app, setApp] = useState<App | null>(null);
   const [copied, setCopied] = useState(false);
+  const [keyLoading, setKeyLoading] = useState(false);
   const [openPostman, setOpenPostman] = useState(false);
   const [openQRCode, setOpenQRCode] = useState({
     open: false,
@@ -39,44 +43,25 @@ const ViewApp = () => {
   const [openEditApp, setOpenEditApp] = useState(false);
   const [openUploadVersion, setOpenUploadVersion] = useState(false);
 
-  const [appVersions, setAppVersions] = useState<AppVersion[]>([]);
-  const [appVersionTags, setAppVersionTags] = useState<AppVersionTag[]>([]);
-  //selected Tags
-  const [selectedTags, setSelectedTags] = useState<AppVersionTag[]>([]);
+  const tableRef = useRef<any>(null);
 
-  //Call API to get app version tags
-  const fetchAppVersionTags = useCallback(async (appId: string) => {
-    if (appId == null) {
-      return;
-    }
-    try {
-      const res = await API.app.getAppVersionTags(appId);
-      const { data }: { data: AppVersionTag[] } = res.data;
-      setAppVersionTags(data);
-      setSelectedTags(data);
-    } catch (error) {
-      console.log(error);
-      if (axios.isAxiosError(error)) {
-        toast.error(error.response?.data?.status?.displayMessage.toString());
-      }
-    }
-  }, []);
-
-  const fetchAppVersion = useCallback(async (appId: string) => {
-    if (appId == null) {
-      return;
-    }
-    try {
-      const res = await API.app.appVersions(appId);
-      const { data }: { data: AppVersion[] } = res.data;
-      setAppVersions(data);
-    } catch (error) {
-      console.log(error);
-      if (axios.isAxiosError(error)) {
-        toast.error(error.response?.data?.status?.displayMessage.toString());
-      }
-    }
-  }, []);
+  // //Call API to get app version tags
+  // const fetchAppVersionTags = useCallback(async (appId: string) => {
+  //   if (appId == null) {
+  //     return;
+  //   }
+  //   try {
+  //     const res = await API.app.getAppVersionTags(appId);
+  //     const { data }: { data: AppVersionTag[] } = res.data;
+  //     setAppVersionTags(data);
+  //     setSelectedTags(data);
+  //   } catch (error) {
+  //     console.log(error);
+  //     if (axios.isAxiosError(error)) {
+  //       toast.error(error.response?.data?.status?.displayMessage.toString());
+  //     }
+  //   }
+  // }, []);
 
   //get app
   const fetchApp = useCallback(async (appId: string) => {
@@ -98,9 +83,11 @@ const ViewApp = () => {
       return;
     }
     try {
+      setKeyLoading(true);
       const res = await API.app.getAPIKey(app.id);
       const { data } = res.data;
       setCopied(true);
+      setKeyLoading(false);
       navigator.clipboard.writeText(data ?? '');
       setTimeout(() => {
         setCopied(false);
@@ -115,13 +102,9 @@ const ViewApp = () => {
 
   useEffect(() => {
     if (appId) {
-      fetchApp(appId).then(() => {
-        fetchAppVersionTags(appId).then(() => {
-          fetchAppVersion(appId);
-        });
-      });
+      fetchApp(appId);
     }
-  }, [appId, fetchApp, fetchAppVersion, fetchAppVersionTags]);
+  }, [appId, fetchApp]);
 
   return (
     <div>
@@ -147,7 +130,7 @@ const ViewApp = () => {
           />
           <div className="flex my-2 mt-4">
             <span
-              className="inline-flex items-center px-3 text-sm text-gray-900 bg-gray-200 border border-r-0 border-gray-300 cursor-pointer rounded-l-md dark:bg-gray-600 dark:text-gray-400 dark:border-gray-600"
+              className="inline-flex text-sm text-gray-900 bg-gray-200 border border-r-0 border-gray-300 cursor-pointer rounded-l-md dark:bg-gray-600 dark:text-gray-400 dark:border-gray-600"
               onClick={() => {
                 if (!copied) {
                   getAPIKey();
@@ -155,14 +138,27 @@ const ViewApp = () => {
               }}
             >
               {!copied ? (
-                <FaKey />
+                <div className="relative flex">
+                  <FaKey className="m-auto mx-3" />
+                  {keyLoading && (
+                    <div className="absolute top-0 bottom-0 left-0 right-0 flex bg-blue-gray-400/50">
+                      <Spinner className="w-5 h-5 m-auto" />
+                    </div>
+                  )}
+                </div>
               ) : (
-                <Tooltip content="Copied" trigger="hover">
-                  <div className="relative">
-                    <IoIosCopy />
-                    <TiTick className="absolute right-[-8px] bottom-[-8px] text-green-400" />
-                  </div>{' '}
-                </Tooltip>
+                <div className="m-auto">
+                  <Tooltip
+                    content="Copied"
+                    trigger="hover"
+                    className="relative"
+                  >
+                    <div className="relative">
+                      <IoIosCopy className="mx-3" />
+                      <TiTick className="absolute right-[0px] bottom-[-8px] text-green-400" />
+                    </div>
+                  </Tooltip>
+                </div>
               )}
             </span>
             <input
@@ -295,40 +291,13 @@ const ViewApp = () => {
           </div>
         </Card>
         <div className="w-full overflow-auto">
-          <div className="flex flex-wrap p-2 mb-2 border border-gray-300 rounded">
-            {appVersionTags.map((tag) => {
-              return (
-                <Tag
-                  key={tag.id}
-                  onClick={() => {
-                    if (selectedTags.find((t) => t.name === tag.name)) {
-                      setSelectedTags(
-                        selectedTags.filter((t) => t.name !== tag.name)
-                      );
-                    } else {
-                      setSelectedTags([...selectedTags, tag]);
-                    }
-                    if (appId) {
-                      fetchAppVersion(appId);
-                    }
-                  }}
-                  className={'normal-case cursor-pointer my-2 mx-1'}
-                  value={tag.name}
-                  color={
-                    !selectedTags.find((t) => t.name === tag.name)
-                      ? 'gray'
-                      : 'blue'
-                  }
-                  variant={'outlined'}
-                />
-              );
-            })}
-          </div>
-          <AppVersionTable
-            appVersions={appVersions}
-            selectedTags={selectedTags}
-            setOpenQRCode={setOpenQRCode}
-          />
+          {appId && (
+            <AppVersionTable
+              ref={tableRef}
+              appId={appId}
+              setOpenQRCode={setOpenQRCode}
+            />
+          )}
         </div>
       </div>
       {app && (
@@ -376,8 +345,7 @@ const ViewApp = () => {
           title={'Upload New Version'}
           onClose={(reload: boolean) => {
             if (reload && appId) {
-              fetchAppVersionTags(appId);
-              fetchAppVersion(appId);
+              tableRef.current?.reload();
             }
             setOpenUploadVersion(false);
           }}

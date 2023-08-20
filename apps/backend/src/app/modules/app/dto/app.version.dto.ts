@@ -18,6 +18,8 @@ export class AppVersionDTO {
   createdAt: Date;
   @ApiProperty()
   updatedAt: Date;
+  @ApiProperty()
+  appId: string;
 
   @ApiProperty()
   file: FileDTO;
@@ -34,6 +36,7 @@ export class AppVersionDTO {
     this.createdAt = data.createdAt;
     this.updatedAt = data.updatedAt;
     this.tags = data.tags?.map((tag) => new AppVersionTagDTO(tag)) ?? [];
-    this.file = new FileDTO(data.file);
+    this.file = data.file ? new FileDTO(data.file) : null;
+    this.appId = data.appId;
   }
 }

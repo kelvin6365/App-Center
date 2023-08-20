@@ -3,14 +3,13 @@ import {
   DataSource,
   DeleteResult,
   FindManyOptions,
-  FindOptionsOrder,
   ILike,
   In,
   Repository,
-  UpdateResult,
 } from 'typeorm';
+import { AppException } from '../../common/response/app.exception';
+import { ResponseCode } from '../../common/response/response.code';
 import { AppVersion } from '../../modules/app/entities/app.version.entity';
-import { App } from '../../modules/app/entities/app.entity';
 
 @Injectable()
 export class AppVersionRepository extends Repository<AppVersion> {
@@ -71,21 +70,27 @@ export class AppVersionRepository extends Repository<AppVersion> {
 
   //Get a single file
   getAppVersion(id: string, withDeleted = false): Promise<AppVersion> {
-    return this.findOne({ where: { id }, withDeleted });
+    return this.findOne({ where: { id }, withDeleted, relations: ['file'] });
   }
 
   //Create a new file
-  createAppVersion(file: AppVersion): Promise<AppVersion> {
-    return this.save(file);
+  createAppVersion(version: AppVersion): Promise<AppVersion> {
+    return this.save(version);
   }
 
   //Delete a file
-  deleteAppVersion(id: string): Promise<DeleteResult> {
-    return this.softDelete({ id });
+  async deleteAppVersion(id: string, updatedBy: string): Promise<DeleteResult> {
+    const target = await this.findOne({ where: { id }, withDeleted: false });
+    if (!target) throw new AppException(ResponseCode.STATUS_1011_NOT_FOUND);
+    target.updatedBy = updatedBy;
+    return await this.manager.transaction(async (em) => {
+      await em.save(target);
+      return await em.softDelete(AppVersion, { id: target.id });
+    });
   }
 
   //AppVersion save
-  updateAppVersion(file: AppVersion): Promise<AppVersion> {
-    return this.save(file);
+  updateAppVersion(version: AppVersion): Promise<AppVersion> {
+    return this.save(version);
   }
 }

@@ -28,7 +28,7 @@ const GitLabCIDialog = ({ title, onClose, open, app }: Props) => {
     setDescription('APP_VERSION_DESCRIPTION');
     setInstallPassword('INSTALL_PASSWORD');
     setTags('Tag1,Tag2,Tag3');
-    setFilePath('/PATH-TO-FILE/FILE.{ipa/apk}');
+    setFilePath('./PATH-TO-FILE/FILE.{ipa/apk}');
   };
   return (
     <Dialog
@@ -103,7 +103,9 @@ const GitLabCIDialog = ({ title, onClose, open, app }: Props) => {
           text={`##Upload To App Center Stage
 upload_to_app_center:
     stage: app_center
-    script: - |
+    image: curlimages/curl:latest
+    script: 
+      - |
         curl --location '${
           import.meta.env.VITE_ENV === 'local'
             ? 'http://localhost:9000' + import.meta.env.VITE_API_HOST

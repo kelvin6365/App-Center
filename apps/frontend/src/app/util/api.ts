@@ -7,11 +7,12 @@ class API {
       CREATE: string;
       SEARCH: string;
       GET_APP: (appId: string) => string;
-      APP_VERSIONS: (appId: string) => string;
+      SEARCH_APP_VERSIONS: (appId: string) => string;
       GET_APP_VERSION_TAGS: (appId: string) => string;
       UPDATE_APP: (appId: string) => string;
       GET_API_KET: (appId: string) => string;
       UPLOAD_APP_VERSION: (appId: string) => string;
+      DELETE_VERSION: (appId: string, versionId: string) => string;
     };
     SETTING: {
       GET_ALL_SETTINGS: string;
@@ -60,6 +61,7 @@ class API {
         installPassword: string;
       }
     ) => Promise<any>;
+    deleteVersion: (appId: string, versionId: string) => Promise<any>;
   };
   static setting: {
     getAllSettings: () => Promise<any>;
@@ -121,12 +123,15 @@ class API {
         CREATE: '/v1/app',
         SEARCH: '/v1/app/search',
         GET_APP: (appId: string) => `/v1/app/${appId}`,
-        APP_VERSIONS: (appId: string) => `/v1/app/${appId}/versions`,
+        SEARCH_APP_VERSIONS: (appId: string) =>
+          `/v1/app/${appId}/version/search`,
         GET_APP_VERSION_TAGS: (appId: string) =>
-          `/v1/app/${appId}/versions/tags`,
+          `/v1/app/${appId}/version/tags`,
         UPDATE_APP: (appId: string) => `/v1/app/${appId}`,
         GET_API_KET: (appId: string) => `/v1/app/${appId}/api-key`,
-        UPLOAD_APP_VERSION: (appId: string) => `/v1/app/${appId}/versions`,
+        UPLOAD_APP_VERSION: (appId: string) => `/v1/app/${appId}/version`,
+        DELETE_VERSION: (appId: string, versionId: string) =>
+          `/v1/app/${appId}/version/${versionId}`,
       },
       SETTING: {
         GET_ALL_SETTINGS: '/v1/setting',
@@ -167,7 +172,9 @@ class API {
         });
       },
       appVersions: (appId: string) => {
-        return this.apiInstance.get(this.API_PATH.APP.APP_VERSIONS(appId));
+        return this.apiInstance.get(
+          this.API_PATH.APP.SEARCH_APP_VERSIONS(appId)
+        );
       },
       getApp: (appId: string) => {
         return this.apiInstance.get(this.API_PATH.APP.GET_APP(appId));
@@ -233,6 +240,11 @@ class API {
               'Content-type': 'multipart/form-data',
             },
           }
+        );
+      },
+      deleteVersion: (appId: string, versionId: string) => {
+        return this.apiInstance.delete(
+          this.API_PATH.APP.DELETE_VERSION(appId, versionId)
         );
       },
     };

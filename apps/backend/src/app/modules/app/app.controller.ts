@@ -12,32 +12,41 @@ import {
   Post,
   Put,
   Query,
+  Res,
   UploadedFile,
   UseInterceptors,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { ApiConsumes, ApiParam, ApiQuery, ApiTags } from '@nestjs/swagger';
+import { Response } from 'express';
 import * as mime from 'mime-types';
+import 'multer';
+import { Readable } from 'typeorm/platform/PlatformTools';
+import { JSONQuery } from '../../common/decorator/json.query';
 import { ApiResponseSchema } from '../../common/decorator/swagger.decorator';
 import { PageDto } from '../../common/dto/page.dto';
+import { SearchQueryDTO } from '../../common/dto/search.dto';
 import { AppException } from '../../common/response/app.exception';
 import { AppResponse } from '../../common/response/app.response';
 import { ResponseCode } from '../../common/response/response.code';
+import { AppAllowedType } from '../file/enum/app.allowed.type.enum';
 import { ImageAllowedType } from '../file/enum/image.allowed.type.enum';
+import { FileService } from '../file/file.service';
 import { AppService } from './app.service';
 import { AppDTO } from './dto/app.dto';
 import { CreateAppDTO } from './dto/create.app.dto';
-import 'multer';
-import { JSONQuery } from '../../common/decorator/json.query';
-import { SearchQueryDTO } from '../../common/dto/search.dto';
 import { CreateAppVersionDTO } from './dto/create.app.version.dto';
-import { AppAllowedType } from '../file/enum/app.allowed.type.enum';
+import { InstallAppDTO } from './dto/install.app.dto';
+import { InstallAppRequestDTO } from './dto/install.app.request.dto';
 import { UpdateAppDTO } from './dto/update.app.dto';
 
 @ApiTags('App')
 @Controller({ path: 'app', version: ['1'] })
 export class AppController {
-  constructor(private readonly appService: AppService) {}
+  constructor(
+    private readonly appService: AppService,
+    private readonly fileService: FileService
+  ) {}
 
   //Get a list of apps with search query, tags and sorting
   @Get('search')
@@ -180,7 +189,7 @@ export class AppController {
   }
 
   //Get a single app with all its versions. support filtering by tags
-  @Get(':id/versions')
+  @Get(':id/version/search')
   @ApiQuery({
     name: 'query',
     required: false,
@@ -213,7 +222,7 @@ export class AppController {
   }
 
   //Add new version to an existing app
-  @Post(':id/versions')
+  @Post(':id/version')
   @ApiConsumes('multipart/form-data')
   @ApiParam({ name: 'id', required: true })
   @UseInterceptors(
@@ -264,7 +273,7 @@ export class AppController {
   }
 
   //get all app version tags by app id
-  @Get(':id/versions/tags')
+  @Get(':id/version/tags')
   @ApiParam({ name: 'id', required: true })
   async getAllAppVersionTags(
     @Param('id', new ParseUUIDPipe()) id: string
@@ -275,9 +284,73 @@ export class AppController {
   //get API key by app id
   @Get(':id/api-key')
   @ApiParam({ name: 'id', required: true })
+  @ApiResponseSchema(HttpStatus.OK, 'OK')
   async getApiKey(
     @Param('id', new ParseUUIDPipe()) id: string
   ): Promise<AppResponse> {
     return new AppResponse(await this.appService.getApiKey(id));
+  }
+
+  //Get App by ID for installing
+  @Post(':id/version/:versionId/install')
+  @ApiParam({ name: 'id', required: true })
+  @ApiParam({ name: 'versionId', required: true })
+  @ApiResponseSchema(HttpStatus.OK, 'OK', InstallAppDTO)
+  async getInstallApp(
+    @Param('id', new ParseUUIDPipe()) id: string,
+    @Param('versionId', new ParseUUIDPipe()) versionId: string,
+    @Body() dto: InstallAppRequestDTO
+  ): Promise<AppResponse> {
+    return new AppResponse(
+      await this.appService.getInstallApp(id, versionId, dto.password)
+    );
+  }
+
+  @Get(':id/version/:versionId/install')
+  @ApiParam({ name: 'id', required: true })
+  @ApiParam({ name: 'versionId', required: true })
+  @ApiQuery({ name: 'password', required: true })
+  async install(
+    @Query('password') password: string,
+    @Param('versionId') versionId: string,
+    @Param('id', new ParseUUIDPipe()) id: string,
+    @Res() res: Response
+  ) {
+    await this.appService.findById(id, false, true);
+    const appVersion = await this.appService.validateInstallPassword(
+      versionId,
+      password
+    );
+    const [file, s3Item] = await this.fileService.getFileByFileUUID(
+      appVersion.fileId
+    );
+    if (!file) {
+      return res
+        .status(400)
+        .json(new AppResponse(null, ResponseCode.STATUS_1011_NOT_FOUND));
+    }
+    if (!s3Item) {
+      return res
+        .status(400)
+        .json(new AppResponse(null, ResponseCode.STATUS_9000_BAD_REQUEST));
+    }
+    res.contentType(file.contentType);
+    res.set({
+      'Content-Disposition': `attachment; filename="${file.name}"`,
+    });
+    return (s3Item.Body as Readable).pipe(res);
+  }
+
+  //delete app version
+  @Delete(':id/version/:versionId')
+  @ApiParam({ name: 'id', required: true })
+  @ApiParam({ name: 'versionId', required: true })
+  async deleteAppVersion(
+    @Param('id', new ParseUUIDPipe()) id: string,
+    @Param('versionId', new ParseUUIDPipe()) versionId: string
+  ) {
+    return new AppResponse(
+      await this.appService.deleteAppVersion(id, versionId)
+    );
   }
 }

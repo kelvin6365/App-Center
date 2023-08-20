@@ -21,7 +21,9 @@ export class AppDTO {
     this.id = data.id;
     this.name = data.name;
     this.description = data.description;
-    this.apiKey = maskingString(data.apiKey, 4, data.apiKey.length);
+    this.apiKey = data.apiKey
+      ? maskingString(data.apiKey, 4, data.apiKey.length)
+      : null;
     this.iconFileId = data.iconFileId;
     this.iconFileURL = iconFileURL;
     this.extra = data.extra;
