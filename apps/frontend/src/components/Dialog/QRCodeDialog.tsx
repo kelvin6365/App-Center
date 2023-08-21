@@ -30,7 +30,7 @@ const QRCodeDialog = ({ title, onClose, open, qrCodeValue }: Props) => {
             size={256}
             style={{
               height: 'auto',
-              maxWidth: '520px',
+              maxWidth: '300px',
               width: '100%',
             }}
             value={qrCodeValue}
