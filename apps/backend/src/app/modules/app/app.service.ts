@@ -142,7 +142,7 @@ export class AppService {
     appId: string,
     appVersion: CreateAppVersionDTO,
     file: Express.Multer.File,
-    user: CurrentUserDTO
+    user?: CurrentUserDTO
   ): Promise<boolean> {
     this.logger.log('Creating a new app version');
     const app = await this.appRepository.findById(appId);
@@ -158,7 +158,8 @@ export class AppService {
       newAppVersion.installPassword = await hashPassword(
         appVersion.installPassword
       );
-      newAppVersion.createdBy = user.id;
+      // newAppVersion.createdBy = user.id;
+      newAppVersion.createdBy = null;
       if (appVersion.tags) {
         newAppVersion.tags = appVersion.tags.map((tag) => {
           const newTag = new AppVersionTag();
@@ -178,7 +179,8 @@ export class AppService {
           user.id
         );
         createdAppVersion.fileId = appFile.id;
-        createdAppVersion.updatedBy = user.id;
+        // createdAppVersion.updatedBy = user.id;
+        createdAppVersion.updatedBy = null;
         await this.appVersionRepository.updateAppVersion(createdAppVersion);
         return true;
       }

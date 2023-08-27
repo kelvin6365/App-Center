@@ -288,11 +288,11 @@ export class AppController {
       })
     )
     file: Express.Multer.File,
-    @Body() appVersion: CreateAppVersionDTO,
-    @CurrentUser() user: CurrentUserDTO
+    @Body() appVersion: CreateAppVersionDTO
+    // @CurrentUser() user: CurrentUserDTO
   ): Promise<AppResponse> {
     return new AppResponse(
-      await this.appService.createAppVersion(id, appVersion, file, user)
+      await this.appService.createAppVersion(id, appVersion, file)
     );
   }
 
