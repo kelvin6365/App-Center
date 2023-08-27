@@ -43,6 +43,7 @@ import { CurrentUser } from '../../common/decorator/user.decorator';
 import { CurrentUserDTO } from '../auth/dto/current.user.dto';
 import { Roles } from '../../common/decorator/roles.decorator';
 import { RoleType } from '../role/enum/role.type.enum';
+import { Public } from '../../common/decorator/public';
 
 @ApiTags('App')
 @Controller({ path: 'app', version: ['1'] })
@@ -228,6 +229,7 @@ export class AppController {
   }
 
   //Add new version to an existing app
+  @Public()
   @Post(':id/version')
   @ApiConsumes('multipart/form-data')
   @ApiParam({ name: 'id', required: true })
@@ -299,6 +301,7 @@ export class AppController {
   }
 
   //get app by id
+  @Public()
   @Get(':id/install')
   @ApiParam({ name: 'id', required: true })
   @ApiResponseSchema(HttpStatus.OK, 'OK')
@@ -311,6 +314,7 @@ export class AppController {
   }
 
   //Get App by ID for installing
+  @Public()
   @Post(':id/version/:versionId/install')
   @ApiParam({ name: 'id', required: true })
   @ApiParam({ name: 'versionId', required: true })
@@ -325,6 +329,7 @@ export class AppController {
     );
   }
 
+  @Public()
   @Get(':id/version/:versionId/install')
   @ApiParam({ name: 'id', required: true })
   @ApiParam({ name: 'versionId', required: true })
