@@ -106,11 +106,7 @@ upload_to_app_center:
     image: curlimages/curl:latest
     script: 
       - |
-        curl --location '${
-          import.meta.env.VITE_ENV === 'local'
-            ? 'http://localhost:9000' + import.meta.env.VITE_API_HOST
-            : import.meta.env.VITE_API_HOST
-        }/v1/app/${app.id}/versions'  \\
+        curl --location '${window.location.origin}/api/v1/app/${app.id}/versions'  \\
         --form 'name="${name}"'  \\
         --form 'description="${description}"'  \\
         --form 'file=@"${filePath}"'  \\

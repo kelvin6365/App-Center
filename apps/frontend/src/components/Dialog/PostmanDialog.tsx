@@ -86,11 +86,7 @@ const PostmanDialog = ({ title, onClose, open, app }: Props) => {
         <div className="py-1 text-base font-bold text-black">cURL</div>
         <CodeBlock
           // eslint-disable-line
-          text={`curl --location '${
-            import.meta.env.VITE_ENV === 'local'
-              ? 'http://localhost:9000' + import.meta.env.VITE_API_HOST
-              : import.meta.env.VITE_API_HOST
-          }/v1/app/${app.id}/versions'  \\
+          text={`curl --location '${window.location.origin}/api/v1/app/${app.id}/versions'  \\
   --form 'name="${name}"'  \\
   --form 'description="${description}"'  \\
   --form 'file=@"${filePath}"'  \\
