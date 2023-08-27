@@ -1,20 +1,16 @@
-// import { Injectable } from '@nestjs/common';
-// import { UserRefreshToken } from '../../modules/users/entities/user.refresh.token.entity';
-// import { DataSource, Repository } from 'typeorm';
+import { Injectable } from '@nestjs/common';
+import { DataSource, Repository } from 'typeorm';
+import { UserRefreshToken } from '../../modules/user/entities/user.refresh.token.entity';
 
-// @Injectable()
-// export class UserRefreshTokenRepository extends Repository<UserRefreshToken> {
-//   constructor(dataSource: DataSource) {
-//     super(UserRefreshToken, dataSource.createEntityManager());
-//   }
+@Injectable()
+export class UserRefreshTokenRepository extends Repository<UserRefreshToken> {
+  constructor(dataSource: DataSource) {
+    super(UserRefreshToken, dataSource.createEntityManager());
+  }
 
-//   async createUserRefreshToken(
-//     userRefreshTokenEntity: UserRefreshToken,
-//   ): Promise<UserRefreshToken> {
-//     try {
-//       return await this.save(this.create(userRefreshTokenEntity));
-//     } catch (error) {
-//       throw error;
-//     }
-//   }
-// }
+  createUserRefreshToken(
+    userRefreshTokenEntity: UserRefreshToken
+  ): Promise<UserRefreshToken> {
+    return this.save(this.create(userRefreshTokenEntity));
+  }
+}

@@ -5,9 +5,14 @@ import { ConfigModule } from '@nestjs/config';
 import appConfig from './common/config/app.config';
 import DatabaseModule from './database/database.module';
 import { LoggerMiddleware } from './common/util/logger.middleware';
-import { APP_FILTER } from '@nestjs/core';
+import { APP_FILTER, APP_GUARD } from '@nestjs/core';
 import { AppExceptionFilter } from './common/exceptionFilters/all.exception.filter';
 import { SettingModule } from './modules/setting/setting.module';
+import { UserModule } from './modules/user/user.module';
+import { RoleModule } from './modules/role/role.module';
+import { RolesGuard } from './modules/auth/admin-auth.guard';
+import { JwtAuthGuard } from './modules/auth/jwt-auth.guard';
+import { AuthModule } from './modules/auth/auth.module';
 
 @Module({
   imports: [
@@ -41,6 +46,9 @@ import { SettingModule } from './modules/setting/setting.module';
     AppModule,
     FileModule,
     SettingModule,
+    UserModule,
+    RoleModule,
+    AuthModule,
   ],
   controllers: [],
   providers: [
@@ -48,6 +56,14 @@ import { SettingModule } from './modules/setting/setting.module';
     {
       provide: APP_FILTER,
       useClass: AppExceptionFilter,
+    },
+    {
+      provide: APP_GUARD,
+      useClass: JwtAuthGuard,
+    },
+    {
+      provide: APP_GUARD,
+      useClass: RolesGuard,
     },
   ],
 })

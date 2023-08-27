@@ -20,9 +20,12 @@ import Scrollbars from 'react-custom-scrollbars-2';
 import { NavLink, useLocation } from 'react-router-dom';
 import logo from '../../assets/images/logo.jpg';
 import MenuItems from './MenuItems';
+import { useAppStore } from '../../app/util/store/store';
+import { AppSlice } from '../../app/util/store/appSlice';
 type Props = {};
 
 const Sidebar = (props: Props) => {
+  const setLogout = useAppStore((state: AppSlice) => state.setLogout);
   const [open, setOpen] = React.useState(0);
   const [openAlert, setOpenAlert] = React.useState(true);
   const location = useLocation();
@@ -33,6 +36,9 @@ const Sidebar = (props: Props) => {
     },
     [open]
   );
+  const logout = () => {
+    setLogout();
+  };
 
   const initMenuOpen = useCallback(() => {
     handleOpen(
@@ -149,14 +155,18 @@ const Sidebar = (props: Props) => {
               <span className="hidden md:block">Settings</span>
             </ListItem>
           </NavLink>
-          <NavLink to={'/login'}>
+          <div
+            onClick={() => {
+              logout();
+            }}
+          >
             <ListItem>
               <ListItemPrefix>
                 <PowerIcon className="w-5 h-5" />
               </ListItemPrefix>
               <span className="hidden md:block">Log Out</span>
             </ListItem>
-          </NavLink>
+          </div>
         </List>
       </Scrollbars>
 

@@ -18,6 +18,7 @@ import { AppVersion } from './entities/app.version.entity';
 import { AppVersionTag } from './entities/app.version.tag.entity';
 import { hashPassword, isMatchPassword } from '../../common/util/password.util';
 import { InstallAppDTO } from './dto/install.app.dto';
+import { CurrentUserDTO } from '../auth/dto/current.user.dto';
 
 @Injectable()
 export class AppService {
@@ -35,7 +36,8 @@ export class AppService {
   //create a new app
   async createApp(
     app: CreateAppDTO,
-    file: Express.Multer.File
+    file: Express.Multer.File,
+    user: CurrentUserDTO
   ): Promise<string> {
     this.logger.log('Creating a new app');
     console.log(file);
@@ -46,7 +48,7 @@ export class AppService {
     newApp.deletedAt = null;
     newApp.apiKey = nanoid();
     newApp.extra = app.extra ?? {};
-    newApp.createdBy = null;
+    newApp.createdBy = user.id;
     const createdApp = await this.appRepository.createApp(newApp);
     if (createdApp) {
       //Create app icon
@@ -127,7 +129,8 @@ export class AppService {
   async createAppVersion(
     appId: string,
     appVersion: CreateAppVersionDTO,
-    file: Express.Multer.File
+    file: Express.Multer.File,
+    user: CurrentUserDTO
   ): Promise<boolean> {
     this.logger.log('Creating a new app version');
     const app = await this.appRepository.findById(appId);
@@ -143,16 +146,14 @@ export class AppService {
       newAppVersion.installPassword = await hashPassword(
         appVersion.installPassword
       );
-      //TODO: User
-      newAppVersion.createdBy = null;
+      newAppVersion.createdBy = user.id;
       if (appVersion.tags) {
         newAppVersion.tags = appVersion.tags.map((tag) => {
           const newTag = new AppVersionTag();
           newTag.appVersion = newAppVersion;
           newTag.appId = app.id;
           newTag.name = tag;
-          //TODO: User
-          newAppVersion.createdBy = null;
+          newAppVersion.createdBy = user.id;
           return newTag;
         });
       }
@@ -162,11 +163,10 @@ export class AppService {
         const appFile = await this.fileService.unloadAppFile(
           createdAppVersion.id,
           file,
-          createdAppVersion.createdBy
+          user.id
         );
         createdAppVersion.fileId = appFile.id;
-        //TODO: User
-        createdAppVersion.updatedBy = null;
+        createdAppVersion.updatedBy = user.id;
         await this.appVersionRepository.updateAppVersion(createdAppVersion);
         return true;
       }
@@ -226,7 +226,8 @@ export class AppService {
   async updateApp(
     id: string,
     app: CreateAppDTO,
-    file: Express.Multer.File
+    file: Express.Multer.File,
+    user: CurrentUserDTO
   ): Promise<boolean> {
     this.logger.log('Updating an app');
     const appToUpdate = await this.appRepository.findById(id);
@@ -234,6 +235,7 @@ export class AppService {
       appToUpdate.name = app.name;
       appToUpdate.description = app.description;
       appToUpdate.extra = app.extra ?? {};
+      appToUpdate.updatedBy = user.id;
       const updatedApp = await this.appRepository.updateApp(appToUpdate);
       if (file) {
         //Update app icon
@@ -241,11 +243,11 @@ export class AppService {
         const appIconFile = await this.fileService.uploadAppIcon(
           updatedApp.id,
           file,
-          updatedApp.createdBy
+          user.id
         );
         updatedApp.iconFileId = appIconFile.id;
         //delete old icon file
-        await this.fileService.deleteFile(oldFileId);
+        await this.fileService.deleteFile(oldFileId, user.id);
         await this.appRepository.updateApp(updatedApp);
       }
       return true;
@@ -330,16 +332,14 @@ export class AppService {
   //delete app version
   async deleteAppVersion(
     appId: string,
-    appVersionId: string
+    appVersionId: string,
+    user: CurrentUserDTO
   ): Promise<boolean> {
     const app = await this.appRepository.findById(appId);
     if (!app) {
       throw new AppException(ResponseCode.STATUS_1011_NOT_FOUND);
     }
-    await this.appVersionRepository.deleteAppVersion(
-      appVersionId,
-      '00000000-0000-0000-0000-000000000000'
-    );
+    await this.appVersionRepository.deleteAppVersion(appVersionId, user.id);
     return true;
   }
 }

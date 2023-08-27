@@ -4,7 +4,13 @@ import Loading from '../../components/Loading/Loading';
 import App from '../app';
 import dashboardRoute from './dashboard/dashboardRoute';
 import settingRoute from './setting/settingRoute';
+const Guard = loadable(() => import('../routes/Guard'), {
+  fallback: <Loading />,
+});
 const Login = loadable(() => import('../views/login/Login'), {
+  fallback: <Loading />,
+});
+const Register = loadable(() => import('../views/register/Register'), {
   fallback: <Loading />,
 });
 const Install = loadable(() => import('../views/install/Install'), {
@@ -18,13 +24,17 @@ const route = () => {
   return [
     {
       path: '/',
-      element: <App />,
+      element: (
+        <Guard auth={true}>
+          <App />
+        </Guard>
+      ),
       children: [
         ...dashboardRoute(),
         ...settingRoute(),
         {
           path: '*',
-          element: <Navigate to={`/`} replace />,
+          element: <Navigate to={`/apps`} replace />,
         },
       ],
     },
@@ -34,7 +44,19 @@ const route = () => {
     },
     {
       path: '/login',
-      element: <Login />,
+      element: (
+        <Guard auth={false}>
+          <Login />
+        </Guard>
+      ),
+    },
+    {
+      path: '/register',
+      element: (
+        <Guard auth={false}>
+          <Register />
+        </Guard>
+      ),
     },
     {
       path: '/404',

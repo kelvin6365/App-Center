@@ -36,8 +36,8 @@ export class FileService {
   }
 
   //delete file
-  async deleteFile(id: string): Promise<boolean> {
-    const res = await this.fileRepository.deleteFile(id);
+  async deleteFile(id: string, userId: string): Promise<boolean> {
+    const res = await this.fileRepository.deleteFile(id, userId);
     return res ? true : false;
   }
 

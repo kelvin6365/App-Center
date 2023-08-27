@@ -49,3 +49,37 @@ jobs:
       - name: Push backend image to DigitalOcean Container Registry
         if: steps.filter.outputs.backend == 'true'
         run: docker push registry.digitalocean.com/two-rocks-studio/app-center/backend:$(echo $GITHUB_SHA | head -c7)
+
+      - name: DigitalOcean App Platform deployment
+        if: steps.filter.outputs.frontend == 'true'
+        uses: digitalocean/app_action@v1.1.5
+        with:
+          app_name: app-center
+          token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
+          images: '[
+            {
+            "name": "app-center-frontend",
+            "image":{
+            "registry_type": "DOCR",
+            "repository": "registry.digitalocean.com/two-rocks-studio/app-center/frontend",
+            "tag": "$(echo $GITHUB_SHA | head -c7)"
+            },
+            },
+            ]'
+
+      - name: DigitalOcean App Platform deployment
+        if: steps.filter.outputs.backend == 'true'
+        uses: digitalocean/app_action@v1.1.5
+        with:
+          app_name: app-center
+          token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
+          images: '[
+            {
+            "name": "app-center-backend",
+            "image":{
+            "registry_type": "DOCR",
+            "repository": "registry.digitalocean.com/two-rocks-studio/app-center/backend",
+            "tag": "$(echo $GITHUB_SHA | head -c7)"
+            },
+            },
+            ]'

@@ -1,8 +1,14 @@
 import axios from 'axios';
 import Cookies from 'js-cookie';
+import { AppSlice } from './store/appSlice';
+import { useAppStore } from './store/store';
 class API {
   static apiInstance: any;
   static API_PATH: {
+    AUTH: {
+      LOGIN: string;
+      REGISTER: string;
+    };
     APP: {
       CREATE: string;
       SEARCH: string;
@@ -25,6 +31,10 @@ class API {
       CREATE_SETTING: string;
       UPDATE_SETTING: string;
     };
+  };
+  static auth: {
+    login: (email: string, password: string) => Promise<any>;
+    register: (email: string, password: string, name: string) => Promise<any>;
   };
   static app: {
     createApp: (data: {
@@ -125,11 +135,22 @@ class API {
         return Promise.resolve(res);
       },
       (err: { response: { status: number } }) => {
+        if (err && err.response?.status === 401) {
+          const { isLoggedIn, setLogout }: AppSlice = useAppStore.getState();
+          if (isLoggedIn) {
+            console.log('%c401 detected, logout now', 'color: #ff0000');
+            setLogout();
+          }
+        }
         return Promise.reject(err);
       }
     );
 
     this.API_PATH = {
+      AUTH: {
+        LOGIN: '/v1/auth/sign-in',
+        REGISTER: '/v1/auth/sign-up',
+      },
       APP: {
         CREATE: '/v1/app',
         SEARCH: '/v1/app/search',
@@ -153,6 +174,22 @@ class API {
         GET_SETTING: (key: string) => `/v1/setting/${key}`,
         CREATE_SETTING: '/v1/setting',
         UPDATE_SETTING: '/v1/setting',
+      },
+    };
+
+    this.auth = {
+      login: async (email: string, password: string) => {
+        return this.apiInstance.post(this.API_PATH.AUTH.LOGIN, {
+          username: email,
+          password,
+        });
+      },
+      register: async (email: string, password: string, name: string) => {
+        return this.apiInstance.post(this.API_PATH.AUTH.REGISTER, {
+          username: email,
+          password,
+          name,
+        });
       },
     };
 

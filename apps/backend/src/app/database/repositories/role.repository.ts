@@ -1,38 +1,26 @@
-// import { Injectable } from '@nestjs/common';
-// import { DataSource, Repository } from 'typeorm';
-// import { Role } from '../../modules/role/entities/role.entity';
+import { Injectable } from '@nestjs/common';
+import { DataSource, Repository } from 'typeorm';
+import { Role } from '../../modules/role/entities/role.entity';
 
-// @Injectable()
-// export class RoleRepository extends Repository<Role> {
-//   constructor(dataSource: DataSource) {
-//     super(Role, dataSource.createEntityManager());
-//   }
-//   async getRoleById(roleId: string, withDeleted = false): Promise<Role> {
-//     try {
-//       return await this.findOne({
-//         where: { id: roleId },
-//         withDeleted,
-//       });
-//     } catch (error) {
-//       throw error;
-//     }
-//   }
+@Injectable()
+export class RoleRepository extends Repository<Role> {
+  constructor(dataSource: DataSource) {
+    super(Role, dataSource.createEntityManager());
+  }
+  getRoleById(roleId: string, withDeleted = false): Promise<Role> {
+    return this.findOne({
+      where: { id: roleId },
+      withDeleted,
+    });
+  }
 
-//   async findAllWithDeleteFalse(): Promise<Role[]> {
-//     try {
-//       return await this.find({
-//         withDeleted: false,
-//       });
-//     } catch (error) {
-//       throw error;
-//     }
-//   }
+  findAllWithDeleteFalse(): Promise<Role[]> {
+    return this.find({
+      withDeleted: false,
+    });
+  }
 
-//   async createRole(role: Role): Promise<any> {
-//     try {
-//       return await this.create(role);
-//     } catch (error) {
-//       throw error;
-//     }
-//   }
-// }
+  createRole(role: Role): Promise<Role> {
+    return this.save(role);
+  }
+}

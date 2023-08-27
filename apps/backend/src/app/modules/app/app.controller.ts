@@ -39,6 +39,10 @@ import { CreateAppVersionDTO } from './dto/create.app.version.dto';
 import { InstallAppDTO } from './dto/install.app.dto';
 import { InstallAppRequestDTO } from './dto/install.app.request.dto';
 import { UpdateAppDTO } from './dto/update.app.dto';
+import { CurrentUser } from '../../common/decorator/user.decorator';
+import { CurrentUserDTO } from '../auth/dto/current.user.dto';
+import { Roles } from '../../common/decorator/roles.decorator';
+import { RoleType } from '../role/enum/role.type.enum';
 
 @ApiTags('App')
 @Controller({ path: 'app', version: ['1'] })
@@ -133,9 +137,10 @@ export class AppController {
       })
     )
     file: Express.Multer.File,
-    @Body() app: CreateAppDTO
+    @Body() app: CreateAppDTO,
+    @CurrentUser() user: CurrentUserDTO
   ): Promise<AppResponse> {
-    return new AppResponse(await this.appService.createApp(app, file));
+    return new AppResponse(await this.appService.createApp(app, file, user));
   }
 
   //Update an existing app
@@ -174,11 +179,12 @@ export class AppController {
     @Param('id') id,
     @UploadedFile()
     file: Express.Multer.File,
-    @Body() updateApp: UpdateAppDTO
+    @Body() updateApp: UpdateAppDTO,
+    @CurrentUser() user: CurrentUserDTO
   ): Promise<AppResponse> {
     console.log(file, updateApp, id);
     return new AppResponse(
-      await this.appService.updateApp(id, updateApp, file)
+      await this.appService.updateApp(id, updateApp, file, user)
     );
   }
 
@@ -265,10 +271,11 @@ export class AppController {
       })
     )
     file: Express.Multer.File,
-    @Body() appVersion: CreateAppVersionDTO
+    @Body() appVersion: CreateAppVersionDTO,
+    @CurrentUser() user: CurrentUserDTO
   ): Promise<AppResponse> {
     return new AppResponse(
-      await this.appService.createAppVersion(id, appVersion, file)
+      await this.appService.createAppVersion(id, appVersion, file, user)
     );
   }
 
@@ -355,14 +362,16 @@ export class AppController {
 
   //delete app version
   @Delete(':id/version/:versionId')
+  @Roles(RoleType.ADMIN)
   @ApiParam({ name: 'id', required: true })
   @ApiParam({ name: 'versionId', required: true })
   async deleteAppVersion(
     @Param('id', new ParseUUIDPipe()) id: string,
-    @Param('versionId', new ParseUUIDPipe()) versionId: string
+    @Param('versionId', new ParseUUIDPipe()) versionId: string,
+    @CurrentUser() user: CurrentUserDTO
   ) {
     return new AppResponse(
-      await this.appService.deleteAppVersion(id, versionId)
+      await this.appService.deleteAppVersion(id, versionId, user)
     );
   }
 }

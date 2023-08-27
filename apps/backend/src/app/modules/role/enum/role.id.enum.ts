@@ -1,0 +1,6 @@
+export enum RoleId {
+  USER = '66b92805-9cdd-475a-80c5-40c4a776f5f8',
+  ADMIN = '0db23208-82d8-4718-93eb-9a40fc78742e',
+  CLIENT = 'd567c254-f2ff-4f1e-aebf-9a0711c2e481',
+  SALESPERSON = '28b9fd96-d256-433b-9076-9311b2059396',
+}

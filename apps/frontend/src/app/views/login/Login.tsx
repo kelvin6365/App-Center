@@ -1,7 +1,13 @@
 import { Button } from '@material-tailwind/react';
 import logo from '../../../assets/images/logo.jpg';
-import { useForm } from 'react-hook-form';
-import { useNavigate } from 'react-router-dom';
+import { SubmitHandler, useForm } from 'react-hook-form';
+import { NavLink, useNavigate } from 'react-router-dom';
+import { useAppStore } from '../../util/store/store';
+import API from '../../util/api';
+import { toast } from 'react-toastify';
+import axios from 'axios';
+import TextInput from '../../../components/Input/TextInput';
+import { useEffect } from 'react';
 type Props = {};
 
 type LoginFormInputs = {
@@ -22,20 +28,40 @@ const Login = (props: Props) => {
 
   const navigate = useNavigate();
 
-  const onSubmit = async () => {
-    navigate('/apps');
+  const [setLoggedIn, isLoggedIn] = useAppStore((state: any) => [
+    state.setLoggedIn,
+    state.isLoggedIn,
+  ]);
+
+  const onSubmit: SubmitHandler<LoginFormInputs> = async (values) => {
+    try {
+      const res = await API.auth.login(values.email, values.password);
+      const { data } = res.data;
+      toast.success('Welcome!');
+      setLoggedIn(data);
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        toast.error(error.response?.data?.status?.displayMessage);
+      }
+    }
   };
+
+  useEffect(() => {
+    if (isLoggedIn) {
+      navigate('/apps', { replace: true });
+    }
+  }, [isLoggedIn, navigate]);
 
   return (
     <section className="bg-gray-50 dark:bg-gray-900">
       <div className="flex flex-col items-center justify-center px-6 py-8 mx-auto md:h-screen lg:py-0">
-        <a
-          href="#"
+        <NavLink
+          to="/"
           className="flex items-center mb-6 text-2xl font-semibold text-gray-900 dark:text-white"
         >
           <img className="w-8 h-8 mr-2" src={logo} alt="logo" />
           App Center
-        </a>
+        </NavLink>
         <div className="w-full bg-white rounded-lg shadow dark:border md:mt-0 sm:max-w-md xl:p-0 dark:bg-gray-800 dark:border-gray-700">
           <div className="p-6 space-y-4 md:space-y-6 sm:p-8">
             <h1 className="text-xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl dark:text-white">
@@ -46,35 +72,27 @@ const Login = (props: Props) => {
               onSubmit={handleSubmit(onSubmit)}
             >
               <div>
-                <label
-                  htmlFor="email"
-                  className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-                >
-                  Your email
-                </label>
-                <input
-                  type="email"
-                  name="email"
-                  id="email"
-                  className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                <TextInput
+                  {...register('email', {
+                    required: 'Email is required',
+                  })}
+                  label={'Email'}
+                  loading={isSubmitting}
                   placeholder="name@company.com"
-                  required
+                  type="email"
+                  errors={errors}
                 />
               </div>
               <div>
-                <label
-                  htmlFor="password"
-                  className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-                >
-                  Password
-                </label>
-                <input
-                  type="password"
-                  name="password"
-                  id="password"
+                <TextInput
+                  {...register('password', {
+                    required: 'Password is required',
+                  })}
+                  label={'Password'}
+                  loading={isSubmitting}
                   placeholder="••••••••"
-                  className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                  required
+                  type="password"
+                  errors={errors}
                 />
               </div>
               <div className="flex items-center justify-between">
@@ -103,17 +121,17 @@ const Login = (props: Props) => {
                   Forgot password?
                 </a>
               </div>
-              <Button className="w-full" type="submit">
+              <Button disabled={isSubmitting} className="w-full" type="submit">
                 Sign In
               </Button>
               <p className="text-sm font-light text-gray-500 dark:text-gray-400">
                 Don’t have an account yet?{' '}
-                <a
-                  href="#"
+                <NavLink
+                  to={'/register'}
                   className="font-medium text-primary-600 hover:underline dark:text-primary-500"
                 >
                   Sign up
-                </a>
+                </NavLink>
               </p>
             </form>
           </div>

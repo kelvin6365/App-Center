@@ -1,97 +1,52 @@
-// import { DataSource, Repository } from 'typeorm';
-// import { Injectable } from '@nestjs/common';
-// import { User } from '../../modules/users/entities/user.entity';
-// import { isUUID } from 'class-validator';
+import { Injectable } from '@nestjs/common';
+import { DataSource, Repository } from 'typeorm';
+import { User } from '../../modules/user/entities/user.entity';
 
-// @Injectable()
-// export class UserRepository extends Repository<User> {
-//   constructor(dataSource: DataSource) {
-//     super(User, dataSource.createEntityManager());
-//   }
+@Injectable()
+export class UserRepository extends Repository<User> {
+  constructor(dataSource: DataSource) {
+    super(User, dataSource.createEntityManager());
+  }
 
-//   async createUser(userEntity: User): Promise<User> {
-//     try {
-//       return await this.save(this.create(userEntity));
-//     } catch (error) {
-//       throw error;
-//     }
-//   }
+  createUser(userEntity: User): Promise<User> {
+    return this.save(this.create(userEntity));
+  }
 
-//   async updateUser(userEntity: User): Promise<User> {
-//     try {
-//       return await this.save(userEntity);
-//     } catch (error) {
-//       throw error;
-//     }
-//   }
+  updateUser(userEntity: User): Promise<User> {
+    return this.save(userEntity);
+  }
 
-//   async addRoleToUser(user: User): Promise<User> {
-//     try {
-//       return await this.save(user);
-//     } catch (error) {
-//       throw error;
-//     }
-//   }
+  addRoleToUser(user: User): Promise<User> {
+    return this.save(user);
+  }
 
-//   async findUserByUserNameWithDeletedFalse(username: string): Promise<User> {
-//     try {
-//       return await this.findOne({
-//         where: { username },
-//         relations: ['profile', 'refreshToken', 'roles.role.translations'],
-//         withDeleted: false,
-//       });
-//     } catch (error) {
-//       throw error;
-//     }
-//   }
+  findUserByUserNameWithDeletedFalse(username: string): Promise<User> {
+    return this.findOne({
+      where: { username },
+      relations: ['profile', 'refreshToken', 'roles'],
+      withDeleted: false,
+    });
+  }
 
-//   async findUserByUserIdWithDeletedFalse(userId: string): Promise<User> {
-//     try {
-//       return await this.findOne({
-//         where: { id: userId },
-//         relations: ['profile', 'refreshToken', 'roles.role.translations'],
-//         withDeleted: false,
-//       });
-//     } catch (error) {
-//       throw error;
-//     }
-//   }
+  findUserByUserIdWithDeletedFalse(userId: string): Promise<User> {
+    return this.findOne({
+      where: { id: userId },
+      relations: ['profile', 'refreshToken', 'roles'],
+      withDeleted: false,
+    });
+  }
 
-//   async findPublicProfileByIdOrSlugWithDeletedFalse(
-//     idOrSlug: string,
-//   ): Promise<User> {
-//     try {
-//       if (isUUID(idOrSlug)) {
-//         return await this.findOne({
-//           select: {
-//             id: true,
-//             profile: {
-//               name: true,
-//               description: true,
-//               slug: true,
-//             },
-//           },
-//           where: { id: idOrSlug },
-//           relations: ['profile'],
-//           withDeleted: false,
-//         });
-//       } else {
-//         return await this.findOne({
-//           select: {
-//             id: true,
-//             profile: {
-//               name: true,
-//               description: true,
-//               slug: true,
-//             },
-//           },
-//           where: { profile: { slug: idOrSlug } },
-//           relations: ['profile'],
-//           withDeleted: false,
-//         });
-//       }
-//     } catch (error) {
-//       throw error;
-//     }
-//   }
-// }
+  findPublicProfileByIdWithDeletedFalse(id: string): Promise<User> {
+    return this.findOne({
+      select: {
+        id: true,
+        profile: {
+          name: true,
+        },
+      },
+      where: { id: id },
+      relations: ['profile'],
+      withDeleted: false,
+    });
+  }
+}

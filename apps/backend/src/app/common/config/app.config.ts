@@ -12,6 +12,11 @@ export default () => ({
   },
   jwt: {
     secret: process.env.JWT_SECRET,
+    user: {
+      accessTokenExpiresIn: process.env.JWT_USER_ACCESS_TOKEN_EXPIRES_IN || 30,
+      refreshTokenExpiresIn:
+        process.env.JWT_USER_REFRESH_TOKEN_EXPIRES_IN || 60,
+    },
   },
   services: {
     file: {

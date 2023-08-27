@@ -6,7 +6,7 @@ const TextInput = React.forwardRef<
   HTMLInputElement,
   ReturnType<UseFormRegister<any>> & {
     label?: string | null;
-    errors: any;
+    errors?: any;
     loading: boolean;
     icon?: React.ReactNode | null;
     placeholder?: string | null;
@@ -54,7 +54,7 @@ const TextInput = React.forwardRef<
             type={type}
           />
         </div>
-        {errors[name] && (
+        {errors && errors[name] && (
           <p className={'text-red-500 text-sm p-1'}>{errors[name]?.message}</p>
         )}
       </div>

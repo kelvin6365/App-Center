@@ -1,17 +1,15 @@
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { useEffect } from 'react';
 import Content from '../components/Content/Content';
 import Sidebar from '../components/Sidebar/Sidebar';
 
-import { Outlet, useLocation, useNavigate } from 'react-router-dom';
+import { Outlet } from 'react-router-dom';
 import PageContent from '../components/Content/PageContent';
-import { useBoundStore } from './util/store/store';
 import API from './util/api';
+import { useAppStore, useBoundStore } from './util/store/store';
 import { Setting } from './util/type/Setting';
 
 export function App() {
-  const navigate = useNavigate();
-  const location = useLocation();
+  const [isLoggedIn] = useAppStore((state: any) => [state.isLoggedIn]);
   const [setSettings] = useBoundStore((state) => [state.setSettings]);
   //fetch settings
   const fetchSettings = async () => {
@@ -30,14 +28,10 @@ export function App() {
 
   //initialize
   useEffect(() => {
-    fetchSettings();
-  }, []);
-
-  useEffect(() => {
-    if (location?.pathname === '/' || location == null) {
-      navigate('/login', { replace: true });
+    if (isLoggedIn) {
+      fetchSettings();
     }
-  }, [location, navigate]);
+  }, []);
 
   return (
     <Content>

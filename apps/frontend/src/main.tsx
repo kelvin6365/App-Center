@@ -21,7 +21,7 @@ if (import.meta.env.VITE_ENV !== 'prod') {
 }
 root.render(
   <ThemeProvider>
-    <ToastContainer />
+    <ToastContainer style={{ zIndex: 99999 }} />
     <RouterProvider router={router} />
   </ThemeProvider>
 );
