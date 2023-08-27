@@ -177,7 +177,8 @@ export class AppService {
         const appFile = await this.fileService.unloadAppFile(
           createdAppVersion.id,
           file,
-          user.id
+          // user.id
+          null
         );
         createdAppVersion.fileId = appFile.id;
         // createdAppVersion.updatedBy = user.id;
