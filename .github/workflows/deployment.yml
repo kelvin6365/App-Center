@@ -69,8 +69,8 @@ jobs:
             "registry_type": "DOCR",
             "repository": "registry.digitalocean.com/two-rocks-studio/app-center/frontend",
             "tag": "${{steps.github-sha.outputs.sha}}"
-            },
-            },
+            }
+            }
             ]'
 
       - name: DigitalOcean App Platform deployment
@@ -86,6 +86,6 @@ jobs:
             "registry_type": "DOCR",
             "repository": "registry.digitalocean.com/two-rocks-studio/app-center/backend",
             "tag": "${{steps.github-sha.outputs.sha}}"
-            },
-            },
+            }
+            }
             ]'
