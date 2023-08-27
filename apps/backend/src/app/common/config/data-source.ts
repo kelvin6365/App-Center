@@ -7,9 +7,6 @@ import appConfig from './app.config';
 dotenv.config({ path: join(__dirname, '..', '..', '../../.env') });
 
 const configService = new ConfigService(appConfig());
-console.log({
-  migrations: [join(__dirname, '../../database/migrations/*.ts')],
-});
 export const AppDataSource = new DataSource({
   type: 'postgres',
   entities: [
