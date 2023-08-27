@@ -5,7 +5,6 @@ import 'reflect-metadata';
 import { DataSource } from 'typeorm';
 import appConfig from './app.config';
 dotenv.config({ path: join(__dirname, '..', '..', '../../.env') });
-
 const configService = new ConfigService(appConfig());
 export const AppDataSource = new DataSource({
   type: 'postgres',
