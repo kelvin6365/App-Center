@@ -9,7 +9,6 @@ import route from './app/routes/route';
 import { ignoreWarning } from './app/util/util';
 ignoreWarning();
 moment.tz.setDefault(moment.tz.guess());
-console.log(moment.tz.guess());
 const routes = route();
 const router = createBrowserRouter(routes);
 const root = ReactDOM.createRoot(
