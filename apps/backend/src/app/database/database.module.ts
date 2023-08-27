@@ -13,6 +13,7 @@ import { UserRefreshToken } from '../modules/user/entities/user.refresh.token.en
 import { Role } from '../modules/role/entities/role.entity';
 import { UserRole } from '../modules/user/entities/user.role.entity';
 import { role1693123446948 } from './migrations/1693123446948-role';
+import { Role1693123446947 } from './migrations/1693123446947-create-role';
 
 @Module({
   imports: [
@@ -38,7 +39,7 @@ import { role1693123446948 } from './migrations/1693123446948-role';
             UserRole,
           ],
           synchronize: configService.get('db.synchronize'),
-          migrations: [role1693123446948],
+          migrations: [Role1693123446947, role1693123446948],
           migrationsRun: configService.get('db.migrationsRun'),
           logging: configService.get('db.logging'),
           autoLoadEntities: true,
