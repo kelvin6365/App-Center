@@ -19,6 +19,9 @@ export class Permission1693145873440 implements MigrationInterface {
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
+    await queryRunner.query(
+      `alter table public.user_permission drop constraint "FK_8a4d5521c1ced158c13438df3df";`
+    );
     await queryRunner.query(`drop table if exists public.permissions;`);
   }
 }
