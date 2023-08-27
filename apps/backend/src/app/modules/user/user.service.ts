@@ -7,6 +7,8 @@ import { UserRole } from './entities/user.role.entity';
 import { SignUpDTO } from '../auth/dto/signup.request.dto';
 import { UserRepository } from '../../database/repositories/users.repository';
 import { UserRefreshTokenRepository } from '../../database/repositories/user.refresh.token.repository';
+import { UserPermission } from './entities/user.permission.entity';
+import PermissionEnum from '../auth/enum/permission.enum';
 
 @Injectable()
 export class UserService {
@@ -27,6 +29,25 @@ export class UserService {
     const userRole = new UserRole();
     userRole.roleId = RoleId.ADMIN;
     newUser.roles = [userRole];
+    //permissions
+    const viewAllAppPermission = new UserPermission();
+    viewAllAppPermission.permissionId = PermissionEnum.VIEW_ALL_APP;
+    const editAllAppPermission = new UserPermission();
+    editAllAppPermission.permissionId = PermissionEnum.EDIT_ALL_APP;
+    const deleteAllAppVersionPermission = new UserPermission();
+    deleteAllAppVersionPermission.permissionId =
+      PermissionEnum.DELETE_ALL_APP_VERSION;
+    const createAllAppVersionPermission = new UserPermission();
+    createAllAppVersionPermission.permissionId =
+      PermissionEnum.CREATE_ALL_APP_VERSION;
+    newUser.permissions = [
+      viewAllAppPermission,
+      editAllAppPermission,
+      deleteAllAppVersionPermission,
+      createAllAppVersionPermission,
+    ];
+    const result = await this.usersRepository.createUser(newUser);
+    return result;
     console.log(newUser);
     return await this.usersRepository.createUser(newUser);
   }

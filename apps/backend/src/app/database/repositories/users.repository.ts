@@ -23,7 +23,7 @@ export class UserRepository extends Repository<User> {
   findUserByUserNameWithDeletedFalse(username: string): Promise<User> {
     return this.findOne({
       where: { username },
-      relations: ['profile', 'refreshToken', 'roles'],
+      relations: ['profile', 'refreshToken', 'roles', 'permissions'],
       withDeleted: false,
     });
   }

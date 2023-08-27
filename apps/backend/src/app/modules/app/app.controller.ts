@@ -14,6 +14,7 @@ import {
   Query,
   Res,
   UploadedFile,
+  UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
@@ -23,15 +24,20 @@ import * as mime from 'mime-types';
 import 'multer';
 import { Readable } from 'typeorm/platform/PlatformTools';
 import { JSONQuery } from '../../common/decorator/json.query';
+import { Public } from '../../common/decorator/public';
+import { Roles } from '../../common/decorator/roles.decorator';
 import { ApiResponseSchema } from '../../common/decorator/swagger.decorator';
+import { CurrentUser } from '../../common/decorator/user.decorator';
 import { PageDto } from '../../common/dto/page.dto';
 import { SearchQueryDTO } from '../../common/dto/search.dto';
 import { AppException } from '../../common/response/app.exception';
 import { AppResponse } from '../../common/response/app.response';
 import { ResponseCode } from '../../common/response/response.code';
+import { CurrentUserDTO } from '../auth/dto/current.user.dto';
 import { AppAllowedType } from '../file/enum/app.allowed.type.enum';
 import { ImageAllowedType } from '../file/enum/image.allowed.type.enum';
 import { FileService } from '../file/file.service';
+import { RoleType } from '../role/enum/role.type.enum';
 import { AppService } from './app.service';
 import { AppDTO } from './dto/app.dto';
 import { CreateAppDTO } from './dto/create.app.dto';
@@ -39,11 +45,8 @@ import { CreateAppVersionDTO } from './dto/create.app.version.dto';
 import { InstallAppDTO } from './dto/install.app.dto';
 import { InstallAppRequestDTO } from './dto/install.app.request.dto';
 import { UpdateAppDTO } from './dto/update.app.dto';
-import { CurrentUser } from '../../common/decorator/user.decorator';
-import { CurrentUserDTO } from '../auth/dto/current.user.dto';
-import { Roles } from '../../common/decorator/roles.decorator';
-import { RoleType } from '../role/enum/role.type.enum';
-import { Public } from '../../common/decorator/public';
+import PermissionGuard from '../auth/permission.guard';
+import AppsPermission from '../auth/enum/apps.permission.enum';
 
 @ApiTags('App')
 @Controller({ path: 'app', version: ['1'] })
@@ -55,6 +58,7 @@ export class AppController {
 
   //Get a list of apps with search query, tags and sorting
   @Get('search')
+  @UseGuards(PermissionGuard(AppsPermission.VIEW_ALL_APP))
   @ApiQuery({
     name: 'query',
     required: false,
@@ -76,7 +80,8 @@ export class AppController {
   async getApps(
     @JSONQuery('query') query: SearchQueryDTO,
     @Query('page', new DefaultValuePipe(1), ParseIntPipe) page = 1,
-    @Query('limit', new DefaultValuePipe(10), ParseIntPipe) limit = 10
+    @Query('limit', new DefaultValuePipe(10), ParseIntPipe) limit = 10,
+    @CurrentUser() currentUser: CurrentUserDTO
   ): Promise<AppResponse> {
     return new AppResponse(
       await this.appService.findAll(
@@ -85,18 +90,23 @@ export class AppController {
         page,
         limit,
         query?.filters ?? [],
-        query?.sorts ?? [{ key: 'createdAt', value: 'DESC' }]
+        query?.sorts ?? [{ key: 'createdAt', value: 'DESC' }],
+        currentUser
       )
     );
   }
 
   //Get a single app
   @Get(':id')
+  @UseGuards(PermissionGuard(AppsPermission.VIEW_ALL_APP))
   @ApiParam({ name: 'id', required: true })
   async getApp(
-    @Param('id', new ParseUUIDPipe()) id: string
+    @Param('id', new ParseUUIDPipe()) id: string,
+    @CurrentUser() currentUser: CurrentUserDTO
   ): Promise<AppResponse> {
-    return new AppResponse(await this.appService.findById(id));
+    return new AppResponse(
+      await this.appService.findById(id, false, false, false, currentUser)
+    );
   }
 
   //Create a new app
@@ -146,6 +156,7 @@ export class AppController {
 
   //Update an existing app
   @Put(':id')
+  @UseGuards(PermissionGuard(AppsPermission.EDIT_ALL_APP))
   @ApiConsumes('multipart/form-data')
   @UseInterceptors(
     FileInterceptor('icon', {
@@ -191,12 +202,14 @@ export class AppController {
 
   //Delete an existing app
   @Delete(':id')
+  @UseGuards(PermissionGuard(AppsPermission.EDIT_ALL_APP))
   async deleteApp(@Param('id') id): Promise<any> {
     // return this.appService.deleteApp(id);
   }
 
   //Get a single app with all its versions. support filtering by tags
   @Get(':id/version/search')
+  @UseGuards(PermissionGuard(AppsPermission.VIEW_ALL_APP))
   @ApiQuery({
     name: 'query',
     required: false,
@@ -215,7 +228,8 @@ export class AppController {
   @ApiResponseSchema(HttpStatus.OK, 'OK')
   async getAppVersions(
     @JSONQuery('query') query: SearchQueryDTO,
-    @Param('id', new ParseUUIDPipe()) id: string
+    @Param('id', new ParseUUIDPipe()) id: string,
+    @CurrentUser() currentUser: CurrentUserDTO
   ): Promise<AppResponse> {
     return new AppResponse(
       await this.appService.getAllAppVersions(
@@ -223,7 +237,8 @@ export class AppController {
         query?.query ?? '',
         query?.withDeleted != null ? query.withDeleted : false,
         query?.filters ?? [],
-        query?.sorts ?? [{ key: 'createdAt', value: 'DESC' }]
+        query?.sorts ?? [{ key: 'createdAt', value: 'DESC' }],
+        currentUser
       )
     );
   }
@@ -283,15 +298,20 @@ export class AppController {
 
   //get all app version tags by app id
   @Get(':id/version/tags')
+  @UseGuards(PermissionGuard(AppsPermission.VIEW_ALL_APP))
   @ApiParam({ name: 'id', required: true })
   async getAllAppVersionTags(
-    @Param('id', new ParseUUIDPipe()) id: string
+    @Param('id', new ParseUUIDPipe()) id: string,
+    @CurrentUser() user: CurrentUserDTO
   ): Promise<AppResponse> {
-    return new AppResponse(await this.appService.getAllAppVersionTags(id));
+    return new AppResponse(
+      await this.appService.getAllAppVersionTags(id, user)
+    );
   }
 
   //get API key by app id
   @Get(':id/api-key')
+  @UseGuards(PermissionGuard(AppsPermission.VIEW_ALL_APP))
   @ApiParam({ name: 'id', required: true })
   @ApiResponseSchema(HttpStatus.OK, 'OK')
   async getApiKey(
@@ -368,6 +388,7 @@ export class AppController {
   //delete app version
   @Delete(':id/version/:versionId')
   @Roles(RoleType.ADMIN)
+  @UseGuards(PermissionGuard(AppsPermission.DELETE_ALL_APP_VERSION))
   @ApiParam({ name: 'id', required: true })
   @ApiParam({ name: 'versionId', required: true })
   async deleteAppVersion(

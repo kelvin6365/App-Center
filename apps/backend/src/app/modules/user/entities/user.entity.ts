@@ -5,6 +5,7 @@ import { UserStatus } from '../enum/user.status.enum';
 import { UserRefreshToken } from './user.refresh.token.entity';
 import { UserRole } from './user.role.entity';
 import { UserProfile } from './user.profile.entity';
+import { UserPermission } from './user.permission.entity';
 
 @Entity('user')
 export class User extends BaseEntity {
@@ -30,6 +31,15 @@ export class User extends BaseEntity {
     cascade: true,
   })
   roles: UserRole[];
+
+  @OneToMany(
+    () => UserPermission,
+    (userPermission: UserPermission) => userPermission.user,
+    {
+      cascade: true,
+    }
+  )
+  permissions: UserPermission[];
 
   @OneToOne(() => UserProfile, (profile) => profile.user, {
     cascade: true,

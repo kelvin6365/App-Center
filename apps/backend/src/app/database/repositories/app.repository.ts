@@ -15,6 +15,7 @@ import {
   Pagination,
   paginate,
 } from 'nestjs-typeorm-paginate';
+import { CurrentUserDTO } from '../../modules/auth/dto/current.user.dto';
 
 @Injectable()
 export class AppRepository extends Repository<App> {

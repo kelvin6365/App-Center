@@ -4,21 +4,21 @@ import { nanoid } from 'nanoid';
 import { PageDto } from '../../common/dto/page.dto';
 import { AppException } from '../../common/response/app.exception';
 import { ResponseCode } from '../../common/response/response.code';
+import { hashPassword, isMatchPassword } from '../../common/util/password.util';
 import { AppRepository } from '../../database/repositories/app.repository';
 import { AppVersionRepository } from '../../database/repositories/app.version.repository';
 import { AppVersionTagRepository } from '../../database/repositories/app.version.tag.repository';
+import { CurrentUserDTO } from '../auth/dto/current.user.dto';
 import { FileService } from '../file/file.service';
 import { AppDTO } from './dto/app.dto';
 import { AppVersionDTO } from './dto/app.version.dto';
 import { AppVersionTagDTO } from './dto/app.version.tag.dto';
 import { CreateAppDTO } from './dto/create.app.dto';
 import { CreateAppVersionDTO } from './dto/create.app.version.dto';
+import { InstallAppDTO } from './dto/install.app.dto';
 import { App } from './entities/app.entity';
 import { AppVersion } from './entities/app.version.entity';
 import { AppVersionTag } from './entities/app.version.tag.entity';
-import { hashPassword, isMatchPassword } from '../../common/util/password.util';
-import { InstallAppDTO } from './dto/install.app.dto';
-import { CurrentUserDTO } from '../auth/dto/current.user.dto';
 
 @Injectable()
 export class AppService {
@@ -40,7 +40,6 @@ export class AppService {
     user: CurrentUserDTO
   ): Promise<string> {
     this.logger.log('Creating a new app');
-    console.log(file);
     //Create a new app by dto
     const newApp: App = new App();
     newApp.name = app.name;
@@ -74,7 +73,8 @@ export class AppService {
     filters: { key: string; values: string | boolean | any[] | number[] }[],
     sorts: { key: string; value: 'ASC' | 'DESC' }[] = [
       { key: 'createdAt', value: 'DESC' },
-    ]
+    ],
+    user: CurrentUserDTO
   ): Promise<PageDto<AppDTO>> {
     const result = await this.appRepository.findAll(
       searchQuery,
@@ -105,8 +105,20 @@ export class AppService {
     id: string,
     withDeleted = false,
     errorIfNotFound = false,
-    forPublicInstallPage = false
+    forPublicInstallPage = false,
+    user?: CurrentUserDTO
   ): Promise<AppDTO> {
+    // //check permissions
+    // const permissions = user.permissions;
+    // if (
+    //   !permissions
+    //     .filter((p) => p.permissionId === AppsPermission.VIEW_APP)
+    //     .map((p) => p.refId)
+    //     .includes(id)
+    // ) {
+    //   throw new AppException(ResponseCode.STATUS_8003_PERMISSION_DENIED);
+    // }
+
     const app = await this.appRepository.findById(id, withDeleted);
     if (!app && errorIfNotFound) {
       throw new AppException(ResponseCode.STATUS_1011_NOT_FOUND);
@@ -181,8 +193,20 @@ export class AppService {
     filters: { key: string; values: string | boolean | any[] | number[] }[],
     sorts: { key: string; value: 'ASC' | 'DESC' }[] = [
       { key: 'createdAt', value: 'DESC' },
-    ]
+    ],
+    user: CurrentUserDTO
   ) {
+    // //check permissions
+    // const permissions = user.permissions;
+    // if (
+    //   !permissions
+    //     .filter((p) => p.permissionId === AppsPermission.VIEW_APP)
+    //     .map((p) => p.refId)
+    //     .includes(appId)
+    // ) {
+    //   throw new AppException(ResponseCode.STATUS_8003_PERMISSION_DENIED);
+    // }
+
     const appVersions = await this.appVersionRepository.getAllAppVersions(
       appId,
       searchQuery,
@@ -213,7 +237,21 @@ export class AppService {
   }
 
   //get all app version tags by app id
-  async getAllAppVersionTags(appId: string) {
+  async getAllAppVersionTags(
+    appId: string,
+    user: CurrentUserDTO
+  ): Promise<AppVersionTagDTO[]> {
+    // //check permissions
+    // const permissions = user.permissions;
+    // if (
+    //   !permissions
+    //     .filter((p) => p.permissionId === AppsPermission.VIEW_APP)
+    //     .map((p) => p.refId)
+    //     .includes(appId)
+    // ) {
+    //   throw new AppException(ResponseCode.STATUS_8003_PERMISSION_DENIED);
+    // }
+
     const appVersionTags = await this.appVersionTagRepository.getAllTagsByAppId(
       appId
     );
@@ -229,6 +267,17 @@ export class AppService {
     file: Express.Multer.File,
     user: CurrentUserDTO
   ): Promise<boolean> {
+    // //check permissions
+    // const permissions = user.permissions;
+    // if (
+    //   !permissions
+    //     .filter((p) => p.permissionId === AppsPermission.EDIT_APP)
+    //     .map((p) => p.refId)
+    //     .includes(id)
+    // ) {
+    //   throw new AppException(ResponseCode.STATUS_8003_PERMISSION_DENIED);
+    // }
+
     this.logger.log('Updating an app');
     const appToUpdate = await this.appRepository.findById(id);
     if (appToUpdate) {

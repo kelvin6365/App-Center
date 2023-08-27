@@ -14,6 +14,8 @@ import { Role } from '../modules/role/entities/role.entity';
 import { UserRole } from '../modules/user/entities/user.role.entity';
 import { role1693123446948 } from './migrations/1693123446948-role';
 import { Role1693123446947 } from './migrations/1693123446947-create-role';
+import { Permission } from '../modules/permission/entities/permission.entity';
+import { UserPermission } from '../modules/user/entities/user.permission.entity';
 
 @Module({
   imports: [
@@ -37,6 +39,8 @@ import { Role1693123446947 } from './migrations/1693123446947-create-role';
             UserRefreshToken,
             Role,
             UserRole,
+            Permission,
+            UserPermission,
           ],
           synchronize: configService.get('db.synchronize'),
           migrations: [Role1693123446947, role1693123446948],

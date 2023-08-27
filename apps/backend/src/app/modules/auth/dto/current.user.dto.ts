@@ -2,6 +2,7 @@ import { ApiProperty } from '@nestjs/swagger';
 import { User } from '../../user/entities/user.entity';
 import { UserRole } from '../../user/entities/user.role.entity';
 import { UserStatus } from '../../user/enum/user.status.enum';
+import { UserPermission } from '../../user/entities/user.permission.entity';
 
 export class CurrentUserDTO {
   @ApiProperty()
@@ -31,6 +32,9 @@ export class CurrentUserDTO {
   @ApiProperty({ type: UserRole, isArray: true })
   roles: UserRole[];
 
+  @ApiProperty({ type: UserPermission, isArray: true })
+  permissions: UserPermission[];
+
   fromEntity(entity: User) {
     const dto = new CurrentUserDTO();
     dto.id = entity.id;
@@ -42,6 +46,7 @@ export class CurrentUserDTO {
     dto.status = entity.status;
     dto.roles = entity.roles;
     dto.name = entity.profile.name;
+    dto.permissions = entity.permissions;
     return dto;
   }
 }
