@@ -166,7 +166,8 @@ export class AppService {
           newTag.appVersion = newAppVersion;
           newTag.appId = app.id;
           newTag.name = tag;
-          newAppVersion.createdBy = user.id;
+          // newAppVersion.createdBy = user.id;
+          newAppVersion.createdBy = null;
           return newTag;
         });
       }
