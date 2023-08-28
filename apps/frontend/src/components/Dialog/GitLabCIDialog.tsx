@@ -106,7 +106,7 @@ upload_to_app_center:
     image: curlimages/curl:latest
     script: 
       - |
-        curl --location '${window.location.origin}/api/v1/app/${app.id}/version'  \\
+        curl -f --location '${window.location.origin}/api/v1/app/${app.id}/version'  \\
         --form 'name="${name}"'  \\
         --form 'description="${description}"'  \\
         --form 'file=@"${filePath}"'  \\
