@@ -28,6 +28,8 @@ import AppVersionTable from '../../../components/Table/AppVersionTable';
 import API from '../../util/api';
 import { App } from '../../util/type/App';
 import { maskingString } from '../../util/util';
+import ShareDialog from '../../../components/Dialog/ShareDialog';
+import { AppVersion } from '../../util/type/AppVersion';
 
 const ViewApp = () => {
   const { appId } = useParams();
@@ -42,6 +44,13 @@ const ViewApp = () => {
   const [openGitLab, setOpenGitLab] = useState(false);
   const [openEditApp, setOpenEditApp] = useState(false);
   const [openUploadVersion, setOpenUploadVersion] = useState(false);
+  const [openShareInstallURL, setOpenShareInstallURL] = useState<{
+    open: boolean;
+    data: AppVersion | null;
+  }>({
+    open: false,
+    data: null,
+  });
 
   const tableRef = useRef<any>(null);
 
@@ -278,10 +287,24 @@ const ViewApp = () => {
               ref={tableRef}
               appId={appId}
               setOpenQRCode={setOpenQRCode}
+              setOpenShareInstallURL={setOpenShareInstallURL}
             />
           )}
         </div>
       </div>
+      {openShareInstallURL.data && (
+        <ShareDialog
+          title={'Share Install URL'}
+          onClose={() =>
+            setOpenShareInstallURL({
+              open: false,
+              data: null,
+            })
+          }
+          open={openShareInstallURL.open}
+          data={openShareInstallURL.data}
+        />
+      )}
       {app && (
         <PostmanDialog
           title={'Postman'}

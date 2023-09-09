@@ -19,7 +19,17 @@ if (import.meta.env.VITE_ENV !== 'prod') {
   console.log('[API]', import.meta.env.VITE_API_HOST);
 }
 root.render(
-  <ThemeProvider>
+  <ThemeProvider
+    value={{
+      tooltip: {
+        styles: {
+          base: {
+            zIndex: 'z-[99999]',
+          },
+        },
+      },
+    }}
+  >
     <ToastContainer style={{ zIndex: 99999 }} />
     <RouterProvider router={router} />
   </ThemeProvider>
