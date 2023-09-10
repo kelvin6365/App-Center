@@ -1,12 +1,9 @@
-import { Typography } from '@material-tailwind/react';
-import { difference } from 'lodash';
+import { Tooltip, Typography } from '@material-tailwind/react';
 import moment from 'moment';
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { AiFillDelete, AiFillEdit } from 'react-icons/ai';
-import { BiSolidShareAlt, BiSolidDownload } from 'react-icons/bi';
-import { ImQrcode } from 'react-icons/im';
-import Tag from '../Chip/Tag';
 import API from '../../app/util/api';
+import { useBoundStore } from '../../app/util/store/store';
 import { Credential } from '../../app/util/type/Credential';
 
 type Props = {
@@ -15,6 +12,10 @@ type Props = {
 
 const CredentialTable = ({ isActive }: Props) => {
   const [credentials, setCredentials] = useState<Credential[]>([]);
+  const [credentialComponents] = useBoundStore((state) => [
+    state.credentialComponents,
+  ]);
+
   //Fetch all credentials
   const fetchCredentials = async () => {
     try {
@@ -38,7 +39,6 @@ const CredentialTable = ({ isActive }: Props) => {
       <table className="w-full text-left table-auto min-w-max ">
         <thead>
           <tr>
-            <th className="p-4 bg-white border-b border-blue-gray-100"></th>
             <th className="p-4 bg-white border-b border-blue-gray-100">
               <Typography
                 variant="small"
@@ -54,7 +54,7 @@ const CredentialTable = ({ isActive }: Props) => {
                 color="blue-gray"
                 className="font-bold leading-none opacity-70"
               >
-                {'Name'}
+                Last Update At
               </Typography>
             </th>
             <th className="p-4 bg-white border-b border-blue-gray-100">
@@ -71,14 +71,32 @@ const CredentialTable = ({ isActive }: Props) => {
         </thead>
         <tbody>
           {credentials.map((credential, index) => {
-            const { id, name, credentialName, createdAt } = credential;
+            const { id, name, credentialName, createdAt, updatedAt } =
+              credential;
             const isLast = index === credentials.length - 1;
             const classes = isLast ? 'p-4' : 'p-4 border-b border-blue-gray-50';
-
+            const target = credentialComponents.find(
+              (c) => c.name === credentialName
+            );
             return (
-              <tr key={id} className="hover:bg-blue-gray-300/20">
+              <tr key={id} className="hover:bg-blue-gray-300/20 group">
                 <td className={classes}>
-                  <div className="flex space-x-2"></div>
+                  <div className="flex space-x-2">
+                    <Tooltip content={target?.label}>
+                      <img
+                        src={target?.icon}
+                        alt={credentialName + ' icon'}
+                        className="object-cover w-12 h-12 p-2 border rounded-full group-hover:bg-white"
+                      />
+                    </Tooltip>
+                    <Typography
+                      variant="small"
+                      color="blue-gray"
+                      className="my-auto font-normal"
+                    >
+                      {name}
+                    </Typography>
+                  </div>
                 </td>
                 <td className={classes}>
                   <Typography
@@ -86,16 +104,7 @@ const CredentialTable = ({ isActive }: Props) => {
                     color="blue-gray"
                     className="font-normal"
                   >
-                    {credentialName}
-                  </Typography>
-                </td>
-                <td className={classes}>
-                  <Typography
-                    variant="small"
-                    color="blue-gray"
-                    className="font-normal"
-                  >
-                    {name}
+                    {moment(updatedAt).format('YYYY-MM-DD HH:mm:ss a')}
                   </Typography>
                 </td>
                 <td className={classes}>

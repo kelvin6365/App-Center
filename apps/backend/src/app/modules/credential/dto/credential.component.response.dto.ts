@@ -7,6 +7,8 @@ export class CredentialComponentResponseDTO {
   @ApiProperty()
   name: string;
   @ApiProperty()
+  icon: string;
+  @ApiProperty()
   version: number;
   @ApiProperty()
   inputs: Record<string, unknown>[];
@@ -14,6 +16,7 @@ export class CredentialComponentResponseDTO {
     this.label = partial.label;
     this.name = partial.name;
     this.version = partial.version;
+    this.icon = partial.icon;
     this.inputs = partial.inputs;
   }
 }

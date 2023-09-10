@@ -6,6 +6,8 @@ export class CredentialComponent extends BaseEntity {
   @Column()
   label: string;
   @Column()
+  icon: string;
+  @Column()
   name: string;
   @Column()
   version: number;
