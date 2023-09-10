@@ -7,6 +7,8 @@ import { useRef, useState } from 'react';
 import { CredentialComponent } from '../../../util/type/CredentialComponent';
 import CreateCredentialDialog from '../../../../components/Dialog/CreateCredentialDialog';
 import { toast } from 'react-toastify';
+import DeleteCredentialDialog from '../../../../components/Dialog/DeleteCredentialDialog';
+import { Credential } from '../../../util/type/Credential';
 type Props = {
   isActive: boolean;
 };
@@ -17,6 +19,14 @@ const Credentials = ({ isActive }: Props) => {
   const [selectedComponent, setSelectedComponent] =
     useState<CredentialComponent | null>(null);
   const [openCreate, setOpenCreate] = useState(false);
+
+  const [openDeleteConfirm, setOpenDeleteConfirm] = useState<{
+    open: boolean;
+    credential: Credential | null;
+  }>({
+    open: false,
+    credential: null,
+  });
   // const [credentialComponents] = useBoundStore((state) => [
   //   state.credentialComponents,
   // ]);
@@ -50,7 +60,12 @@ const Credentials = ({ isActive }: Props) => {
           </DefaultButton>
         </div>
       </div>
-      {isActive && <CredentialTable ref={tableRef} />}
+      {isActive && (
+        <CredentialTable
+          ref={tableRef}
+          setOpenDeleteConfirm={setOpenDeleteConfirm}
+        />
+      )}
       <SearchCredentialTypeDialog
         title="Add new credential"
         open={openSearch}
@@ -77,6 +92,20 @@ const Credentials = ({ isActive }: Props) => {
           type={selectedComponent}
         />
       )}
+      <DeleteCredentialDialog
+        title={'Delete credential'}
+        open={openDeleteConfirm.open}
+        credential={openDeleteConfirm.credential}
+        onClose={(reload) => {
+          if (reload) {
+            tableRef.current?.reload();
+          }
+          setOpenDeleteConfirm({
+            open: false,
+            credential: null,
+          });
+        }}
+      />
     </div>
   );
 };

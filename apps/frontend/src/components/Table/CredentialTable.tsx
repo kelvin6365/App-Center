@@ -6,9 +6,17 @@ import API from '../../app/util/api';
 import { useBoundStore } from '../../app/util/store/store';
 import { Credential } from '../../app/util/type/Credential';
 
-// type Props = {};
+type Props = {
+  setOpenDeleteConfirm: ({
+    open,
+    credential,
+  }: {
+    open: boolean;
+    credential: Credential;
+  }) => void;
+};
 
-const CredentialTable = forwardRef(({}, ref) => {
+const CredentialTable = forwardRef(({ setOpenDeleteConfirm }: Props, ref) => {
   const [credentials, setCredentials] = useState<Credential[]>([]);
   const [credentialComponents] = useBoundStore((state) => [
     state.credentialComponents,
@@ -31,6 +39,10 @@ const CredentialTable = forwardRef(({}, ref) => {
       console.log(error);
     }
   };
+
+  useEffect(() => {
+    fetchCredentials();
+  }, []);
 
   useEffect(() => {
     console.log('[Is Active] Start fetch');
@@ -139,10 +151,10 @@ const CredentialTable = forwardRef(({}, ref) => {
                       color="blue-gray"
                       className="p-2 font-medium rounded-full hover:bg-white"
                       onClick={() => {
-                        //   setOpenDeleteDialog({
-                        //     open: true,
-                        //     data: data,
-                        //   });
+                        setOpenDeleteConfirm({
+                          open: true,
+                          credential,
+                        });
                       }}
                     >
                       <AiFillDelete className="w-5 h-5 text-red-500" />
