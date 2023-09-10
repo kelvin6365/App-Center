@@ -9,6 +9,8 @@ export class CredentialComponent extends BaseEntity {
   icon: string;
   @Column()
   name: string;
+  @Column({ default: null })
+  description: string;
   @Column()
   version: number;
   @Column({ type: 'jsonb' })

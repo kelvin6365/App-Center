@@ -1,16 +1,16 @@
 export class Credential {
-  id!: string;
+  id?: string;
   name!: string;
   credentialName!: string;
-  createdAt!: string;
-  updatedAt!: string;
+  createdAt?: string;
+  updatedAt?: string;
 }
 export class CredentialWithEncryptedData<T> extends Credential {
-  encryptedData!: T;
+  encryptedData?: T;
 }
 
 export class AzureOpenAI {
-  azureOpenAIApiKey!: string;
+  azureOpenAIApiKey?: string;
 }
 
 export class AzureOpenAICredential extends CredentialWithEncryptedData<AzureOpenAI> {}

@@ -1,10 +1,6 @@
+import { Injectable } from '@nestjs/common';
 import { DataSource, DeleteResult, Repository } from 'typeorm';
 import { Credential } from '../../modules/credential/entities/credential.entity';
-import { Injectable } from '@nestjs/common';
-import {
-  decryptCredentialData,
-  encryptCredentialData,
-} from '../../common/util/util';
 
 @Injectable()
 export class CredentialRepository extends Repository<Credential> {
@@ -13,10 +9,6 @@ export class CredentialRepository extends Repository<Credential> {
   }
   //Create Credential
   async createCredential(credential: Credential): Promise<Credential> {
-    //Encrypt
-    credential.encryptedData = await encryptCredentialData(
-      credential.encryptedData
-    );
     return await this.save(credential);
   }
 
@@ -59,6 +51,9 @@ export class CredentialRepository extends Repository<Credential> {
   ) {
     const credentials = await this.find({
       withDeleted: options.withDeleted,
+      order: {
+        createdAt: 'DESC',
+      },
     });
     return credentials;
   }

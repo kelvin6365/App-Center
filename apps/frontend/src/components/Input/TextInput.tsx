@@ -10,7 +10,8 @@ const TextInput = React.forwardRef<
     loading: boolean;
     icon?: React.ReactNode | null;
     placeholder?: string | null;
-    type?: 'text' | 'password' | 'email' | 'number' | 'date' | 'url';
+    className?: string | null;
+    type?: 'text' | 'password' | 'email' | 'number' | 'date' | 'url' | string;
   }
 >(
   (
@@ -23,6 +24,7 @@ const TextInput = React.forwardRef<
       loading,
       icon,
       placeholder,
+      className,
       type = 'text',
     },
     ref
@@ -43,7 +45,8 @@ const TextInput = React.forwardRef<
           <input
             className={classNames(
               'bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500',
-              icon != null && 'pl-10'
+              icon != null && 'pl-10',
+              className
             )}
             name={name}
             ref={ref}
@@ -52,6 +55,7 @@ const TextInput = React.forwardRef<
             placeholder={placeholder ?? ''}
             disabled={loading}
             type={type}
+            autoFocus={false}
           />
         </div>
         {errors && errors[name] && (

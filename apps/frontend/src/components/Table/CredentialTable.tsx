@@ -1,6 +1,6 @@
 import { Tooltip, Typography } from '@material-tailwind/react';
 import moment from 'moment';
-import { useEffect, useState } from 'react';
+import { forwardRef, useEffect, useImperativeHandle, useState } from 'react';
 import { AiFillDelete, AiFillEdit } from 'react-icons/ai';
 import API from '../../app/util/api';
 import { useBoundStore } from '../../app/util/store/store';
@@ -8,11 +8,17 @@ import { Credential } from '../../app/util/type/Credential';
 
 // type Props = {};
 
-const CredentialTable = () => {
+const CredentialTable = forwardRef(({}, ref) => {
   const [credentials, setCredentials] = useState<Credential[]>([]);
   const [credentialComponents] = useBoundStore((state) => [
     state.credentialComponents,
   ]);
+
+  useImperativeHandle(ref, () => ({
+    reload: () => {
+      fetchCredentials();
+    },
+  }));
 
   //Fetch all credentials
   const fetchCredentials = async () => {
@@ -150,6 +156,6 @@ const CredentialTable = () => {
       </table>
     </div>
   );
-};
+});
 
 export default CredentialTable;

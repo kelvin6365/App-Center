@@ -110,8 +110,9 @@ class API {
     getAllCredentials: () => Promise<any>;
     getCredential: (key: string) => Promise<any>;
     createCredential: (data: {
-      key: string;
-      config: Record<string, unknown>;
+      name: string;
+      credentialName: string;
+      encryptedData: Record<string, unknown>;
     }) => Promise<any>;
     updateCredential: (data: {
       id: string;
@@ -387,7 +388,11 @@ class API {
           this.API_PATH.CREDENTIAL.GET_CREDENTIAL(id)
         );
       },
-      createCredential: (data: any) => {
+      createCredential: (data: {
+        name: string;
+        credentialName: string;
+        encryptedData: Record<string, unknown>;
+      }) => {
         return this.apiInstance.post(
           this.API_PATH.CREDENTIAL.CREATE_CREDENTIAL,
           data

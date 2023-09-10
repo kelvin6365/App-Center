@@ -7,6 +7,8 @@ export class CredentialComponentResponseDTO {
   @ApiProperty()
   name: string;
   @ApiProperty()
+  description: string;
+  @ApiProperty()
   icon: string;
   @ApiProperty()
   version: number;
@@ -15,6 +17,7 @@ export class CredentialComponentResponseDTO {
   constructor(partial: Partial<CredentialComponent>) {
     this.label = partial.label;
     this.name = partial.name;
+    this.description = partial.description;
     this.version = partial.version;
     this.icon = partial.icon;
     this.inputs = partial.inputs;

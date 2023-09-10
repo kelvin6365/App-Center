@@ -3,6 +3,7 @@ import path from 'path';
 import fs from 'fs';
 import { Logger } from '@nestjs/common';
 import { cloneDeep } from 'lodash';
+import { CredentialComponent } from '../../modules/credential/entities/credential.component.entity';
 const REDACTED_CREDENTIAL_VALUE = '_APP_CENTER_REDACTED_CREDENTIAL_VALUE__';
 export const maskingString = (str: string, start: number, end: number) => {
   if (
@@ -81,13 +82,17 @@ export const encryptCredentialData = async (
 export const decryptCredentialData = async (
   encryptedData: string,
   componentCredentialName?: string,
-  componentCredentials?: any
+  componentCredentials?: {
+    [ket: string]: CredentialComponent;
+  }
 ): Promise<string> => {
   const encryptKey = await getEncryptionKey();
   const decryptedData = AES.decrypt(encryptedData, encryptKey);
   try {
     if (componentCredentialName && componentCredentials) {
-      const plainDataObj = JSON.parse(decryptedData.toString(enc.Utf8));
+      const plainDataObj: Record<string, string> = JSON.parse(
+        decryptedData.toString(enc.Utf8)
+      );
       return redactCredentialWithPasswordType(
         componentCredentialName,
         plainDataObj,
@@ -104,18 +109,19 @@ export const decryptCredentialData = async (
 /**
  * Redact values that are of password type to avoid sending back to client
  * @param {string} componentCredentialName
- * @param {ICredentialDataDecrypted} decryptedCredentialObj
- * @param {IComponentCredentials} componentCredentials
+ * @param {Record<string,string> } decryptedCredentialObj
+ * @param {{[ket: string]: CredentialComponent;}} componentCredentials
  * @returns {ICredentialDataDecrypted}
  */
 export const redactCredentialWithPasswordType = (
   componentCredentialName: string,
-  decryptedCredentialObj: any,
-  componentCredentials: any
+  decryptedCredentialObj: Record<string, string>,
+  componentCredentials: {
+    [ket: string]: CredentialComponent;
+  }
 ): string => {
   const plainDataObj = cloneDeep(decryptedCredentialObj);
   for (const cred in plainDataObj) {
-    console.log(cred);
     const inputParam = componentCredentials[
       componentCredentialName
     ].inputs?.find((inp) => inp.type === 'password' && inp.name === cred);
