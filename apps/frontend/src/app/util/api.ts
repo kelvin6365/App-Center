@@ -31,6 +31,15 @@ class API {
       CREATE_SETTING: string;
       UPDATE_SETTING: string;
     };
+    CREDENTIAL: {
+      GET_ALL_CREDENTIALS: string;
+      GET_CREDENTIAL: (id: string) => string;
+      CREATE_CREDENTIAL: string;
+      UPDATE_CREDENTIAL: (id: string) => string;
+      DELETE_CREDENTIAL: (id: string) => string;
+      GET_ALL_CREDENTIAL_COMPONENTS: string;
+      GET_CREDENTIAL_COMPONENT: (name: string) => string;
+    };
   };
   static auth: {
     login: (email: string, password: string) => Promise<any>;
@@ -97,6 +106,23 @@ class API {
       config: Record<string, unknown>;
     }) => Promise<any>;
   };
+  static credential: {
+    getAllCredentials: () => Promise<any>;
+    getCredential: (key: string) => Promise<any>;
+    createCredential: (data: {
+      name: string;
+      credentialName: string;
+      encryptedData: Record<string, unknown>;
+    }) => Promise<any>;
+    updateCredential: (data: {
+      id: string;
+      config: Record<string, unknown>;
+    }) => Promise<any>;
+    deleteCredential: (key: string) => Promise<any>;
+    getAllCredentialComponents: () => Promise<any>;
+    getCredentialComponent: (name: string) => Promise<any>;
+  };
+
   static {
     this.apiInstance = axios.create({
       baseURL: import.meta.env.VITE_API_HOST,
@@ -174,6 +200,16 @@ class API {
         GET_SETTING: (key: string) => `/v1/setting/${key}`,
         CREATE_SETTING: '/v1/setting',
         UPDATE_SETTING: '/v1/setting',
+      },
+      CREDENTIAL: {
+        GET_ALL_CREDENTIALS: '/v1/credential',
+        GET_CREDENTIAL: (id: string) => `/v1/credential/${id}`,
+        CREATE_CREDENTIAL: '/v1/credential',
+        UPDATE_CREDENTIAL: (id: string) => `/v1/credential/${id}`,
+        DELETE_CREDENTIAL: (id: string) => `/v1/credential/${id}`,
+        GET_ALL_CREDENTIAL_COMPONENTS: '/v1/credential/component',
+        GET_CREDENTIAL_COMPONENT: (name: string) =>
+          `/v1/credential/component/${name}`,
       },
     };
 
@@ -338,6 +374,50 @@ class API {
         config: Record<string, unknown>;
       }) => {
         return this.apiInstance.put(this.API_PATH.SETTING.UPDATE_SETTING, data);
+      },
+    };
+
+    this.credential = {
+      getAllCredentials: () => {
+        return this.apiInstance.get(
+          this.API_PATH.CREDENTIAL.GET_ALL_CREDENTIALS
+        );
+      },
+      getCredential: (id: string) => {
+        return this.apiInstance.get(
+          this.API_PATH.CREDENTIAL.GET_CREDENTIAL(id)
+        );
+      },
+      createCredential: (data: {
+        name: string;
+        credentialName: string;
+        encryptedData: Record<string, unknown>;
+      }) => {
+        return this.apiInstance.post(
+          this.API_PATH.CREDENTIAL.CREATE_CREDENTIAL,
+          data
+        );
+      },
+      updateCredential: (data: any) => {
+        return this.apiInstance.put(
+          this.API_PATH.CREDENTIAL.UPDATE_CREDENTIAL(data.id),
+          data
+        );
+      },
+      deleteCredential: (id: string) => {
+        return this.apiInstance.delete(
+          this.API_PATH.CREDENTIAL.DELETE_CREDENTIAL(id)
+        );
+      },
+      getAllCredentialComponents: () => {
+        return this.apiInstance.get(
+          this.API_PATH.CREDENTIAL.GET_ALL_CREDENTIAL_COMPONENTS
+        );
+      },
+      getCredentialComponent: (name: string) => {
+        return this.apiInstance.get(
+          this.API_PATH.CREDENTIAL.GET_CREDENTIAL_COMPONENT(name)
+        );
       },
     };
   }

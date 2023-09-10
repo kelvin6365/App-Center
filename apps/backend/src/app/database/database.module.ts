@@ -18,6 +18,10 @@ import { Permission } from '../modules/permission/entities/permission.entity';
 import { UserPermission } from '../modules/user/entities/user.permission.entity';
 import { Permission1693145873440 } from './migrations/1693145873440-permission';
 import { PermissionInsert1693145971058 } from './migrations/1693145971058-permission-insert';
+import { Credential } from '../modules/credential/entities/credential.entity';
+import { CredentialComponent } from '../modules/credential/entities/credential.component.entity';
+import { CreateCredentialComponent1694362620123 } from './migrations/1694362620123-CreateCredentialComponent';
+import { InsertCredentialComponent1694362717025 } from './migrations/1694362717025-InsertCredentialComponent';
 
 @Module({
   imports: [
@@ -43,6 +47,8 @@ import { PermissionInsert1693145971058 } from './migrations/1693145971058-permis
             UserRole,
             Permission,
             UserPermission,
+            Credential,
+            CredentialComponent,
           ],
           synchronize: configService.get('db.synchronize'),
           migrations: [
@@ -50,6 +56,8 @@ import { PermissionInsert1693145971058 } from './migrations/1693145971058-permis
             role1693123446948,
             Permission1693145873440,
             PermissionInsert1693145971058,
+            CreateCredentialComponent1694362620123,
+            InsertCredentialComponent1694362717025,
           ],
           migrationsRun: configService.get('db.migrationsRun'),
           logging: configService.get('db.logging'),

@@ -17,6 +17,7 @@ import {
 import { toast } from 'react-toastify';
 import API from '../../app/util/api';
 import DeleteAppVersionDialog from '../Dialog/DeleteAppVersionDialog';
+import { MdOutlineClear } from 'react-icons/md';
 
 type Props = {
   appId: string;
@@ -118,6 +119,22 @@ const AppVersionTable = forwardRef(
               />
             );
           })}
+          {selectedTags.length > 0 && (
+            <Tag
+              color={'gray'}
+              className={'normal-case cursor-pointer my-2 mx-1 h-[30px]'}
+              onClick={() => {
+                setSelectedTags([]);
+              }}
+              value={
+                <div className="flex space-x-1">
+                  <MdOutlineClear className="w-4 h-4 p-0 m-0" />
+                  <p>Clear All</p>
+                </div>
+              }
+              variant={'ghost'}
+            />
+          )}
         </div>
         <div className="overflow-y-auto">
           <table className="w-full text-left table-auto min-w-max ">
@@ -209,7 +226,7 @@ const AppVersionTable = forwardRef(
                     : 'p-4 border-b border-blue-gray-50';
 
                   return (
-                    <tr key={id} className="hover:bg-blue-gray-300/40">
+                    <tr key={id} className="hover:bg-blue-gray-300/20">
                       <td className={classes}>
                         <div className="flex space-x-2">
                           <Typography

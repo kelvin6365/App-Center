@@ -34,19 +34,21 @@ import { AppException } from '../../common/response/app.exception';
 import { AppResponse } from '../../common/response/app.response';
 import { ResponseCode } from '../../common/response/response.code';
 import { CurrentUserDTO } from '../auth/dto/current.user.dto';
+import AppsPermission from '../auth/enum/apps.permission.enum';
+import PermissionGuard from '../auth/permission.guard';
 import { AppAllowedType } from '../file/enum/app.allowed.type.enum';
 import { ImageAllowedType } from '../file/enum/image.allowed.type.enum';
 import { FileService } from '../file/file.service';
 import { RoleType } from '../role/enum/role.type.enum';
 import { AppService } from './app.service';
 import { AppDTO } from './dto/app.dto';
+import { AppVersionDTO } from './dto/app.version.dto';
+import { AppVersionTagDTO } from './dto/app.version.tag.dto';
 import { CreateAppDTO } from './dto/create.app.dto';
 import { CreateAppVersionDTO } from './dto/create.app.version.dto';
 import { InstallAppDTO } from './dto/install.app.dto';
 import { InstallAppRequestDTO } from './dto/install.app.request.dto';
 import { UpdateAppDTO } from './dto/update.app.dto';
-import PermissionGuard from '../auth/permission.guard';
-import AppsPermission from '../auth/enum/apps.permission.enum';
 
 @ApiTags('App')
 @Controller({ path: 'app', version: ['1'] })
@@ -82,8 +84,8 @@ export class AppController {
     @Query('page', new DefaultValuePipe(1), ParseIntPipe) page = 1,
     @Query('limit', new DefaultValuePipe(10), ParseIntPipe) limit = 10,
     @CurrentUser() currentUser: CurrentUserDTO
-  ): Promise<AppResponse> {
-    return new AppResponse(
+  ): Promise<AppResponse<PageDto<AppDTO>>> {
+    return new AppResponse<PageDto<AppDTO>>(
       await this.appService.findAll(
         query?.query ?? '',
         query?.withDeleted != null ? query.withDeleted : false,
@@ -103,8 +105,8 @@ export class AppController {
   async getApp(
     @Param('id', new ParseUUIDPipe()) id: string,
     @CurrentUser() currentUser: CurrentUserDTO
-  ): Promise<AppResponse> {
-    return new AppResponse(
+  ): Promise<AppResponse<AppDTO>> {
+    return new AppResponse<AppDTO>(
       await this.appService.findById(id, false, false, false, currentUser)
     );
   }
@@ -150,8 +152,10 @@ export class AppController {
     file: Express.Multer.File,
     @Body() app: CreateAppDTO,
     @CurrentUser() user: CurrentUserDTO
-  ): Promise<AppResponse> {
-    return new AppResponse(await this.appService.createApp(app, file, user));
+  ): Promise<AppResponse<string>> {
+    return new AppResponse<string>(
+      await this.appService.createApp(app, file, user)
+    );
   }
 
   //Update an existing app
@@ -193,9 +197,9 @@ export class AppController {
     file: Express.Multer.File,
     @Body() updateApp: UpdateAppDTO,
     @CurrentUser() user: CurrentUserDTO
-  ): Promise<AppResponse> {
+  ): Promise<AppResponse<boolean>> {
     console.log(file, updateApp, id);
-    return new AppResponse(
+    return new AppResponse<boolean>(
       await this.appService.updateApp(id, updateApp, file, user)
     );
   }
@@ -230,8 +234,8 @@ export class AppController {
     @JSONQuery('query') query: SearchQueryDTO,
     @Param('id', new ParseUUIDPipe()) id: string,
     @CurrentUser() currentUser: CurrentUserDTO
-  ): Promise<AppResponse> {
-    return new AppResponse(
+  ): Promise<AppResponse<AppVersionDTO[]>> {
+    return new AppResponse<AppVersionDTO[]>(
       await this.appService.getAllAppVersions(
         id,
         query?.query ?? '',
@@ -290,8 +294,8 @@ export class AppController {
     file: Express.Multer.File,
     @Body() appVersion: CreateAppVersionDTO
     // @CurrentUser() user: CurrentUserDTO
-  ): Promise<AppResponse> {
-    return new AppResponse(
+  ): Promise<AppResponse<boolean>> {
+    return new AppResponse<boolean>(
       await this.appService.createAppVersion(id, appVersion, file)
     );
   }
@@ -303,8 +307,8 @@ export class AppController {
   async getAllAppVersionTags(
     @Param('id', new ParseUUIDPipe()) id: string,
     @CurrentUser() user: CurrentUserDTO
-  ): Promise<AppResponse> {
-    return new AppResponse(
+  ): Promise<AppResponse<AppVersionTagDTO[]>> {
+    return new AppResponse<AppVersionTagDTO[]>(
       await this.appService.getAllAppVersionTags(id, user)
     );
   }
@@ -316,8 +320,8 @@ export class AppController {
   @ApiResponseSchema(HttpStatus.OK, 'OK')
   async getApiKey(
     @Param('id', new ParseUUIDPipe()) id: string
-  ): Promise<AppResponse> {
-    return new AppResponse(await this.appService.getApiKey(id));
+  ): Promise<AppResponse<string>> {
+    return new AppResponse<string>(await this.appService.getApiKey(id));
   }
 
   //get app by id
@@ -343,8 +347,8 @@ export class AppController {
     @Param('id', new ParseUUIDPipe()) id: string,
     @Param('versionId', new ParseUUIDPipe()) versionId: string,
     @Body() dto: InstallAppRequestDTO
-  ): Promise<AppResponse> {
-    return new AppResponse(
+  ): Promise<AppResponse<InstallAppDTO>> {
+    return new AppResponse<InstallAppDTO>(
       await this.appService.getInstallApp(id, versionId, dto.password)
     );
   }

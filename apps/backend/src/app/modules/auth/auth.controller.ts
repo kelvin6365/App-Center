@@ -27,8 +27,8 @@ export class AuthController {
   @Public()
   @Post('sign-up')
   @ApiResponseSchema(HttpStatus.OK, 'OK')
-  async register(@Body() data: SignUpDTO): Promise<AppResponse> {
-    return new AppResponse(await this.authService.signUp(data));
+  async register(@Body() data: SignUpDTO): Promise<AppResponse<boolean>> {
+    return new AppResponse<boolean>(await this.authService.signUp(data));
   }
 
   @Public()

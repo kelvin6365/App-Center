@@ -2,7 +2,9 @@
   "name": "@app-center/source",
   "version": "0.0.0",
   "license": "MIT",
-  "scripts": {},
+  "scripts": {
+    "migration:create": "npx typeorm migration:create"
+  },
   "private": true,
   "dependencies": {
     "@aws-sdk/client-s3": "^3.385.0",
@@ -19,14 +21,17 @@
     "@nestjs/swagger": "^7.1.6",
     "@nestjs/typeorm": "^10.0.0",
     "@swc/helpers": "~0.5.0",
+    "@types/crypto-js": "^4.1.2",
     "axios": "^1.4.0",
     "bcrypt": "^5.1.0",
     "class-transformer": "^0.5.1",
     "class-validator": "^0.14.0",
     "classnames": "^2.3.2",
+    "crypto-js": "^4.1.1",
     "env-cmd": "^10.1.0",
     "flowbite": "^1.8.1",
     "flowbite-react": "^0.5.0",
+    "fs": "^0.0.1-security",
     "image-thumbnail": "^1.0.15",
     "js-cookie": "^3.0.5",
     "lodash": "^4.17.21",
@@ -117,4 +122,3 @@
     "vitest": "~0.32.0"
   }
 }
-
