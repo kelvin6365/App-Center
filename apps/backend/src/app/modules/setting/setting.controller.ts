@@ -22,8 +22,8 @@ export class SettingController {
   constructor(private readonly settingService: SettingService) {}
   @Get('')
   @ApiResponseSchema(HttpStatus.OK, 'OK', SettingListDTO)
-  async findAll(): Promise<AppResponse> {
-    return new AppResponse(await this.settingService.findAll());
+  async findAll(): Promise<AppResponse<SettingListDTO>> {
+    return new AppResponse<SettingListDTO>(await this.settingService.findAll());
   }
 
   //create a new setting
@@ -31,8 +31,8 @@ export class SettingController {
   @ApiResponseSchema(HttpStatus.OK, 'OK')
   async create(
     @Body() createSettingDTO: CreateSettingDTO
-  ): Promise<AppResponse> {
-    return new AppResponse(
+  ): Promise<AppResponse<boolean>> {
+    return new AppResponse<boolean>(
       await this.settingService.createSetting(createSettingDTO)
     );
   }
@@ -42,8 +42,8 @@ export class SettingController {
   @ApiResponseSchema(HttpStatus.OK, 'OK')
   async update(
     @Body() updateSettingDTO: UpdateSettingDTO
-  ): Promise<AppResponse> {
-    return new AppResponse(
+  ): Promise<AppResponse<boolean>> {
+    return new AppResponse<boolean>(
       await this.settingService.updateSetting(updateSettingDTO)
     );
   }
@@ -51,7 +51,9 @@ export class SettingController {
   //get a setting by key
   @Get('/:key')
   @ApiResponseSchema(HttpStatus.OK, 'OK', SettingDTO)
-  async findByKey(@Param('key') key: string): Promise<AppResponse> {
-    return new AppResponse(await this.settingService.getSettingByKey(key));
+  async findByKey(@Param('key') key: string): Promise<AppResponse<SettingDTO>> {
+    return new AppResponse<SettingDTO>(
+      await this.settingService.getSettingByKey(key)
+    );
   }
 }

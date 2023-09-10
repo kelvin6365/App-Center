@@ -1,19 +1,16 @@
+import { Cog6ToothIcon } from '@heroicons/react/24/solid';
 import {
-  Tabs,
-  TabsHeader,
-  TabsBody,
   Tab,
   TabPanel,
+  Tabs,
+  TabsBody,
+  TabsHeader,
   Typography,
 } from '@material-tailwind/react';
-import {
-  ChevronDownIcon,
-  Cog6ToothIcon,
-  CubeTransparentIcon,
-  PowerIcon,
-} from '@heroicons/react/24/solid';
-import DefaultBreadcrumb from '../../../components/Breadcrumb/DefaultBreadcrumb';
 import { useState } from 'react';
+import DefaultBreadcrumb from '../../../components/Breadcrumb/DefaultBreadcrumb';
+import General from './general/General';
+import Credentials from './credentials/Credentials';
 type Props = {};
 
 const Setting = (props: Props) => {
@@ -22,28 +19,22 @@ const Setting = (props: Props) => {
     {
       label: 'General',
       value: 1,
-      desc: `It really matters and then like it really doesn't matter.
-      What matters is the people who are sparked by it. And the people 
-      who are like offended by it, it doesn't matter.`,
+      desc: <General />,
     },
     {
-      label: 'Teams',
+      label: 'Notifications',
       value: 2,
-      desc: `Because it's about motivating the doers. Because I'm here
-      to follow my dreams and inspire other people to follow their dreams, too.`,
+      desc: `Coming soon`,
     },
     {
-      label: 'Keys Configurations',
+      label: 'Credentials',
       value: 3,
-      desc: `We're not always in the position that we want to be at.
-      We're constantly growing. We're constantly making mistakes. We're
-      constantly trying to express ourselves and actualize our dreams.`,
+      desc: <Credentials />,
     },
     {
       label: 'Others',
       value: 4,
-      desc: `Because it's about motivating the doers. Because I'm here
-      to follow my dreams and inspire other people to follow their dreams, too.`,
+      desc: `Coming soon`,
     },
     // {
     //   label: 'Svelte',

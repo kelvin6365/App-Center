@@ -13,6 +13,7 @@ import { RoleModule } from './modules/role/role.module';
 import { RolesGuard } from './modules/auth/admin-auth.guard';
 import { JwtAuthGuard } from './modules/auth/jwt-auth.guard';
 import { AuthModule } from './modules/auth/auth.module';
+import { CredentialModule } from './modules/credential/credential.module';
 
 @Module({
   imports: [
@@ -49,6 +50,7 @@ import { AuthModule } from './modules/auth/auth.module';
     UserModule,
     RoleModule,
     AuthModule,
+    CredentialModule,
   ],
   controllers: [],
   providers: [
