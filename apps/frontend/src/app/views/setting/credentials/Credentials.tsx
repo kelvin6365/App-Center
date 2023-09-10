@@ -29,7 +29,7 @@ const Credentials = ({ isActive }: Props) => {
           </DefaultButton>
         </div>
       </div>
-      <CredentialTable isActive={isActive} />
+      {isActive && <CredentialTable />}
     </div>
   );
 };

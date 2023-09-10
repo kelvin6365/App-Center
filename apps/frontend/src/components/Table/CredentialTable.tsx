@@ -6,11 +6,9 @@ import API from '../../app/util/api';
 import { useBoundStore } from '../../app/util/store/store';
 import { Credential } from '../../app/util/type/Credential';
 
-type Props = {
-  isActive: boolean;
-};
+// type Props = {};
 
-const CredentialTable = ({ isActive }: Props) => {
+const CredentialTable = () => {
   const [credentials, setCredentials] = useState<Credential[]>([]);
   const [credentialComponents] = useBoundStore((state) => [
     state.credentialComponents,
@@ -29,11 +27,10 @@ const CredentialTable = ({ isActive }: Props) => {
   };
 
   useEffect(() => {
-    if (isActive) {
-      console.log('[Is Active] Start fetch');
-      fetchCredentials();
-    }
-  }, [isActive]);
+    console.log('[Is Active] Start fetch');
+    fetchCredentials();
+  }, []);
+
   return (
     <div className="overflow-y-auto">
       <table className="w-full text-left table-auto min-w-max ">
