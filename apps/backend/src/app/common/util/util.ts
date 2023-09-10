@@ -37,12 +37,18 @@ export const getEncryptionKeyPath = (): string => {
  * @returns {string}
  */
 export const generateEncryptKey = (): string => {
-  const salt = lib.WordArray.random(128 / 8);
-  const key256Bits = PBKDF2(process.env.PASSPHRASE || 'PASSPHRASE', salt, {
-    keySize: 256 / 32,
-    iterations: 1000,
-  });
-  return key256Bits.toString();
+  if (process.env.KEY) {
+    console.log('[Use custom encryption key]');
+    return process.env.KEY;
+  } else {
+    console.log('[Use Generate encryption key]');
+    const salt = lib.WordArray.random(128 / 8);
+    const key256Bits = PBKDF2(process.env.PASSPHRASE || 'PASSPHRASE', salt, {
+      keySize: 256 / 32,
+      iterations: 1000,
+    });
+    return key256Bits.toString();
+  }
 };
 
 /**
@@ -53,7 +59,7 @@ export const getEncryptionKey = async (): Promise<string> => {
   try {
     return await fs.promises.readFile(getEncryptionKeyPath(), 'utf8');
   } catch (error) {
-    Logger.debug('Encryption key not found. Now generateEncryptKey()');
+    console.log('Encryption key not found. Now generateEncryptKey()');
     const encryptKey = generateEncryptKey();
     await fs.promises.writeFile(getEncryptionKeyPath(), encryptKey);
     return encryptKey;
