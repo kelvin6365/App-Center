@@ -6,21 +6,22 @@ import { Outlet } from 'react-router-dom';
 import PageContent from '../components/Content/PageContent';
 import API from './util/api';
 import { useAppStore, useBoundStore } from './util/store/store';
-import { Setting } from './util/type/Setting';
 
 export function App() {
   const [isLoggedIn] = useAppStore((state: any) => [state.isLoggedIn]);
-  const [setSettings] = useBoundStore((state) => [state.setSettings]);
+  const [setSettings, setCredentialComponents] = useBoundStore((state) => [
+    state.setSettings,
+    state.setCredentialComponents,
+  ]);
   //fetch settings
-  const fetchSettings = async () => {
+  const fetchInitData = async () => {
     try {
-      const res = await API.setting.getAllSettings();
-      const {
-        data: { settings: _ },
-      }: {
-        data: { settings: Setting[] };
-      } = res.data;
-      setSettings(_);
+      const [settingsRes, credentialComponentsRes] = await Promise.all([
+        API.setting.getAllSettings(),
+        API.credential.getAllCredentialComponents(),
+      ]);
+      setSettings(settingsRes.data.data.settings);
+      setCredentialComponents(credentialComponentsRes.data.data);
     } catch (error) {
       console.error(error);
     }
@@ -29,7 +30,7 @@ export function App() {
   //initialize
   useEffect(() => {
     if (isLoggedIn) {
-      fetchSettings();
+      fetchInitData();
     }
   }, []);
 

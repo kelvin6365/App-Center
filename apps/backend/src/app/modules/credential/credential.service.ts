@@ -108,6 +108,18 @@ export class CredentialService {
     }
   }
 
+  //Get all credential components
+  async getAllCredentialComponents(): Promise<
+    CredentialComponentResponseDTO[]
+  > {
+    const credentialComponents =
+      await this.credentialComponentRepository.getAllCredentialComponents();
+    return credentialComponents.map(
+      (credentialComponent) =>
+        new CredentialComponentResponseDTO(credentialComponent)
+    );
+  }
+
   //get credential component
   async getCredentialComponent(
     credentialComponentName: string

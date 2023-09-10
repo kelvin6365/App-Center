@@ -226,7 +226,7 @@ const AppVersionTable = forwardRef(
                     : 'p-4 border-b border-blue-gray-50';
 
                   return (
-                    <tr key={id} className="hover:bg-blue-gray-300/40">
+                    <tr key={id} className="hover:bg-blue-gray-300/20">
                       <td className={classes}>
                         <div className="flex space-x-2">
                           <Typography

@@ -52,9 +52,11 @@ export class CredentialRepository extends Repository<Credential> {
   }
 
   //Get All Credential
-  async getAllCredentialWithoutEncryptedData(options?: {
-    withDeleted?: false;
-  }) {
+  async getAllCredentialWithoutEncryptedData(
+    options: { withDeleted?: boolean } = {
+      withDeleted: false,
+    }
+  ) {
     const credentials = await this.find({
       withDeleted: options.withDeleted,
     });

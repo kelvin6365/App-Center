@@ -29,7 +29,7 @@ const Setting = (props: Props) => {
     {
       label: 'Credentials',
       value: 3,
-      desc: <Credentials />,
+      desc: <Credentials isActive={activeTab === 3} />,
     },
     {
       label: 'Others',

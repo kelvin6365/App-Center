@@ -19,4 +19,13 @@ export class CredentialComponentRepository extends Repository<CredentialComponen
       withDeleted,
     });
   }
+
+  //Get All credential components
+  async getAllCredentialComponents(
+    withDeleted = false
+  ): Promise<CredentialComponent[]> {
+    return await this.find({
+      withDeleted,
+    });
+  }
 }
