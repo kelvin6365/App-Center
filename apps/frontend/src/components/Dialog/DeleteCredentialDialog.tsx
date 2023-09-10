@@ -11,6 +11,7 @@ import { SubmitHandler, useForm } from 'react-hook-form';
 import { toast } from 'react-toastify';
 import API from '../../app/util/api';
 import { Credential } from '../../app/util/type/Credential';
+import { useBoundStore } from '../../app/util/store/store';
 
 type Props = {
   title: string;
@@ -29,6 +30,10 @@ const DeleteCredentialDialog = ({
   open,
   credential,
 }: Props) => {
+  const [credentialComponents] = useBoundStore((state) => [
+    state.credentialComponents,
+  ]);
+
   const {
     register,
     handleSubmit,
@@ -40,6 +45,9 @@ const DeleteCredentialDialog = ({
       id: credential?.id,
     },
   });
+  const target = credentialComponents.find(
+    (c) => c.name === credential?.credentialName
+  );
 
   useEffect(() => {
     if (open) {
@@ -96,8 +104,15 @@ const DeleteCredentialDialog = ({
               </h2>
               <br />
               <div className="text-left">
-                <p className="grid grid-cols-2 text-lg font-bold ">
-                  <p>Name:</p> <p>{credential?.name}</p>
+                <p className="grid grid-cols-1 text-lg font-bold">
+                  <div className="flex mx-auto">
+                    <img
+                      src={target?.icon}
+                      alt={credential?.credentialName + ' icon'}
+                      className="object-cover w-12 h-12 p-2 border rounded-full group-hover:bg-white"
+                    />
+                    <p className="my-auto ml-2">{credential?.name}</p>
+                  </div>
                 </p>
               </div>
             </div>
