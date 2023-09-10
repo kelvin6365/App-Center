@@ -4,6 +4,14 @@
   "sourceRoot": "apps/backend/src",
   "projectType": "application",
   "targets": {
+    "migration:create": {
+      "executor": "nx:run-commands",
+      "outputs": ["{options.outputPath}"],
+      "options": {
+        "cwd": "apps/backend/src/app/database/migrations",
+        "commands": ["typeorm migration:create"]
+      }
+    },
     "build": {
       "executor": "@nx/webpack:webpack",
       "outputs": ["{options.outputPath}"],
