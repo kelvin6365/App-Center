@@ -37,10 +37,6 @@ export class CredentialRepository extends Repository<Credential> {
 
   //Update Credential
   async updateCredential(credential: Credential): Promise<Credential> {
-    //Encrypt
-    credential.encryptedData = await encryptCredentialData(
-      credential.encryptedData
-    );
     return await this.save(credential);
   }
 
@@ -56,17 +52,12 @@ export class CredentialRepository extends Repository<Credential> {
   }
 
   //Get All Credential
-  async getAllCredential(options?: { withDeleted?: false; decrypt?: false }) {
+  async getAllCredentialWithoutEncryptedData(options?: {
+    withDeleted?: false;
+  }) {
     const credentials = await this.find({
       withDeleted: options.withDeleted,
     });
-    if (options.decrypt) {
-      credentials.forEach(async (credential) => {
-        credential.encryptedData = await decryptCredentialData(
-          credential.encryptedData
-        );
-      });
-    }
     return credentials;
   }
 }

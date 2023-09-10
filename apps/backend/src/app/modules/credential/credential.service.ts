@@ -9,7 +9,10 @@ import { AppException } from '../../common/response/app.exception';
 import { ResponseCode } from '../../common/response/response.code';
 import { CredentialComponentRepository } from '../../database/repositories/credential.component.repository';
 import { CredentialComponentResponseDTO } from './dto/credential.component.response.dto';
-import { decryptCredentialData } from '../../common/util/util';
+import {
+  decryptCredentialData,
+  encryptCredentialData,
+} from '../../common/util/util';
 import { omit } from 'lodash';
 
 @Injectable()
@@ -21,7 +24,8 @@ export class CredentialService {
 
   //Get all Credentials
   async getAllCredentials(): Promise<CredentialResponseDTO[]> {
-    const credentials = await this.credentialRepository.find();
+    const credentials =
+      await this.credentialRepository.getAllCredentialWithoutEncryptedData();
     return credentials.map(
       (credential) =>
         new CredentialResponseDTO(omit(credential, ['encryptedData']))
@@ -38,6 +42,7 @@ export class CredentialService {
       await this.credentialComponentRepository.getCredentialComponentByCredentialName(
         credential.credentialName
       );
+
     credential.encryptedData = await decryptCredentialData(
       credential.encryptedData,
       credential.credentialName,
@@ -58,6 +63,10 @@ export class CredentialService {
     if (user.id) {
       newCredential.createdBy = user.id;
     }
+    //Encrypt
+    newCredential.encryptedData = await encryptCredentialData(
+      credential.encryptedData
+    );
     await this.credentialRepository.createCredential(newCredential);
     return true;
   }
@@ -78,10 +87,13 @@ export class CredentialService {
     //Update credential
     credentialToUpdate.name = credential.name;
     credentialToUpdate.credentialName = credential.credentialName;
-    credentialToUpdate.encryptedData = credential.encryptedData;
     if (user.id) {
       credentialToUpdate.updatedBy = user.id;
     }
+    //Encrypt
+    credentialToUpdate.encryptedData = await encryptCredentialData(
+      credential.encryptedData
+    );
     await this.credentialRepository.updateCredential(credentialToUpdate);
     return true;
   }
