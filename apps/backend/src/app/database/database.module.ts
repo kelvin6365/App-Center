@@ -22,6 +22,7 @@ import { Credential } from '../modules/credential/entities/credential.entity';
 import { CredentialComponent } from '../modules/credential/entities/credential.component.entity';
 import { CreateCredentialComponent1694362620123 } from './migrations/1694362620123-CreateCredentialComponent';
 import { InsertCredentialComponent1694362717025 } from './migrations/1694362717025-InsertCredentialComponent';
+import { InsertCredentialComponent1694362717026 } from './migrations/1694362717026-InsertCredentialComponent';
 
 @Module({
   imports: [
@@ -58,6 +59,7 @@ import { InsertCredentialComponent1694362717025 } from './migrations/16943627170
             PermissionInsert1693145971058,
             CreateCredentialComponent1694362620123,
             InsertCredentialComponent1694362717025,
+            InsertCredentialComponent1694362717026,
           ],
           migrationsRun: configService.get('db.migrationsRun'),
           logging: configService.get('db.logging'),
