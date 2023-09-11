@@ -23,7 +23,7 @@ export class UserRepository extends Repository<User> {
   findUserByUserNameWithDeletedFalse(username: string): Promise<User> {
     return this.findOne({
       where: { username },
-      relations: ['profile', 'refreshToken', 'roles', 'permissions'],
+      relations: ['profile', 'roles', 'permissions'],
       withDeleted: false,
     });
   }
@@ -31,22 +31,22 @@ export class UserRepository extends Repository<User> {
   findUserByUserIdWithDeletedFalse(userId: string): Promise<User> {
     return this.findOne({
       where: { id: userId },
-      relations: ['profile', 'refreshToken', 'roles'],
+      relations: ['profile', 'roles', 'permissions'],
       withDeleted: false,
     });
   }
 
-  findPublicProfileByIdWithDeletedFalse(id: string): Promise<User> {
-    return this.findOne({
-      select: {
-        id: true,
-        profile: {
-          name: true,
-        },
-      },
-      where: { id: id },
-      relations: ['profile'],
-      withDeleted: false,
-    });
-  }
+  // findPublicProfileByIdWithDeletedFalse(id: string): Promise<User> {
+  //   return this.findOne({
+  //     select: {
+  //       id: true,
+  //       profile: {
+  //         name: true,
+  //       },
+  //     },
+  //     where: { id: id },
+  //     relations: ['profile'],
+  //     withDeleted: false,
+  //   });
+  // }
 }

@@ -6,6 +6,7 @@ import { hashPassword } from '../../../common/util/password.util';
 export class SignUpDTO {
   @ApiProperty()
   @IsNotEmpty()
+  @IsEmail()
   username: string;
 
   @ApiProperty()

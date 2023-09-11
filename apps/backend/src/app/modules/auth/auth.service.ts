@@ -22,7 +22,7 @@ export class AuthService {
   ) {}
   async signUp(signUpDTO: SignUpDTO): Promise<boolean> {
     try {
-      await this.userService.createUser(signUpDTO);
+      await this.userService.signUp(signUpDTO);
       return true;
     } catch (error) {
       this.logger.error(error);

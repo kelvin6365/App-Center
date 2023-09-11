@@ -1,5 +1,5 @@
 import { CanActivate, ExecutionContext, mixin, Type } from '@nestjs/common';
-import PermissionEnum from './enum/permission.enum';
+import PermissionEnum from '../permission/enum/permission.enum';
 import { JwtAuthGuard } from './jwt-auth.guard';
 import { UserPermission } from '../user/entities/user.permission.entity';
 
