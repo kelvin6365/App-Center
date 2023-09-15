@@ -1,59 +1,48 @@
-// import { applyDecorators, HttpStatus } from '@nestjs/common';
-// import { ApiExtraModels, ApiResponse, getSchemaPath } from '@nestjs/swagger';
-// import { AppResponse } from '../response/app.response';
-// import { PageDto } from '../dto/page.dto';
-// import { MetaDTO } from '../dto/meta.dto';
+import { applyDecorators, HttpStatus, Type } from '@nestjs/common';
+import {
+  ApiExtraModels,
+  ApiOkResponse,
+  ApiResponse,
+  getSchemaPath,
+} from '@nestjs/swagger';
+import { MetaDTO } from '../dto/meta.dto';
+import { PageDto } from '../dto/page.dto';
+import { AppResponse } from '../response/app.response';
 
-// export function ApiPagingResponseSchema(
-//   httpStatus: number,
-//   description: string,
-//   dataDto: any
-// ) {
-//   const httpStatusDecorator = [];
+export function ApiPagingResponseSchema(
+  httpStatus: number,
+  description: string,
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  dataDto: any
+) {
+  const httpStatusDecorator = [
+    ApiResponse({ status: HttpStatus.BAD_REQUEST, description: 'Bad Request' }),
+  ];
 
-//   httpStatusDecorator.push(
-//     ApiResponse({ status: HttpStatus.BAD_REQUEST, description: 'Bad Request' })
-//   );
-
-//   return applyDecorators(
-//     ApiResponse({
-//       status: httpStatus,
-//       description: description,
-//       schema: {
-//         allOf: [
-//           {
-//             $ref: getSchemaPath(AppResponse),
-//             properties: {
-//               data: {
-//                 $ref: getSchemaPath(PageDto<typeof dataDto>),
-//               },
-//             },
-//           },
-//           {
-//             properties: {
-//               data: {
-//                 properties: {
-//                   // items: {
-//                   //   $ref: getSchemaPath(dataDto),
-//                   //   type: 'array',
-//                   // },
-//                   items: {
-//                     type: 'array',
-//                     $ref: getSchemaPath(dataDto),
-//                     properties: {
-//                       sss: {
-//                         type: 'string',
-//                       },
-//                     },
-//                   },
-//                 },
-//               },
-//             },
-//           },
-//         ],
-//       },
-//     }),
-//     ApiExtraModels(AppResponse, PageDto<typeof dataDto>),
-//     ...httpStatusDecorator
-//   );
-// }
+  return applyDecorators(
+    ApiExtraModels(AppResponse, PageDto, dataDto, MetaDTO),
+    ApiOkResponse({
+      status: httpStatus,
+      description: description,
+      schema: {
+        allOf: [
+          { $ref: getSchemaPath(AppResponse) },
+          {
+            properties: {
+              data: {
+                properties: {
+                  items: {
+                    type: 'array',
+                    items: { $ref: getSchemaPath(dataDto) },
+                  },
+                  meta: { $ref: getSchemaPath(MetaDTO) },
+                },
+              },
+            },
+          },
+        ],
+      },
+    }),
+    ...httpStatusDecorator
+  );
+}

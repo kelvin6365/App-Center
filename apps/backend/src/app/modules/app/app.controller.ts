@@ -27,6 +27,7 @@ import { JSONQuery } from '../../common/decorator/json.query';
 import { Public } from '../../common/decorator/public';
 import { Roles } from '../../common/decorator/roles.decorator';
 import { ApiResponseSchema } from '../../common/decorator/swagger.decorator';
+import { ApiPagingResponseSchema } from '../../common/decorator/swagger.paging.decorator';
 import { CurrentUser } from '../../common/decorator/user.decorator';
 import { PageDto } from '../../common/dto/page.dto';
 import { SearchQueryDTO } from '../../common/dto/search.dto';
@@ -78,7 +79,7 @@ export class AppController {
   })
   @ApiQuery({ name: 'page', required: false })
   @ApiQuery({ name: 'limit', required: false })
-  @ApiResponseSchema(HttpStatus.OK, 'OK', PageDto<AppDTO>)
+  @ApiPagingResponseSchema(HttpStatus.OK, 'OK', AppDTO)
   async getApps(
     @JSONQuery('query') query: SearchQueryDTO,
     @Query('page', new DefaultValuePipe(1), ParseIntPipe) page = 1,
