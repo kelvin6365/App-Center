@@ -3,8 +3,8 @@ import { ConfigService } from '@nestjs/config';
 import { PassportStrategy } from '@nestjs/passport';
 import { Request } from 'express';
 import { ExtractJwt, Strategy } from 'passport-jwt';
-import { AuthService } from './auth.service';
 import { UserService } from '../user/user.service';
+import { CurrentUserDTO } from './dto/current.user.dto';
 
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {
@@ -35,6 +35,6 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
       request.res.clearCookie('Authentication');
       throw new UnauthorizedException();
     }
-    return user;
+    return new CurrentUserDTO().fromEntity(user);
   }
 }

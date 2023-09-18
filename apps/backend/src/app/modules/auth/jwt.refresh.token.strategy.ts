@@ -30,7 +30,7 @@ export class JwtRefreshTokenStrategy extends PassportStrategy(
   }
 
   async validate(payload: any): Promise<CurrentUserDTO> {
-    if (payload.type != LoginTokenType.REFRESH_TOKEN) {
+    if (payload.type != LoginTokenType.UserRefreshToken) {
       throw new UnauthorizedException();
     }
     const user = await this.userService.getUserByUsernameWithDeletedFalse(

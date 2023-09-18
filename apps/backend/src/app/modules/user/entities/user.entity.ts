@@ -1,11 +1,12 @@
 import { Exclude } from 'class-transformer';
-import { Entity, Column, OneToOne, OneToMany } from 'typeorm';
+import { Entity, Column, OneToOne, OneToMany, JoinColumn } from 'typeorm';
 import { BaseEntity } from '../../../database/entities/base.entity';
 import { UserStatus } from '../enum/user.status.enum';
 import { UserRefreshToken } from './user.refresh.token.entity';
 import { UserRole } from './user.role.entity';
 import { UserProfile } from './user.profile.entity';
 import { UserPermission } from './user.permission.entity';
+import { UserTenant } from './user.tenant.entity';
 
 @Entity('user')
 export class User extends BaseEntity {
@@ -19,7 +20,7 @@ export class User extends BaseEntity {
   @Column({ nullable: true, name: 'ref_id' })
   refId: string;
 
-  @Column({ default: UserStatus.INACTIVE, type: 'varchar' })
+  @Column({ default: UserStatus.Inactive, type: 'varchar' })
   status: UserStatus;
 
   @OneToOne(() => UserRefreshToken, (refreshToken) => refreshToken.user, {
@@ -45,4 +46,8 @@ export class User extends BaseEntity {
     cascade: true,
   })
   profile: UserProfile;
+
+  @OneToMany(() => UserTenant, (userTenant) => userTenant.user)
+  @JoinColumn({ name: 'id' })
+  tenants: UserTenant[];
 }

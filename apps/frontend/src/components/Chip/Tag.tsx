@@ -5,7 +5,8 @@ const StyledTag = tw(Chip)``;
 const Tag = ({
   onClick,
   ...props
-}: ChipProps & React.RefAttributes<HTMLDivElement> & { onClick?: any }) => {
+}: // eslint-disable-next-line @typescript-eslint/no-explicit-any
+ChipProps & React.RefAttributes<HTMLDivElement> & { onClick?: any }) => {
   return (
     <div onClick={onClick}>
       <StyledTag color="cyan" {...props} />

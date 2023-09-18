@@ -12,8 +12,7 @@ const CustomPageContent = tw(Card)`
   my-4
   p-12
 `;
-type Props = {};
-const PageContent = ({ children }: PropsWithChildren<Props>) => {
+const PageContent = ({ children }: PropsWithChildren) => {
   return (
     <CustomScrollbars>
       <CustomPageContent>{children}</CustomPageContent>

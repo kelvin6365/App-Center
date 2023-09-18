@@ -21,6 +21,7 @@ export function DefaultPagination({
         setActive(index);
         onPageChange(index);
       },
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } as any);
 
   const next = () => {

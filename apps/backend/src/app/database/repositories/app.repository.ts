@@ -25,6 +25,7 @@ export class AppRepository extends Repository<App> {
 
   //Get All Apps
   async findAll(
+    tenantId,
     searchQuery = '',
     withDeleted = false,
     options: IPaginationOptions = { page: 1, limit: 10 },
@@ -69,6 +70,7 @@ export class AppRepository extends Repository<App> {
         findOptions.order[sort.key] = sort.value;
       }
     }
+    findOptions.where = findOptions.where.map((o) => ({ ...o, tenantId }));
     return await paginate<App>(this, options, findOptions);
   }
 

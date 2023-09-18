@@ -32,5 +32,19 @@ export default () => ({
       publicAPI: process.env.PUBLIC_API,
     },
   },
-  static: {},
+  static: {
+    defaultTenant: {
+      enabled: Boolean(process.env.DEFAULT_TENANT_ENABLED) || false,
+      name: process.env.DEFAULT_TENANT,
+      domainName: process.env.DEFAULT_TENANT_DOMAINNAME,
+      username: process.env.DEFAULT_TENANT_USERNAME,
+      password: process.env.DEFAULT_TENANT_PASSWORD,
+    },
+    defaultAdministrator: {
+      enabled: Boolean(process.env.DEFAULT_ADMIN_ENABLED) || false,
+      name: process.env.DEFAULT_ADMIN,
+      username: process.env.DEFAULT_ADMIN_USERNAME,
+      password: process.env.DEFAULT_ADMIN_PASSWORD,
+    },
+  },
 });

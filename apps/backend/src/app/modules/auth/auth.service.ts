@@ -39,12 +39,12 @@ export class AuthService {
     const payloadAccess = {
       username: user.username,
       sub: user.id,
-      type: LoginTokenType.ACCESS_TOKEN,
+      type: LoginTokenType.UserAccessToken,
     };
     const payloadRefresh = {
       username: user.username,
       sub: user.id,
-      type: LoginTokenType.REFRESH_TOKEN,
+      type: LoginTokenType.UserRefreshToken,
     };
     const refreshTokenExpiresDate = moment()
       .add(

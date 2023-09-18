@@ -10,6 +10,7 @@ export class PortalUserResponseDTO {
   roles: RoleDTO[];
   profile: any;
   permissions: PermissionDTO[];
+  tenants: string[];
   constructor(partial: Partial<User>) {
     this.id = partial.id;
     this.username = partial.username;
@@ -19,5 +20,6 @@ export class PortalUserResponseDTO {
     this.permissions = partial.permissions?.map(
       (permission) => new PermissionDTO(permission.permission, permission.refId)
     );
+    this.tenants = partial.tenants?.map((tenant) => tenant.id);
   }
 }

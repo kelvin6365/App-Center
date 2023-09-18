@@ -37,7 +37,7 @@ const DeleteCredentialDialog = ({
   const {
     register,
     handleSubmit,
-    formState: { errors, isSubmitting },
+    formState: { isSubmitting },
     reset,
   } = useForm<DeleteFormInputs>({
     // resolver: yupResolver<Inputs>(schema),
@@ -63,6 +63,7 @@ const DeleteCredentialDialog = ({
   ) => {
     try {
       const res = await API.credential.deleteCredential(values.id);
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const { status }: { data: any; status: any } = res.data;
       console.log(status);
       if (status.code === 1000) {

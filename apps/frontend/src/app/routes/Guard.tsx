@@ -9,6 +9,7 @@ type Props = {
 
 const Guard = ({ children, auth }: Props) => {
   const location = useLocation();
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const isLoggedIn = useAppStore((state: any) => state.isLoggedIn);
   console.log(
     '[Init] Auth Guard',

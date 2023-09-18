@@ -35,6 +35,9 @@ export class CurrentUserDTO {
   @ApiProperty({ type: UserPermission, isArray: true })
   permissions: UserPermission[];
 
+  @ApiProperty()
+  tenants: string[];
+
   fromEntity(entity: User) {
     const dto = new CurrentUserDTO();
     dto.id = entity.id;
@@ -47,6 +50,7 @@ export class CurrentUserDTO {
     dto.roles = entity.roles;
     dto.name = entity.profile.name;
     dto.permissions = entity.permissions;
+    dto.tenants = entity.tenants?.map((tenant) => tenant.tenantId);
     return dto;
   }
 }

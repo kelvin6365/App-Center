@@ -4,8 +4,10 @@ import classNames from 'classnames';
 
 const TextInput = React.forwardRef<
   HTMLInputElement,
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   ReturnType<UseFormRegister<any>> & {
     label?: string | null;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     errors?: any;
     loading: boolean;
     icon?: React.ReactNode | null;

@@ -23,11 +23,10 @@ import { App } from '../../util/type/App';
 import { AppVersion } from '../../util/type/AppVersion';
 import isUuid, { useQuery } from '../../util/util';
 
-type Props = {};
 type InstallAppFormInputs = {
   password: string;
 };
-const Install = (props: Props) => {
+const Install = () => {
   const { id: appId } = useParams();
   const query = useQuery();
   const versionId = query.get('versionId');
@@ -43,10 +42,8 @@ const Install = (props: Props) => {
   const {
     register,
     handleSubmit,
-    watch,
     formState: { errors, isSubmitting },
     getValues,
-    reset,
   } = useForm<InstallAppFormInputs>({
     defaultValues: {
       password: undefined,
@@ -108,6 +105,7 @@ const Install = (props: Props) => {
     }
 
     getApp();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const onSubmit: SubmitHandler<InstallAppFormInputs> = async (values) => {

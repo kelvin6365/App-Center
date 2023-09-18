@@ -3,7 +3,9 @@ import { UseFormRegister } from 'react-hook-form';
 
 const FileUpload = React.forwardRef<
   HTMLInputElement,
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   ReturnType<UseFormRegister<any>> & {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     errors: any;
     loading: boolean;
     accept?: string;
@@ -20,15 +22,17 @@ const FileUpload = React.forwardRef<
           {(files?.length ?? 0) > 0 ? (
             <div className="relative flex h-full pointer-events-none">
               {['jpg', 'jpeg', 'png'].indexOf(
-                files![0].name.split('.').pop() ?? ''
-              ) != -1 ? (
+                files?.[0].name.split('.').pop() ?? ''
+              ) !== -1 ? (
                 <img
+                  // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
                   src={URL.createObjectURL(files![0])}
                   alt="preview"
                   className="h-full p-8 mx-auto"
                 />
               ) : (
-                <center className="px-4 px-8 my-auto">{files![0].name}</center>
+                // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+                <center className="px-4 my-auto">{files![0].name}</center>
               )}
             </div>
           ) : (

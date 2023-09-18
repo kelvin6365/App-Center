@@ -22,9 +22,8 @@ import logo from '../../assets/images/logo.jpg';
 import MenuItems from './MenuItems';
 import { useAppStore } from '../../app/util/store/store';
 import { AppSlice } from '../../app/util/store/appSlice';
-type Props = {};
 
-const Sidebar = (props: Props) => {
+const Sidebar = () => {
   const setLogout = useAppStore((state: AppSlice) => state.setLogout);
   const [open, setOpen] = React.useState(0);
   const [openAlert, setOpenAlert] = React.useState(true);
@@ -42,9 +41,11 @@ const Sidebar = (props: Props) => {
 
   const initMenuOpen = useCallback(() => {
     handleOpen(
+      // eslint-disable-next-line array-callback-return
       MenuItems.findIndex((menuItems) => {
         if (menuItems.children) {
           return (
+            // eslint-disable-next-line array-callback-return
             menuItems.children.findIndex((children) => {
               if (children.path === location.pathname) {
                 return true;
@@ -61,7 +62,7 @@ const Sidebar = (props: Props) => {
   }, [handleOpen, location.pathname]);
   useEffect(() => {
     initMenuOpen();
-  }, []);
+  }, [initMenuOpen]);
 
   return (
     <Card className="transform my-4 mx-2 md:mx-4 h-[calc(100vh-2rem)] min-w-[60px] w-fit md:w-full max-w-[20rem] py-4 px-2 md:p-4 shadow-xl shadow-blue-gray-900/5">
@@ -78,7 +79,7 @@ const Sidebar = (props: Props) => {
       <Scrollbars className="h-full">
         <List className="md:min-w-[240px] min-w-0 p-0 md:p2">
           {MenuItems.map((item, index) => {
-            const { icon, label, path, children } = item;
+            const { icon, label, children } = item;
             return (
               <Accordion
                 key={index}

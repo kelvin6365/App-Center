@@ -15,6 +15,7 @@ import { FileModule } from './modules/file/file.module';
 import { RoleModule } from './modules/role/role.module';
 import { SettingModule } from './modules/setting/setting.module';
 import { UserModule } from './modules/user/user.module';
+import { TenantModule } from './modules/tenant/tenant.module';
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -30,6 +31,7 @@ import { UserModule } from './modules/user/user.module';
     RoleModule,
     AuthModule,
     CredentialModule,
+    TenantModule,
   ],
   controllers: [],
   providers: [

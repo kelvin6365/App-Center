@@ -17,8 +17,8 @@ export class UserProfile extends BaseEntity {
   @Column({ type: 'jsonb', array: false, nullable: true })
   extra: Record<string, unknown>;
 
-  @Column({ name: 'user_id' })
-  userId: number;
+  @Column({ name: 'user_id', type: 'uuid' })
+  userId: string;
 
   @Column({ name: 'avatar_id', nullable: true, type: 'uuid' })
   avatarId: string;
