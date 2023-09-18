@@ -19,6 +19,9 @@ export default () => ({
     },
   },
   services: {
+    redis: {
+      enabled: false,
+    },
     file: {
       bucketName: process.env.BUCKET_NAME,
       spaceKey: process.env.BUCKET_KEY,
