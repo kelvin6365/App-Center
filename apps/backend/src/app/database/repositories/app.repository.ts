@@ -1,21 +1,12 @@
 import { Injectable } from '@nestjs/common';
 import {
-  Repository,
-  DataSource,
-  FindOptionsOrder,
-  Like,
-  ILike,
-  FindManyOptions,
-  In,
-} from 'typeorm';
-import { App } from '../../modules/app/entities/app.entity';
-import {
   IPaginationMeta,
   IPaginationOptions,
   Pagination,
   paginate,
 } from 'nestjs-typeorm-paginate';
-import { CurrentUserDTO } from '../../modules/auth/dto/current.user.dto';
+import { DataSource, FindManyOptions, ILike, In, Repository } from 'typeorm';
+import { App } from '../../modules/app/entities/app.entity';
 
 @Injectable()
 export class AppRepository extends Repository<App> {
@@ -25,7 +16,7 @@ export class AppRepository extends Repository<App> {
 
   //Get All Apps
   async findAll(
-    tenantId,
+    tenantId: string,
     searchQuery = '',
     withDeleted = false,
     options: IPaginationOptions = { page: 1, limit: 10 },
@@ -70,7 +61,10 @@ export class AppRepository extends Repository<App> {
         findOptions.order[sort.key] = sort.value;
       }
     }
-    findOptions.where = findOptions.where.map((o) => ({ ...o, tenantId }));
+    findOptions.where = findOptions.where.map((o) => ({
+      ...o,
+      tenantId: tenantId ? tenantId : null,
+    }));
     return await paginate<App>(this, options, findOptions);
   }
 
