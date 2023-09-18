@@ -53,6 +53,12 @@ I'd love to hear your feedback on the product and any features you'd like to see
 
 Contributions are welcome! Please open an issue first to discuss changes you'd like to make.
 
+## Road map
+
+- Support multiple tenants for a user's account
+- Master Administration
+- Support integrated with jira
+
 ## License
 
 App Center is licensed under MIT.

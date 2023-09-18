@@ -62,7 +62,8 @@ const Sidebar = () => {
   }, [handleOpen, location.pathname]);
   useEffect(() => {
     initMenuOpen();
-  }, [initMenuOpen]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return (
     <Card className="transform my-4 mx-2 md:mx-4 h-[calc(100vh-2rem)] min-w-[60px] w-fit md:w-full max-w-[20rem] py-4 px-2 md:p-4 shadow-xl shadow-blue-gray-900/5">
