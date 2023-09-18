@@ -99,7 +99,10 @@ const ViewApp = () => {
 
   return (
     <div>
-      <DefaultBreadcrumb pageName={'Dashboard.All Apps.' + app?.name ?? '-'} />
+      <DefaultBreadcrumb
+        pageName={'Dashboard.All Apps.' + app?.name ?? '-'}
+        paths={['/', '/apps']}
+      />
       <div className="pb-2">
         <Typography variant="h4" color="blue-gray">
           {app?.name ?? '-'}

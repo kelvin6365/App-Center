@@ -14,6 +14,7 @@ type Props = {
 };
 
 const Credentials = ({ isActive }: Props) => {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const tableRef = useRef<any>(null);
   const [openSearch, setOpenSearch] = useState(false);
   const [selectedComponent, setSelectedComponent] =

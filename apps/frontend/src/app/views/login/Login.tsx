@@ -8,19 +8,16 @@ import { toast } from 'react-toastify';
 import axios from 'axios';
 import TextInput from '../../../components/Input/TextInput';
 import { useEffect } from 'react';
-type Props = {};
 
 type LoginFormInputs = {
   email: string;
   password: string;
 };
-const Login = (props: Props) => {
+const Login = () => {
   const {
     register,
     handleSubmit,
-    watch,
     formState: { errors, isSubmitting },
-    reset,
   } = useForm<LoginFormInputs>({
     // resolver: yupResolver<Inputs>(schema),
     defaultValues: {},
@@ -28,6 +25,7 @@ const Login = (props: Props) => {
 
   const navigate = useNavigate();
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [setLoggedIn, isLoggedIn] = useAppStore((state: any) => [
     state.setLoggedIn,
     state.isLoggedIn,
@@ -114,12 +112,9 @@ const Login = (props: Props) => {
                     </label>
                   </div>
                 </div>
-                <a
-                  href="#"
-                  className="text-sm font-medium text-primary-600 hover:underline dark:text-primary-500"
-                >
+                <p className="text-sm font-medium text-primary-600 hover:underline dark:text-primary-500">
                   Forgot password?
-                </a>
+                </p>
               </div>
               <Button disabled={isSubmitting} className="w-full" type="submit">
                 Sign In

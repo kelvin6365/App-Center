@@ -1,4 +1,4 @@
-import { applyDecorators, HttpStatus, Type } from '@nestjs/common';
+import { applyDecorators, HttpStatus } from '@nestjs/common';
 import {
   ApiExtraModels,
   ApiOkResponse,

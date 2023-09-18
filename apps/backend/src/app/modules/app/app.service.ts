@@ -19,6 +19,7 @@ import { InstallAppDTO } from './dto/install.app.dto';
 import { App } from './entities/app.entity';
 import { AppVersion } from './entities/app.version.entity';
 import { AppVersionTag } from './entities/app.version.tag.entity';
+import { UpdateAppDTO } from './dto/update.app.dto';
 
 @Injectable()
 export class AppService {
@@ -48,6 +49,7 @@ export class AppService {
     newApp.apiKey = nanoid();
     newApp.extra = app.extra ?? {};
     newApp.createdBy = user.id;
+    newApp.tenantId = user.tenants[0];
     const createdApp = await this.appRepository.createApp(newApp);
     if (createdApp) {
       //Create app icon
@@ -77,6 +79,7 @@ export class AppService {
     user: CurrentUserDTO
   ): Promise<PageDto<AppDTO>> {
     const result = await this.appRepository.findAll(
+      user.tenants[0],
       searchQuery,
       withDeleted,
       {
@@ -267,7 +270,7 @@ export class AppService {
   //update app
   async updateApp(
     id: string,
-    app: CreateAppDTO,
+    app: UpdateAppDTO,
     file: Express.Multer.File,
     user: CurrentUserDTO
   ): Promise<boolean> {

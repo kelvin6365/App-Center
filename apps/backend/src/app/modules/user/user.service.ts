@@ -8,7 +8,11 @@ import { SignUpDTO } from '../auth/dto/signup.request.dto';
 import { UserRepository } from '../../database/repositories/users.repository';
 import { UserRefreshTokenRepository } from '../../database/repositories/user.refresh.token.repository';
 import { UserPermission } from './entities/user.permission.entity';
-import PermissionEnum from '../auth/enum/permission.enum';
+import PermissionEnum from '../permission/enum/permission.enum';
+import { CreateUserDTO } from './dto/create.user.dto';
+import { hashPassword } from '../../common/util/password.util';
+import { PortalUserResponseDTO } from './dto/portal.user.response.dto';
+import { omit } from 'lodash';
 
 @Injectable()
 export class UserService {
@@ -17,7 +21,7 @@ export class UserService {
     private readonly usersRepository: UserRepository,
     private readonly userRefreshTokenRepository: UserRefreshTokenRepository
   ) {}
-  async createUser(signUpDTO: SignUpDTO): Promise<User> {
+  async signUp(signUpDTO: SignUpDTO): Promise<User> {
     const newUser = new User();
     const newProfile = new UserProfile();
     newUser.username = signUpDTO.username;
@@ -48,8 +52,6 @@ export class UserService {
     ];
     const result = await this.usersRepository.createUser(newUser);
     return result;
-    console.log(newUser);
-    return await this.usersRepository.createUser(newUser);
   }
 
   async updateUserRefreshToken(
@@ -89,5 +91,46 @@ export class UserService {
       this.logger.error(error);
       throw error;
     }
+  }
+
+  //Create user from user management
+  async createUser(newUserDTO: CreateUserDTO) {
+    const newUser = new User();
+    const newProfile = new UserProfile();
+    newUser.username = newUserDTO.username;
+    newUser.password = await hashPassword(newUserDTO.password);
+    newProfile.email = newUserDTO.email;
+    newProfile.name = newUserDTO.name;
+    newUser.profile = newProfile;
+    newUser.refreshToken = new UserRefreshToken();
+    //Assign roles
+    newUser.roles = [];
+    newUserDTO.roleTypes.forEach((roleType) => {
+      const userRole = new UserRole();
+      userRole.roleId = RoleId[roleType];
+      newUser.roles.push(userRole);
+    });
+    //Assign permissions
+    newUser.permissions = [];
+    newUserDTO.permissions.forEach((permission) => {
+      const userPermission = new UserPermission();
+      userPermission.userId = newUser.id;
+      userPermission.permissionId = permission;
+      newUser.permissions.push(userPermission);
+    });
+    //Create user
+    await this.usersRepository.createUser(newUser);
+    return true;
+  }
+
+  //Get User By ID
+  async getUserByIdWithDeletedFalse(
+    userId: string
+  ): Promise<PortalUserResponseDTO> {
+    const user = omit(
+      await this.usersRepository.findUserByUserIdWithDeletedFalse(userId),
+      ['password', 'refreshToken']
+    );
+    return new PortalUserResponseDTO(user);
   }
 }

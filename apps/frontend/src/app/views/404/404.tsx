@@ -1,9 +1,7 @@
 import React from 'react';
 import { NavLink } from 'react-router-dom';
 
-type Props = {};
-
-const ErrorPage = (props: Props) => {
+const ErrorPage = () => {
   return (
     <main className="h-screen w-full flex flex-col justify-center items-center bg-[#d6ddf1]">
       <h1 className="font-extrabold tracking-widest text-white text-9xl">

@@ -35,7 +35,7 @@ import { AppException } from '../../common/response/app.exception';
 import { AppResponse } from '../../common/response/app.response';
 import { ResponseCode } from '../../common/response/response.code';
 import { CurrentUserDTO } from '../auth/dto/current.user.dto';
-import AppsPermission from '../auth/enum/apps.permission.enum';
+import AppsPermission from '../permission/enum/apps.permission.enum';
 import PermissionGuard from '../auth/permission.guard';
 import { AppAllowedType } from '../file/enum/app.allowed.type.enum';
 import { ImageAllowedType } from '../file/enum/image.allowed.type.enum';

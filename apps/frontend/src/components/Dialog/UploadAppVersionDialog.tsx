@@ -24,6 +24,7 @@ type Props = {
 type EditAppFormInputs = {
   name: string;
   description: string;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   file: any;
   tags: string;
   installPassword: string;
@@ -57,6 +58,7 @@ const UploadAppVersionDialog = ({ title, onClose, open, app }: Props) => {
           .join(','),
         installPassword: values.installPassword.trim(),
       });
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const { status }: { data: any; status: any } = res.data;
       console.log(status);
       if (status.code === 1000) {

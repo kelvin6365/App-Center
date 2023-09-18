@@ -66,6 +66,7 @@ const AllApps = () => {
         toast.error(error.response?.data?.status?.displayMessage.toString());
       }
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [page, supperSearch]);
 
   const onSubmit = async (values: SearchFormInputs) => {
@@ -93,7 +94,7 @@ const AllApps = () => {
 
   return (
     <>
-      <DefaultBreadcrumb pageName="Dashboard.All Apps" />
+      <DefaultBreadcrumb pageName="Dashboard.All Apps" paths={['/']} />
       <div className="pb-2">
         <Typography variant="h4" color="blue-gray">
           App Apps

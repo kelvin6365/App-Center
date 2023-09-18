@@ -28,7 +28,7 @@ const DeleteAppVersionDialog = ({ title, onClose, open, version }: Props) => {
   const {
     register,
     handleSubmit,
-    formState: { errors, isSubmitting },
+    formState: { isSubmitting },
     reset,
   } = useForm<DeleteVersionFormInputs>({
     // resolver: yupResolver<Inputs>(schema),
@@ -50,6 +50,7 @@ const DeleteAppVersionDialog = ({ title, onClose, open, version }: Props) => {
   const onSubmit: SubmitHandler<DeleteVersionFormInputs> = async (values) => {
     try {
       const res = await API.app.deleteVersion(values.id, values.versionId);
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const { status }: { data: any; status: any } = res.data;
       console.log(status);
       if (status.code === 1000) {

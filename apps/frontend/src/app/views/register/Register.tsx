@@ -8,7 +8,6 @@ import { toast } from 'react-toastify';
 import axios from 'axios';
 import TextInput from '../../../components/Input/TextInput';
 import { useEffect } from 'react';
-type Props = {};
 
 type RegisterFormInputs = {
   email: string;
@@ -16,13 +15,12 @@ type RegisterFormInputs = {
   confirmPassword: string;
   name: string;
 };
-const Login = (props: Props) => {
+const Login = () => {
   const {
     register,
     handleSubmit,
     watch,
     formState: { errors, isSubmitting },
-    reset,
   } = useForm<RegisterFormInputs>({
     // resolver: yupResolver<Inputs>(schema),
     defaultValues: {},
@@ -30,6 +28,7 @@ const Login = (props: Props) => {
 
   const navigate = useNavigate();
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [setLoggedIn, isLoggedIn] = useAppStore((state: any) => [
     state.setLoggedIn,
     state.isLoggedIn,

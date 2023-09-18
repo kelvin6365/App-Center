@@ -39,7 +39,7 @@ const CreateApp = () => {
 
   useEffect(() => {
     reset();
-  }, []);
+  }, [reset]);
 
   const onSubmit: SubmitHandler<CreateAppFormInputs> = async (values) => {
     console.log(values);
@@ -56,6 +56,7 @@ const CreateApp = () => {
           confluenceURL: values.confluenceURL,
         },
       });
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const { data, status }: { data: any; status: any } = res.data;
       if (status.code === 1000) {
         reset();
@@ -72,7 +73,7 @@ const CreateApp = () => {
   };
   return (
     <div>
-      <DefaultBreadcrumb pageName="Dashboard.Create App" />
+      <DefaultBreadcrumb pageName="Dashboard.Create App" paths={['/']} />
       <div className="pb-2">
         <Typography variant="h4" color="blue-gray">
           Create New App

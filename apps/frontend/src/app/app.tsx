@@ -8,6 +8,7 @@ import API from './util/api';
 import { useAppStore, useBoundStore } from './util/store/store';
 
 export function App() {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [isLoggedIn] = useAppStore((state: any) => [state.isLoggedIn]);
   const [setSettings, setCredentialComponents] = useBoundStore((state) => [
     state.setSettings,
@@ -32,6 +33,7 @@ export function App() {
     if (isLoggedIn) {
       fetchInitData();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (

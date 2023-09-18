@@ -23,6 +23,7 @@ type Props = {
 type EditAppFormInputs = {
   name: string;
   description: string;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   icon: any;
   playStoreURL: string;
   appStoreURL: string;
@@ -65,6 +66,7 @@ const EditAppDialog = ({ title, onClose, open, app }: Props) => {
           confluenceURL: values.confluenceURL,
         },
       });
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const { status }: { data: any; status: any } = res.data;
       console.log(status);
       if (status.code === 1000) {

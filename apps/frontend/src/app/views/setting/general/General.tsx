@@ -1,8 +1,8 @@
 import { useEffect } from 'react';
 
-type Props = {};
+// type Props = {};
 
-const General = (props: Props) => {
+const General = () => {
   useEffect(() => {
     console.log('General');
   }, []);

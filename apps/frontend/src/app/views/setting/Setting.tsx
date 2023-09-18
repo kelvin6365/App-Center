@@ -11,9 +11,8 @@ import { useState } from 'react';
 import DefaultBreadcrumb from '../../../components/Breadcrumb/DefaultBreadcrumb';
 import General from './general/General';
 import Credentials from './credentials/Credentials';
-type Props = {};
 
-const Setting = (props: Props) => {
+const Setting = () => {
   const [activeTab, setActiveTab] = useState(1);
   const data = [
     {
@@ -49,6 +48,7 @@ const Setting = (props: Props) => {
       <DefaultBreadcrumb
         pageName="Settings"
         icon={<Cog6ToothIcon className="w-5 h-5" />}
+        paths={['/setting']}
       />
       <div className="pb-2">
         <Typography variant="h4" color="blue-gray">
