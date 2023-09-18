@@ -63,7 +63,7 @@ export class AppRepository extends Repository<App> {
     }
     findOptions.where = findOptions.where.map((o) => ({
       ...o,
-      tenantId: tenantId ? tenantId : null,
+      tenantId: tenantId ? tenantId : '00000000-0000-0000-0000-000000000000',
     }));
     return await paginate<App>(this, options, findOptions);
   }
