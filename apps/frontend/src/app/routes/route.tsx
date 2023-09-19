@@ -4,6 +4,7 @@ import Loading from '../../components/Loading/Loading';
 import App from '../app';
 import dashboardRoute from './dashboard/dashboardRoute';
 import settingRoute from './setting/settingRoute';
+import userManagementRoute from './userManagement/userManagementRoute';
 const Guard = loadable(() => import('../routes/Guard'), {
   fallback: <Loading />,
 });
@@ -31,6 +32,7 @@ const route = () => {
       ),
       children: [
         ...dashboardRoute(),
+        ...userManagementRoute(),
         ...settingRoute(),
         {
           path: '*',

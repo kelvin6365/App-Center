@@ -23,7 +23,7 @@ const dashboardRoute = () => {
       element: <ViewApp />,
     },
     {
-      path: '/create-app',
+      path: '/apps/create-app',
       element: <CreateApp />,
     },
   ];
