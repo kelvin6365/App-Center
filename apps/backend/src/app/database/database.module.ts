@@ -33,6 +33,7 @@ import { UserStatus } from '../modules/user/enum/user.status.enum';
 import { Admin } from '../modules/admin/entities/admin.entity';
 import { RoleId } from '../modules/role/enum/role.id.enum';
 import PermissionEnum from '../modules/permission/enum/permission.enum';
+import { InsertSystemConfig1695107265137 } from './migrations/1695107265137-Insert-systemconfig';
 
 @Module({
   imports: [
@@ -73,6 +74,7 @@ import PermissionEnum from '../modules/permission/enum/permission.enum';
             CreateCredentialComponent1694362620123,
             InsertCredentialComponent1694362717025,
             InsertCredentialComponent1694362717026,
+            InsertSystemConfig1695107265137,
           ],
           migrationsRun: configService.get('db.migrationsRun'),
           logging: configService.get('db.logging'),
