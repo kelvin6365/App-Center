@@ -7,14 +7,21 @@ import { CreateSettingDTO } from './dto/create.setting.dto';
 import { AppException } from '../../common/response/app.exception';
 import { ResponseCode } from '../../common/response/response.code';
 import { UpdateSettingDTO } from './dto/update.setting.dto';
+import { CurrentUserDTO } from '../auth/dto/current.user.dto';
 
 @Injectable()
 export class SettingService {
   constructor(private readonly settingRepository: SettingRepository) {}
 
   //get all settings
-  async findAll(withDeleted = false): Promise<SettingListDTO> {
-    const settings = await this.settingRepository.findAll(withDeleted);
+  async findAll(
+    user: CurrentUserDTO,
+    withDeleted = false
+  ): Promise<SettingListDTO> {
+    const settings = await this.settingRepository.findAll(
+      user.id !== undefined,
+      withDeleted
+    );
     return new SettingListDTO(
       settings.map((setting) => new SettingDTO(setting))
     );
@@ -25,6 +32,7 @@ export class SettingService {
     const newSetting = new Setting();
     newSetting.key = setting.key;
     newSetting.config = setting.config;
+    newSetting.type = setting.type;
     const result = await this.settingRepository.createSetting(newSetting);
     return result ? true : false;
   }

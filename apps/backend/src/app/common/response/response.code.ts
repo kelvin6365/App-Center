@@ -140,4 +140,9 @@ export class ResponseCode {
     'User Already Exists',
     'User already exist.'
   );
+  static readonly STATUS_8014_USER_IS_NOT_ACTIVE = new ResponseStatus(
+    8014,
+    'User is not active',
+    'User is not active.'
+  );
 }

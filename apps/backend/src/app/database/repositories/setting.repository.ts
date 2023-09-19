@@ -3,6 +3,7 @@ import { DataSource, DeleteResult, Repository } from 'typeorm';
 import { Setting } from '../../modules/setting/entities/setting.entity';
 import { AppException } from '../../common/response/app.exception';
 import { ResponseCode } from '../../common/response/response.code';
+import { SettingType } from '../../modules/setting/enum/setting.type.enum';
 
 @Injectable()
 export class SettingRepository extends Repository<Setting> {
@@ -11,8 +12,11 @@ export class SettingRepository extends Repository<Setting> {
   }
 
   //get all settings
-  async findAll(withDeleted = false): Promise<Setting[]> {
+  async findAll(withPrivate = false, withDeleted = false): Promise<Setting[]> {
     return this.find({
+      where: {
+        type: withPrivate ? null : SettingType.Public,
+      },
       withDeleted,
     });
   }

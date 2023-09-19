@@ -1,6 +1,20 @@
 import { Injectable } from '@nestjs/common';
-import { DataSource, Repository } from 'typeorm';
+import {
+  DataSource,
+  FindManyOptions,
+  ILike,
+  In,
+  Repository,
+  UpdateResult,
+} from 'typeorm';
 import { User } from '../../modules/user/entities/user.entity';
+import {
+  IPaginationMeta,
+  IPaginationOptions,
+  Pagination,
+  paginate,
+} from 'nestjs-typeorm-paginate';
+import { UserStatus } from '../../modules/user/enum/user.status.enum';
 
 @Injectable()
 export class UserRepository extends Repository<User> {
@@ -14,6 +28,10 @@ export class UserRepository extends Repository<User> {
 
   updateUser(userEntity: User): Promise<User> {
     return this.save(userEntity);
+  }
+
+  updateUserStatus(id: string, status: UserStatus): Promise<UpdateResult> {
+    return this.update(id, { status });
   }
 
   addRoleToUser(user: User): Promise<User> {
@@ -36,17 +54,60 @@ export class UserRepository extends Repository<User> {
     });
   }
 
-  // findPublicProfileByIdWithDeletedFalse(id: string): Promise<User> {
-  //   return this.findOne({
-  //     select: {
-  //       id: true,
-  //       profile: {
-  //         name: true,
-  //       },
-  //     },
-  //     where: { id: id },
-  //     relations: ['profile'],
-  //     withDeleted: false,
-  //   });
-  // }
+  async searchUsers(
+    searchQuery = '',
+    withDeleted = false,
+    options: IPaginationOptions = { page: 1, limit: 10 },
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    filters: { key: string; values: string | boolean | any[] | number[] }[],
+    sorts: { key: string; value: 'ASC' | 'DESC' }[] = [
+      { key: 'createdAt', value: 'DESC' },
+    ]
+  ): Promise<Pagination<User, IPaginationMeta>> {
+    let findOptions: FindManyOptions<User> = {};
+    findOptions = {
+      where: [],
+      withDeleted,
+      order: {},
+      relations: [
+        'profile',
+        'roles',
+        'permissions',
+        'tenants',
+        'tenants.tenant',
+      ],
+    };
+    const orWhereOptions = [
+      {
+        profile: {
+          name: ILike(`%${searchQuery}%`),
+        },
+      },
+      {
+        username: ILike(`%${searchQuery}%`),
+      },
+    ];
+    if (filters.length > 0) {
+      const relations = filters.reduce(function (r, o) {
+        const path = o.key.split('.'),
+          last = path.pop();
+        path.reduce(function (p, k) {
+          return (p[k] = p[k] || {});
+        }, r)[last] = Array.isArray(o.values)
+          ? In(o.values)
+          : ILike(`%${o.values}%`);
+        return r;
+      }, {});
+      findOptions.where = orWhereOptions.map((o) => ({ ...o, ...relations }));
+    } else {
+      findOptions.where = orWhereOptions;
+    }
+    if (sorts.length > 0) {
+      for (let i = 0; i < sorts.length; i++) {
+        const sort = sorts[i];
+        findOptions.order[sort.key] = sort.value;
+      }
+    }
+    return paginate<User>(this, options, findOptions);
+  }
 }
