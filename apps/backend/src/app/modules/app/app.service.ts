@@ -1,7 +1,7 @@
 import { Inject, Injectable, Logger, LoggerService } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { nanoid } from 'nanoid';
-import { PageDto } from '../../common/dto/page.dto';
+import { PageDTO } from '../../common/dto/page.dto';
 import { AppException } from '../../common/response/app.exception';
 import { ResponseCode } from '../../common/response/response.code';
 import { hashPassword, isMatchPassword } from '../../common/util/password.util';
@@ -77,7 +77,7 @@ export class AppService {
       { key: 'createdAt', value: 'DESC' },
     ],
     user: CurrentUserDTO
-  ): Promise<PageDto<AppDTO>> {
+  ): Promise<PageDTO<AppDTO>> {
     const result = await this.appRepository.findAll(
       user.tenants[0],
       searchQuery,

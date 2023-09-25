@@ -35,7 +35,7 @@ import { LoginResponseDTO } from '../auth/admin/dto/login.response.dto';
 import { JSONQuery } from '../../common/decorator/json.query';
 import { SearchQueryDTO } from '../../common/dto/search.dto';
 import { AdminResponseDTO } from './dto/admin.response.dto';
-import { PageDto } from '../../common/dto/page.dto';
+import { PageDTO } from '../../common/dto/page.dto';
 import { ApiPagingResponseSchema } from '../../common/decorator/swagger.paging.decorator';
 import { LocalAdminAuthGuard } from '../auth/admin/local-admin-auth.guard';
 import { JwtAdminAuthGuard } from '../auth/admin/jwt-admin-auth.guard';
@@ -104,8 +104,8 @@ export class AdminController {
     @Query('page', new DefaultValuePipe(1), ParseIntPipe) page = 1,
     @Query('limit', new DefaultValuePipe(10), ParseIntPipe) limit = 10,
     @CurrentUser() user: CurrentAdminDTO
-  ): Promise<AppResponse<PageDto<AdminResponseDTO>>> {
-    return new AppResponse<PageDto<AdminResponseDTO>>(
+  ): Promise<AppResponse<PageDTO<AdminResponseDTO>>> {
+    return new AppResponse<PageDTO<AdminResponseDTO>>(
       await this.adminService.findAll(
         query?.query ?? '',
         query?.withDeleted != null ? query.withDeleted : false,

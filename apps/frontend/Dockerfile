@@ -1,7 +1,8 @@
 FROM node:lts-alpine as build
+RUN npm i -g pnpm
 WORKDIR /app
 COPY ./dist/apps/frontend .
-RUN yarn install
+RUN pnpm install
 
 FROM nginx:alpine AS react-nx-ui
 COPY apps/frontend/default.conf /etc/nginx/conf.d/default.conf

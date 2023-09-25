@@ -1,8 +1,9 @@
 FROM node:lts-alpine
+RUN npm i -g pnpm
 WORKDIR /app
 COPY ./dist/apps/backend .
 ENV PORT=9000
 EXPOSE ${PORT}
-RUN yarn install
-RUN yarn add pg
+RUN pnpm install
+RUN pnpm add pg
 CMD node ./main.js

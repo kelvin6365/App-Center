@@ -15,6 +15,8 @@ import { UserProfile } from './entities/user.profile.entity';
 import { UserRefreshToken } from './entities/user.refresh.token.entity';
 import { UserRole } from './entities/user.role.entity';
 import { UserStatus } from './enum/user.status.enum';
+import { IPaginationMeta, Pagination } from 'nestjs-typeorm-paginate';
+import { PageDTO } from '../../common/dto/page.dto';
 
 @Injectable()
 export class UserService {
@@ -147,7 +149,7 @@ export class UserService {
       { key: 'createdAt', value: 'DESC' },
     ],
     user: CurrentUserDTO
-  ): Promise<any> {
+  ): Promise<Promise<PageDTO<PortalUserResponseDTO>>> {
     const users = await this.usersRepository.searchUsers(
       searchQuery,
       withDeleted,

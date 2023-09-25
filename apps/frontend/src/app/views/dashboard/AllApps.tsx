@@ -97,7 +97,7 @@ const AllApps = () => {
       <DefaultBreadcrumb pageName="Dashboard.All Apps" paths={['/']} />
       <div className="pb-2">
         <Typography variant="h4" color="blue-gray">
-          App Apps
+          All Apps
         </Typography>
         <Typography color="gray" className="mt-1 font-normal">
           All apps can be found here.

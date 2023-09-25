@@ -22,7 +22,7 @@ import { Roles } from '../../common/decorator/roles.decorator';
 import { ApiResponseSchema } from '../../common/decorator/swagger.decorator';
 import { ApiPagingResponseSchema } from '../../common/decorator/swagger.paging.decorator';
 import { CurrentUser } from '../../common/decorator/user.decorator';
-import { PageDto } from '../../common/dto/page.dto';
+import { PageDTO } from '../../common/dto/page.dto';
 import { SearchQueryDTO } from '../../common/dto/search.dto';
 import { AppResponse } from '../../common/response/app.response';
 import { CurrentUserDTO } from '../auth/dto/current.user.dto';
@@ -31,6 +31,7 @@ import { CreateUserDTO } from './dto/create.user.dto';
 import { PortalUserResponseDTO } from './dto/portal.user.response.dto';
 import { UpdateUserStatusRequestDTO } from './dto/update.user.status.request.dto';
 import { UserService } from './user.service';
+import { Pagination, IPaginationMeta } from 'nestjs-typeorm-paginate';
 @ApiTags('User')
 @Controller({ path: '/user', version: ['1'] })
 @ApiBearerAuth()
@@ -38,7 +39,7 @@ export class UserController {
   constructor(private readonly userService: UserService) {}
 
   //Get All Users
-  @Get()
+  @Get('search')
   @Public()
   @ApiOperation({ summary: 'Get all Admins with filter / sort / paging' })
   @ApiQuery({
@@ -59,14 +60,14 @@ export class UserController {
   })
   @ApiQuery({ name: 'page', required: false })
   @ApiQuery({ name: 'limit', required: false })
-  @ApiPagingResponseSchema(HttpStatus.OK, 'OK', PageDto)
+  @ApiPagingResponseSchema(HttpStatus.OK, 'OK', PortalUserResponseDTO)
   async getAllUsers(
     @JSONQuery('query') query: SearchQueryDTO,
     @Query('page', new DefaultValuePipe(1), ParseIntPipe) page = 1,
     @Query('limit', new DefaultValuePipe(10), ParseIntPipe) limit = 10,
     @CurrentUser() user: CurrentUserDTO
-  ): Promise<AppResponse> {
-    return new AppResponse(
+  ): Promise<AppResponse<PageDTO<PortalUserResponseDTO>>> {
+    return new AppResponse<PageDTO<PortalUserResponseDTO>>(
       await this.userService.searchUser(
         query?.query ?? '',
         query?.withDeleted != null ? query.withDeleted : false,

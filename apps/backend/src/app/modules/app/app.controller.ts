@@ -29,7 +29,7 @@ import { Roles } from '../../common/decorator/roles.decorator';
 import { ApiResponseSchema } from '../../common/decorator/swagger.decorator';
 import { ApiPagingResponseSchema } from '../../common/decorator/swagger.paging.decorator';
 import { CurrentUser } from '../../common/decorator/user.decorator';
-import { PageDto } from '../../common/dto/page.dto';
+import { PageDTO } from '../../common/dto/page.dto';
 import { SearchQueryDTO } from '../../common/dto/search.dto';
 import { AppException } from '../../common/response/app.exception';
 import { AppResponse } from '../../common/response/app.response';
@@ -85,8 +85,8 @@ export class AppController {
     @Query('page', new DefaultValuePipe(1), ParseIntPipe) page = 1,
     @Query('limit', new DefaultValuePipe(10), ParseIntPipe) limit = 10,
     @CurrentUser() currentUser: CurrentUserDTO
-  ): Promise<AppResponse<PageDto<AppDTO>>> {
-    return new AppResponse<PageDto<AppDTO>>(
+  ): Promise<AppResponse<PageDTO<AppDTO>>> {
+    return new AppResponse<PageDTO<AppDTO>>(
       await this.appService.findAll(
         query?.query ?? '',
         query?.withDeleted != null ? query.withDeleted : false,
