@@ -33,7 +33,8 @@ import { UserStatus } from '../modules/user/enum/user.status.enum';
 import { Admin } from '../modules/admin/entities/admin.entity';
 import { RoleId } from '../modules/role/enum/role.id.enum';
 import PermissionEnum from '../modules/permission/enum/permission.enum';
-import { InsertSystemConfig1695107265137 } from './migrations/1695107265137-Insert-systemconfig';
+import { InsertSystemConfig1695658100920 } from './migrations/1695658100920-Insert-SystemConfig';
+import { CreateSetting1695107265137 } from './migrations/1695107265137-Create-Setting';
 
 @Module({
   imports: [
@@ -64,6 +65,7 @@ import { InsertSystemConfig1695107265137 } from './migrations/1695107265137-Inse
             CredentialComponent,
             Tenant,
             UserTenant,
+            Setting,
           ],
           synchronize: configService.get('db.synchronize'),
           migrations: [
@@ -74,7 +76,8 @@ import { InsertSystemConfig1695107265137 } from './migrations/1695107265137-Inse
             CreateCredentialComponent1694362620123,
             InsertCredentialComponent1694362717025,
             InsertCredentialComponent1694362717026,
-            InsertSystemConfig1695107265137,
+            CreateSetting1695107265137,
+            InsertSystemConfig1695658100920,
           ],
           migrationsRun: configService.get('db.migrationsRun'),
           logging: configService.get('db.logging'),
