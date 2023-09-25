@@ -49,9 +49,9 @@ const DefaultBreadcrumb = ({ pageName, paths, icon }: DefaultBreadcrumb) => {
                   ))}
                 <span
                   onClick={() => {
-                    if (index !== paths.length - 1) {
-                      return;
-                    }
+                    // if (index !== paths.length - 1) {
+                    //   return;
+                    // }
                     console.log('[Go]', paths[index]);
                     navigate(paths[index]);
                   }}

@@ -21,12 +21,12 @@ const userManagementRoute = () => {
       element: <AllUsers />,
     },
     {
-      path: '/users/:id',
-      element: <ViewUser />,
-    },
-    {
       path: '/users/invite',
       element: <InviteUser />,
+    },
+    {
+      path: '/users/:id',
+      element: <ViewUser />,
     },
   ];
 };

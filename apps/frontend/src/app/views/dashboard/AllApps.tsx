@@ -94,7 +94,7 @@ const AllApps = () => {
 
   return (
     <>
-      <DefaultBreadcrumb pageName="Dashboard.All Apps" paths={['/']} />
+      <DefaultBreadcrumb pageName="Dashboard.All Apps" paths={['/apps']} />
       <div className="pb-2">
         <Typography variant="h4" color="blue-gray">
           All Apps

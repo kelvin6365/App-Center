@@ -37,7 +37,7 @@ const MenuItems = [
       {
         label: 'Invite User',
         icon: <UserPlusIcon strokeWidth={3} className="w-5 h-5" />,
-        path: '/users/invite-user',
+        path: '/users/invite',
       },
     ],
   },

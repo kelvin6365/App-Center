@@ -102,7 +102,7 @@ const ViewApp = () => {
     <div>
       <DefaultBreadcrumb
         pageName={'Dashboard.All Apps.' + app?.name ?? '-'}
-        paths={['/', '/apps']}
+        paths={['/apps', '/apps']}
       />
       <div className="pb-2">
         <Typography variant="h4" color="blue-gray">

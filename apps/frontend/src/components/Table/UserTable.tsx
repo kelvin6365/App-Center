@@ -272,7 +272,7 @@ const UserTable = ensuredForwardRef<UserTableRef, Props>(
                             if (cell.column.id === 'select') {
                               return;
                             }
-                            navigate('../' + row.original.id);
+                            navigate('./' + row.original.id);
                           }}
                         >
                           {cell.column.id === 'select' ? (
