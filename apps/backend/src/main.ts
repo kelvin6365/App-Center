@@ -43,7 +43,7 @@ async function bootstrap() {
     `🚀 Application is running on: http://localhost:${port}/${globalPrefix}`
   );
   Logger.log(
-    `🚀 Swagger is running on: http://localhost:${port}/${
+    `🚀 Swagger is running on: http://localhost:${port}${
       configService.get<string>('app.swaggerPath') ?? 'api/swagger'
     }`
   );
