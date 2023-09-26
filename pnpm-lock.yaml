@@ -55,9 +55,6 @@ dependencies:
   '@types/crypto-js':
     specifier: ^4.1.2
     version: 4.1.2
-  '@types/js-cookie':
-    specifier: ^3.0.4
-    version: 3.0.4
   axios:
     specifier: ^1.4.0
     version: 1.4.0
@@ -258,6 +255,9 @@ devDependencies:
   '@types/jest':
     specifier: ^29.4.0
     version: 29.4.0
+  '@types/js-cookie':
+    specifier: ^3.0.4
+    version: 3.0.4
   '@types/loadable__component':
     specifier: ^5.13.4
     version: 5.13.4
@@ -276,6 +276,9 @@ devDependencies:
   '@types/passport-local':
     specifier: ^1.0.35
     version: 1.0.35
+  '@types/prop-types':
+    specifier: ^15.7.7
+    version: 15.7.7
   '@types/react':
     specifier: 18.2.14
     version: 18.2.14
@@ -5112,7 +5115,7 @@ packages:
 
   /@types/js-cookie@3.0.4:
     resolution: {integrity: sha512-vMMnFF+H5KYqdd/myCzq6wLDlPpteJK+jGFgBus3Da7lw+YsDmx2C8feGTzY2M3Fo823yON+HC2CL240j4OV+w==}
-    dev: false
+    dev: true
 
   /@types/json-schema@7.0.13:
     resolution: {integrity: sha512-RbSSoHliUbnXj3ny0CNFOoxrIDV6SUGyStHsvDqosw6CkdPV8TtWGlfecuK4ToyMEAql6pzNxgCFKanovUzlgQ==}
