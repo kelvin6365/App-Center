@@ -38,9 +38,9 @@ jobs:
         with:
           filters: |
             frontend:
-              - 'apps/frontend/**'
+              - '**'
             backend:
-              - 'apps/backend/**'
+              - '**'
       - name: Generate GITHUB_SHA
         id: github-sha
         shell: bash
