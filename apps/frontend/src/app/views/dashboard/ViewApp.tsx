@@ -25,7 +25,9 @@ import GitLabCIDialog from '../../../components/Dialog/GitLabCIDialog';
 import PostmanDialog from '../../../components/Dialog/PostmanDialog';
 import QRCodeDialog from '../../../components/Dialog/QRCodeDialog';
 import UploadAppVersionDialog from '../../../components/Dialog/UploadAppVersionDialog';
-import AppVersionTable from '../../../components/Table/AppVersionTable';
+import AppVersionTable, {
+  TableRef,
+} from '../../../components/Table/AppVersionTable';
 import API from '../../util/api';
 import { App } from '../../util/type/App';
 import { maskingString } from '../../util/util';
@@ -53,7 +55,7 @@ const ViewApp = () => {
     data: null,
   });
 
-  const tableRef = useRef<any>(null);
+  const tableRef = useRef<TableRef>(null);
 
   //get app
   const fetchApp = useCallback(async (appId: string) => {

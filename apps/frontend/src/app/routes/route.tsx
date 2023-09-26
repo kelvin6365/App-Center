@@ -21,6 +21,9 @@ const Install = loadable(() => import('../views/install/Install'), {
 const NotFound = loadable(() => import('../views/404/404'), {
   fallback: <Loading />,
 });
+const Account = loadable(() => import('../views/account/Account'), {
+  fallback: <Loading />,
+});
 
 const route = () => {
   return [
@@ -37,6 +40,10 @@ const route = () => {
         ...dashboardRoute(),
         ...userManagementRoute(),
         ...settingRoute(),
+        {
+          path: 'account',
+          element: <Account />,
+        },
         {
           path: '*',
           element: <Navigate to={`/apps`} replace />,

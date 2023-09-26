@@ -5,10 +5,10 @@ import {
   DialogFooter,
   DialogHeader,
 } from '@material-tailwind/react';
-import { useForm } from 'react-hook-form';
+import { Controller, useForm } from 'react-hook-form';
 import { useBoundStore } from '../../app/util/store/store';
 import { CredentialComponent } from '../../app/util/type/CredentialComponent';
-import TextInput from '../Input/TextInput';
+import TextInput from '../Input/Input';
 
 type Props = {
   title: string;
@@ -28,10 +28,10 @@ const SearchCredentialTypeDialog = ({
   ]);
 
   const {
-    register,
     watch,
     setValue,
-    formState: { errors, isSubmitting },
+    control,
+    formState: { isSubmitting },
   } = useForm({
     mode: 'onBlur',
     defaultValues: {
@@ -54,12 +54,21 @@ const SearchCredentialTypeDialog = ({
     >
       <DialogHeader>{title}</DialogHeader>
       <DialogBody divider>
-        <div className="w-full">
-          <TextInput
-            {...register('search', {})}
-            placeholder={'Search Credential Type'}
-            loading={isSubmitting}
-            errors={errors}
+        <div className="w-full my-2">
+          <Controller
+            name="search"
+            control={control}
+            rules={{}}
+            render={({ field, fieldState: { error } }) => {
+              return (
+                <TextInput
+                  {...field}
+                  label={'Search Credential Type'}
+                  disabled={isSubmitting}
+                  error={error}
+                />
+              );
+            }}
           />
         </div>
         {credentialComponents
@@ -67,7 +76,7 @@ const SearchCredentialTypeDialog = ({
             (c) =>
               c.label
                 .toLowerCase()
-                .indexOf(searchCredentialName.toLowerCase()) !== -1
+                .indexOf(searchCredentialName?.toLowerCase()) !== -1
           )
           .map((component, i) => (
             <div

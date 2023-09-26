@@ -1,10 +1,12 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import axios from 'axios';
+import axios, { AxiosResponse } from 'axios';
 import Cookies from 'js-cookie';
 import { AppSlice } from './store/appSlice';
 import { useAppStore } from './store/store';
 import { UserStatus } from './type/UserStatus';
 import { RoleType } from './type/RoleType';
+import { PortalUserProfile } from './type/PortalUserProfile';
+import { ResponseStatus } from './type/ResponseStatus';
 
 const API = {
   apiInstance: axios.create({
@@ -45,6 +47,7 @@ const API = {
       UPDATE_USER_STATUS: (userId: string) => `/v1/user/${userId}/status`,
       CREATE_USER: '/v1/user',
       PROFILE: '/v1/user',
+      UPDATE_PROFILE: '/v1/user',
     },
     SETTING: {
       GET_ALL_SETTINGS: '/v1/setting',
@@ -230,6 +233,37 @@ const API = {
     },
     profile: () => {
       return API.apiInstance.get(API.API_PATH.USER.PROFILE);
+    },
+    updateProfile: ({
+      name,
+    }: {
+      name: string;
+    }): Promise<
+      AxiosResponse<{
+        data: PortalUserProfile;
+        status: ResponseStatus;
+      }>
+    > => {
+      return API.apiInstance.put(API.API_PATH.USER.UPDATE_PROFILE, {
+        name,
+      });
+    },
+    changePassword: ({
+      password,
+      oldPassword,
+    }: {
+      password: string;
+      oldPassword: string;
+    }): Promise<
+      AxiosResponse<{
+        data: PortalUserProfile;
+        status: ResponseStatus;
+      }>
+    > => {
+      return API.apiInstance.put(API.API_PATH.USER.UPDATE_PROFILE, {
+        password,
+        oldPassword,
+      });
     },
   },
   setting: {

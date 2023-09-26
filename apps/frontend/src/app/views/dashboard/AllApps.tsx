@@ -1,18 +1,18 @@
 import { Typography } from '@material-tailwind/react';
 import axios from 'axios';
 import { useCallback, useEffect, useState } from 'react';
-import { useForm } from 'react-hook-form';
+import { Controller, useForm } from 'react-hook-form';
 import { NavLink, useLocation, useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import DefaultBreadcrumb from '../../../components/Breadcrumb/DefaultBreadcrumb';
-import TextInput from '../../../components/Input/TextInput';
 import { DefaultPagination } from '../../../components/Pagination/Pagination';
 import API from '../../util/api';
 import { App } from '../../util/type/App';
 import { Meta } from '../../util/type/Meta';
 import { BiSearchAlt2 } from 'react-icons/bi';
 import Loading from '../../../components/Loading/Loading';
-import { AppCard } from '@app-center/shared-ui';
+import { AppCard, MainButton } from '@app-center/shared-ui';
+import TextInput from '../../../components/Input/Input';
 type SearchFormInputs = {
   supperSearch: string;
 };
@@ -31,9 +31,9 @@ const AllApps = () => {
   const [isLoading, setIsLoading] = useState(true);
 
   const {
-    register,
     handleSubmit,
-    formState: { errors, isSubmitting },
+    control,
+    formState: { isSubmitting },
     reset,
   } = useForm<SearchFormInputs>({
     // resolver: yupResolver<Inputs>(schema),
@@ -105,13 +105,36 @@ const AllApps = () => {
       </div>
       <div className="pt-4">
         <form onSubmit={handleSubmit(onSubmit)}>
-          <TextInput
-            {...register('supperSearch', {})}
-            placeholder="Quick Search..."
-            errors={errors}
-            loading={isSubmitting}
-            icon={<BiSearchAlt2 />}
-          />
+          <div className="flex w-full gap-4">
+            <div className="w-full">
+              <Controller
+                name="supperSearch"
+                control={control}
+                rules={{}}
+                render={({ field, fieldState: { error } }) => {
+                  return (
+                    <TextInput
+                      {...field}
+                      label="Quick Search..."
+                      error={error}
+                      disabled={isSubmitting}
+                      icon={
+                        <BiSearchAlt2
+                          className="cursor-pointer hover:text-blue-500"
+                          onClick={() => {
+                            handleSubmit(onSubmit)();
+                          }}
+                        />
+                      }
+                    />
+                  );
+                }}
+              />
+            </div>
+            <MainButton type="submit" disabled={isSubmitting}>
+              Search
+            </MainButton>
+          </div>
         </form>
       </div>
       {isLoading && (

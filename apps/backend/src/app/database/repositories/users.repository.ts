@@ -22,11 +22,40 @@ export class UserRepository extends Repository<User> {
     super(User, dataSource.createEntityManager());
   }
 
+  //find user by email for match password
+  async findUserByEmailWithPassword(
+    username: string,
+    withDeleted = false
+  ): Promise<User> {
+    return await this.findOne({
+      select: [
+        'id',
+        'username',
+        'refId',
+        'status',
+        'password',
+        'createdAt',
+        'deletedAt',
+        'updatedAt',
+        'tenants',
+        'roles',
+        'permissions',
+        'profile',
+      ],
+      where: { username },
+      withDeleted,
+      relations: ['tenants', 'roles', 'permissions', 'profile'],
+    });
+  }
+
   createUser(userEntity: User): Promise<User> {
     return this.save(this.create(userEntity));
   }
 
-  updateUser(userEntity: User): Promise<User> {
+  updateUser(userEntity: User, updatedBy?: string): Promise<User> {
+    if (updatedBy) {
+      userEntity.updatedBy = updatedBy;
+    }
     return this.save(userEntity);
   }
 
@@ -109,5 +138,23 @@ export class UserRepository extends Repository<User> {
       }
     }
     return paginate<User>(this, options, findOptions);
+  }
+
+  async updateUserProfileNameOrPassword(
+    id: string,
+    user: User,
+    updatedBy?: string
+  ): Promise<User> {
+    if (updatedBy) {
+      user.updatedBy = updatedBy;
+      await this.save(user);
+    } else {
+      await this.save(user);
+    }
+    return await this.findOne({
+      where: { id: id },
+      relations: ['profile', 'roles', 'permissions', 'tenants'],
+      withDeleted: false,
+    });
   }
 }

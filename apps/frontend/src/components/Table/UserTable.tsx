@@ -41,11 +41,13 @@ function IndeterminateCheckbox({
   disabled,
 }: // ...rest
 { indeterminate?: boolean } & HTMLProps<HTMLInputElement>) {
-  const ref = useRef<HTMLInputElement>(null!);
+  const ref = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     if (typeof indeterminate === 'boolean') {
-      ref.current.indeterminate = !checked && indeterminate;
+      if (ref.current) {
+        ref.current.indeterminate = !checked && indeterminate;
+      }
     }
   }, [ref, indeterminate, checked]);
 
@@ -71,7 +73,7 @@ const UserTable = ensuredForwardRef<UserTableRef, Props>(
     const navigate = useNavigate();
     const [selectedRows, setSelectedRows] = useState({});
     const [data, setData] = useState<PortalUserProfile[]>([]);
-    const itemsPerPage = 20;
+    // const itemsPerPage = 20;
 
     const [totalPages, setTotalPages] = useState(0);
 
@@ -153,7 +155,7 @@ const UserTable = ensuredForwardRef<UserTableRef, Props>(
         header: () => <span>Deleted At</span>,
       },
     ];
-    const table = useReactTable<any>({
+    const table = useReactTable<PortalUserProfile>({
       data: data,
       columns,
       getRowId: (row, relativeIndex, parent) =>
@@ -197,7 +199,8 @@ const UserTable = ensuredForwardRef<UserTableRef, Props>(
           toast.error(error.response?.data?.status?.displayMessage.toString());
         }
       }
-    }, [isLoading]);
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [supperSearch, page]);
 
     useImperativeHandle(ref, () => {
       return {
@@ -209,7 +212,7 @@ const UserTable = ensuredForwardRef<UserTableRef, Props>(
 
     useEffect(() => {
       searchUser();
-    }, []);
+    }, [searchUser]);
 
     return (
       <>

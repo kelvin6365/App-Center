@@ -33,7 +33,7 @@ export class JwtRefreshTokenStrategy extends PassportStrategy(
     if (payload.type != LoginTokenType.UserRefreshToken) {
       throw new UnauthorizedException();
     }
-    const user = await this.userService.getUserByUsernameWithDeletedFalse(
+    const user = await this.userService.findUserByEmailWithPassword(
       payload.username
     );
     //TODO: Cache

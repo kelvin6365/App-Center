@@ -17,11 +17,11 @@ import { toast } from 'react-toastify';
 import logo from '../../../assets/images/logo.jpg';
 import Tag from '../../../components/Chip/Tag';
 import QRCodeDialog from '../../../components/Dialog/QRCodeDialog';
-import TextInput from '../../../components/Input/TextInput';
 import API from '../../util/api';
 import { App } from '../../util/type/App';
 import { AppVersion } from '../../util/type/AppVersion';
 import isUuid, { useQuery } from '../../util/util';
+import TextInput from '../../../components/Input/Input';
 
 type InstallAppFormInputs = {
   password: string;
@@ -211,8 +211,8 @@ const Install = () => {
                     })}
                     type="password"
                     label="Password"
-                    errors={errors}
-                    loading={isSubmitting}
+                    error={errors.password}
+                    disabled={isSubmitting}
                   />
                 </div>
 

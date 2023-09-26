@@ -1,15 +1,15 @@
 import { Button } from '@material-tailwind/react';
 import axios from 'axios';
 import { useEffect, useState } from 'react';
-import { SubmitHandler, useForm } from 'react-hook-form';
+import { Controller, SubmitHandler, useForm } from 'react-hook-form';
 import { NavLink, useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import logo from '../../../assets/images/logo.jpg';
-import TextInput from '../../../components/Input/TextInput';
 import API from '../../util/api';
 import { useAppStore, useBoundStore } from '../../util/store/store';
 import { Setting } from '../../util/type/Setting';
 import Loading from '../../../components/Loading/Loading';
+import TextInput from '../../../components/Input/Input';
 
 type LoginFormInputs = {
   email: string;
@@ -18,9 +18,9 @@ type LoginFormInputs = {
 const Login = () => {
   const [loading, setLoading] = useState(true);
   const {
-    register,
     handleSubmit,
-    formState: { errors, isSubmitting },
+    control,
+    formState: { isSubmitting },
   } = useForm<LoginFormInputs>({
     // resolver: yupResolver<Inputs>(schema),
     defaultValues: {},
@@ -104,27 +104,43 @@ const Login = () => {
               onSubmit={handleSubmit(onSubmit)}
             >
               <div>
-                <TextInput
-                  {...register('email', {
+                <Controller
+                  name="email"
+                  control={control}
+                  rules={{
                     required: 'Email is required',
-                  })}
-                  label={'Email'}
-                  loading={isSubmitting}
-                  placeholder="name@company.com"
-                  type="email"
-                  errors={errors}
+                  }}
+                  render={({ field, formState: { errors } }) => {
+                    return (
+                      <TextInput
+                        {...field}
+                        label={'Email'}
+                        disabled={isSubmitting}
+                        type="email"
+                        error={errors.email}
+                      />
+                    );
+                  }}
                 />
               </div>
               <div>
-                <TextInput
-                  {...register('password', {
-                    required: 'Password is required',
-                  })}
-                  label={'Password'}
-                  loading={isSubmitting}
-                  placeholder="••••••••"
-                  type="password"
-                  errors={errors}
+                <Controller
+                  name="password"
+                  control={control}
+                  rules={{
+                    required: 'Email is required',
+                  }}
+                  render={({ field, formState: { errors } }) => {
+                    return (
+                      <TextInput
+                        {...field}
+                        label={'Password'}
+                        disabled={isSubmitting}
+                        type="password"
+                        error={errors.password}
+                      />
+                    );
+                  }}
                 />
               </div>
               <div className="flex items-center justify-between">

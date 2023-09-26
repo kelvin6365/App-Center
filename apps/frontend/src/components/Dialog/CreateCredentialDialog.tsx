@@ -7,10 +7,10 @@ import {
 } from '@material-tailwind/react';
 import { CredentialComponent } from '../../app/util/type/CredentialComponent';
 import { useForm } from 'react-hook-form';
-import TextInput from '../Input/TextInput';
 import API from '../../app/util/api';
 import { omit } from 'lodash';
 import { toast } from 'react-toastify';
+import TextInput from '../Input/Input';
 
 type Props = {
   title: string;
@@ -75,7 +75,11 @@ const CreateCredentialDialog = ({
           className="mb-2"
           dangerouslySetInnerHTML={{ __html: type.description }}
         />
-        <form id="form" onSubmit={handleSubmit(createCredential)}>
+        <form
+          id="form"
+          className="flex flex-col gap-6 my-4"
+          onSubmit={handleSubmit(createCredential)}
+        >
           <TextInput
             label={'Name'}
             {...register('name', {
@@ -84,8 +88,9 @@ const CreateCredentialDialog = ({
                 message: 'Name is required',
               },
             })}
-            loading={isSubmitting}
-            errors={errors}
+            // variant="static"
+            disabled={isSubmitting}
+            error={errors.name}
           />
           {type.inputs.map((input, index) => {
             return (
@@ -95,13 +100,14 @@ const CreateCredentialDialog = ({
                 {...register(input.name, {
                   required: {
                     value: true,
-                    message: input.label + 'is required',
+                    message: input.label + ' is required',
                   },
                 })}
-                type={input.type}
-                placeholder={input.placeholder}
-                loading={isSubmitting}
-                errors={errors}
+                type={input.type as 'password' | 'text'}
+                // placeholder={input.placeholder}
+                // variant="static"
+                disabled={isSubmitting}
+                error={errors[input.name]}
               />
             );
           })}

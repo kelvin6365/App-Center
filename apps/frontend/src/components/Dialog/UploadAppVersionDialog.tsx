@@ -6,13 +6,13 @@ import {
   DialogHeader,
 } from '@material-tailwind/react';
 import axios from 'axios';
+import { useEffect } from 'react';
 import { SubmitHandler, useForm } from 'react-hook-form';
 import { toast } from 'react-toastify';
 import API from '../../app/util/api';
 import { App } from '../../app/util/type/App';
 import FileUpload from '../Input/FileUpload';
-import TextInput from '../Input/TextInput';
-import { useEffect } from 'react';
+import TextInput from '../Input/Input';
 import Loading from '../Loading/Loading';
 
 type Props = {
@@ -107,37 +107,42 @@ const UploadAppVersionDialog = ({ title, onClose, open, app }: Props) => {
                 required: 'Version Name is required',
               })}
               label="Version Name*"
-              placeholder={'eg: v1.0.0'}
-              errors={errors}
-              loading={isSubmitting}
+              helperText={'eg: v1.0.0'}
+              error={errors.name}
+              disabled={isSubmitting}
             />
-            <TextInput
-              {...register('description', {
-                required: 'Version Description is required',
-              })}
-              label="Description*"
-              placeholder={"eg: 'Version 1.0.0'"}
-              errors={errors}
-              loading={isSubmitting}
-            />
+            <div>
+              <TextInput
+                {...register('description', {
+                  required: 'Version Description is required',
+                })}
+                label="Description*"
+                helperText={"eg: 'Version 1.0.0'"}
+                error={errors.description}
+                disabled={isSubmitting}
+              />
+            </div>
           </div>
           <div className="grid grid-cols-2 gap-6 mb-6">
-            <TextInput
-              {...register('tags', {
-                required: 'Tags is required',
-              })}
-              label="Tags*"
-              placeholder={'eg: Android,UAT,APK'}
-              errors={errors}
-              loading={isSubmitting}
-            />
+            <div>
+              <TextInput
+                {...register('tags', {
+                  required: 'Tags is required',
+                })}
+                label="Tags*"
+                error={errors.tags}
+                disabled={isSubmitting}
+                helperText={'eg: Android,UAT,APK'}
+              />
+            </div>
             <TextInput
               {...register('installPassword', {
                 required: 'Install Password is required',
               })}
               label="Install Password*"
-              errors={errors}
-              loading={isSubmitting}
+              error={errors.installPassword}
+              disabled={isSubmitting}
+              helperText={'For install page to download the app'}
             />
           </div>
           <FileUpload

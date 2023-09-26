@@ -1,14 +1,14 @@
+import { MainButton } from '@app-center/shared-ui';
 import { Typography } from '@material-tailwind/react';
-import CredentialTable from '../../../../components/Table/CredentialTable';
-import DefaultButton from '../../../../components/Button/DefaultButton';
-import { IoMdAdd } from 'react-icons/io';
-import SearchCredentialTypeDialog from '../../../../components/Dialog/SearchCredentialTypeDialog';
 import { useRef, useState } from 'react';
-import { CredentialComponent } from '../../../util/type/CredentialComponent';
-import CreateCredentialDialog from '../../../../components/Dialog/CreateCredentialDialog';
+import { IoMdAdd } from 'react-icons/io';
 import { toast } from 'react-toastify';
+import CreateCredentialDialog from '../../../../components/Dialog/CreateCredentialDialog';
 import DeleteCredentialDialog from '../../../../components/Dialog/DeleteCredentialDialog';
+import SearchCredentialTypeDialog from '../../../../components/Dialog/SearchCredentialTypeDialog';
+import CredentialTable from '../../../../components/Table/CredentialTable';
 import { Credential } from '../../../util/type/Credential';
+import { CredentialComponent } from '../../../util/type/CredentialComponent';
 type Props = {
   isActive: boolean;
 };
@@ -50,7 +50,7 @@ const Credentials = ({ isActive }: Props) => {
           </Typography>
         </div>
         <div>
-          <DefaultButton
+          <MainButton
             className="flex justify-center"
             onClick={() => {
               setOpenSearch(true);
@@ -58,7 +58,7 @@ const Credentials = ({ isActive }: Props) => {
           >
             <IoMdAdd className="w-4 h-4 my-auto" />
             <p className="my-auto ml-1 font-bold">Add</p>
-          </DefaultButton>
+          </MainButton>
         </div>
       </div>
       {isActive && (

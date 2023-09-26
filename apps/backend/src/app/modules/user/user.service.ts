@@ -1,6 +1,6 @@
 import { Inject, Injectable, Logger, LoggerService } from '@nestjs/common';
 import { omit } from 'lodash';
-import { hashPassword } from '../../common/util/password.util';
+import { hashPassword, isMatchPassword } from '../../common/util/password.util';
 import { UserRefreshTokenRepository } from '../../database/repositories/user.refresh.token.repository';
 import { UserRepository } from '../../database/repositories/users.repository';
 import { CurrentUserDTO } from '../auth/dto/current.user.dto';
@@ -17,6 +17,9 @@ import { UserRole } from './entities/user.role.entity';
 import { UserStatus } from './enum/user.status.enum';
 import { IPaginationMeta, Pagination } from 'nestjs-typeorm-paginate';
 import { PageDTO } from '../../common/dto/page.dto';
+import { AppException } from '../../common/response/app.exception';
+import { ResponseCode } from '../../common/response/response.code';
+import { UpdateUserDTO } from './dto/update.user.dto';
 
 @Injectable()
 export class UserService {
@@ -131,11 +134,17 @@ export class UserService {
   async getUserByIdWithDeletedFalse(
     userId: string
   ): Promise<PortalUserResponseDTO> {
-    const user = omit(
-      await this.usersRepository.findUserByUserIdWithDeletedFalse(userId),
-      ['password', 'refreshToken']
+    console.log(
+      await this.usersRepository.findUserByUserIdWithDeletedFalse(userId)
+    );
+    const user = await this.usersRepository.findUserByUserIdWithDeletedFalse(
+      userId
     );
     return new PortalUserResponseDTO(user);
+  }
+
+  async findUserByEmailWithPassword(username: string) {
+    return await this.usersRepository.findUserByEmailWithPassword(username);
   }
 
   //Search User
@@ -169,5 +178,38 @@ export class UserService {
   async updateUserStatus(id: string, status: UserStatus) {
     await this.usersRepository.updateUserStatus(id, status);
     return true;
+  }
+
+  //update user profile
+  async updateUserProfile(updateProfile: UpdateUserDTO, user: CurrentUserDTO) {
+    //check if user exists
+    const currentUser = await this.usersRepository.findUserByEmailWithPassword(
+      user.username
+    );
+    if (!currentUser) {
+      throw new AppException(ResponseCode.STATUS_8004_USER_NOT_EXIST);
+    }
+    if (updateProfile.password) {
+      if (
+        !(await isMatchPassword(
+          updateProfile.oldPassword,
+          currentUser.password
+        ))
+      ) {
+        throw new AppException(
+          ResponseCode.STATUS_8005_USER_PASSWORD_NOT_MATCH
+        );
+      }
+      currentUser.password = await hashPassword(updateProfile.password);
+    }
+    if (updateProfile.name) {
+      currentUser.profile.name = updateProfile.name;
+    }
+    const updatedUser =
+      await this.usersRepository.updateUserProfileNameOrPassword(
+        user.id,
+        currentUser
+      );
+    return new PortalUserResponseDTO(updatedUser);
   }
 }

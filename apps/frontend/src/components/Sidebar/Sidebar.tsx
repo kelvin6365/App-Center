@@ -82,7 +82,7 @@ const Sidebar = () => {
         </Typography>
       </div>
       <Scrollbars className="h-full">
-        <div className="flex items-center gap-4 p-2">
+        <NavLink to={'/account'} className="flex items-center gap-4 p-2">
           <Avatar
             alt="avatar"
             src={
@@ -104,7 +104,7 @@ const Sidebar = () => {
               {profile?.status ?? '-'}
             </Typography>
           </div>
-        </div>
+        </NavLink>
         <hr className="my-2 border-blue-gray-50" />
         <List className="md:min-w-[240px] min-w-0 p-0 md:p2">
           {MenuItems.map((item, index) => {

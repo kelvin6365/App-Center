@@ -31,6 +31,7 @@ import { CreateUserDTO } from './dto/create.user.dto';
 import { PortalUserResponseDTO } from './dto/portal.user.response.dto';
 import { UpdateUserStatusRequestDTO } from './dto/update.user.status.request.dto';
 import { UserService } from './user.service';
+import { UpdateUserDTO } from './dto/update.user.dto';
 @ApiTags('User')
 @Controller({ path: '/user', version: ['1'] })
 @ApiBearerAuth()
@@ -110,6 +111,19 @@ export class UserController {
   ): Promise<AppResponse<boolean>> {
     return new AppResponse<boolean>(
       await this.userService.createUser(createUserDTO)
+    );
+  }
+
+  //update user
+  @Put('')
+  @Roles(RoleType.ADMIN)
+  @ApiResponseSchema(HttpStatus.OK, 'OK')
+  async updateCurrentUser(
+    @Body() updateUserDTO: UpdateUserDTO,
+    @CurrentUser() user: CurrentUserDTO
+  ): Promise<AppResponse<PortalUserResponseDTO>> {
+    return new AppResponse<PortalUserResponseDTO>(
+      await this.userService.updateUserProfile(updateUserDTO, user)
     );
   }
 
