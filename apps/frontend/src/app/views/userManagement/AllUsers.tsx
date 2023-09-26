@@ -1,31 +1,23 @@
 import { Typography } from '@material-tailwind/react';
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import DefaultBreadcrumb from '../../../components/Breadcrumb/DefaultBreadcrumb';
 import UserTable from '../../../components/Table/UserTable';
 
 const AllUsers = () => {
-  const itemsPerPage = 20;
   const navigate = useNavigate();
-  const [users, setUsers] = useState<[]>([]);
-
-  const [totalPages, setTotalPages] = useState(0);
 
   const location = useLocation();
   const { supperSearch, page } = location.state || {};
 
   //isLoading
-  const [init, setIsLoading] = useState(true);
 
   useEffect(() => {
     // reset({
     //   supperSearch: supperSearch,
     // });
 
-    if (location.state) {
-      // searchUsers();
-      setIsLoading(false);
-    } else {
+    if (!location.state) {
       navigate('/users', {
         state: { page: 1, supperSearch: '' },
         replace: true,

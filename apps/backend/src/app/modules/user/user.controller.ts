@@ -31,7 +31,6 @@ import { CreateUserDTO } from './dto/create.user.dto';
 import { PortalUserResponseDTO } from './dto/portal.user.response.dto';
 import { UpdateUserStatusRequestDTO } from './dto/update.user.status.request.dto';
 import { UserService } from './user.service';
-import { Pagination, IPaginationMeta } from 'nestjs-typeorm-paginate';
 @ApiTags('User')
 @Controller({ path: '/user', version: ['1'] })
 @ApiBearerAuth()
@@ -88,6 +87,17 @@ export class UserController {
   ): Promise<AppResponse<PortalUserResponseDTO>> {
     return new AppResponse<PortalUserResponseDTO>(
       await this.userService.getUserByIdWithDeletedFalse(id)
+    );
+  }
+
+  //Get current User
+  @Get('')
+  @ApiResponseSchema(HttpStatus.OK, 'OK')
+  async getCurrentUser(
+    @CurrentUser() user: CurrentUserDTO
+  ): Promise<AppResponse<PortalUserResponseDTO>> {
+    return new AppResponse<PortalUserResponseDTO>(
+      await this.userService.getUserByIdWithDeletedFalse(user.id)
     );
   }
 

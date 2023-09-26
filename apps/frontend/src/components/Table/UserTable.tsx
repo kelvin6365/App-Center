@@ -22,6 +22,7 @@ import API from '../../app/util/api';
 import { Meta } from '../../app/util/type/Meta';
 import { DefaultPagination } from '../Pagination/Pagination';
 import Loading from '../Loading/Loading';
+import { PortalUserProfile } from '../../app/util/type/PortalUserProfile';
 
 export type UserTableRef = {
   refresh: () => void;
@@ -46,7 +47,7 @@ function IndeterminateCheckbox({
     if (typeof indeterminate === 'boolean') {
       ref.current.indeterminate = !checked && indeterminate;
     }
-  }, [ref, indeterminate]);
+  }, [ref, indeterminate, checked]);
 
   return (
     <Checkbox
@@ -69,7 +70,7 @@ const UserTable = ensuredForwardRef<UserTableRef, Props>(
   ) => {
     const navigate = useNavigate();
     const [selectedRows, setSelectedRows] = useState({});
-    const [data, setData] = useState<[]>([]);
+    const [data, setData] = useState<PortalUserProfile[]>([]);
     const itemsPerPage = 20;
 
     const [totalPages, setTotalPages] = useState(0);
@@ -77,7 +78,7 @@ const UserTable = ensuredForwardRef<UserTableRef, Props>(
     //isLoading
     const [isLoading, setIsLoading] = useState(true);
 
-    const columns: ColumnDef<any>[] = [
+    const columns: ColumnDef<PortalUserProfile>[] = [
       {
         id: 'select',
         header: ({ table }) => (
@@ -146,10 +147,10 @@ const UserTable = ensuredForwardRef<UserTableRef, Props>(
         header: () => <span>Last Updated</span>,
       },
       {
-        accessorFn: (row) => row.createdBy,
-        id: 'createdBy',
+        accessorFn: (row) => row.deletedAt,
+        id: 'deletedAt',
         cell: (info) => <i>{info.getValue<string>()}</i>,
-        header: () => <span>Created By</span>,
+        header: () => <span>Deleted At</span>,
       },
     ];
     const table = useReactTable<any>({
@@ -219,7 +220,7 @@ const UserTable = ensuredForwardRef<UserTableRef, Props>(
         )}
         <div className="overflow-auto">
           {!isLoading && (
-            <table className="w-full text-left table-auto min-w-max">
+            <table className="w-full text-left rounded-md table-auto min-w-max overflow-clip">
               <thead>
                 {table.getHeaderGroups().map((headerGroup) => (
                   <tr key={headerGroup.id}>
@@ -262,7 +263,7 @@ const UserTable = ensuredForwardRef<UserTableRef, Props>(
                   return (
                     <tr
                       key={row.original.id}
-                      className="p-4 cursor-pointer hover:bg-green-pea-400/30"
+                      className="p-4 cursor-pointer hover:bg-blue-400/30"
                     >
                       {row.getVisibleCells().map((cell) => (
                         <td

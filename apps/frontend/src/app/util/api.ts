@@ -44,6 +44,7 @@ const API = {
       GET_USER: (userId: string) => `/v1/user/${userId}`,
       UPDATE_USER_STATUS: (userId: string) => `/v1/user/${userId}/status`,
       CREATE_USER: '/v1/user',
+      PROFILE: '/v1/user',
     },
     SETTING: {
       GET_ALL_SETTINGS: '/v1/setting',
@@ -226,6 +227,9 @@ const API = {
       permissions: string[];
     }) => {
       return API.apiInstance.post(API.API_PATH.USER.CREATE_USER, data);
+    },
+    profile: () => {
+      return API.apiInstance.get(API.API_PATH.USER.PROFILE);
     },
   },
   setting: {

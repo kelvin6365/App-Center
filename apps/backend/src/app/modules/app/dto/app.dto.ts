@@ -16,6 +16,8 @@ export class AppDTO {
   iconFileURL: string;
   @ApiProperty()
   extra: Record<string, unknown>;
+  @ApiProperty()
+  tenantId: string;
 
   constructor(data: Partial<AppDTO>, iconFileURL: string) {
     this.id = data.id;
@@ -27,5 +29,6 @@ export class AppDTO {
     this.iconFileId = data.iconFileId;
     this.iconFileURL = iconFileURL;
     this.extra = data.extra;
+    this.tenantId = data.tenantId;
   }
 }
