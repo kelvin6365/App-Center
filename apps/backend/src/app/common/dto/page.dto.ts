@@ -1,6 +1,6 @@
 import { MetaDTO } from './meta.dto';
 
-export class PageDto<T> {
+export class PageDTO<T> {
   readonly items: T[];
 
   readonly meta: MetaDTO;

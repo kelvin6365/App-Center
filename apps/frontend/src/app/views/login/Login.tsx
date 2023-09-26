@@ -1,19 +1,22 @@
 import { Button } from '@material-tailwind/react';
-import logo from '../../../assets/images/logo.jpg';
+import axios from 'axios';
+import { useEffect, useState } from 'react';
 import { SubmitHandler, useForm } from 'react-hook-form';
 import { NavLink, useNavigate } from 'react-router-dom';
-import { useAppStore } from '../../util/store/store';
-import API from '../../util/api';
 import { toast } from 'react-toastify';
-import axios from 'axios';
+import logo from '../../../assets/images/logo.jpg';
 import TextInput from '../../../components/Input/TextInput';
-import { useEffect } from 'react';
+import API from '../../util/api';
+import { useAppStore, useBoundStore } from '../../util/store/store';
+import { Setting } from '../../util/type/Setting';
+import Loading from '../../../components/Loading/Loading';
 
 type LoginFormInputs = {
   email: string;
   password: string;
 };
 const Login = () => {
+  const [loading, setLoading] = useState(true);
   const {
     register,
     handleSubmit,
@@ -30,6 +33,28 @@ const Login = () => {
     state.setLoggedIn,
     state.isLoggedIn,
   ]);
+  const [setSettings, settings] = useBoundStore((state) => [
+    state.setSettings,
+    state.settings,
+  ]);
+  const { config: DISABLE_REGISTER }: Setting = settings.find(
+    (setting) => setting.key === 'DISABLE_REGISTER'
+  ) ?? {
+    id: 'DEFAULT',
+    key: 'DISABLE_REGISTER',
+    config: { value: true },
+  };
+
+  //fetch settings
+  const fetchInitData = async () => {
+    try {
+      const [settingsRes] = await Promise.all([API.setting.getAllSettings()]);
+      setSettings(settingsRes.data.data.settings);
+      setLoading(false);
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
   const onSubmit: SubmitHandler<LoginFormInputs> = async (values) => {
     try {
@@ -45,10 +70,19 @@ const Login = () => {
   };
 
   useEffect(() => {
+    fetchInitData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  useEffect(() => {
     if (isLoggedIn) {
       navigate('/apps', { replace: true });
     }
   }, [isLoggedIn, navigate]);
+
+  if (loading) {
+    return <Loading />;
+  }
 
   return (
     <section className="bg-gray-50 dark:bg-gray-900">
@@ -119,15 +153,17 @@ const Login = () => {
               <Button disabled={isSubmitting} className="w-full" type="submit">
                 Sign In
               </Button>
-              <p className="text-sm font-light text-gray-500 dark:text-gray-400">
-                Don’t have an account yet?{' '}
-                <NavLink
-                  to={'/register'}
-                  className="font-medium text-primary-600 hover:underline dark:text-primary-500"
-                >
-                  Sign up
-                </NavLink>
-              </p>
+              {DISABLE_REGISTER.value === false && (
+                <p className="text-sm font-light text-gray-500 dark:text-gray-400">
+                  Don’t have an account yet?{' '}
+                  <NavLink
+                    to={'/register'}
+                    className="font-medium text-primary-600 hover:underline dark:text-primary-500"
+                  >
+                    Sign up
+                  </NavLink>
+                </p>
+              )}
             </form>
           </div>
         </div>

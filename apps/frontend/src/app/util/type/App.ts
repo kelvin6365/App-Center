@@ -6,4 +6,5 @@ export interface App {
   iconFileId: string;
   iconFileURL: string;
   extra: any;
+  tenantId: string;
 }

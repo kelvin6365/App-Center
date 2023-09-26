@@ -9,19 +9,29 @@ import { useAppStore, useBoundStore } from './util/store/store';
 
 export function App() {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const [isLoggedIn] = useAppStore((state: any) => [state.isLoggedIn]);
+  const [isLoggedIn, setProfile] = useAppStore((state: any) => [
+    state.isLoggedIn,
+    state.setProfile,
+  ]);
   const [setSettings, setCredentialComponents] = useBoundStore((state) => [
     state.setSettings,
     state.setCredentialComponents,
   ]);
+
   //fetch settings
   const fetchInitData = async () => {
     try {
-      const [settingsRes, credentialComponentsRes] = await Promise.all([
-        API.setting.getAllSettings(),
-        API.credential.getAllCredentialComponents(),
-      ]);
+      const [settingsRes, credentialComponentsRes, profileRes] =
+        await Promise.all([
+          API.setting.getAllSettings(),
+          API.credential.getAllCredentialComponents(),
+          API.user.profile(),
+        ]);
+      console.log('[fetchInitData] Profile');
+      setProfile(profileRes.data.data);
+      console.log('[fetchInitData] Settings');
       setSettings(settingsRes.data.data.settings);
+      console.log('[fetchInitData] CredentialComponents');
       setCredentialComponents(credentialComponentsRes.data.data);
     } catch (error) {
       console.error(error);

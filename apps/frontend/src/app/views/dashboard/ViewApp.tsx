@@ -2,11 +2,12 @@ import {
   Card,
   IconButton,
   Spinner,
+  Tooltip,
   Typography,
 } from '@material-tailwind/react';
 import axios from 'axios';
 import classNames from 'classnames';
-import { Tooltip } from 'flowbite-react';
+// import { Tooltip } from 'flowbite-react';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { BiEdit, BiLogoGitlab, BiLogoPlayStore } from 'react-icons/bi';
 import { BsGit } from 'react-icons/bs';
@@ -101,7 +102,7 @@ const ViewApp = () => {
     <div>
       <DefaultBreadcrumb
         pageName={'Dashboard.All Apps.' + app?.name ?? '-'}
-        paths={['/', '/apps']}
+        paths={['/apps', '/apps']}
       />
       <div className="pb-2">
         <Typography variant="h4" color="blue-gray">

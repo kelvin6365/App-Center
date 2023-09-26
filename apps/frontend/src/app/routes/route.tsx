@@ -4,6 +4,8 @@ import Loading from '../../components/Loading/Loading';
 import App from '../app';
 import dashboardRoute from './dashboard/dashboardRoute';
 import settingRoute from './setting/settingRoute';
+import userManagementRoute from './userManagement/userManagementRoute';
+import { Suspense } from 'react';
 const Guard = loadable(() => import('../routes/Guard'), {
   fallback: <Loading />,
 });
@@ -25,12 +27,15 @@ const route = () => {
     {
       path: '/',
       element: (
-        <Guard auth={true}>
-          <App />
-        </Guard>
+        <Suspense fallback={<Loading />}>
+          <Guard auth={true}>
+            <App />
+          </Guard>
+        </Suspense>
       ),
       children: [
         ...dashboardRoute(),
+        ...userManagementRoute(),
         ...settingRoute(),
         {
           path: '*',
@@ -40,22 +45,30 @@ const route = () => {
     },
     {
       path: '/install/:id',
-      element: <Install />,
+      element: (
+        <Suspense fallback={<Loading />}>
+          <Install />
+        </Suspense>
+      ),
     },
     {
       path: '/login',
       element: (
-        <Guard auth={false}>
-          <Login />
-        </Guard>
+        <Suspense fallback={<Loading />}>
+          <Guard auth={false}>
+            <Login />
+          </Guard>
+        </Suspense>
       ),
     },
     {
       path: '/register',
       element: (
-        <Guard auth={false}>
-          <Register />
-        </Guard>
+        <Suspense fallback={<Loading />}>
+          <Guard auth={false}>
+            <Register />
+          </Guard>
+        </Suspense>
       ),
     },
     {

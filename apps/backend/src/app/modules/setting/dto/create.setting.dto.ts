@@ -1,7 +1,13 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsJSON, IsNotEmpty, IsObject, IsString } from 'class-validator';
+import { IsEnum, IsNotEmpty, IsObject, IsString } from 'class-validator';
+import { SettingType } from '../enum/setting.type.enum';
 
 export class CreateSettingDTO {
+  @ApiProperty()
+  @IsNotEmpty()
+  @IsEnum(SettingType)
+  type: SettingType;
+
   @ApiProperty()
   @IsNotEmpty()
   @IsString()

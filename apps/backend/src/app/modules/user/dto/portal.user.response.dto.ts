@@ -11,6 +11,9 @@ export class PortalUserResponseDTO {
   profile: any;
   permissions: PermissionDTO[];
   tenants: string[];
+  createdAt: Date;
+  updatedAt: Date;
+  deletedAt: Date;
   constructor(partial: Partial<User>) {
     this.id = partial.id;
     this.username = partial.username;
@@ -21,5 +24,8 @@ export class PortalUserResponseDTO {
       (permission) => new PermissionDTO(permission.permission, permission.refId)
     );
     this.tenants = partial.tenants?.map((tenant) => tenant.id);
+    this.createdAt = partial.createdAt;
+    this.updatedAt = partial.updatedAt;
+    this.deletedAt = partial.deletedAt;
   }
 }

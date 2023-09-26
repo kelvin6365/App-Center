@@ -14,7 +14,7 @@ import { LoginResponseDTO } from '../auth/admin/dto/login.response.dto';
 import { Admin } from './entities/admin.entity';
 import { AdminStatus } from './enum/admin.status.enum';
 import { AdminResponseDTO } from './dto/admin.response.dto';
-import { PageDto } from '../../common/dto/page.dto';
+import { PageDTO } from '../../common/dto/page.dto';
 import { LoginTokenType } from '../auth/enum/login.token.type.enum';
 
 @Injectable()
@@ -96,7 +96,7 @@ export class AdminService {
       { key: 'createdAt', value: 'DESC' },
     ],
     user: CurrentAdminDTO
-  ): Promise<PageDto<AdminResponseDTO>> {
+  ): Promise<PageDTO<AdminResponseDTO>> {
     const result = await this.adminRepository.findAllAdmins(
       searchQuery,
       withDeleted,

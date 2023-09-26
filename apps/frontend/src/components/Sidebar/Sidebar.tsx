@@ -9,6 +9,7 @@ import {
   AccordionBody,
   AccordionHeader,
   Alert,
+  Avatar,
   Card,
   List,
   ListItem,
@@ -24,7 +25,10 @@ import { useAppStore } from '../../app/util/store/store';
 import { AppSlice } from '../../app/util/store/appSlice';
 
 const Sidebar = () => {
-  const setLogout = useAppStore((state: AppSlice) => state.setLogout);
+  const [setLogout, profile] = useAppStore((state: AppSlice) => [
+    state.setLogout,
+    state.profile,
+  ]);
   const [open, setOpen] = React.useState(0);
   const [openAlert, setOpenAlert] = React.useState(true);
   const location = useLocation();
@@ -78,6 +82,30 @@ const Sidebar = () => {
         </Typography>
       </div>
       <Scrollbars className="h-full">
+        <div className="flex items-center gap-4 p-2">
+          <Avatar
+            alt="avatar"
+            src={
+              profile?.profile?.avatar ??
+              'https://ui-avatars.com/api/?name=' +
+                (profile?.profile?.name ?? '')
+            }
+            className="border border-blue-500 shadow-xl shadow-blue-900/20 ring-4 ring-blue-500/30"
+          />
+          <div>
+            <Typography
+              variant="p"
+              className="text-base font-bold"
+              color="blue-gray"
+            >
+              {profile?.profile?.name ?? '-'}
+            </Typography>
+            <Typography color="gray" variant="p" className="text-xs font-light">
+              {profile?.status ?? '-'}
+            </Typography>
+          </div>
+        </div>
+        <hr className="my-2 border-blue-gray-50" />
         <List className="md:min-w-[240px] min-w-0 p-0 md:p2">
           {MenuItems.map((item, index) => {
             const { icon, label, children } = item;

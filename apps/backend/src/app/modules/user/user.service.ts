@@ -1,18 +1,22 @@
 import { Inject, Injectable, Logger, LoggerService } from '@nestjs/common';
+import { omit } from 'lodash';
+import { hashPassword } from '../../common/util/password.util';
+import { UserRefreshTokenRepository } from '../../database/repositories/user.refresh.token.repository';
+import { UserRepository } from '../../database/repositories/users.repository';
+import { CurrentUserDTO } from '../auth/dto/current.user.dto';
+import { SignUpDTO } from '../auth/dto/signup.request.dto';
+import PermissionEnum from '../permission/enum/permission.enum';
 import { RoleId } from '../role/enum/role.id.enum';
+import { CreateUserDTO } from './dto/create.user.dto';
+import { PortalUserResponseDTO } from './dto/portal.user.response.dto';
 import { User } from './entities/user.entity';
+import { UserPermission } from './entities/user.permission.entity';
 import { UserProfile } from './entities/user.profile.entity';
 import { UserRefreshToken } from './entities/user.refresh.token.entity';
 import { UserRole } from './entities/user.role.entity';
-import { SignUpDTO } from '../auth/dto/signup.request.dto';
-import { UserRepository } from '../../database/repositories/users.repository';
-import { UserRefreshTokenRepository } from '../../database/repositories/user.refresh.token.repository';
-import { UserPermission } from './entities/user.permission.entity';
-import PermissionEnum from '../permission/enum/permission.enum';
-import { CreateUserDTO } from './dto/create.user.dto';
-import { hashPassword } from '../../common/util/password.util';
-import { PortalUserResponseDTO } from './dto/portal.user.response.dto';
-import { omit } from 'lodash';
+import { UserStatus } from './enum/user.status.enum';
+import { IPaginationMeta, Pagination } from 'nestjs-typeorm-paginate';
+import { PageDTO } from '../../common/dto/page.dto';
 
 @Injectable()
 export class UserService {
@@ -132,5 +136,38 @@ export class UserService {
       ['password', 'refreshToken']
     );
     return new PortalUserResponseDTO(user);
+  }
+
+  //Search User
+  async searchUser(
+    searchQuery = '',
+    withDeleted = false,
+    page = 1,
+    limit = 10,
+    filters: { key: string; values: string | boolean | any[] | number[] }[],
+    sorts: { key: string; value: 'ASC' | 'DESC' }[] = [
+      { key: 'createdAt', value: 'DESC' },
+    ],
+    user: CurrentUserDTO
+  ): Promise<Promise<PageDTO<PortalUserResponseDTO>>> {
+    const users = await this.usersRepository.searchUsers(
+      searchQuery,
+      withDeleted,
+      {
+        page,
+        limit,
+      },
+      filters,
+      sorts
+    );
+    return {
+      ...users,
+      items: users.items.map((user) => new PortalUserResponseDTO(user)),
+    };
+  }
+
+  async updateUserStatus(id: string, status: UserStatus) {
+    await this.usersRepository.updateUserStatus(id, status);
+    return true;
   }
 }

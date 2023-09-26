@@ -17,10 +17,9 @@ module.exports = withMT({
       __dirname,
       '../../node_modules/@material-tailwind/react/theme/components/**/*.{js,ts,jsx,tsx}'
     ),
-    join(__dirname, '../../node_modules/flowbite/**/*.js'),
   ],
   theme: {
     extend: {},
   },
-  plugins: [require('flowbite/plugin')],
+  plugins: [],
 });

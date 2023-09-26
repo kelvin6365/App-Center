@@ -11,6 +11,7 @@ import { LoginResponseDTO } from './dto/login.response.dto';
 import { LoginTokenType } from './enum/login.token.type.enum';
 import moment from 'moment';
 import { JwtService } from '@nestjs/jwt';
+import { UserStatus } from '../user/enum/user.status.enum';
 
 @Injectable()
 export class AuthService {
@@ -93,6 +94,9 @@ export class AuthService {
       throw new AppException(
         ResponseCode.STATUS_8001_USER_USERNAME_OR_PASSWORD_NOT_MATCH
       );
+    }
+    if (user.status !== UserStatus.Activated) {
+      throw new AppException(ResponseCode.STATUS_8014_USER_IS_NOT_ACTIVE);
     }
     user.password = undefined;
     return new CurrentUserDTO().fromEntity(user);

@@ -6,7 +6,7 @@ import {
   getSchemaPath,
 } from '@nestjs/swagger';
 import { MetaDTO } from '../dto/meta.dto';
-import { PageDto } from '../dto/page.dto';
+import { PageDTO } from '../dto/page.dto';
 import { AppResponse } from '../response/app.response';
 
 export function ApiPagingResponseSchema(
@@ -20,7 +20,7 @@ export function ApiPagingResponseSchema(
   ];
 
   return applyDecorators(
-    ApiExtraModels(AppResponse, PageDto, dataDto, MetaDTO),
+    ApiExtraModels(AppResponse, PageDTO, dataDto, MetaDTO),
     ApiOkResponse({
       status: httpStatus,
       description: description,

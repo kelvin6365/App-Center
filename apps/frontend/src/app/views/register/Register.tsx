@@ -2,12 +2,14 @@ import { Button } from '@material-tailwind/react';
 import logo from '../../../assets/images/logo.jpg';
 import { SubmitHandler, useForm } from 'react-hook-form';
 import { NavLink, useNavigate } from 'react-router-dom';
-import { useAppStore } from '../../util/store/store';
+import { useAppStore, useBoundStore } from '../../util/store/store';
 import API from '../../util/api';
 import { toast } from 'react-toastify';
 import axios from 'axios';
 import TextInput from '../../../components/Input/TextInput';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
+import Loading from '../../../components/Loading/Loading';
+import { Setting } from '../../util/type/Setting';
 
 type RegisterFormInputs = {
   email: string;
@@ -15,7 +17,8 @@ type RegisterFormInputs = {
   confirmPassword: string;
   name: string;
 };
-const Login = () => {
+const Register = () => {
+  const [loading, setLoading] = useState(true);
   const {
     register,
     handleSubmit,
@@ -33,6 +36,29 @@ const Login = () => {
     state.setLoggedIn,
     state.isLoggedIn,
   ]);
+
+  const [setSettings, settings] = useBoundStore((state) => [
+    state.setSettings,
+    state.settings,
+  ]);
+  const { config: DISABLE_REGISTER }: Setting = settings.find(
+    (setting) => setting.key === 'DISABLE_REGISTER'
+  ) ?? {
+    id: 'DEFAULT',
+    key: 'DISABLE_REGISTER',
+    config: { value: true },
+  };
+
+  //fetch settings
+  const fetchInitData = async () => {
+    try {
+      const [settingsRes] = await Promise.all([API.setting.getAllSettings()]);
+      setSettings(settingsRes.data.data.settings);
+      setLoading(false);
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
   const onSubmit: SubmitHandler<RegisterFormInputs> = async (values) => {
     try {
@@ -68,11 +94,24 @@ const Login = () => {
   };
 
   useEffect(() => {
+    fetchInitData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  useEffect(() => {
     if (isLoggedIn) {
       navigate('/apps', { replace: true });
+    } else {
+      if (DISABLE_REGISTER.value === true) {
+        navigate('/login', { replace: true });
+      }
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isLoggedIn, navigate]);
 
+  if (loading) {
+    return <Loading />;
+  }
   return (
     <section className="bg-gray-50 dark:bg-gray-900">
       <div className="flex flex-col items-center justify-center px-6 py-8 mx-auto md:h-screen lg:py-0">
@@ -160,4 +199,4 @@ const Login = () => {
   );
 };
 
-export default Login;
+export default Register;

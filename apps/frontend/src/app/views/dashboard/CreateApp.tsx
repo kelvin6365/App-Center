@@ -73,7 +73,7 @@ const CreateApp = () => {
   };
   return (
     <div>
-      <DefaultBreadcrumb pageName="Dashboard.Create App" paths={['/']} />
+      <DefaultBreadcrumb pageName="Dashboard.Create App" paths={['/apps']} />
       <div className="pb-2">
         <Typography variant="h4" color="blue-gray">
           Create New App

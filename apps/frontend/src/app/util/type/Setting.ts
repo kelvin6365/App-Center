@@ -5,5 +5,5 @@ export interface Setting {
 }
 
 export interface StringValueConfig {
-  value: string;
+  value: string | boolean;
 }

@@ -32,6 +32,11 @@ const Guard = ({ children, auth }: Props) => {
         return <Navigate to="/login" replace></Navigate>;
       }
     }
+  } else {
+    if (isLoggedIn) {
+      console.log('[Init] Redirecting to home');
+      return <Navigate to="/apps" replace></Navigate>;
+    }
   }
 
   return <Suspense>{children}</Suspense>;

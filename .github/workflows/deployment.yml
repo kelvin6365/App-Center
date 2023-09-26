@@ -9,8 +9,16 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [18]
     steps:
       - uses: actions/checkout@v3
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: 'pnpm'
       - uses: dorny/paths-filter@v2
         id: filter
         with:
@@ -25,14 +33,14 @@ jobs:
         run: |
           SHORT_SHA=$(echo $GITHUB_SHA | head -c7)
           echo "::set-output name=sha::$SHORT_SHA"
-      - run: yarn install
+      - run: pnpm install
         if: ${{ steps.filter.outputs.frontend == 'true' || steps.filter.outputs.backend == 'true' }}
       - name: Build Frontend
         if: steps.filter.outputs.frontend == 'true'
-        run: yarn nx build frontend
+        run: pnpm nx build frontend
       - name: Build Backend
         if: steps.filter.outputs.backend == 'true'
-        run: yarn nx build backend
+        run: pnpm nx build backend
       - name: Install doctl
         uses: digitalocean/action-doctl@v2
         with:
