@@ -5,7 +5,6 @@ import { useForm } from 'react-hook-form';
 import { NavLink, useLocation, useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import DefaultBreadcrumb from '../../../components/Breadcrumb/DefaultBreadcrumb';
-import AppCard from '../../../components/Card/AppCard';
 import TextInput from '../../../components/Input/TextInput';
 import { DefaultPagination } from '../../../components/Pagination/Pagination';
 import API from '../../util/api';
@@ -13,6 +12,7 @@ import { App } from '../../util/type/App';
 import { Meta } from '../../util/type/Meta';
 import { BiSearchAlt2 } from 'react-icons/bi';
 import Loading from '../../../components/Loading/Loading';
+import { AppCard } from '@app-center/shared-ui';
 type SearchFormInputs = {
   supperSearch: string;
 };

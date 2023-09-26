@@ -6,7 +6,7 @@ type Props = {
   icon: string;
 };
 
-const AppCard = ({ name, description, icon }: Props) => {
+export const AppCard = ({ name, description, icon }: Props) => {
   return (
     <div className="cursor-pointer group">
       <Card className="m-3 transition group-hover:scale-110">

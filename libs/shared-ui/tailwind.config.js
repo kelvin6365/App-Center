@@ -10,14 +10,6 @@ module.exports = withMT({
       '{src,pages,components,app}/**/*!(*.stories|*.spec).{ts,tsx,html}'
     ),
     ...createGlobPatternsForDependencies(__dirname),
-    join(
-      __dirname,
-      '../../node_modules/@material-tailwind/react/components/**/*.{js,ts,jsx,tsx}'
-    ),
-    join(
-      __dirname,
-      '../../node_modules/@material-tailwind/react/theme/components/**/*.{js,ts,jsx,tsx}'
-    ),
   ],
   theme: {
     extend: {},
