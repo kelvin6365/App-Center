@@ -1,5 +1,7 @@
 import { Inject, Injectable, Logger, LoggerService } from '@nestjs/common';
-import { omit } from 'lodash';
+import { PageDTO } from '../../common/dto/page.dto';
+import { AppException } from '../../common/response/app.exception';
+import { ResponseCode } from '../../common/response/response.code';
 import { hashPassword, isMatchPassword } from '../../common/util/password.util';
 import { UserRefreshTokenRepository } from '../../database/repositories/user.refresh.token.repository';
 import { UserRepository } from '../../database/repositories/users.repository';
@@ -9,17 +11,15 @@ import PermissionEnum from '../permission/enum/permission.enum';
 import { RoleId } from '../role/enum/role.id.enum';
 import { CreateUserDTO } from './dto/create.user.dto';
 import { PortalUserResponseDTO } from './dto/portal.user.response.dto';
+import { UpdateUserDTO } from './dto/update.user.dto';
 import { User } from './entities/user.entity';
 import { UserPermission } from './entities/user.permission.entity';
 import { UserProfile } from './entities/user.profile.entity';
 import { UserRefreshToken } from './entities/user.refresh.token.entity';
 import { UserRole } from './entities/user.role.entity';
 import { UserStatus } from './enum/user.status.enum';
-import { IPaginationMeta, Pagination } from 'nestjs-typeorm-paginate';
-import { PageDTO } from '../../common/dto/page.dto';
-import { AppException } from '../../common/response/app.exception';
-import { ResponseCode } from '../../common/response/response.code';
-import { UpdateUserDTO } from './dto/update.user.dto';
+import { UserTenant } from './entities/user.tenant.entity';
+import { RoleType } from '../role/enum/role.type.enum';
 
 @Injectable()
 export class UserService {
@@ -119,11 +119,27 @@ export class UserService {
     });
     //Assign permissions
     newUser.permissions = [];
+    if (newUserDTO.roleTypes.includes(RoleType.ADMIN)) {
+      newUserDTO.permissions = [
+        PermissionEnum.VIEW_ALL_APP,
+        PermissionEnum.EDIT_ALL_APP,
+        PermissionEnum.CREATE_ALL_APP_VERSION,
+        PermissionEnum.DELETE_ALL_APP_VERSION,
+      ];
+    }
     newUserDTO.permissions.forEach((permission) => {
       const userPermission = new UserPermission();
       userPermission.userId = newUser.id;
       userPermission.permissionId = permission;
       newUser.permissions.push(userPermission);
+    });
+    //tenants
+    newUser.tenants = [];
+    newUserDTO.tenantIds.forEach((tenantId) => {
+      const userTenant = new UserTenant();
+      userTenant.tenantId = tenantId;
+      userTenant.userId = newUser.id;
+      newUser.tenants.push(userTenant);
     });
     //Create user
     await this.usersRepository.createUser(newUser);
@@ -159,7 +175,9 @@ export class UserService {
     ],
     user: CurrentUserDTO
   ): Promise<Promise<PageDTO<PortalUserResponseDTO>>> {
+    const userTenantsId = user.tenants.map((tenant) => tenant.tenant.id);
     const users = await this.usersRepository.searchUsers(
+      userTenantsId,
       searchQuery,
       withDeleted,
       {

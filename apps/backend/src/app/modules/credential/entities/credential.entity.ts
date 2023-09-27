@@ -11,4 +11,7 @@ export class Credential extends BaseEntity {
 
   @Column({ type: 'text' })
   encryptedData: string;
+
+  @Column({ name: 'tenant_id' })
+  tenantId: string;
 }

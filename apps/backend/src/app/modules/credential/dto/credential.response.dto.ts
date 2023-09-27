@@ -19,6 +19,8 @@ export class CredentialResponseDTO {
   credentialName: string;
   @ApiProperty()
   encryptedData: Record<string, unknown>;
+  @ApiProperty()
+  tenantId: string;
 
   constructor(partial: Partial<Credential>) {
     this.id = partial.id;
@@ -29,5 +31,6 @@ export class CredentialResponseDTO {
     if (partial.encryptedData) {
       this.encryptedData = JSON.parse(partial.encryptedData);
     }
+    this.tenantId = partial.tenantId;
   }
 }

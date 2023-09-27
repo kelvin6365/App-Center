@@ -29,12 +29,12 @@ const ViewUser = () => {
       desc: <div />,
     },
     {
-      label: 'Coming soon',
+      label: 'Teams',
       value: 2,
       desc: `Coming soon`,
     },
     {
-      label: 'Coming soon',
+      label: 'Permissions',
       value: 3,
       desc: `Coming soon`,
     },

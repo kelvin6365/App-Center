@@ -1,11 +1,13 @@
 import { ApiProperty } from '@nestjs/swagger';
 import {
+  ArrayNotEmpty,
   IsArray,
   IsEmail,
   IsEnum,
   IsNotEmpty,
   IsOptional,
   IsString,
+  IsUUID,
 } from 'class-validator';
 import PermissionEnum from '../../permission/enum/permission.enum';
 import { RoleType } from '../../role/enum/role.type.enum';
@@ -45,4 +47,9 @@ export class CreateUserDTO {
     values.map((value: string) => PermissionEnum[value])
   )
   permissions: PermissionEnum[];
+
+  @ApiProperty()
+  @ArrayNotEmpty()
+  @IsUUID(undefined, { each: true })
+  tenantIds: string[];
 }

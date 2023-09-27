@@ -13,6 +13,7 @@ import { BiSearchAlt2 } from 'react-icons/bi';
 import Loading from '../../../components/Loading/Loading';
 import { AppCard, MainButton } from '@app-center/shared-ui';
 import TextInput from '../../../components/Input/Input';
+import { useAppStore } from '../../util/store/store';
 type SearchFormInputs = {
   supperSearch: string;
 };
@@ -20,6 +21,7 @@ type SearchFormInputs = {
 const AllApps = () => {
   const itemsPerPage = 20;
   const navigate = useNavigate();
+  const [profile] = useAppStore((state) => [state.profile]);
   const location = useLocation();
   const { supperSearch, page } = location.state || {};
 
@@ -53,6 +55,12 @@ const AllApps = () => {
         limit: itemsPerPage,
         query: JSON.stringify({
           query: supperSearch ?? '',
+          filters: [
+            // {
+            //   key: 'tenantId',
+            //   values: [profile?.tenants[0].id],
+            // },
+          ],
         }),
       });
       const { data }: { data: { items: App[]; meta: Meta } } = res.data;

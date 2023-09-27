@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import Content from '../components/Content/Content';
 import Sidebar from '../components/Sidebar/Sidebar';
 
@@ -6,6 +6,7 @@ import { Outlet } from 'react-router-dom';
 import PageContent from '../components/Content/PageContent';
 import API from './util/api';
 import { useAppStore, useBoundStore } from './util/store/store';
+import Loading from '../components/Loading/Loading';
 
 export function App() {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -18,8 +19,13 @@ export function App() {
     state.setCredentialComponents,
   ]);
 
+  const [isLoading, setIsLoading] = useState(true);
+
   //fetch settings
   const fetchInitData = async () => {
+    if (isLoading) {
+      setIsLoading(true);
+    }
     try {
       const [settingsRes, credentialComponentsRes, profileRes] =
         await Promise.all([
@@ -33,6 +39,7 @@ export function App() {
       setSettings(settingsRes.data.data.settings);
       console.log('[fetchInitData] CredentialComponents');
       setCredentialComponents(credentialComponentsRes.data.data);
+      setIsLoading(false);
     } catch (error) {
       console.error(error);
     }
@@ -45,6 +52,10 @@ export function App() {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  if (isLoading) {
+    return <Loading />;
+  }
 
   return (
     <Content>

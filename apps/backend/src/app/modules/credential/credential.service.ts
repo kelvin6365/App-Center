@@ -23,9 +23,14 @@ export class CredentialService {
   ) {}
 
   //Get all Credentials
-  async getAllCredentials(): Promise<CredentialResponseDTO[]> {
+  async getAllCredentials(
+    user: CurrentUserDTO
+  ): Promise<CredentialResponseDTO[]> {
     const credentials =
-      await this.credentialRepository.getAllCredentialWithoutEncryptedData();
+      await this.credentialRepository.getAllCredentialWithoutEncryptedData(
+        {},
+        user.tenants.map((ut) => ut.tenant.id)
+      );
     return credentials.map(
       (credential) =>
         new CredentialResponseDTO(omit(credential, ['encryptedData']))
@@ -33,9 +38,14 @@ export class CredentialService {
   }
 
   //Get credential
-  async getCredential(credentialId: string): Promise<CredentialResponseDTO> {
+  async getCredential(
+    credentialId: string,
+    user: CurrentUserDTO
+  ): Promise<CredentialResponseDTO> {
     const credential = await this.credentialRepository.getCredential(
-      credentialId
+      credentialId,
+      {},
+      user.tenants.map((ut) => ut.tenant.id)
     );
     //get credential component
     const credentialComponent =
@@ -56,13 +66,17 @@ export class CredentialService {
     credential: CreateCredentialRequestDTO,
     user: CurrentUserDTO
   ): Promise<boolean> {
+    //check if credential belongs to users tenants
+    const userTenantIds = user.tenants.map((ut) => ut.tenant.id);
+    if (!userTenantIds.includes(credential.tenantId)) {
+      throw new AppException(ResponseCode.STATUS_8003_PERMISSION_DENIED);
+    }
     const newCredential = new Credential();
     newCredential.name = credential.name;
     newCredential.credentialName = credential.credentialName;
     newCredential.encryptedData = credential.encryptedData;
-    if (user.id) {
-      newCredential.createdBy = user.id;
-    }
+    newCredential.createdBy = user.id;
+    newCredential.tenantId = credential.tenantId;
     //Encrypt
     newCredential.encryptedData = await encryptCredentialData(
       credential.encryptedData
@@ -84,6 +98,12 @@ export class CredentialService {
     if (!credentialToUpdate) {
       throw new AppException(ResponseCode.STATUS_1011_NOT_FOUND);
     }
+    //check if credential belongs to users tenants
+    const userTenantIds = user.tenants.map((ut) => ut.tenant.id);
+    if (!userTenantIds.includes(credential.tenantId)) {
+      throw new AppException(ResponseCode.STATUS_8003_PERMISSION_DENIED);
+    }
+
     //Update credential
     credentialToUpdate.name = credential.name;
     credentialToUpdate.credentialName = credential.credentialName;
@@ -101,6 +121,17 @@ export class CredentialService {
   //Delete credential
   async deleteCredential(credentialId: string, user?: CurrentUserDTO) {
     try {
+      const credential = await this.credentialRepository.getCredential(
+        credentialId
+      );
+      if (!credential) {
+        throw new AppException(ResponseCode.STATUS_1011_NOT_FOUND);
+      }
+      //check if credential belongs to users tenants
+      const userTenantIds = user.tenants.map((ut) => ut.tenant.id);
+      if (!userTenantIds.includes(credential.tenantId)) {
+        throw new AppException(ResponseCode.STATUS_8003_PERMISSION_DENIED);
+      }
       await this.credentialRepository.deleteCredential(credentialId, user.id);
       return true;
     } catch (error) {

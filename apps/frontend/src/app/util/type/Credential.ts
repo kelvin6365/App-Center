@@ -4,6 +4,7 @@ export class Credential {
   credentialName!: string;
   createdAt!: string;
   updatedAt!: string;
+  tenantId!: string;
 }
 export class CredentialWithEncryptedData<T> extends Credential {
   encryptedData!: T;

@@ -84,6 +84,7 @@ export class UserRepository extends Repository<User> {
   }
 
   async searchUsers(
+    tenantIds: string[],
     searchQuery = '',
     withDeleted = false,
     options: IPaginationOptions = { page: 1, limit: 10 },
@@ -111,9 +112,19 @@ export class UserRepository extends Repository<User> {
         profile: {
           name: ILike(`%${searchQuery}%`),
         },
+        tenants: {
+          tenantId: tenantIds
+            ? In(tenantIds)
+            : In(['00000000-0000-0000-0000-000000000000']),
+        },
       },
       {
         username: ILike(`%${searchQuery}%`),
+        tenants: {
+          tenantId: tenantIds
+            ? In(tenantIds)
+            : In(['00000000-0000-0000-0000-000000000000']),
+        },
       },
     ];
     if (filters.length > 0) {
@@ -137,6 +148,7 @@ export class UserRepository extends Repository<User> {
         findOptions.order[sort.key] = sort.value;
       }
     }
+
     return paginate<User>(this, options, findOptions);
   }
 

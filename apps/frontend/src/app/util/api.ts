@@ -26,44 +26,47 @@ const API = {
       REGISTER: '/v1/auth/sign-up',
     },
     APP: {
-      CREATE: '/v1/app',
-      SEARCH: '/v1/app/search',
-      GET_APP: (appId: string) => `/v1/app/${appId}`,
-      SEARCH_APP_VERSIONS: (appId: string) => `/v1/app/${appId}/version/search`,
-      GET_APP_VERSION_TAGS: (appId: string) => `/v1/app/${appId}/version/tags`,
-      UPDATE_APP: (appId: string) => `/v1/app/${appId}`,
-      GET_API_KET: (appId: string) => `/v1/app/${appId}/api-key`,
-      UPLOAD_APP_VERSION: (appId: string) => `/v1/app/${appId}/version`,
+      CREATE: '/v1/portal/app',
+      SEARCH: '/v1/portal/app/search',
+      GET_APP: (appId: string) => `/v1/portal/app/${appId}`,
+      SEARCH_APP_VERSIONS: (appId: string) =>
+        `/v1/portal/app/${appId}/version/search`,
+      GET_APP_VERSION_TAGS: (appId: string) =>
+        `/v1/portal/app/${appId}/version/tags`,
+      UPDATE_APP: (appId: string) => `/v1/portal/app/${appId}`,
+      GET_API_KET: (appId: string) => `/v1/portal/app/${appId}/api-key`,
+      UPLOAD_APP_VERSION: (appId: string) => `/v1/portal/app/${appId}/version`,
       DELETE_VERSION: (appId: string, versionId: string) =>
-        `/v1/app/${appId}/version/${versionId}`,
+        `/v1/portal/app/${appId}/version/${versionId}`,
       PUBLIC_INSTALL_PAGE_APP_DETAILS: (appId: string) =>
-        `/v1/app/${appId}/install`,
+        `/v1/portal/app/${appId}/install`,
       PUBLIC_INSTALL_PAGE_APP_VERSIONS: (appId: string, versionId: string) =>
-        `/v1/app/${appId}/version/${versionId}/install`,
+        `/v1/portal/app/${appId}/version/${versionId}/install`,
     },
     USER: {
-      SEARCH_USERS: '/v1/user/search',
-      GET_USER: (userId: string) => `/v1/user/${userId}`,
-      UPDATE_USER_STATUS: (userId: string) => `/v1/user/${userId}/status`,
-      CREATE_USER: '/v1/user',
-      PROFILE: '/v1/user',
-      UPDATE_PROFILE: '/v1/user',
+      SEARCH_USERS: '/v1/portal/user/search',
+      GET_USER: (userId: string) => `/v1/portal/user/${userId}`,
+      UPDATE_USER_STATUS: (userId: string) =>
+        `/v1/portal/user/${userId}/status`,
+      CREATE_USER: '/v1/portal/user',
+      PROFILE: '/v1/portal/user',
+      UPDATE_PROFILE: '/v1/portal/user',
     },
     SETTING: {
-      GET_ALL_SETTINGS: '/v1/setting',
-      GET_SETTING: (key: string) => `/v1/setting/${key}`,
-      CREATE_SETTING: '/v1/setting',
-      UPDATE_SETTING: '/v1/setting',
+      GET_ALL_SETTINGS: '/v1/portal/setting',
+      GET_SETTING: (key: string) => `/v1/portal/setting/${key}`,
+      CREATE_SETTING: '/v1/portal/setting',
+      UPDATE_SETTING: '/v1/portal/setting',
     },
     CREDENTIAL: {
-      GET_ALL_CREDENTIALS: '/v1/credential',
-      GET_CREDENTIAL: (id: string) => `/v1/credential/${id}`,
-      CREATE_CREDENTIAL: '/v1/credential',
-      UPDATE_CREDENTIAL: (id: string) => `/v1/credential/${id}`,
-      DELETE_CREDENTIAL: (id: string) => `/v1/credential/${id}`,
-      GET_ALL_CREDENTIAL_COMPONENTS: '/v1/credential/component',
+      GET_ALL_CREDENTIALS: '/v1/portal/credential',
+      GET_CREDENTIAL: (id: string) => `/v1/portal/credential/${id}`,
+      CREATE_CREDENTIAL: '/v1/portal/credential',
+      UPDATE_CREDENTIAL: (id: string) => `/v1/portal/credential/${id}`,
+      DELETE_CREDENTIAL: (id: string) => `/v1/portal/credential/${id}`,
+      GET_ALL_CREDENTIAL_COMPONENTS: '/v1/portal/credential/component',
       GET_CREDENTIAL_COMPONENT: (name: string) =>
-        `/v1/credential/component/${name}`,
+        `/v1/portal/credential/component/${name}`,
     },
   },
 
@@ -295,6 +298,7 @@ const API = {
       name: string;
       credentialName: string;
       encryptedData: Record<string, unknown>;
+      tenantId: string;
     }) => {
       return API.apiInstance.post(
         API.API_PATH.CREDENTIAL.CREATE_CREDENTIAL,

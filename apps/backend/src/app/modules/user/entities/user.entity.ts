@@ -49,7 +49,9 @@ export class User extends BaseEntity {
   })
   profile: UserProfile;
 
-  @OneToMany(() => UserTenant, (userTenant) => userTenant.user)
+  @OneToMany(() => UserTenant, (userTenant) => userTenant.user, {
+    cascade: true,
+  })
   @JoinColumn({ name: 'id' })
   tenants: UserTenant[];
 }

@@ -7,7 +7,7 @@ import {
 } from '@material-tailwind/react';
 import axios from 'axios';
 import { useEffect } from 'react';
-import { SubmitHandler, useForm } from 'react-hook-form';
+import { SubmitHandler, useForm, Controller } from 'react-hook-form';
 import { toast } from 'react-toastify';
 import API from '../../app/util/api';
 import { App } from '../../app/util/type/App';
@@ -35,6 +35,7 @@ const UploadAppVersionDialog = ({ title, onClose, open, app }: Props) => {
     register,
     handleSubmit,
     formState: { errors, isSubmitting },
+    control,
     reset,
   } = useForm<EditAppFormInputs>({
     // resolver: yupResolver<Inputs>(schema),
@@ -102,47 +103,83 @@ const UploadAppVersionDialog = ({ title, onClose, open, app }: Props) => {
             </div>
           )}
           <div className="flex flex-col gap-6 mb-4">
-            <TextInput
-              {...register('name', {
+            <Controller
+              name="name"
+              control={control}
+              rules={{
                 required: 'Version Name is required',
-              })}
-              label="Version Name*"
-              helperText={'eg: v1.0.0'}
-              error={errors.name}
-              disabled={isSubmitting}
+              }}
+              render={({ field, fieldState: { error } }) => {
+                return (
+                  <TextInput
+                    {...field}
+                    label="Version Name*"
+                    helperText={'eg: v1.0.0'}
+                    error={error}
+                    disabled={isSubmitting}
+                  />
+                );
+              }}
             />
             <div>
-              <TextInput
-                {...register('description', {
+              <Controller
+                name="description"
+                control={control}
+                rules={{
                   required: 'Version Description is required',
-                })}
-                label="Description*"
-                helperText={"eg: 'Version 1.0.0'"}
-                error={errors.description}
-                disabled={isSubmitting}
+                }}
+                render={({ field, fieldState: { error } }) => {
+                  return (
+                    <TextInput
+                      {...field}
+                      label="Description*"
+                      helperText={"eg: 'Version 1.0.0'"}
+                      error={error}
+                      disabled={isSubmitting}
+                    />
+                  );
+                }}
               />
             </div>
           </div>
           <div className="grid grid-cols-2 gap-6 mb-6">
             <div>
-              <TextInput
-                {...register('tags', {
+              <Controller
+                name="tags"
+                control={control}
+                rules={{
                   required: 'Tags is required',
-                })}
-                label="Tags*"
-                error={errors.tags}
-                disabled={isSubmitting}
-                helperText={'eg: Android,UAT,APK'}
+                }}
+                render={({ field, fieldState: { error } }) => {
+                  return (
+                    <TextInput
+                      {...field}
+                      label="Tags*"
+                      error={error}
+                      disabled={isSubmitting}
+                      helperText={'eg: Android,UAT,APK'}
+                    />
+                  );
+                }}
               />
             </div>
-            <TextInput
-              {...register('installPassword', {
+            <Controller
+              name="installPassword"
+              control={control}
+              rules={{
                 required: 'Install Password is required',
-              })}
-              label="Install Password*"
-              error={errors.installPassword}
-              disabled={isSubmitting}
-              helperText={'For install page to download the app'}
+              }}
+              render={({ field, fieldState: { error } }) => {
+                return (
+                  <TextInput
+                    {...field}
+                    label="Install Password*"
+                    error={error}
+                    disabled={isSubmitting}
+                    helperText={'For install page to download the app'}
+                  />
+                );
+              }}
             />
           </div>
           <FileUpload

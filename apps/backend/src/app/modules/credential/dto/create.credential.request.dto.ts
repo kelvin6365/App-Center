@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Transform } from 'class-transformer';
-import { IsJSON, IsNotEmpty, IsString } from 'class-validator';
+import { IsNotEmpty, IsString, IsUUID } from 'class-validator';
 
 export class CreateCredentialRequestDTO {
   @ApiProperty()
@@ -19,4 +19,9 @@ export class CreateCredentialRequestDTO {
   })
   @IsString()
   encryptedData: string;
+
+  @ApiProperty()
+  @IsNotEmpty()
+  @IsUUID()
+  tenantId: string;
 }

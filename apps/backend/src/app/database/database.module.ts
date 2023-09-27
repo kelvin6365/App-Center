@@ -214,17 +214,21 @@ class DatabaseModule {
     const viewAllAppPermission = new UserPermission();
     viewAllAppPermission.permissionId = PermissionEnum.VIEW_ALL_APP;
     viewAllAppPermission.userId = result2.raw[0].id;
+    viewAllAppPermission.refId = tenant.id;
     const editAllAppPermission = new UserPermission();
     editAllAppPermission.permissionId = PermissionEnum.EDIT_ALL_APP;
     editAllAppPermission.userId = result2.raw[0].id;
+    editAllAppPermission.refId = tenant.id;
     const deleteAllAppVersionPermission = new UserPermission();
     deleteAllAppVersionPermission.permissionId =
       PermissionEnum.DELETE_ALL_APP_VERSION;
     deleteAllAppVersionPermission.userId = result2.raw[0].id;
+    deleteAllAppVersionPermission.refId = tenant.id;
     const createAllAppVersionPermission = new UserPermission();
     createAllAppVersionPermission.permissionId =
       PermissionEnum.CREATE_ALL_APP_VERSION;
     createAllAppVersionPermission.userId = result2.raw[0].id;
+    createAllAppVersionPermission.refId = tenant.id;
     await this.dataSource
       .createQueryBuilder()
       .insert()
