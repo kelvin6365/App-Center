@@ -20,8 +20,8 @@ const Guard = ({ children, auth }: Props) => {
   if (auth) {
     if (location?.pathname === '/' || location == null) {
       if (isLoggedIn) {
-        console.log('[Init] Navigating to /apps');
-        return <Navigate to="/apps" replace></Navigate>;
+        console.log('[Init] Navigating to /apps/all');
+        return <Navigate to="/apps/all" replace></Navigate>;
       } else {
         console.log('[Init] Redirecting to login');
         return <Navigate to="/login" replace></Navigate>;
@@ -35,7 +35,7 @@ const Guard = ({ children, auth }: Props) => {
   } else {
     if (isLoggedIn) {
       console.log('[Init] Redirecting to home');
-      return <Navigate to="/apps" replace></Navigate>;
+      return <Navigate to="/apps/all" replace></Navigate>;
     }
   }
 

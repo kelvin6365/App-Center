@@ -80,7 +80,7 @@ const AllApps = () => {
   const onSubmit = async (values: SearchFormInputs) => {
     console.log(values);
 
-    navigate('/apps', {
+    navigate('/apps/all', {
       state: { page: 1, supperSearch: values.supperSearch },
     });
   };
@@ -93,7 +93,7 @@ const AllApps = () => {
     if (location.state) {
       searchApps();
     } else {
-      navigate('/apps', {
+      navigate('/apps/all', {
         state: { page: 1, supperSearch: '' },
         replace: true,
       });
@@ -102,7 +102,7 @@ const AllApps = () => {
 
   return (
     <>
-      <DefaultBreadcrumb pageName="Dashboard.All Apps" paths={['/apps']} />
+      <DefaultBreadcrumb pageName="Dashboard.All Apps" paths={['/apps/all']} />
       <div className="pb-2">
         <Typography variant="h4" color="blue-gray">
           All Apps
@@ -172,7 +172,7 @@ const AllApps = () => {
           totalPages={totalPages}
           onPageChange={(latestPage: number) => {
             console.log(latestPage);
-            navigate('/apps', {
+            navigate('/apps/all', {
               state: { page: latestPage, supperSearch: supperSearch },
             });
           }}

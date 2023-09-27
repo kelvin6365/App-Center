@@ -1,13 +1,16 @@
-import { Injectable, Response } from '@nestjs/common';
+import { Inject, Injectable, Logger, LoggerService } from '@nestjs/common';
 import { DataSource, DeleteResult, Repository } from 'typeorm';
-import { Setting } from '../../modules/setting/entities/setting.entity';
 import { AppException } from '../../common/response/app.exception';
 import { ResponseCode } from '../../common/response/response.code';
+import { Setting } from '../../modules/setting/entities/setting.entity';
 import { SettingType } from '../../modules/setting/enum/setting.type.enum';
 
 @Injectable()
 export class SettingRepository extends Repository<Setting> {
-  constructor(dataSource: DataSource) {
+  constructor(
+    dataSource: DataSource,
+    @Inject(Logger) private readonly logger: LoggerService
+  ) {
     super(Setting, dataSource.createEntityManager());
   }
 
@@ -26,7 +29,7 @@ export class SettingRepository extends Repository<Setting> {
     try {
       return await this.save(setting);
     } catch (error) {
-      console.log(error);
+      this.logger.error(error);
       switch (error.code) {
         case '23505':
           throw new AppException(

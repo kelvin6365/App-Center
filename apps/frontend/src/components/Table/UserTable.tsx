@@ -276,7 +276,7 @@ const UserTable = ensuredForwardRef<UserTableRef, Props>(
                             if (cell.column.id === 'select') {
                               return;
                             }
-                            navigate('./' + row.original.id);
+                            navigate('/users/' + row.original.id);
                           }}
                         >
                           {cell.column.id === 'select' ? (
@@ -331,7 +331,7 @@ const UserTable = ensuredForwardRef<UserTableRef, Props>(
             totalPages={totalPages}
             onPageChange={(latestPage: number) => {
               console.log(latestPage);
-              navigate('/users', {
+              navigate('/users/all', {
                 state: { page: latestPage, supperSearch: supperSearch },
               });
             }}

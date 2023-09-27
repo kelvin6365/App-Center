@@ -110,6 +110,7 @@ export class UserService {
     newProfile.name = newUserDTO.name;
     newUser.profile = newProfile;
     newUser.refreshToken = new UserRefreshToken();
+    newUser.status = newUserDTO.status;
     //Assign roles
     newUser.roles = [];
     newUserDTO.roleTypes.forEach((roleType) => {

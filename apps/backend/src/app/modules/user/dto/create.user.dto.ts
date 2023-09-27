@@ -12,6 +12,7 @@ import {
 import PermissionEnum from '../../permission/enum/permission.enum';
 import { RoleType } from '../../role/enum/role.type.enum';
 import { Transform } from 'class-transformer';
+import { UserStatus } from '../enum/user.status.enum';
 export class CreateUserDTO {
   @ApiProperty()
   @IsNotEmpty()
@@ -52,4 +53,9 @@ export class CreateUserDTO {
   @ArrayNotEmpty()
   @IsUUID(undefined, { each: true })
   tenantIds: string[];
+
+  @ApiProperty()
+  @IsOptional()
+  @IsEnum(UserStatus)
+  status: UserStatus;
 }

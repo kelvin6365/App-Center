@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable, Logger, LoggerService } from '@nestjs/common';
 import {
   DataSource,
   FindManyOptions,
@@ -15,10 +15,15 @@ import {
   paginate,
 } from 'nestjs-typeorm-paginate';
 import { UserStatus } from '../../modules/user/enum/user.status.enum';
+import { AppException } from '../../common/response/app.exception';
+import { ResponseCode } from '../../common/response/response.code';
 
 @Injectable()
 export class UserRepository extends Repository<User> {
-  constructor(dataSource: DataSource) {
+  constructor(
+    dataSource: DataSource,
+    @Inject(Logger) private readonly logger: LoggerService
+  ) {
     super(User, dataSource.createEntityManager());
   }
 
@@ -48,8 +53,20 @@ export class UserRepository extends Repository<User> {
     });
   }
 
-  createUser(userEntity: User): Promise<User> {
-    return this.save(this.create(userEntity));
+  async createUser(userEntity: User): Promise<User> {
+    try {
+      return await this.save(this.create(userEntity));
+    } catch (error) {
+      this.logger.error(error);
+      switch (error.code) {
+        case '23505':
+          throw new AppException(
+            ResponseCode.STATUS_1012_FAIL_TO_CREATE('User already exist.')
+          );
+        default:
+          throw error;
+      }
+    }
   }
 
   updateUser(userEntity: User, updatedBy?: string): Promise<User> {

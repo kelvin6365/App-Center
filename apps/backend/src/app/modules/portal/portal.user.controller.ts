@@ -128,7 +128,7 @@ export class PortalUserController {
     @Body() createUserDTO: CreateUserDTO
   ): Promise<AppResponse<boolean>> {
     return new AppResponse<boolean>(
-      await this.userService.createUser(createUserDTO)
+      await await this.userService.createUser(createUserDTO)
     );
   }
 

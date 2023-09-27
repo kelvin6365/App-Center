@@ -61,7 +61,6 @@ const UploadAppVersionDialog = ({ title, onClose, open, app }: Props) => {
       });
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const { status }: { data: any; status: any } = res.data;
-      console.log(status);
       if (status.code === 1000) {
         onClose(true);
         reset();

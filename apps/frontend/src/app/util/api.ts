@@ -231,8 +231,12 @@ const API = {
       username: string;
       roleTypes: RoleType[];
       permissions: string[];
+      tenantIds: string[];
     }) => {
-      return API.apiInstance.post(API.API_PATH.USER.CREATE_USER, data);
+      return API.apiInstance.post(API.API_PATH.USER.CREATE_USER, {
+        ...data,
+        status: UserStatus.Activated,
+      });
     },
     profile: () => {
       return API.apiInstance.get(API.API_PATH.USER.PROFILE);

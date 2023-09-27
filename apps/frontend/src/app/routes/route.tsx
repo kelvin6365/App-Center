@@ -46,7 +46,7 @@ const route = () => {
         },
         {
           path: '*',
-          element: <Navigate to={`/apps`} replace />,
+          element: <Navigate to={`/apps/all`} replace />,
         },
       ],
     },
