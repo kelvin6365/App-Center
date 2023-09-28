@@ -205,7 +205,7 @@ const UserTable = ensuredForwardRef<UserTableRef, Props>(
         }
       }
       // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [supperSearch, page]);
+    }, [supperSearch, page, selectedTenant?.id]);
 
     useImperativeHandle(ref, () => {
       return {
@@ -217,7 +217,7 @@ const UserTable = ensuredForwardRef<UserTableRef, Props>(
 
     useEffect(() => {
       searchUser();
-    }, [searchUser]);
+    }, [searchUser, selectedTenant?.id]);
 
     return (
       <>
