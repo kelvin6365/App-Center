@@ -163,6 +163,7 @@ export class UserService {
 
   //Search User
   async searchUser(
+    tenantId: string,
     searchQuery = '',
     withDeleted = false,
     page = 1,
@@ -173,9 +174,8 @@ export class UserService {
     ],
     user: CurrentUserDTO
   ): Promise<Promise<PageDTO<PortalUserResponseDTO>>> {
-    const userTenantsId = user.tenants.map((tenant) => tenant.tenant.id);
     const users = await this.usersRepository.searchUsers(
-      userTenantsId,
+      [tenantId],
       searchQuery,
       withDeleted,
       {

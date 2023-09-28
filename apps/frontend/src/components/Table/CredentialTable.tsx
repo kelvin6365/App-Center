@@ -3,7 +3,7 @@ import moment from 'moment';
 import { forwardRef, useEffect, useImperativeHandle, useState } from 'react';
 import { AiFillDelete, AiFillEdit } from 'react-icons/ai';
 import API from '../../app/util/api';
-import { useBoundStore } from '../../app/util/store/store';
+import { useAppStore, useBoundStore } from '../../app/util/store/store';
 import { Credential } from '../../app/util/type/Credential';
 
 type Props = {
@@ -17,6 +17,7 @@ type Props = {
 };
 
 const CredentialTable = forwardRef(({ setOpenDeleteConfirm }: Props, ref) => {
+  const [selectedTenant] = useAppStore((state) => [state.selectedTenant]);
   const [credentials, setCredentials] = useState<Credential[]>([]);
   const [credentialComponents] = useBoundStore((state) => [
     state.credentialComponents,
@@ -30,8 +31,11 @@ const CredentialTable = forwardRef(({ setOpenDeleteConfirm }: Props, ref) => {
 
   //Fetch all credentials
   const fetchCredentials = async () => {
+    if (!selectedTenant) {
+      return;
+    }
     try {
-      const res = await API.credential.getAllCredentials();
+      const res = await API.credential.getAllCredentials(selectedTenant.id);
       console.log(res.data);
       const { data } = res.data;
       setCredentials(data);

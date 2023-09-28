@@ -58,7 +58,7 @@ export class PortalUserController {
   }
 
   //Get All Users
-  @Get('search')
+  @Get('/tenant/:tenantId/search')
   @ApiOperation({ summary: 'Get all Admins with filter / sort / paging' })
   @ApiQuery({
     name: 'query',
@@ -83,10 +83,12 @@ export class PortalUserController {
     @JSONQuery('query') query: SearchQueryDTO,
     @Query('page', new DefaultValuePipe(1), ParseIntPipe) page = 1,
     @Query('limit', new DefaultValuePipe(10), ParseIntPipe) limit = 10,
+    @Param('tenantId') tenantId: string,
     @CurrentUser() user: CurrentUserDTO
   ): Promise<AppResponse<PageDTO<PortalUserResponseDTO>>> {
     return new AppResponse<PageDTO<PortalUserResponseDTO>>(
       await this.userService.searchUser(
+        tenantId,
         query?.query ?? '',
         query?.withDeleted != null ? query.withDeleted : false,
         page,

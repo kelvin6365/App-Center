@@ -53,12 +53,15 @@ export class PortalCredentialController {
   }
 
   //Get All Credentials
-  @Get()
+  @Get('/tenant/:tenantId')
   @ApiOperation({ summary: 'Get All Credentials' })
   @ApiResponseSchema(HttpStatus.OK, 'OK')
-  async getAllCredentials(@CurrentUser() user: CurrentUserDTO) {
+  async getAllCredentials(
+    @Param('tenantId') tenantId: string,
+    @CurrentUser() user: CurrentUserDTO
+  ) {
     return new AppResponse(
-      await this.credentialService.getAllCredentials(user)
+      await this.credentialService.getAllCredentials(tenantId, user)
     );
   }
 

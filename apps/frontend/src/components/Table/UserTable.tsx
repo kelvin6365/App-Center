@@ -23,6 +23,7 @@ import { Meta } from '../../app/util/type/Meta';
 import { DefaultPagination } from '../Pagination/Pagination';
 import Loading from '../Loading/Loading';
 import { PortalUserProfile } from '../../app/util/type/PortalUserProfile';
+import { useAppStore } from '../../app/util/store/store';
 
 export type UserTableRef = {
   refresh: () => void;
@@ -73,6 +74,7 @@ const UserTable = ensuredForwardRef<UserTableRef, Props>(
     const navigate = useNavigate();
     const [selectedRows, setSelectedRows] = useState({});
     const [data, setData] = useState<PortalUserProfile[]>([]);
+    const [selectedTenant] = useAppStore((state) => [state.selectedTenant]);
     // const itemsPerPage = 20;
 
     const [totalPages, setTotalPages] = useState(0);
@@ -173,13 +175,15 @@ const UserTable = ensuredForwardRef<UserTableRef, Props>(
     });
 
     const searchUser = useCallback(async () => {
+      if (!selectedTenant) {
+        return;
+      }
       try {
         if (!isLoading) {
           setIsLoading(true);
         }
         //search api
-        const res = await API.user
-          .searchUsers
+        const res = await API.user.searchUsers(
           //   {
           //   page: page,
           //   limit: itemsPerPage,
@@ -187,7 +191,8 @@ const UserTable = ensuredForwardRef<UserTableRef, Props>(
           //     query: supperSearch ?? '',
           //   }),
           // }
-          ();
+          selectedTenant.id
+        );
         const { data }: { data: { items: []; meta: Meta } } = res.data;
         const { items, meta }: { items: []; meta: Meta } = data;
         setData(items);

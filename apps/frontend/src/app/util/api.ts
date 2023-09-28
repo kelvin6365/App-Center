@@ -44,7 +44,8 @@ const API = {
         `/v1/portal/app/${appId}/version/${versionId}/install`,
     },
     USER: {
-      SEARCH_USERS: '/v1/portal/user/search',
+      SEARCH_USERS: (tenantId: string) =>
+        `/v1/portal/user/tenant/${tenantId}/search`,
       GET_USER: (userId: string) => `/v1/portal/user/${userId}`,
       UPDATE_USER_STATUS: (userId: string) =>
         `/v1/portal/user/${userId}/status`,
@@ -60,7 +61,8 @@ const API = {
       UPDATE_SETTING: '/v1/portal/setting',
     },
     CREDENTIAL: {
-      GET_ALL_CREDENTIALS: '/v1/portal/credential',
+      GET_ALL_CREDENTIALS: (tenantId: string) =>
+        '/v1/portal/credential/tenant/' + tenantId,
       GET_CREDENTIAL: (id: string) => `/v1/portal/credential/${id}`,
       CREATE_CREDENTIAL: '/v1/portal/credential',
       UPDATE_CREDENTIAL: (id: string) => `/v1/portal/credential/${id}`,
@@ -216,8 +218,8 @@ const API = {
     },
   },
   user: {
-    searchUsers: () => {
-      return API.apiInstance.get(API.API_PATH.USER.SEARCH_USERS);
+    searchUsers: (tenantId: string) => {
+      return API.apiInstance.get(API.API_PATH.USER.SEARCH_USERS(tenantId));
     },
     getUser: (userId: string) => {
       return API.apiInstance.get(API.API_PATH.USER.GET_USER(userId));
@@ -298,8 +300,10 @@ const API = {
     },
   },
   credential: {
-    getAllCredentials: () => {
-      return API.apiInstance.get(API.API_PATH.CREDENTIAL.GET_ALL_CREDENTIALS);
+    getAllCredentials: (tenantId: string) => {
+      return API.apiInstance.get(
+        API.API_PATH.CREDENTIAL.GET_ALL_CREDENTIALS(tenantId)
+      );
     },
     getCredential: (id: string) => {
       return API.apiInstance.get(API.API_PATH.CREDENTIAL.GET_CREDENTIAL(id));
