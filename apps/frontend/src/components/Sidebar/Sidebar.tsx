@@ -136,21 +136,23 @@ const Sidebar = () => {
           </div>
         </NavLink>
         <form className="mt-3 mb-4" onSubmit={handleSubmit(onSelectTenant)}>
-          <Typography className="text-sm font-bold">Tenants</Typography>
+          {/* <Typography className="text-sm font-bold">Tenants</Typography> */}
           <Controller
             name="selectedTenantId"
             control={control}
             render={({ field }) => {
-              console.log(field);
               return (
                 <Select
                   ref={field.ref}
                   color="blue"
                   label="Tenant"
-                  disabled={availableTenants.length <= 1}
+                  // disabled={availableTenants.length <= 1}
                   value={field.value}
                   onBlur={field.onBlur}
-                  onChange={field.onChange}
+                  onChange={(e) => {
+                    field.onChange(e);
+                    handleSubmit(onSelectTenant)();
+                  }}
                 >
                   {availableTenants.map((availableTenants) => {
                     return (

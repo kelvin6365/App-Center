@@ -45,13 +45,9 @@ const CredentialTable = forwardRef(({ setOpenDeleteConfirm }: Props, ref) => {
   };
 
   useEffect(() => {
-    fetchCredentials();
-  }, []);
-
-  useEffect(() => {
     console.log('[Is Active] Start fetch');
     fetchCredentials();
-  }, []);
+  }, [selectedTenant?.id]);
 
   return (
     <div className="overflow-y-auto">

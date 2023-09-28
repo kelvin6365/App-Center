@@ -62,20 +62,20 @@ export class AppRepository extends Repository<App> {
       }
     }
     findOptions.where = findOptions.where.map((o) => {
-      // const filterByTenant = filters.find((f) => f.key === 'tenantId');
-      // if (filterByTenant) {
-      //   const values = filterByTenant.values as string[];
-      //   return {
-      //     ...o,
-      //     tenantId: tenantIds
-      //       ? In(
-      //           tenantIds.filter(function (e) {
-      //             return values.indexOf(e) > -1;
-      //           })
-      //         )
-      //       : In(['00000000-0000-0000-0000-000000000000']),
-      //   };
-      // }
+      const filterByTenant = filters.find((f) => f.key === 'tenantId');
+      if (filterByTenant) {
+        const values = filterByTenant.values as string[];
+        return {
+          ...o,
+          tenantId: tenantIds
+            ? In(
+                tenantIds.filter(function (e) {
+                  return values.indexOf(e) > -1;
+                })
+              )
+            : In(['00000000-0000-0000-0000-000000000000']),
+        };
+      }
       return {
         ...o,
         tenantId: tenantIds

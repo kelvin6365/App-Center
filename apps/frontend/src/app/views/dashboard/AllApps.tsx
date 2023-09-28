@@ -77,7 +77,7 @@ const AllApps = () => {
       }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [page, supperSearch]);
+  }, [page, supperSearch, selectedTenant?.id]);
 
   const onSubmit = async (values: SearchFormInputs) => {
     console.log(values);
@@ -100,7 +100,14 @@ const AllApps = () => {
         replace: true,
       });
     }
-  }, [searchApps, navigate, location.state, reset, supperSearch]);
+  }, [
+    searchApps,
+    navigate,
+    location.state,
+    reset,
+    supperSearch,
+    selectedTenant?.id,
+  ]);
 
   return (
     <>
