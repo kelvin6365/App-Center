@@ -1,18 +1,19 @@
 import { Typography } from '@material-tailwind/react';
 import axios from 'axios';
 import { useCallback, useEffect, useState } from 'react';
-import { useForm } from 'react-hook-form';
+import { Controller, useForm } from 'react-hook-form';
 import { NavLink, useLocation, useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import DefaultBreadcrumb from '../../../components/Breadcrumb/DefaultBreadcrumb';
-import AppCard from '../../../components/Card/AppCard';
-import TextInput from '../../../components/Input/TextInput';
 import { DefaultPagination } from '../../../components/Pagination/Pagination';
 import API from '../../util/api';
 import { App } from '../../util/type/App';
 import { Meta } from '../../util/type/Meta';
 import { BiSearchAlt2 } from 'react-icons/bi';
 import Loading from '../../../components/Loading/Loading';
+import { AppCard, MainButton } from '@app-center/shared-ui';
+import TextInput from '../../../components/Input/Input';
+import { useAppStore } from '../../util/store/store';
 type SearchFormInputs = {
   supperSearch: string;
 };
@@ -20,6 +21,7 @@ type SearchFormInputs = {
 const AllApps = () => {
   const itemsPerPage = 20;
   const navigate = useNavigate();
+  const [selectedTenant] = useAppStore((state) => [state.selectedTenant]);
   const location = useLocation();
   const { supperSearch, page } = location.state || {};
 
@@ -31,9 +33,9 @@ const AllApps = () => {
   const [isLoading, setIsLoading] = useState(true);
 
   const {
-    register,
     handleSubmit,
-    formState: { errors, isSubmitting },
+    control,
+    formState: { isSubmitting },
     reset,
   } = useForm<SearchFormInputs>({
     // resolver: yupResolver<Inputs>(schema),
@@ -53,6 +55,14 @@ const AllApps = () => {
         limit: itemsPerPage,
         query: JSON.stringify({
           query: supperSearch ?? '',
+          filters: selectedTenant
+            ? [
+                {
+                  key: 'tenantId',
+                  values: [selectedTenant.id],
+                },
+              ]
+            : [],
         }),
       });
       const { data }: { data: { items: App[]; meta: Meta } } = res.data;
@@ -72,7 +82,7 @@ const AllApps = () => {
   const onSubmit = async (values: SearchFormInputs) => {
     console.log(values);
 
-    navigate('/apps', {
+    navigate('/apps/all', {
       state: { page: 1, supperSearch: values.supperSearch },
     });
   };
@@ -85,7 +95,7 @@ const AllApps = () => {
     if (location.state) {
       searchApps();
     } else {
-      navigate('/apps', {
+      navigate('/apps/all', {
         state: { page: 1, supperSearch: '' },
         replace: true,
       });
@@ -94,7 +104,7 @@ const AllApps = () => {
 
   return (
     <>
-      <DefaultBreadcrumb pageName="Dashboard.All Apps" paths={['/apps']} />
+      <DefaultBreadcrumb pageName="Dashboard.All Apps" paths={['/apps/all']} />
       <div className="pb-2">
         <Typography variant="h4" color="blue-gray">
           All Apps
@@ -105,13 +115,36 @@ const AllApps = () => {
       </div>
       <div className="pt-4">
         <form onSubmit={handleSubmit(onSubmit)}>
-          <TextInput
-            {...register('supperSearch', {})}
-            placeholder="Quick Search..."
-            errors={errors}
-            loading={isSubmitting}
-            icon={<BiSearchAlt2 />}
-          />
+          <div className="flex w-full gap-4">
+            <div className="w-full">
+              <Controller
+                name="supperSearch"
+                control={control}
+                rules={{}}
+                render={({ field, fieldState: { error } }) => {
+                  return (
+                    <TextInput
+                      {...field}
+                      label="Quick Search..."
+                      error={error}
+                      disabled={isSubmitting}
+                      icon={
+                        <BiSearchAlt2
+                          className="cursor-pointer hover:text-blue-500"
+                          onClick={() => {
+                            handleSubmit(onSubmit)();
+                          }}
+                        />
+                      }
+                    />
+                  );
+                }}
+              />
+            </div>
+            <MainButton type="submit" disabled={isSubmitting}>
+              Search
+            </MainButton>
+          </div>
         </form>
       </div>
       {isLoading && (
@@ -141,7 +174,7 @@ const AllApps = () => {
           totalPages={totalPages}
           onPageChange={(latestPage: number) => {
             console.log(latestPage);
-            navigate('/apps', {
+            navigate('/apps/all', {
               state: { page: latestPage, supperSearch: supperSearch },
             });
           }}

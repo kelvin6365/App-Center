@@ -16,10 +16,11 @@ import { AppVersionTagDTO } from './dto/app.version.tag.dto';
 import { CreateAppDTO } from './dto/create.app.dto';
 import { CreateAppVersionDTO } from './dto/create.app.version.dto';
 import { InstallAppDTO } from './dto/install.app.dto';
+import { UpdateAppDTO } from './dto/update.app.dto';
 import { App } from './entities/app.entity';
 import { AppVersion } from './entities/app.version.entity';
 import { AppVersionTag } from './entities/app.version.tag.entity';
-import { UpdateAppDTO } from './dto/update.app.dto';
+import { ResponseStatus } from '../../common/response/response.status';
 
 @Injectable()
 export class AppService {
@@ -40,6 +41,13 @@ export class AppService {
     file: Express.Multer.File,
     user: CurrentUserDTO
   ): Promise<string> {
+    //Check tenant id
+    const isAllowed = user.tenants
+      .map((ut) => ut.tenant.id)
+      .includes(app.tenantId);
+    if (!isAllowed) {
+      throw new AppException(ResponseCode.STATUS_8003_PERMISSION_DENIED);
+    }
     this.logger.log('Creating a new app');
     //Create a new app by dto
     const newApp: App = new App();
@@ -49,7 +57,7 @@ export class AppService {
     newApp.apiKey = nanoid();
     newApp.extra = app.extra ?? {};
     newApp.createdBy = user.id;
-    newApp.tenantId = user.tenants[0];
+    newApp.tenantId = app.tenantId;
     const createdApp = await this.appRepository.createApp(newApp);
     if (createdApp) {
       //Create app icon
@@ -78,8 +86,10 @@ export class AppService {
     ],
     user: CurrentUserDTO
   ): Promise<PageDTO<AppDTO>> {
+    const userTenantsId = user.tenants.map((tenant) => tenant.tenant.id);
+
     const result = await this.appRepository.findAll(
-      user.tenants[0],
+      userTenantsId,
       searchQuery,
       withDeleted,
       {
@@ -111,21 +121,29 @@ export class AppService {
     forPublicInstallPage = false,
     user?: CurrentUserDTO
   ): Promise<AppDTO> {
-    // //check permissions
-    // const permissions = user.permissions;
-    // if (
-    //   !permissions
-    //     .filter((p) => p.permissionId === AppsPermission.VIEW_APP)
-    //     .map((p) => p.refId)
-    //     .includes(id)
-    // ) {
-    //   throw new AppException(ResponseCode.STATUS_8003_PERMISSION_DENIED);
-    // }
-
     const app = await this.appRepository.findById(id, withDeleted);
     if (!app && errorIfNotFound) {
       throw new AppException(ResponseCode.STATUS_1011_NOT_FOUND);
     }
+    // //check permissions
+    // const permissions = user.permissions;
+    // if (
+    //   !permissions.filter((p) => p.permissionId === AppsPermission.VIEW_ALL_APP)
+    // ) {
+    //   if (
+    //     !permissions
+    //       .filter((p) => p.permissionId === AppsPermission.VIEW_APP)
+    //       .map((p) => p.refId)
+    //       .includes(app.id)
+    //   ) {
+    //     throw new AppException(ResponseCode.STATUS_8003_PERMISSION_DENIED);
+    //   }
+    // } else {
+    //   //view all apps permission also need to in same tenant
+    //   if (!user.tenants.map((ut) => ut.tenant.id).includes(app.tenantId)) {
+    //     throw new AppException(ResponseCode.STATUS_8003_PERMISSION_DENIED);
+    //   }
+    // }
     return new AppDTO(
       forPublicInstallPage
         ? {

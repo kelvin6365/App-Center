@@ -6,10 +6,10 @@ import { useAppStore, useBoundStore } from '../../util/store/store';
 import API from '../../util/api';
 import { toast } from 'react-toastify';
 import axios from 'axios';
-import TextInput from '../../../components/Input/TextInput';
 import { useEffect, useState } from 'react';
 import Loading from '../../../components/Loading/Loading';
 import { Setting } from '../../util/type/Setting';
+import TextInput from '../../../components/Input/Input';
 
 type RegisterFormInputs = {
   email: string;
@@ -137,9 +137,9 @@ const Register = () => {
                     required: 'Email is required',
                   })}
                   label={'Email'}
-                  loading={isSubmitting}
+                  disabled={isSubmitting}
                   type="email"
-                  errors={errors}
+                  error={errors.email}
                 />
               </div>
               <div>
@@ -148,9 +148,9 @@ const Register = () => {
                     required: 'Password is required',
                   })}
                   label={'Password'}
-                  loading={isSubmitting}
+                  disabled={isSubmitting}
                   type="password"
-                  errors={errors}
+                  error={errors.password}
                 />
               </div>
               <div>
@@ -164,9 +164,9 @@ const Register = () => {
                     },
                   })}
                   label={'Confirm Password'}
-                  loading={isSubmitting}
+                  disabled={isSubmitting}
                   type="password"
-                  errors={errors}
+                  error={errors.confirmPassword}
                 />
               </div>
               <div>
@@ -175,8 +175,8 @@ const Register = () => {
                     required: 'Name is required',
                   })}
                   label={'Name'}
-                  loading={isSubmitting}
-                  errors={errors}
+                  disabled={isSubmitting}
+                  error={errors.name}
                 />
               </div>
               <Button disabled={isSubmitting} className="w-full" type="submit">

@@ -16,7 +16,7 @@ export class UserTenant extends BaseEntity {
   @JoinColumn({ name: 'user_id' })
   user: User;
 
-  @ManyToOne(() => Tenant, (tenant: Tenant) => tenant.users)
+  @ManyToOne(() => Tenant, (tenant: Tenant) => tenant.users, { eager: true })
   @JoinColumn({ name: 'tenant_id' })
   tenant: Tenant;
 }

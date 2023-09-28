@@ -19,6 +19,11 @@ export class CreateAppDTO {
   @IsNotEmpty()
   description: string;
 
+  @ApiProperty()
+  @IsUUID()
+  @IsNotEmpty()
+  tenantId: string;
+
   @ApiProperty({ type: [String] })
   @IsOptional()
   @IsUUID('4', { each: true })

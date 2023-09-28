@@ -82,9 +82,7 @@ export class AuthService {
     username: string,
     hashedPassword: string
   ): Promise<CurrentUserDTO> {
-    const user = await this.userService.getUserByUsernameWithDeletedFalse(
-      username
-    );
+    const user = await this.userService.findUserByEmailWithPassword(username);
     if (!user) {
       throw new AppException(
         ResponseCode.STATUS_8001_USER_USERNAME_OR_PASSWORD_NOT_MATCH

@@ -3,6 +3,7 @@ import { User } from '../../user/entities/user.entity';
 import { UserRole } from '../../user/entities/user.role.entity';
 import { UserStatus } from '../../user/enum/user.status.enum';
 import { UserPermission } from '../../user/entities/user.permission.entity';
+import { UserTenant } from '../../user/entities/user.tenant.entity';
 
 export class CurrentUserDTO {
   @ApiProperty()
@@ -36,7 +37,7 @@ export class CurrentUserDTO {
   permissions: UserPermission[];
 
   @ApiProperty()
-  tenants: string[];
+  tenants: UserTenant[];
 
   fromEntity(entity: User) {
     const dto = new CurrentUserDTO();
@@ -50,7 +51,7 @@ export class CurrentUserDTO {
     dto.roles = entity.roles;
     dto.name = entity.profile.name;
     dto.permissions = entity.permissions;
-    dto.tenants = entity.tenants?.map((tenant) => tenant.tenantId);
+    dto.tenants = entity.tenants;
     return dto;
   }
 }

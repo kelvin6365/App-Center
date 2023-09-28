@@ -1,40 +1,39 @@
 import { Logger, Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { DataSource } from 'typeorm';
+import { hashPassword } from '../common/util/password.util';
+import { Admin } from '../modules/admin/entities/admin.entity';
+import { AdminStatus } from '../modules/admin/enum/admin.status.enum';
 import { App } from '../modules/app/entities/app.entity';
-import { AppVersion } from '../modules/app/entities/app.version.entity';
-import { File } from '../modules/file/entities/file.entity';
 import { AppTag } from '../modules/app/entities/app.tag.entity';
+import { AppVersion } from '../modules/app/entities/app.version.entity';
 import { AppVersionTag } from '../modules/app/entities/app.version.tag.entity';
+import { CredentialComponent } from '../modules/credential/entities/credential.component.entity';
+import { Credential } from '../modules/credential/entities/credential.entity';
+import { File } from '../modules/file/entities/file.entity';
+import { Permission } from '../modules/permission/entities/permission.entity';
+import { Role } from '../modules/role/entities/role.entity';
+import { RoleId } from '../modules/role/enum/role.id.enum';
 import { Setting } from '../modules/setting/entities/setting.entity';
+import { Tenant } from '../modules/tenant/entities/tenant.entity';
+import { TenantStatus } from '../modules/tenant/enum/tenant.status.enum';
 import { User } from '../modules/user/entities/user.entity';
+import { UserPermission } from '../modules/user/entities/user.permission.entity';
 import { UserProfile } from '../modules/user/entities/user.profile.entity';
 import { UserRefreshToken } from '../modules/user/entities/user.refresh.token.entity';
-import { Role } from '../modules/role/entities/role.entity';
 import { UserRole } from '../modules/user/entities/user.role.entity';
-import { role1693123446948 } from './migrations/1693123446948-role';
+import { UserTenant } from '../modules/user/entities/user.tenant.entity';
+import { UserStatus } from '../modules/user/enum/user.status.enum';
 import { Role1693123446947 } from './migrations/1693123446947-create-role';
-import { Permission } from '../modules/permission/entities/permission.entity';
-import { UserPermission } from '../modules/user/entities/user.permission.entity';
+import { role1693123446948 } from './migrations/1693123446948-role';
 import { Permission1693145873440 } from './migrations/1693145873440-permission';
 import { PermissionInsert1693145971058 } from './migrations/1693145971058-permission-insert';
-import { Credential } from '../modules/credential/entities/credential.entity';
-import { CredentialComponent } from '../modules/credential/entities/credential.component.entity';
 import { CreateCredentialComponent1694362620123 } from './migrations/1694362620123-CreateCredentialComponent';
 import { InsertCredentialComponent1694362717025 } from './migrations/1694362717025-InsertCredentialComponent';
 import { InsertCredentialComponent1694362717026 } from './migrations/1694362717026-InsertCredentialComponent';
-import { Tenant } from '../modules/tenant/entities/tenant.entity';
-import { UserTenant } from '../modules/user/entities/user.tenant.entity';
-import { DataSource } from 'typeorm';
-import { hashPassword } from '../common/util/password.util';
-import { AdminStatus } from '../modules/admin/enum/admin.status.enum';
-import { TenantStatus } from '../modules/tenant/enum/tenant.status.enum';
-import { UserStatus } from '../modules/user/enum/user.status.enum';
-import { Admin } from '../modules/admin/entities/admin.entity';
-import { RoleId } from '../modules/role/enum/role.id.enum';
-import PermissionEnum from '../modules/permission/enum/permission.enum';
-import { InsertSystemConfig1695658100920 } from './migrations/1695658100920-Insert-SystemConfig';
 import { CreateSetting1695107265137 } from './migrations/1695107265137-Create-Setting';
+import { InsertSystemConfig1695658100920 } from './migrations/1695658100920-Insert-SystemConfig';
 
 @Module({
   imports: [
@@ -167,11 +166,11 @@ class DatabaseModule {
       },
     });
 
+    //Create user
     const newUser = new User();
     newUser.username = username;
     newUser.status = UserStatus.Activated;
     newUser.password = await hashPassword(password);
-
     const result2 = await this.dataSource
       .createQueryBuilder()
       .insert()
@@ -179,6 +178,7 @@ class DatabaseModule {
       .values([newUser])
       .execute();
 
+    //Create Profile for user
     const profile = new UserProfile();
     profile.userId = result2.raw[0].id;
     profile.name = name;
@@ -190,6 +190,7 @@ class DatabaseModule {
       .values([profile])
       .execute();
 
+    //Assign tenant to user
     const userTenant = new UserTenant();
     userTenant.userId = result2.raw[0].id;
     userTenant.tenantId = tenant.id;
@@ -200,9 +201,11 @@ class DatabaseModule {
       .values([userTenant])
       .execute();
 
+    //Assign admin role to user
     const userRole = new UserRole();
     userRole.roleId = RoleId.ADMIN;
     userRole.userId = result2.raw[0].id;
+    userRole.tenantId = tenant.id;
     await this.dataSource
       .createQueryBuilder()
       .insert()
@@ -210,32 +213,36 @@ class DatabaseModule {
       .values([userRole])
       .execute();
 
-    //permissions
-    const viewAllAppPermission = new UserPermission();
-    viewAllAppPermission.permissionId = PermissionEnum.VIEW_ALL_APP;
-    viewAllAppPermission.userId = result2.raw[0].id;
-    const editAllAppPermission = new UserPermission();
-    editAllAppPermission.permissionId = PermissionEnum.EDIT_ALL_APP;
-    editAllAppPermission.userId = result2.raw[0].id;
-    const deleteAllAppVersionPermission = new UserPermission();
-    deleteAllAppVersionPermission.permissionId =
-      PermissionEnum.DELETE_ALL_APP_VERSION;
-    deleteAllAppVersionPermission.userId = result2.raw[0].id;
-    const createAllAppVersionPermission = new UserPermission();
-    createAllAppVersionPermission.permissionId =
-      PermissionEnum.CREATE_ALL_APP_VERSION;
-    createAllAppVersionPermission.userId = result2.raw[0].id;
-    await this.dataSource
-      .createQueryBuilder()
-      .insert()
-      .into(UserPermission)
-      .values([
-        viewAllAppPermission,
-        editAllAppPermission,
-        deleteAllAppVersionPermission,
-        createAllAppVersionPermission,
-      ])
-      .execute();
+    //permissions [As admin user will able to view all app]
+    // const viewAllAppPermission = new UserPermission();
+    // viewAllAppPermission.permissionId = PermissionEnum.VIEW_ALL_APP;
+    // viewAllAppPermission.userId = result2.raw[0].id;
+    // viewAllAppPermission.refId = tenant.id;
+    // const editAllAppPermission = new UserPermission();
+    // editAllAppPermission.permissionId = PermissionEnum.EDIT_ALL_APP;
+    // editAllAppPermission.userId = result2.raw[0].id;
+    // editAllAppPermission.refId = tenant.id;
+    // const deleteAllAppVersionPermission = new UserPermission();
+    // deleteAllAppVersionPermission.permissionId =
+    //   PermissionEnum.DELETE_ALL_APP_VERSION;
+    // deleteAllAppVersionPermission.userId = result2.raw[0].id;
+    // deleteAllAppVersionPermission.refId = tenant.id;
+    // const createAllAppVersionPermission = new UserPermission();
+    // createAllAppVersionPermission.permissionId =
+    //   PermissionEnum.CREATE_ALL_APP_VERSION;
+    // createAllAppVersionPermission.userId = result2.raw[0].id;
+    // createAllAppVersionPermission.refId = tenant.id;
+    // await this.dataSource
+    //   .createQueryBuilder()
+    //   .insert()
+    //   .into(UserPermission)
+    //   .values([
+    //     viewAllAppPermission,
+    //     editAllAppPermission,
+    //     deleteAllAppVersionPermission,
+    //     createAllAppVersionPermission,
+    //   ])
+    //   .execute();
 
     Logger.log(`Tenant user ${result2.raw[0].name} created!`);
   }

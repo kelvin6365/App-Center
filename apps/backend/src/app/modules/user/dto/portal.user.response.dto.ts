@@ -1,5 +1,6 @@
 import { PermissionDTO } from '../../permission/dto/permission.dto';
 import { RoleDTO } from '../../role/dto/role.dto';
+import { TenantDTO } from '../../tenant/dto/tenant.dto';
 import { User } from '../entities/user.entity';
 import { UserStatus } from '../enum/user.status.enum';
 
@@ -10,7 +11,7 @@ export class PortalUserResponseDTO {
   roles: RoleDTO[];
   profile: any;
   permissions: PermissionDTO[];
-  tenants: string[];
+  tenants: TenantDTO[];
   createdAt: Date;
   updatedAt: Date;
   deletedAt: Date;
@@ -23,7 +24,9 @@ export class PortalUserResponseDTO {
     this.permissions = partial.permissions?.map(
       (permission) => new PermissionDTO(permission.permission, permission.refId)
     );
-    this.tenants = partial.tenants?.map((tenant) => tenant.id);
+    this.tenants = partial.tenants?.map(
+      (userTenant) => new TenantDTO(userTenant.tenant)
+    );
     this.createdAt = partial.createdAt;
     this.updatedAt = partial.updatedAt;
     this.deletedAt = partial.deletedAt;

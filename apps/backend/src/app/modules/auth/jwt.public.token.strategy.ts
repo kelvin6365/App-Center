@@ -33,7 +33,7 @@ export class JwtPublicTokenStrategy extends PassportStrategy(
   }
 
   async validate(payload: any): Promise<CurrentUserDTO> {
-    const user = await this.userService.getUserByUsernameWithDeletedFalse(
+    const user = await this.userService.findUserByEmailWithPassword(
       payload.username
     );
     if (user) {

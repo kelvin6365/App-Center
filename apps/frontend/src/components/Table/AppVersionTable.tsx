@@ -28,7 +28,11 @@ type Props = {
   }) => void;
 };
 
-const AppVersionTable = forwardRef(
+export type TableRef = {
+  reload: () => void;
+};
+
+const AppVersionTable = forwardRef<TableRef, Props>(
   ({ appId, setOpenQRCode, setOpenShareInstallURL }: Props, ref) => {
     const [appVersions, setAppVersions] = useState<AppVersion[]>([]);
     const [appVersionTags, setAppVersionTags] = useState<AppVersionTag[]>([]);

@@ -6,11 +6,12 @@ import {
   DialogHeader,
 } from '@material-tailwind/react';
 import { CredentialComponent } from '../../app/util/type/CredentialComponent';
-import { useForm } from 'react-hook-form';
-import TextInput from '../Input/TextInput';
+import { useForm, Controller } from 'react-hook-form';
 import API from '../../app/util/api';
 import { omit } from 'lodash';
 import { toast } from 'react-toastify';
+import TextInput from '../Input/Input';
+import { useAppStore } from '../../app/util/store/store';
 
 type Props = {
   title: string;
@@ -28,19 +29,28 @@ const CreateCredentialDialog = ({
   onSuccess,
 }: Props) => {
   const {
-    register,
     handleSubmit,
     reset,
-    formState: { errors, isSubmitting },
+    control,
+    formState: { isSubmitting },
   } = useForm();
+
+  const [profile, selectedTenant] = useAppStore((state) => [
+    state.profile,
+    state.selectedTenant,
+  ]);
 
   //Submit Create Credential
   const createCredential = async (e: Record<string, string>) => {
+    if (!profile || !selectedTenant) {
+      return;
+    }
     try {
       const res = await API.credential.createCredential({
         name: e.name,
         credentialName: type.name,
         encryptedData: omit(e, ['name']),
+        tenantId: selectedTenant?.id,
       });
       if (!res.data.data) {
         throw new Error('Credential create failed');
@@ -75,33 +85,51 @@ const CreateCredentialDialog = ({
           className="mb-2"
           dangerouslySetInnerHTML={{ __html: type.description }}
         />
-        <form id="form" onSubmit={handleSubmit(createCredential)}>
-          <TextInput
-            label={'Name'}
-            {...register('name', {
-              required: {
-                value: true,
-                message: 'Name is required',
-              },
-            })}
-            loading={isSubmitting}
-            errors={errors}
+        <form
+          id="form"
+          className="flex flex-col gap-6 my-4"
+          onSubmit={handleSubmit(createCredential)}
+        >
+          <Controller
+            name="name"
+            control={control}
+            rules={{
+              required: 'Name is required',
+            }}
+            render={({ field, fieldState: { error } }) => {
+              return (
+                <TextInput
+                  label={'Name'}
+                  {...field}
+                  // variant="static"
+                  disabled={isSubmitting}
+                  error={error}
+                />
+              );
+            }}
           />
           {type.inputs.map((input, index) => {
             return (
-              <TextInput
+              <Controller
                 key={index}
-                label={input.label}
-                {...register(input.name, {
-                  required: {
-                    value: true,
-                    message: input.label + 'is required',
-                  },
-                })}
-                type={input.type}
-                placeholder={input.placeholder}
-                loading={isSubmitting}
-                errors={errors}
+                name={input.label}
+                control={control}
+                rules={{
+                  required: input.label + ' is required',
+                }}
+                render={({ field, fieldState: { error } }) => {
+                  return (
+                    <TextInput
+                      label={input.label}
+                      {...field}
+                      type={input.type as 'password' | 'text'}
+                      // placeholder={input.placeholder}
+                      // variant="static"
+                      disabled={isSubmitting}
+                      error={error}
+                    />
+                  );
+                }}
               />
             );
           })}

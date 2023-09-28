@@ -14,7 +14,9 @@ import {
   List,
   ListItem,
   ListItemPrefix,
+  Select,
   Typography,
+  Option,
 } from '@material-tailwind/react';
 import React, { useCallback, useEffect } from 'react';
 import Scrollbars from 'react-custom-scrollbars-2';
@@ -23,15 +25,33 @@ import logo from '../../assets/images/logo.jpg';
 import MenuItems from './MenuItems';
 import { useAppStore } from '../../app/util/store/store';
 import { AppSlice } from '../../app/util/store/appSlice';
+import { Controller, SubmitHandler, useForm } from 'react-hook-form';
 
 const Sidebar = () => {
-  const [setLogout, profile] = useAppStore((state: AppSlice) => [
-    state.setLogout,
-    state.profile,
-  ]);
+  const [setLogout, profile, availableTenants, setTenant, selectedTenant] =
+    useAppStore((state: AppSlice) => [
+      state.setLogout,
+      state.profile,
+      state.availableTenants,
+      state.setTenant,
+      state.selectedTenant,
+    ]);
   const [open, setOpen] = React.useState(0);
   const [openAlert, setOpenAlert] = React.useState(true);
   const location = useLocation();
+
+  const {
+    handleSubmit,
+    // formState: { errors, isSubmitting },
+    control,
+    reset,
+  } = useForm<{ selectedTenantId: string }>({
+    mode: 'onChange',
+    // resolver: yupResolver<Inputs>(schema),
+    defaultValues: {
+      selectedTenantId: selectedTenant?.id ?? '',
+    },
+  });
 
   const handleOpen = useCallback(
     (value: number) => {
@@ -41,6 +61,16 @@ const Sidebar = () => {
   );
   const logout = () => {
     setLogout();
+  };
+
+  const onSelectTenant: SubmitHandler<{ selectedTenantId: string }> = async (
+    values
+  ) => {
+    setTenant(
+      availableTenants.find(
+        (tenant) => tenant.id === values.selectedTenantId
+      ) ?? null
+    );
   };
 
   const initMenuOpen = useCallback(() => {
@@ -74,7 +104,7 @@ const Sidebar = () => {
       <div className="flex items-center gap-4 p-2 mb-2 md:p-4">
         <img
           src={logo}
-          alt="Altech"
+          alt="App Center Logo"
           className="w-full h-full max-w-[32px] max-h-8 aspect-square"
         />
         <Typography variant="h5" color="blue-gray" className="hidden md:block">
@@ -82,7 +112,7 @@ const Sidebar = () => {
         </Typography>
       </div>
       <Scrollbars className="h-full">
-        <div className="flex items-center gap-4 p-2">
+        <NavLink to={'/account'} className="flex items-center gap-4 p-2">
           <Avatar
             alt="avatar"
             src={
@@ -104,7 +134,40 @@ const Sidebar = () => {
               {profile?.status ?? '-'}
             </Typography>
           </div>
-        </div>
+        </NavLink>
+        <form className="mt-3 mb-4" onSubmit={handleSubmit(onSelectTenant)}>
+          <Typography className="text-sm font-bold">Tenants</Typography>
+          <Controller
+            name="selectedTenantId"
+            control={control}
+            render={({ field }) => {
+              console.log(field);
+              return (
+                <Select
+                  ref={field.ref}
+                  color="blue"
+                  label="Tenant"
+                  disabled={availableTenants.length <= 1}
+                  value={field.value}
+                  onBlur={field.onBlur}
+                  onChange={field.onChange}
+                >
+                  {availableTenants.map((availableTenants) => {
+                    return (
+                      <Option
+                        key={availableTenants.id}
+                        value={availableTenants.id}
+                      >
+                        {availableTenants.name}
+                      </Option>
+                    );
+                  })}
+                </Select>
+              );
+            }}
+          />
+        </form>
+
         <hr className="my-2 border-blue-gray-50" />
         <List className="md:min-w-[240px] min-w-0 p-0 md:p2">
           {MenuItems.map((item, index) => {

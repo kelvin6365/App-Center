@@ -18,7 +18,7 @@ const AllUsers = () => {
     // });
 
     if (!location.state) {
-      navigate('/users', {
+      navigate('/users/all', {
         state: { page: 1, supperSearch: '' },
         replace: true,
       });
@@ -29,7 +29,7 @@ const AllUsers = () => {
     <>
       <DefaultBreadcrumb
         pageName="User Management.All Users"
-        paths={['/users']}
+        paths={['/users/all']}
       />
       <div className="pb-2">
         <Typography variant="h4" color="blue-gray">

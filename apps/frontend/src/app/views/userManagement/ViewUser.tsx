@@ -14,11 +14,12 @@ import { toast } from 'react-toastify';
 import DefaultBreadcrumb from '../../../components/Breadcrumb/DefaultBreadcrumb';
 import API from '../../util/api';
 import isUuid from '../../util/util';
+import { PortalUserProfile } from '../../util/type/PortalUserProfile';
 
 const ViewUser = () => {
   const { id } = useParams();
   const navigate = useNavigate();
-  const [user, setUser] = useState<any | null>(null);
+  const [user, setUser] = useState<PortalUserProfile | null>(null);
 
   const [activeTab, setActiveTab] = useState(1);
   const data = [
@@ -28,12 +29,12 @@ const ViewUser = () => {
       desc: <div />,
     },
     {
-      label: 'Coming soon',
+      label: 'Teams',
       value: 2,
       desc: `Coming soon`,
     },
     {
-      label: 'Coming soon',
+      label: 'Permissions',
       value: 3,
       desc: `Coming soon`,
     },

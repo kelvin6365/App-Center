@@ -15,7 +15,7 @@ const CreateApp = loadable(() => import('../../views/dashboard/CreateApp'), {
 const dashboardRoute = () => {
   return [
     {
-      path: '/apps',
+      path: '/apps/all',
       element: <AllApps />,
     },
     {

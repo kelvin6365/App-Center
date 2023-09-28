@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { DataSource, DeleteResult, Repository } from 'typeorm';
+import { DataSource, DeleteResult, In, Repository } from 'typeorm';
 import { Credential } from '../../modules/credential/entities/credential.entity';
 
 @Injectable()
@@ -17,10 +17,11 @@ export class CredentialRepository extends Repository<Credential> {
     credentialId: string,
     options: { withDeleted?: boolean } = {
       withDeleted: false,
-    }
+    },
+    tenantIds?: string[]
   ): Promise<Credential> {
     const credential = await this.findOne({
-      where: { id: credentialId },
+      where: { id: credentialId, tenantId: In(tenantIds) },
       withDeleted: options.withDeleted,
     });
 
@@ -47,9 +48,13 @@ export class CredentialRepository extends Repository<Credential> {
   async getAllCredentialWithoutEncryptedData(
     options: { withDeleted?: boolean } = {
       withDeleted: false,
-    }
+    },
+    tenantIds: string[]
   ) {
     const credentials = await this.find({
+      where: {
+        tenantId: In(tenantIds),
+      },
       withDeleted: options.withDeleted,
       order: {
         createdAt: 'DESC',

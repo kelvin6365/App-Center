@@ -23,6 +23,7 @@ import { Meta } from '../../app/util/type/Meta';
 import { DefaultPagination } from '../Pagination/Pagination';
 import Loading from '../Loading/Loading';
 import { PortalUserProfile } from '../../app/util/type/PortalUserProfile';
+import { useAppStore } from '../../app/util/store/store';
 
 export type UserTableRef = {
   refresh: () => void;
@@ -41,11 +42,13 @@ function IndeterminateCheckbox({
   disabled,
 }: // ...rest
 { indeterminate?: boolean } & HTMLProps<HTMLInputElement>) {
-  const ref = useRef<HTMLInputElement>(null!);
+  const ref = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     if (typeof indeterminate === 'boolean') {
-      ref.current.indeterminate = !checked && indeterminate;
+      if (ref.current) {
+        ref.current.indeterminate = !checked && indeterminate;
+      }
     }
   }, [ref, indeterminate, checked]);
 
@@ -71,7 +74,8 @@ const UserTable = ensuredForwardRef<UserTableRef, Props>(
     const navigate = useNavigate();
     const [selectedRows, setSelectedRows] = useState({});
     const [data, setData] = useState<PortalUserProfile[]>([]);
-    const itemsPerPage = 20;
+    const [selectedTenant] = useAppStore((state) => [state.selectedTenant]);
+    // const itemsPerPage = 20;
 
     const [totalPages, setTotalPages] = useState(0);
 
@@ -153,7 +157,7 @@ const UserTable = ensuredForwardRef<UserTableRef, Props>(
         header: () => <span>Deleted At</span>,
       },
     ];
-    const table = useReactTable<any>({
+    const table = useReactTable<PortalUserProfile>({
       data: data,
       columns,
       getRowId: (row, relativeIndex, parent) =>
@@ -171,13 +175,15 @@ const UserTable = ensuredForwardRef<UserTableRef, Props>(
     });
 
     const searchUser = useCallback(async () => {
+      if (!selectedTenant) {
+        return;
+      }
       try {
         if (!isLoading) {
           setIsLoading(true);
         }
         //search api
-        const res = await API.user
-          .searchUsers
+        const res = await API.user.searchUsers(
           //   {
           //   page: page,
           //   limit: itemsPerPage,
@@ -185,7 +191,8 @@ const UserTable = ensuredForwardRef<UserTableRef, Props>(
           //     query: supperSearch ?? '',
           //   }),
           // }
-          ();
+          selectedTenant.id
+        );
         const { data }: { data: { items: []; meta: Meta } } = res.data;
         const { items, meta }: { items: []; meta: Meta } = data;
         setData(items);
@@ -197,7 +204,8 @@ const UserTable = ensuredForwardRef<UserTableRef, Props>(
           toast.error(error.response?.data?.status?.displayMessage.toString());
         }
       }
-    }, [isLoading]);
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [supperSearch, page]);
 
     useImperativeHandle(ref, () => {
       return {
@@ -209,7 +217,7 @@ const UserTable = ensuredForwardRef<UserTableRef, Props>(
 
     useEffect(() => {
       searchUser();
-    }, []);
+    }, [searchUser]);
 
     return (
       <>
@@ -273,7 +281,7 @@ const UserTable = ensuredForwardRef<UserTableRef, Props>(
                             if (cell.column.id === 'select') {
                               return;
                             }
-                            navigate('./' + row.original.id);
+                            navigate('/users/' + row.original.id);
                           }}
                         >
                           {cell.column.id === 'select' ? (
@@ -328,7 +336,7 @@ const UserTable = ensuredForwardRef<UserTableRef, Props>(
             totalPages={totalPages}
             onPageChange={(latestPage: number) => {
               console.log(latestPage);
-              navigate('/users', {
+              navigate('/users/all', {
                 state: { page: latestPage, supperSearch: supperSearch },
               });
             }}

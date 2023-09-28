@@ -16,7 +16,7 @@ export class AppRepository extends Repository<App> {
 
   //Get All Apps
   async findAll(
-    tenantId: string,
+    tenantIds: string[],
     searchQuery = '',
     withDeleted = false,
     options: IPaginationOptions = { page: 1, limit: 10 },
@@ -61,10 +61,28 @@ export class AppRepository extends Repository<App> {
         findOptions.order[sort.key] = sort.value;
       }
     }
-    findOptions.where = findOptions.where.map((o) => ({
-      ...o,
-      tenantId: tenantId ? tenantId : '00000000-0000-0000-0000-000000000000',
-    }));
+    findOptions.where = findOptions.where.map((o) => {
+      // const filterByTenant = filters.find((f) => f.key === 'tenantId');
+      // if (filterByTenant) {
+      //   const values = filterByTenant.values as string[];
+      //   return {
+      //     ...o,
+      //     tenantId: tenantIds
+      //       ? In(
+      //           tenantIds.filter(function (e) {
+      //             return values.indexOf(e) > -1;
+      //           })
+      //         )
+      //       : In(['00000000-0000-0000-0000-000000000000']),
+      //   };
+      // }
+      return {
+        ...o,
+        tenantId: tenantIds
+          ? In(tenantIds)
+          : In(['00000000-0000-0000-0000-000000000000']),
+      };
+    });
     return await paginate<App>(this, options, findOptions);
   }
 

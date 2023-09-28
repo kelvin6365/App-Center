@@ -135,6 +135,11 @@ export class ResponseCode {
     'User Not Found',
     'User not exist.'
   );
+  static readonly STATUS_8005_USER_PASSWORD_NOT_MATCH = new ResponseStatus(
+    8005,
+    'User Password Not Match',
+    'User password not match.'
+  );
   static readonly STATUS_8013_USER_ALREADY_EXIST = new ResponseStatus(
     8013,
     'User Already Exists',

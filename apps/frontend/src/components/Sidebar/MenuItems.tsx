@@ -8,14 +8,14 @@ import {
 
 const MenuItems = [
   {
-    label: 'Dashboard',
+    label: 'Apps',
     icon: <HomeIcon strokeWidth={3} className="w-5 h-5" />,
-    path: '/',
+    path: '/apps',
     children: [
       {
         label: 'All Apps',
         icon: <FolderIcon strokeWidth={3} className="w-5 h-5" />,
-        path: '/apps',
+        path: '/apps/all',
       },
       {
         label: 'Create App',
@@ -25,19 +25,19 @@ const MenuItems = [
     ],
   },
   {
-    label: 'User Management',
+    label: 'Users',
     icon: <UserGroupIcon strokeWidth={3} className="w-5 h-5" />,
-    path: '/',
+    path: '/users',
     children: [
       {
         label: 'All Users',
         icon: <UserGroupIcon strokeWidth={3} className="w-5 h-5" />,
-        path: '/users',
+        path: '/users/all',
       },
       {
-        label: 'Invite User',
+        label: 'Create User',
         icon: <UserPlusIcon strokeWidth={3} className="w-5 h-5" />,
-        path: '/users/invite',
+        path: '/users/create',
       },
     ],
   },

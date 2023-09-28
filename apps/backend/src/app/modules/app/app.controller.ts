@@ -61,7 +61,6 @@ export class AppController {
 
   //Get a list of apps with search query, tags and sorting
   @Get('search')
-  @UseGuards(PermissionGuard(AppsPermission.VIEW_ALL_APP))
   @ApiQuery({
     name: 'query',
     required: false,
@@ -101,7 +100,6 @@ export class AppController {
 
   //Get a single app
   @Get(':id')
-  @UseGuards(PermissionGuard(AppsPermission.VIEW_ALL_APP))
   @ApiParam({ name: 'id', required: true })
   async getApp(
     @Param('id', new ParseUUIDPipe()) id: string,
@@ -161,7 +159,6 @@ export class AppController {
 
   //Update an existing app
   @Put(':id')
-  @UseGuards(PermissionGuard(AppsPermission.EDIT_ALL_APP))
   @ApiConsumes('multipart/form-data')
   @UseInterceptors(
     FileInterceptor('icon', {
@@ -207,14 +204,12 @@ export class AppController {
 
   //Delete an existing app
   @Delete(':id')
-  @UseGuards(PermissionGuard(AppsPermission.EDIT_ALL_APP))
   async deleteApp(@Param('id') id): Promise<any> {
     // return this.appService.deleteApp(id);
   }
 
   //Get a single app with all its versions. support filtering by tags
   @Get(':id/version/search')
-  @UseGuards(PermissionGuard(AppsPermission.VIEW_ALL_APP))
   @ApiQuery({
     name: 'query',
     required: false,
@@ -303,7 +298,6 @@ export class AppController {
 
   //get all app version tags by app id
   @Get(':id/version/tags')
-  @UseGuards(PermissionGuard(AppsPermission.VIEW_ALL_APP))
   @ApiParam({ name: 'id', required: true })
   async getAllAppVersionTags(
     @Param('id', new ParseUUIDPipe()) id: string,
@@ -316,7 +310,6 @@ export class AppController {
 
   //get API key by app id
   @Get(':id/api-key')
-  @UseGuards(PermissionGuard(AppsPermission.VIEW_ALL_APP))
   @ApiParam({ name: 'id', required: true })
   @ApiResponseSchema(HttpStatus.OK, 'OK')
   async getApiKey(
@@ -393,7 +386,6 @@ export class AppController {
   //delete app version
   @Delete(':id/version/:versionId')
   @Roles(RoleType.ADMIN)
-  @UseGuards(PermissionGuard(AppsPermission.DELETE_ALL_APP_VERSION))
   @ApiParam({ name: 'id', required: true })
   @ApiParam({ name: 'versionId', required: true })
   async deleteAppVersion(

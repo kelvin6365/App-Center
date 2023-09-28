@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable, Logger, LoggerService } from '@nestjs/common';
 import {
   DataSource,
   FindManyOptions,
@@ -15,18 +15,64 @@ import {
   paginate,
 } from 'nestjs-typeorm-paginate';
 import { UserStatus } from '../../modules/user/enum/user.status.enum';
+import { AppException } from '../../common/response/app.exception';
+import { ResponseCode } from '../../common/response/response.code';
 
 @Injectable()
 export class UserRepository extends Repository<User> {
-  constructor(dataSource: DataSource) {
+  constructor(
+    dataSource: DataSource,
+    @Inject(Logger) private readonly logger: LoggerService
+  ) {
     super(User, dataSource.createEntityManager());
   }
 
-  createUser(userEntity: User): Promise<User> {
-    return this.save(this.create(userEntity));
+  //find user by email for match password
+  async findUserByEmailWithPassword(
+    username: string,
+    withDeleted = false
+  ): Promise<User> {
+    return await this.findOne({
+      select: [
+        'id',
+        'username',
+        'refId',
+        'status',
+        'password',
+        'createdAt',
+        'deletedAt',
+        'updatedAt',
+        'tenants',
+        'roles',
+        'permissions',
+        'profile',
+      ],
+      where: { username },
+      withDeleted,
+      relations: ['tenants', 'roles', 'permissions', 'profile'],
+    });
   }
 
-  updateUser(userEntity: User): Promise<User> {
+  async createUser(userEntity: User): Promise<User> {
+    try {
+      return await this.save(this.create(userEntity));
+    } catch (error) {
+      this.logger.error(error);
+      switch (error.code) {
+        case '23505':
+          throw new AppException(
+            ResponseCode.STATUS_1012_FAIL_TO_CREATE('User already exist.')
+          );
+        default:
+          throw error;
+      }
+    }
+  }
+
+  updateUser(userEntity: User, updatedBy?: string): Promise<User> {
+    if (updatedBy) {
+      userEntity.updatedBy = updatedBy;
+    }
     return this.save(userEntity);
   }
 
@@ -55,6 +101,7 @@ export class UserRepository extends Repository<User> {
   }
 
   async searchUsers(
+    tenantIds: string[],
     searchQuery = '',
     withDeleted = false,
     options: IPaginationOptions = { page: 1, limit: 10 },
@@ -82,9 +129,19 @@ export class UserRepository extends Repository<User> {
         profile: {
           name: ILike(`%${searchQuery}%`),
         },
+        tenants: {
+          tenantId: tenantIds
+            ? In(tenantIds)
+            : In(['00000000-0000-0000-0000-000000000000']),
+        },
       },
       {
         username: ILike(`%${searchQuery}%`),
+        tenants: {
+          tenantId: tenantIds
+            ? In(tenantIds)
+            : In(['00000000-0000-0000-0000-000000000000']),
+        },
       },
     ];
     if (filters.length > 0) {
@@ -108,6 +165,25 @@ export class UserRepository extends Repository<User> {
         findOptions.order[sort.key] = sort.value;
       }
     }
+
     return paginate<User>(this, options, findOptions);
+  }
+
+  async updateUserProfileNameOrPassword(
+    id: string,
+    user: User,
+    updatedBy?: string
+  ): Promise<User> {
+    if (updatedBy) {
+      user.updatedBy = updatedBy;
+      await this.save(user);
+    } else {
+      await this.save(user);
+    }
+    return await this.findOne({
+      where: { id: id },
+      relations: ['profile', 'roles', 'permissions', 'tenants'],
+      withDeleted: false,
+    });
   }
 }

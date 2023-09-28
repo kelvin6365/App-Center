@@ -16,13 +16,13 @@ interface UserPermission {
   id: string;
   createdAt: string;
   updatedAt: string;
-  deletedAt?: any;
+  deletedAt?: string | null;
   version: number;
-  createdBy?: any;
-  updatedBy?: any;
+  createdBy?: string | null;
+  updatedBy?: string | null;
   userId: string;
   permissionId: string;
-  refId?: any;
+  refId?: string | null;
   permission: Permission;
 }
 
@@ -30,10 +30,10 @@ interface Permission {
   id: string;
   createdAt: string;
   updatedAt: string;
-  deletedAt?: any;
+  deletedAt?: string | null;
   version: number;
-  createdBy?: any;
-  updatedBy?: any;
+  createdBy?: string | null;
+  updatedBy?: string | null;
   type: string;
 }
 
@@ -41,10 +41,10 @@ interface UserRole {
   id: string;
   createdAt: string;
   updatedAt: string;
-  deletedAt?: any;
+  deletedAt?: string | null;
   version: number;
-  createdBy?: any;
-  updatedBy?: any;
+  createdBy?: string | null;
+  updatedBy?: string | null;
   userId: string;
   roleId: string;
   role: Role;
@@ -54,10 +54,10 @@ interface Role {
   id: string;
   createdAt: string;
   updatedAt: string;
-  deletedAt?: any;
+  deletedAt?: string | null;
   version: number;
-  createdBy?: any;
-  updatedBy?: any;
+  createdBy?: string | null;
+  updatedBy?: string | null;
   type: string;
   name: string;
   description: string;
