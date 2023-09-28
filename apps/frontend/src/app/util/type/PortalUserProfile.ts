@@ -5,10 +5,7 @@ export interface PortalUserProfile {
   roles: Role[];
   profile: Profile;
   permissions: Permission[];
-  tenants: {
-    id: string;
-    name: string;
-  }[];
+  tenants: Tenant[];
   createdAt: string;
   updatedAt: string;
   deletedAt?: any;
@@ -40,4 +37,9 @@ interface Role {
   type: string;
   name: string;
   description: string;
+}
+
+export interface Tenant {
+  id: string;
+  name: string;
 }

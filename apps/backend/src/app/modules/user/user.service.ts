@@ -7,19 +7,16 @@ import { UserRefreshTokenRepository } from '../../database/repositories/user.ref
 import { UserRepository } from '../../database/repositories/users.repository';
 import { CurrentUserDTO } from '../auth/dto/current.user.dto';
 import { SignUpDTO } from '../auth/dto/signup.request.dto';
-import PermissionEnum from '../permission/enum/permission.enum';
 import { RoleId } from '../role/enum/role.id.enum';
 import { CreateUserDTO } from './dto/create.user.dto';
 import { PortalUserResponseDTO } from './dto/portal.user.response.dto';
 import { UpdateUserDTO } from './dto/update.user.dto';
 import { User } from './entities/user.entity';
-import { UserPermission } from './entities/user.permission.entity';
 import { UserProfile } from './entities/user.profile.entity';
 import { UserRefreshToken } from './entities/user.refresh.token.entity';
 import { UserRole } from './entities/user.role.entity';
-import { UserStatus } from './enum/user.status.enum';
 import { UserTenant } from './entities/user.tenant.entity';
-import { RoleType } from '../role/enum/role.type.enum';
+import { UserStatus } from './enum/user.status.enum';
 
 @Injectable()
 export class UserService {
@@ -29,34 +26,37 @@ export class UserService {
     private readonly userRefreshTokenRepository: UserRefreshTokenRepository
   ) {}
   async signUp(signUpDTO: SignUpDTO): Promise<User> {
+    //! New User need to walk through onboarding to create a tenant.
     const newUser = new User();
     const newProfile = new UserProfile();
     newUser.username = signUpDTO.username;
     newUser.password = await signUpDTO.password;
     newProfile.email = signUpDTO.email;
+    newUser.status = UserStatus.Pending;
     newProfile.name = signUpDTO.name;
     newUser.profile = newProfile;
     newUser.refreshToken = new UserRefreshToken();
-    const userRole = new UserRole();
-    userRole.roleId = RoleId.ADMIN;
-    newUser.roles = [userRole];
-    //permissions
-    const viewAllAppPermission = new UserPermission();
-    viewAllAppPermission.permissionId = PermissionEnum.VIEW_ALL_APP;
-    const editAllAppPermission = new UserPermission();
-    editAllAppPermission.permissionId = PermissionEnum.EDIT_ALL_APP;
-    const deleteAllAppVersionPermission = new UserPermission();
-    deleteAllAppVersionPermission.permissionId =
-      PermissionEnum.DELETE_ALL_APP_VERSION;
-    const createAllAppVersionPermission = new UserPermission();
-    createAllAppVersionPermission.permissionId =
-      PermissionEnum.CREATE_ALL_APP_VERSION;
-    newUser.permissions = [
-      viewAllAppPermission,
-      editAllAppPermission,
-      deleteAllAppVersionPermission,
-      createAllAppVersionPermission,
-    ];
+
+    // const userRole = new UserRole();
+    // userRole.roleId = RoleId.ADMIN;
+    // newUser.roles = [userRole];
+    // !permissions [Signup will not handle permissions]
+    // const viewAllAppPermission = new UserPermission();
+    // viewAllAppPermission.permissionId = PermissionEnum.VIEW_ALL_APP;
+    // const editAllAppPermission = new UserPermission();
+    // editAllAppPermission.permissionId = PermissionEnum.EDIT_ALL_APP;
+    // const deleteAllAppVersionPermission = new UserPermission();
+    // deleteAllAppVersionPermission.permissionId =
+    //   PermissionEnum.DELETE_ALL_APP_VERSION;
+    // const createAllAppVersionPermission = new UserPermission();
+    // createAllAppVersionPermission.permissionId =
+    //   PermissionEnum.CREATE_ALL_APP_VERSION;
+    // newUser.permissions = [
+    //   viewAllAppPermission,
+    //   editAllAppPermission,
+    //   deleteAllAppVersionPermission,
+    //   createAllAppVersionPermission,
+    // ];
     const result = await this.usersRepository.createUser(newUser);
     return result;
   }
@@ -111,29 +111,6 @@ export class UserService {
     newUser.profile = newProfile;
     newUser.refreshToken = new UserRefreshToken();
     newUser.status = newUserDTO.status;
-    //Assign roles
-    newUser.roles = [];
-    newUserDTO.roleTypes.forEach((roleType) => {
-      const userRole = new UserRole();
-      userRole.roleId = RoleId[roleType];
-      newUser.roles.push(userRole);
-    });
-    //Assign permissions
-    newUser.permissions = [];
-    if (newUserDTO.roleTypes.includes(RoleType.ADMIN)) {
-      newUserDTO.permissions = [
-        PermissionEnum.VIEW_ALL_APP,
-        PermissionEnum.EDIT_ALL_APP,
-        PermissionEnum.CREATE_ALL_APP_VERSION,
-        PermissionEnum.DELETE_ALL_APP_VERSION,
-      ];
-    }
-    newUserDTO.permissions.forEach((permission) => {
-      const userPermission = new UserPermission();
-      userPermission.userId = newUser.id;
-      userPermission.permissionId = permission;
-      newUser.permissions.push(userPermission);
-    });
     //tenants
     newUser.tenants = [];
     newUserDTO.tenantIds.forEach((tenantId) => {
@@ -142,6 +119,26 @@ export class UserService {
       userTenant.userId = newUser.id;
       newUser.tenants.push(userTenant);
     });
+
+    //Assign roles
+    newUser.roles = [];
+    newUserDTO.roleTypes.forEach((roleType) => {
+      newUser.tenants.forEach((userTenant) => {
+        const userRole = new UserRole();
+        userRole.roleId = RoleId[roleType];
+        userRole.tenantId = userTenant.tenantId;
+        newUser.roles.push(userRole);
+      });
+    });
+    //!Assign permissions [Create new user will not handle permissions]
+    // newUser.permissions = [];
+    // newUserDTO.permissions.forEach((permission) => {
+    //   const userPermission = new UserPermission();
+    //   userPermission.userId = newUser.id;
+    //   userPermission.permissionId = permission;
+    //   newUser.permissions.push(userPermission);
+    // });
+
     //Create user
     await this.usersRepository.createUser(newUser);
     return true;

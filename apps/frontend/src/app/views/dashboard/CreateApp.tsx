@@ -8,6 +8,7 @@ import FileUpload from '../../../components/Input/FileUpload';
 import API from '../../util/api';
 import { useNavigate } from 'react-router-dom';
 import TextInput from '../../../components/Input/Input';
+import { useAppStore } from '../../util/store/store';
 
 type CreateAppFormInputs = {
   name: string;
@@ -37,18 +38,22 @@ const CreateApp = () => {
     },
   });
   const navigate = useNavigate();
+  const [selectedTenant] = useAppStore((state) => [state.selectedTenant]);
 
   useEffect(() => {
     reset();
   }, [reset]);
 
   const onSubmit: SubmitHandler<CreateAppFormInputs> = async (values) => {
-    console.log(values);
+    if (!selectedTenant) {
+      return;
+    }
     try {
       const res = await API.app.createApp({
         name: values.name,
         description: values.description,
         icon: values.icon[0] ?? null,
+        tenantId: selectedTenant?.id,
         extra: {
           playStoreURL: values.playStoreURL,
           appStoreURL: values.appStoreURL,

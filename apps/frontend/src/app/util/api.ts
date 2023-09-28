@@ -51,6 +51,7 @@ const API = {
       CREATE_USER: '/v1/portal/user',
       PROFILE: '/v1/portal/user',
       UPDATE_PROFILE: '/v1/portal/user',
+      TENANTS: '/v1/portal/user/tenants',
     },
     SETTING: {
       GET_ALL_SETTINGS: '/v1/portal/setting',
@@ -94,11 +95,13 @@ const API = {
       extra: {
         [key: string]: any;
       };
+      tenantId: string;
     }) => {
-      const { name, description, icon } = data;
+      const { name, description, icon, tenantId } = data;
       const form = new FormData();
       form.append('name', name);
       form.append('description', description);
+      form.append('tenantId', tenantId);
       form.append('icon', icon);
       form.append('extra', JSON.stringify(data.extra));
       return API.apiInstance.post(API.API_PATH.APP.CREATE, form, {
@@ -271,6 +274,9 @@ const API = {
         password,
         oldPassword,
       });
+    },
+    getAvailableTenants: () => {
+      return API.apiInstance.get(API.API_PATH.USER.TENANTS);
     },
   },
   setting: {

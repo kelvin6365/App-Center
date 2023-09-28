@@ -1,19 +1,26 @@
 import dayjs from 'dayjs';
 import Cookies from 'js-cookie';
 import { StateCreator } from 'zustand';
-import { PortalUserProfile } from '../type/PortalUserProfile';
+import { PortalUserProfile, Tenant } from '../type/PortalUserProfile';
 
 export type AppSlice = {
   isLoggedIn: boolean;
+  profile: PortalUserProfile | null;
+  availableTenants: Tenant[];
+  selectedTenant: Tenant | null;
+
   setLoggedIn: (payload: any) => void;
   setLogout: () => void;
-  profile: PortalUserProfile | null;
   setProfile: (payload: PortalUserProfile | null) => void;
+  setAvailableTenants: (payload: Tenant[]) => void;
+  setTenant: (payload: Tenant | null) => void;
 };
 
 const createAppSlice: StateCreator<AppSlice, [], []> = (set) => ({
   isLoggedIn: false,
   profile: null,
+  availableTenants: [],
+  selectedTenant: null,
   setLoggedIn: (payload: any) =>
     set(() => {
       const expires = new Date(payload.accessTokenExpires);
@@ -37,6 +44,12 @@ const createAppSlice: StateCreator<AppSlice, [], []> = (set) => ({
     }),
   setProfile: (payload: PortalUserProfile | null) =>
     set((state) => ({ ...state, profile: payload })),
+
+  setAvailableTenants: (payload: Tenant[]) =>
+    set((state) => ({ ...state, availableTenants: payload })),
+
+  setTenant: (payload: Tenant | null) =>
+    set((state) => ({ ...state, selectedTenant: payload })),
 });
 
 export default createAppSlice;

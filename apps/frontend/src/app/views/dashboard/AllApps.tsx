@@ -21,7 +21,7 @@ type SearchFormInputs = {
 const AllApps = () => {
   const itemsPerPage = 20;
   const navigate = useNavigate();
-  const [profile] = useAppStore((state) => [state.profile]);
+  const [selectedTenant] = useAppStore((state) => [state.selectedTenant]);
   const location = useLocation();
   const { supperSearch, page } = location.state || {};
 
@@ -55,12 +55,14 @@ const AllApps = () => {
         limit: itemsPerPage,
         query: JSON.stringify({
           query: supperSearch ?? '',
-          filters: [
-            // {
-            //   key: 'tenantId',
-            //   values: [profile?.tenants[0].id],
-            // },
-          ],
+          filters: selectedTenant
+            ? [
+                {
+                  key: 'tenantId',
+                  values: [selectedTenant.id],
+                },
+              ]
+            : [],
         }),
       });
       const { data }: { data: { items: App[]; meta: Meta } } = res.data;

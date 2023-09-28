@@ -1,14 +1,13 @@
 import { Alert, Button, Typography } from '@material-tailwind/react';
-import DefaultBreadcrumb from '../../../components/Breadcrumb/DefaultBreadcrumb';
-import TextInput from '../../../components/Input/Input';
-import { Controller, useForm } from 'react-hook-form';
-import { NavLink } from 'react-router-dom';
-import API from '../../util/api';
-import { RoleType } from '../../util/type/RoleType';
-import { useAppStore } from '../../util/store/store';
-import { toast } from 'react-toastify';
 import axios from 'axios';
 import { useState } from 'react';
+import { Controller, useForm } from 'react-hook-form';
+import { toast } from 'react-toastify';
+import DefaultBreadcrumb from '../../../components/Breadcrumb/DefaultBreadcrumb';
+import TextInput from '../../../components/Input/Input';
+import API from '../../util/api';
+import { useAppStore } from '../../util/store/store';
+import { RoleType } from '../../util/type/RoleType';
 type CreateUser = {
   name: string;
   email: string;
@@ -16,7 +15,10 @@ type CreateUser = {
   confirmPassword: string;
 };
 const CreateUser = () => {
-  const [profile] = useAppStore((state) => [state.profile]);
+  const [profile, selectedTenant] = useAppStore((state) => [
+    state.profile,
+    state.selectedTenant,
+  ]);
   const [createdUser, setCreatedUser] = useState<{
     name: string;
     email: string;
@@ -39,7 +41,7 @@ const CreateUser = () => {
   });
 
   const onSubmit = async (values: CreateUser) => {
-    if (!profile) {
+    if (!profile || !selectedTenant) {
       return;
     }
     if (createdUser) {
@@ -53,7 +55,7 @@ const CreateUser = () => {
         password: values.password,
         roleTypes: [RoleType.ADMIN],
         permissions: [],
-        tenantIds: [profile?.tenants[0].id],
+        tenantIds: [selectedTenant.id],
       });
       const { status } = res.data;
       if (status.code === 1000) {
@@ -126,9 +128,9 @@ const CreateUser = () => {
           <div>
             <TextInput
               label={'Tenant'}
-              value={profile?.tenants[0].name}
+              value={selectedTenant?.name}
               disabled={true}
-              helperText="Create a user in this tenant"
+              helperText="This user will be assign in this tenant"
             />
           </div>
           <div>
@@ -146,7 +148,6 @@ const CreateUser = () => {
                     disabled={isSubmitting}
                     type="email"
                     error={error}
-                    helperText="Email is use for login"
                   />
                 );
               }}

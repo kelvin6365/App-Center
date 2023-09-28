@@ -28,6 +28,6 @@ export class App extends BaseEntity {
   @OneToMany(() => AppTag, (appTag) => appTag.app, { cascade: true })
   tags: AppTag[];
 
-  @Column({ name: 'tenant_id', type: 'uuid', nullable: true })
+  @Column({ name: 'tenant_id', type: 'uuid', nullable: false })
   tenantId: string;
 }

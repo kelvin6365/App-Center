@@ -29,18 +29,20 @@ const CreateCredentialDialog = ({
   onSuccess,
 }: Props) => {
   const {
-    register,
     handleSubmit,
     reset,
     control,
-    formState: { errors, isSubmitting },
+    formState: { isSubmitting },
   } = useForm();
 
-  const [profile] = useAppStore((state) => [state.profile]);
+  const [profile, selectedTenant] = useAppStore((state) => [
+    state.profile,
+    state.selectedTenant,
+  ]);
 
   //Submit Create Credential
   const createCredential = async (e: Record<string, string>) => {
-    if (!profile) {
+    if (!profile || !selectedTenant) {
       return;
     }
     try {
@@ -48,7 +50,7 @@ const CreateCredentialDialog = ({
         name: e.name,
         credentialName: type.name,
         encryptedData: omit(e, ['name']),
-        tenantId: profile.tenants[0].id,
+        tenantId: selectedTenant?.id,
       });
       if (!res.data.data) {
         throw new Error('Credential create failed');
