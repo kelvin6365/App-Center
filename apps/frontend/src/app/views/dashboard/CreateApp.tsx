@@ -88,11 +88,21 @@ const CreateApp = () => {
           Enter the details to create a new app.
         </Typography>
       </div>
+
       <form
         onSubmit={handleSubmit(onSubmit)}
         className="max-w-screen-sm mt-8 mb-2"
       >
         <div className="flex flex-col gap-6 mb-4">
+          <div>
+            <TextInput
+              label={'Tenant'}
+              value={selectedTenant?.name}
+              disabled={true}
+              helperText="This app will be created for this tenant"
+            />
+          </div>
+
           <Controller
             name="name"
             control={control}
