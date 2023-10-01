@@ -11,6 +11,7 @@ import { AppVersionTagRepository } from '../../database/repositories/app.version
 import { CurrentUserDTO } from '../auth/dto/current.user.dto';
 import { CredentialService } from '../credential/credential.service';
 import { FileService } from '../file/file.service';
+import { SearchJiraIssueDTO } from '../jira/dto/search.jira.issue.dto';
 import { JiraService } from '../jira/jira.service';
 import { AppDTO } from './dto/app.dto';
 import { AppVersionDTO } from './dto/app.version.dto';
@@ -22,9 +23,8 @@ import { PatchAppDTO } from './dto/patch.app.dto';
 import { UpdateAppDTO } from './dto/update.app.dto';
 import { App } from './entities/app.entity';
 import { AppVersion } from './entities/app.version.entity';
-import { AppVersionTag } from './entities/app.version.tag.entity';
-import { SearchJiraIssueDTO } from '../jira/dto/search.jira.issue.dto';
 import { AppVersionJiraIssue } from './entities/app.version.jira.issue.entity';
+import { AppVersionTag } from './entities/app.version.tag.entity';
 
 @Injectable()
 export class AppService {
@@ -300,7 +300,7 @@ export class AppService {
           )
         )
       );
-      issuesRes.forEach((issue, index) => {
+      issuesRes.forEach((issue) => {
         jiraKeys[issue.key] = {
           summary: issue.fields.summary,
           status: issue.fields.status.name,

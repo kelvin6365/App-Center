@@ -41,7 +41,7 @@ const JiraIssuesDialog = ({ title, onClose, open, app, data }: Props) => {
                   rel="noreferrer"
                   className="flex px-2 my-auto text-blue-500 hover:text-blue-600"
                 >
-                  <img src={issue.iconUrl} />{' '}
+                  <img src={issue.iconUrl} alt={issue.summary} />{' '}
                   <p className="ml-2">{issue.summary}</p>
                 </a>
               </div>
