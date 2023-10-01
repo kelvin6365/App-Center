@@ -151,14 +151,48 @@ const API = {
     ) => {
       const { name, description, icon } = data;
       const form = new FormData();
-      form.append('name', name);
-      form.append('description', description);
+      if (name) {
+        form.append('name', name);
+      }
+      if (description) {
+        form.append('description', description);
+      }
       if (icon) {
         form.append('icon', icon);
       }
       form.append('extra', JSON.stringify(data.extra));
       console.log(form);
       return API.apiInstance.put(API.API_PATH.APP.UPDATE_APP(appId), form, {
+        headers: {
+          'Content-type': 'multipart/form-data',
+        },
+      });
+    },
+    patchApp: (
+      appId: string,
+      data: {
+        name?: string;
+        description?: string;
+        icon?: File | null;
+        extra: {
+          [key: string]: any;
+        };
+      }
+    ) => {
+      const { name, description, icon } = data;
+      const form = new FormData();
+      if (name) {
+        form.append('name', name);
+      }
+      if (description) {
+        form.append('description', description);
+      }
+      if (icon) {
+        form.append('icon', icon);
+      }
+      form.append('extra', JSON.stringify(data.extra));
+      console.log(form);
+      return API.apiInstance.patch(API.API_PATH.APP.UPDATE_APP(appId), form, {
         headers: {
           'Content-type': 'multipart/form-data',
         },
@@ -300,9 +334,14 @@ const API = {
     },
   },
   credential: {
-    getAllCredentials: (tenantId: string) => {
+    getAllCredentials: (tenantId: string, name?: string) => {
       return API.apiInstance.get(
-        API.API_PATH.CREDENTIAL.GET_ALL_CREDENTIALS(tenantId)
+        API.API_PATH.CREDENTIAL.GET_ALL_CREDENTIALS(tenantId),
+        {
+          params: {
+            name,
+          },
+        }
       );
     },
     getCredential: (id: string) => {

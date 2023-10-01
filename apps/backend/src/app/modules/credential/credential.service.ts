@@ -25,6 +25,7 @@ export class CredentialService {
   //Get all Credentials
   async getAllCredentials(
     tenantId: string,
+    name: string,
     user: CurrentUserDTO
   ): Promise<CredentialResponseDTO[]> {
     const isAllowed = user.tenants.map((ut) => ut.tenant.id).includes(tenantId);
@@ -32,9 +33,11 @@ export class CredentialService {
       throw new AppException(ResponseCode.STATUS_8003_PERMISSION_DENIED);
     }
     const credentials =
-      await this.credentialRepository.getAllCredentialWithoutEncryptedData({}, [
-        tenantId,
-      ]);
+      await this.credentialRepository.getAllCredentialWithoutEncryptedData(
+        {},
+        [tenantId],
+        name
+      );
     return credentials.map(
       (credential) =>
         new CredentialResponseDTO(omit(credential, ['encryptedData']))

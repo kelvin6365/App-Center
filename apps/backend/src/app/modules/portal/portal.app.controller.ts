@@ -9,6 +9,7 @@ import {
   ParseFilePipe,
   ParseIntPipe,
   ParseUUIDPipe,
+  Patch,
   Post,
   Put,
   Query,
@@ -56,6 +57,7 @@ import { AppAllowedType } from '../file/enum/app.allowed.type.enum';
 import { ImageAllowedType } from '../file/enum/image.allowed.type.enum';
 import { FileService } from '../file/file.service';
 import { RoleType } from '../role/enum/role.type.enum';
+import { PatchAppDTO } from '../app/dto/patch.app.dto';
 
 @ApiTags('Portal')
 @ApiBearerAuth()
@@ -168,6 +170,50 @@ export class PortalAppController {
     );
   }
 
+  //patch an existing app
+  @Patch(':id')
+  @ApiConsumes('multipart/form-data')
+  @UseInterceptors(
+    FileInterceptor('icon', {
+      limits: {
+        files: 1,
+        fileSize: 1024 * 1024,
+      },
+      fileFilter: (req: any, file: any, cb: any) => {
+        if (
+          Object.keys(ImageAllowedType)
+            .map((t) => t.toLocaleLowerCase())
+            .indexOf(
+              (mime.extension(file.mimetype) as string).toLocaleLowerCase()
+            ) !== -1
+        ) {
+          // Allow storage of file
+          cb(null, true);
+        } else {
+          // Reject file
+          cb(
+            new AppException(
+              ResponseCode.STATUS_7000_UNSUPPORTED_FILE_TYPE(file.mimetype),
+              HttpStatus.BAD_REQUEST
+            ),
+            false
+          );
+        }
+      },
+    })
+  )
+  async patchApp(
+    @Param('id') id,
+    @UploadedFile()
+    file: Express.Multer.File,
+    @Body() patchApp: PatchAppDTO,
+    @CurrentUser() user: CurrentUserDTO
+  ): Promise<AppResponse<boolean>> {
+    return new AppResponse<boolean>(
+      await this.appService.patchApp(id, patchApp, file, user)
+    );
+  }
+
   //Update an existing app
   @Put(':id')
   @ApiConsumes('multipart/form-data')
@@ -207,7 +253,6 @@ export class PortalAppController {
     @Body() updateApp: UpdateAppDTO,
     @CurrentUser() user: CurrentUserDTO
   ): Promise<AppResponse<boolean>> {
-    console.log(file, updateApp, id);
     return new AppResponse<boolean>(
       await this.appService.updateApp(id, updateApp, file, user)
     );

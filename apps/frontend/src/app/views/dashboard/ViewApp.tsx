@@ -33,6 +33,7 @@ import { App } from '../../util/type/App';
 import { maskingString } from '../../util/util';
 import ShareDialog from '../../../components/Dialog/ShareDialog';
 import { AppVersion } from '../../util/type/AppVersion';
+import JiraDialog from '../../../components/Dialog/JiraDialog';
 
 const ViewApp = () => {
   const { appId } = useParams();
@@ -54,6 +55,7 @@ const ViewApp = () => {
     open: false,
     data: null,
   });
+  const [openJira, setOpenJira] = useState(false);
 
   const tableRef = useRef<TableRef>(null);
 
@@ -241,11 +243,7 @@ const ViewApp = () => {
               <IconButton
                 className="text-blue-500 bg-white"
                 onClick={() => {
-                  if (app?.extra?.jiraURL) {
-                    window.open(app.extra.jiraURL, '_blank');
-                  } else {
-                    toast.info('Jira URL is not set');
-                  }
+                  setOpenJira(true);
                 }}
               >
                 <SiJirasoftware className="w-5 h-5" />
@@ -361,6 +359,19 @@ const ViewApp = () => {
             setOpenUploadVersion(false);
           }}
           open={openUploadVersion}
+          app={app}
+        />
+      )}
+      {app && (
+        <JiraDialog
+          open={openJira}
+          title={'Jira'}
+          onClose={(reload: boolean) => {
+            if (reload && appId) {
+              fetchApp(appId);
+            }
+            setOpenJira(false);
+          }}
           app={app}
         />
       )}

@@ -21,6 +21,7 @@ import { App } from './entities/app.entity';
 import { AppVersion } from './entities/app.version.entity';
 import { AppVersionTag } from './entities/app.version.tag.entity';
 import { ResponseStatus } from '../../common/response/response.status';
+import { PatchAppDTO } from './dto/patch.app.dto';
 
 @Injectable()
 export class AppService {
@@ -308,7 +309,60 @@ export class AppService {
     if (appToUpdate) {
       appToUpdate.name = app.name;
       appToUpdate.description = app.description;
-      appToUpdate.extra = app.extra ?? {};
+      appToUpdate.extra = app.extra
+        ? { ...appToUpdate.extra, ...app.extra }
+        : {};
+      appToUpdate.updatedBy = user.id;
+      const updatedApp = await this.appRepository.updateApp(appToUpdate);
+      if (file) {
+        //Update app icon
+        const oldFileId = appToUpdate.iconFileId;
+        const appIconFile = await this.fileService.uploadAppIcon(
+          updatedApp.id,
+          file,
+          user.id
+        );
+        updatedApp.iconFileId = appIconFile.id;
+        //delete old icon file
+        await this.fileService.deleteFile(oldFileId, user.id);
+        await this.appRepository.updateApp(updatedApp);
+      }
+      return true;
+    } else {
+      throw new AppException(ResponseCode.STATUS_1011_NOT_FOUND);
+    }
+  }
+
+  //patch app
+  async patchApp(
+    id: string,
+    app: PatchAppDTO,
+    file: Express.Multer.File,
+    user: CurrentUserDTO
+  ): Promise<boolean> {
+    // //check permissions
+    // const permissions = user.permissions;
+    // if (
+    //   !permissions
+    //     .filter((p) => p.permissionId === AppsPermission.EDIT_APP)
+    //     .map((p) => p.refId)
+    //     .includes(id)
+    // ) {
+    //   throw new AppException(ResponseCode.STATUS_8003_PERMISSION_DENIED);
+    // }
+
+    this.logger.log('Patching an app');
+    const appToUpdate = await this.appRepository.findById(id);
+    if (appToUpdate) {
+      if (app.name) {
+        appToUpdate.name = app.name;
+      }
+      if (app.description) {
+        appToUpdate.description = app.description;
+      }
+      appToUpdate.extra = app.extra
+        ? { ...appToUpdate.extra, ...app.extra }
+        : {};
       appToUpdate.updatedBy = user.id;
       const updatedApp = await this.appRepository.updateApp(appToUpdate);
       if (file) {

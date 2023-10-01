@@ -49,11 +49,13 @@ export class CredentialRepository extends Repository<Credential> {
     options: { withDeleted?: boolean } = {
       withDeleted: false,
     },
-    tenantIds: string[]
+    tenantIds: string[],
+    name?: string
   ) {
     const credentials = await this.find({
       where: {
         tenantId: In(tenantIds),
+        credentialName: name,
       },
       withDeleted: options.withDeleted,
       order: {
