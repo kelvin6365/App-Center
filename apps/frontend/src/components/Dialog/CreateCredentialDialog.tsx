@@ -112,7 +112,7 @@ const CreateCredentialDialog = ({
             return (
               <Controller
                 key={index}
-                name={input.label}
+                name={input.name}
                 control={control}
                 rules={{
                   required: input.label + ' is required',

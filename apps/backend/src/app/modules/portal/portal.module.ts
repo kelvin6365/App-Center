@@ -16,6 +16,8 @@ import { FileModule } from '../file/file.module';
 import { AppModule } from '../app/app.module';
 import { CredentialModule } from '../credential/credential.module';
 import { PortalCredentialController } from './portal.credential.controller';
+import { PortalTestController } from './test.controller';
+import { JiraModule } from '../jira/jira.module';
 @Module({
   imports: [
     AuthModule,
@@ -24,6 +26,7 @@ import { PortalCredentialController } from './portal.credential.controller';
     FileModule,
     AppModule,
     CredentialModule,
+    JiraModule,
     PassportModule,
     JwtModule.registerAsync({
       imports: [ConfigModule],
@@ -43,6 +46,7 @@ import { PortalCredentialController } from './portal.credential.controller';
     PortalSettingController,
     PortalAppController,
     PortalCredentialController,
+    PortalTestController,
   ],
   providers: [
     Logger,

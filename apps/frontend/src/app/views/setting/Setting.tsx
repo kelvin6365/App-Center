@@ -7,13 +7,18 @@ import {
   TabsHeader,
   Typography,
 } from '@material-tailwind/react';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import DefaultBreadcrumb from '../../../components/Breadcrumb/DefaultBreadcrumb';
 import General from './general/General';
 import Credentials from './credentials/Credentials';
+import { useQuery } from '../../util/util';
+import { useNavigate } from 'react-router-dom';
 
 const Setting = () => {
+  const navigate = useNavigate();
+  const [init, setInit] = useState(false);
   const [activeTab, setActiveTab] = useState(1);
+  const query = useQuery();
   const data = [
     {
       label: 'General',
@@ -43,6 +48,33 @@ const Setting = () => {
     //   constantly trying to express ourselves and actualize our dreams.`,
     // },
   ];
+
+  const initTab = () => {
+    console.log(query.get('tab'));
+    if (query.get('tab') !== null) {
+      switch (query.get('tab') as string) {
+        default:
+        case 'general':
+          setActiveTab(1);
+          break;
+        case 'notification':
+          setActiveTab(2);
+          break;
+        case 'credentials':
+          setActiveTab(3);
+          break;
+        case 'others':
+          setActiveTab(4);
+          break;
+      }
+      navigate('/setting', { replace: true });
+    }
+    setInit(true);
+  };
+  useEffect(() => {
+    initTab();
+  }, []);
+
   return (
     <div>
       <DefaultBreadcrumb
@@ -58,31 +90,33 @@ const Setting = () => {
           Configurations for the system.
         </Typography>
       </div>
-      <Tabs value={1}>
-        <TabsHeader
-          indicatorProps={{
-            className: 'bg-blue-500 shadow-none',
-          }}
-        >
-          {data.map(({ label, value }) => (
-            <Tab
-              key={value}
-              value={value}
-              onClick={() => setActiveTab(value)}
-              className={activeTab === value ? 'text-white' : ''}
-            >
-              {label}
-            </Tab>
-          ))}
-        </TabsHeader>
-        <TabsBody>
-          {data.map(({ value, desc }) => (
-            <TabPanel key={value} value={value}>
-              {desc}
-            </TabPanel>
-          ))}
-        </TabsBody>
-      </Tabs>
+      {init && (
+        <Tabs value={activeTab}>
+          <TabsHeader
+            indicatorProps={{
+              className: 'bg-blue-500 shadow-none',
+            }}
+          >
+            {data.map(({ label, value }) => (
+              <Tab
+                key={value}
+                value={value}
+                onClick={() => setActiveTab(value)}
+                className={activeTab === value ? 'text-white' : ''}
+              >
+                {label}
+              </Tab>
+            ))}
+          </TabsHeader>
+          <TabsBody>
+            {data.map(({ value, desc }) => (
+              <TabPanel key={value} value={value}>
+                {desc}
+              </TabPanel>
+            ))}
+          </TabsBody>
+        </Tabs>
+      )}
     </div>
   );
 };

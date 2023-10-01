@@ -2,6 +2,7 @@ import { ApiProperty } from '@nestjs/swagger';
 import { AppVersion } from '../entities/app.version.entity';
 import { AppVersionTagDTO } from './app.version.tag.dto';
 import { FileDTO } from '../../file/dto/file.dto';
+import { AppVersionJiraIssueDTO } from './app.version.jira.issue.dto';
 
 export class AppVersionDTO {
   @ApiProperty()
@@ -27,6 +28,9 @@ export class AppVersionDTO {
   @ApiProperty()
   tags: AppVersionTagDTO[];
 
+  @ApiProperty()
+  jiraIssues: AppVersionJiraIssueDTO[];
+
   constructor(data: Partial<AppVersion>, fileURL: string) {
     this.id = data.id;
     this.name = data.name;
@@ -38,5 +42,7 @@ export class AppVersionDTO {
     this.tags = data.tags?.map((tag) => new AppVersionTagDTO(tag)) ?? [];
     this.file = data.file ? new FileDTO(data.file) : null;
     this.appId = data.appId;
+    this.jiraIssues =
+      data.jiraIssues?.map((issue) => new AppVersionJiraIssueDTO(issue)) ?? [];
   }
 }

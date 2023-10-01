@@ -9,18 +9,22 @@ import { AppRepository } from '../../database/repositories/app.repository';
 import { AppVersionRepository } from '../../database/repositories/app.version.repository';
 import { AppVersionTagRepository } from '../../database/repositories/app.version.tag.repository';
 import { CurrentUserDTO } from '../auth/dto/current.user.dto';
+import { CredentialService } from '../credential/credential.service';
 import { FileService } from '../file/file.service';
+import { SearchJiraIssueDTO } from '../jira/dto/search.jira.issue.dto';
+import { JiraService } from '../jira/jira.service';
 import { AppDTO } from './dto/app.dto';
 import { AppVersionDTO } from './dto/app.version.dto';
 import { AppVersionTagDTO } from './dto/app.version.tag.dto';
 import { CreateAppDTO } from './dto/create.app.dto';
 import { CreateAppVersionDTO } from './dto/create.app.version.dto';
 import { InstallAppDTO } from './dto/install.app.dto';
+import { PatchAppDTO } from './dto/patch.app.dto';
 import { UpdateAppDTO } from './dto/update.app.dto';
 import { App } from './entities/app.entity';
 import { AppVersion } from './entities/app.version.entity';
+import { AppVersionJiraIssue } from './entities/app.version.jira.issue.entity';
 import { AppVersionTag } from './entities/app.version.tag.entity';
-import { ResponseStatus } from '../../common/response/response.status';
 
 @Injectable()
 export class AppService {
@@ -30,6 +34,8 @@ export class AppService {
     private readonly appVersionRepository: AppVersionRepository,
     private readonly appVersionTagRepository: AppVersionTagRepository,
     private readonly fileService: FileService,
+    private readonly jiraService: JiraService,
+    private readonly credentialService: CredentialService,
     private readonly configService: ConfigService
   ) {
     this.logger = new Logger('AppService');
@@ -187,9 +193,17 @@ export class AppService {
           newTag.appVersion = newAppVersion;
           newTag.appId = app.id;
           newTag.name = tag;
-          // newAppVersion.createdBy = user.id;
-          newAppVersion.createdBy = null;
+          newAppVersion.createdBy = user?.id ?? null;
           return newTag;
+        });
+      }
+      if (app.extra?.jiraCredential && appVersion.jiraIssues?.length > 0) {
+        newAppVersion.jiraIssues = appVersion.jiraIssues.map((issue) => {
+          const newJiraIssue = new AppVersionJiraIssue();
+          newJiraIssue.appVersion = newAppVersion;
+          newJiraIssue.issueIdOrKey = issue;
+          newAppVersion.createdBy = user?.id ?? null;
+          return newJiraIssue;
         });
       }
       const createdAppVersion =
@@ -231,7 +245,10 @@ export class AppService {
     // ) {
     //   throw new AppException(ResponseCode.STATUS_8003_PERMISSION_DENIED);
     // }
-
+    const app = await this.appRepository.findById(appId, withDeleted);
+    if (!app) {
+      throw new AppException(ResponseCode.STATUS_1011_NOT_FOUND);
+    }
     const appVersions = await this.appVersionRepository.getAllAppVersions(
       appId,
       searchQuery,
@@ -239,6 +256,7 @@ export class AppService {
       filters,
       sorts
     );
+
     for (let i = 0; i < appVersions.length; i++) {
       const appVersion = appVersions[i];
       //find app version tags by app version id
@@ -248,6 +266,73 @@ export class AppService {
         );
       appVersion.tags = appVersionTags;
     }
+
+    if (app.extra?.jiraCredential) {
+      const jiraKeys = {};
+      //Fetch jira issues details
+      const allIssuesFromDifferentVersions = [];
+      appVersions.forEach((appVersion) => {
+        appVersion.jiraIssues.forEach((issue) =>
+          allIssuesFromDifferentVersions.push(issue.issueIdOrKey)
+        );
+      });
+      //get jira credentials
+      const jiraCredentials = await this.credentialService.getCredential(
+        app.extra.jiraCredential as string,
+        user,
+        true
+      );
+      if (!jiraCredentials) {
+        throw new AppException(
+          ResponseCode.STATUS_1017_JIRA_CREDENTIAL_NOT_SET
+        );
+      }
+      const issuesRes = await Promise.all(
+        allIssuesFromDifferentVersions.map((issue) =>
+          this.jiraService.getJiraIssue(
+            issue,
+            jiraCredentials.encryptedData as {
+              jiraProjectKey: string;
+              jiraUsername: string;
+              jiraAPIToken: string;
+              jiraHost: string;
+            }
+          )
+        )
+      );
+      issuesRes.forEach((issue) => {
+        jiraKeys[issue.key] = {
+          summary: issue.fields.summary,
+          status: issue.fields.status.name,
+          issuetype: {
+            iconUrl: issue.fields.issuetype.iconUrl,
+            name: issue.fields.issuetype.name,
+          },
+          url: `https://${jiraCredentials.encryptedData.jiraHost}/browse/${issue.key}`,
+        };
+      });
+      return appVersions.map((appVersion) => {
+        appVersion = {
+          ...appVersion,
+          jiraIssues: appVersion.jiraIssues.map((issue) => {
+            return {
+              ...issue,
+              key: issue.issueIdOrKey,
+              ...jiraKeys[issue.issueIdOrKey],
+            };
+          }),
+        };
+        return new AppVersionDTO(
+          appVersion,
+          appVersion.fileId
+            ? this.configService.get('services.file.fileAPI') +
+              appVersion.fileId +
+              '&download=true'
+            : null
+        );
+      });
+    }
+
     return appVersions.map(
       (appVersion) =>
         new AppVersionDTO(
@@ -308,7 +393,60 @@ export class AppService {
     if (appToUpdate) {
       appToUpdate.name = app.name;
       appToUpdate.description = app.description;
-      appToUpdate.extra = app.extra ?? {};
+      appToUpdate.extra = app.extra
+        ? { ...appToUpdate.extra, ...app.extra }
+        : {};
+      appToUpdate.updatedBy = user.id;
+      const updatedApp = await this.appRepository.updateApp(appToUpdate);
+      if (file) {
+        //Update app icon
+        const oldFileId = appToUpdate.iconFileId;
+        const appIconFile = await this.fileService.uploadAppIcon(
+          updatedApp.id,
+          file,
+          user.id
+        );
+        updatedApp.iconFileId = appIconFile.id;
+        //delete old icon file
+        await this.fileService.deleteFile(oldFileId, user.id);
+        await this.appRepository.updateApp(updatedApp);
+      }
+      return true;
+    } else {
+      throw new AppException(ResponseCode.STATUS_1011_NOT_FOUND);
+    }
+  }
+
+  //patch app
+  async patchApp(
+    id: string,
+    app: PatchAppDTO,
+    file: Express.Multer.File,
+    user: CurrentUserDTO
+  ): Promise<boolean> {
+    // //check permissions
+    // const permissions = user.permissions;
+    // if (
+    //   !permissions
+    //     .filter((p) => p.permissionId === AppsPermission.EDIT_APP)
+    //     .map((p) => p.refId)
+    //     .includes(id)
+    // ) {
+    //   throw new AppException(ResponseCode.STATUS_8003_PERMISSION_DENIED);
+    // }
+
+    this.logger.log('Patching an app');
+    const appToUpdate = await this.appRepository.findById(id);
+    if (appToUpdate) {
+      if (app.name) {
+        appToUpdate.name = app.name;
+      }
+      if (app.description) {
+        appToUpdate.description = app.description;
+      }
+      appToUpdate.extra = app.extra
+        ? { ...appToUpdate.extra, ...app.extra }
+        : {};
       appToUpdate.updatedBy = user.id;
       const updatedApp = await this.appRepository.updateApp(appToUpdate);
       if (file) {
@@ -415,5 +553,42 @@ export class AppService {
     }
     await this.appVersionRepository.deleteAppVersion(appVersionId, user.id);
     return true;
+  }
+
+  //Search jira issues
+  async searchJiraIssues(
+    appId: string,
+    query: string,
+    user: CurrentUserDTO
+  ): Promise<SearchJiraIssueDTO[]> {
+    //check app
+    const app = await this.appRepository.findById(appId);
+    if (!app) {
+      throw new AppException(ResponseCode.STATUS_1011_NOT_FOUND);
+    }
+    //check app enabled jira?
+
+    if (!app.extra?.jiraCredential) {
+      throw new AppException(ResponseCode.STATUS_1016_JIRA_NOT_ENABLE_YET);
+    }
+    //get jira credentials
+    const jiraCredentials = await this.credentialService.getCredential(
+      app.extra.jiraCredential as string,
+      user,
+      true
+    );
+    if (!jiraCredentials) {
+      throw new AppException(ResponseCode.STATUS_1017_JIRA_CREDENTIAL_NOT_SET);
+    }
+    //fetch jira issues
+    return await this.jiraService.searchJiraIssues(
+      query,
+      jiraCredentials.encryptedData as {
+        jiraProjectKey: string;
+        jiraUsername: string;
+        jiraAPIToken: string;
+        jiraHost: string;
+      }
+    );
   }
 }

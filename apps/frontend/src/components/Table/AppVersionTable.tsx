@@ -1,12 +1,7 @@
-import { Typography } from '@material-tailwind/react';
+import { Badge, Tooltip, Typography } from '@material-tailwind/react';
+import axios from 'axios';
 import { difference } from 'lodash';
 import moment from 'moment';
-import { BiSolidDownload, BiSolidShareAlt } from 'react-icons/bi';
-import { ImQrcode } from 'react-icons/im';
-import { AiFillDelete } from 'react-icons/ai';
-import Tag from '../Chip/Tag';
-import { AppVersion, AppVersionTag } from '../../app/util/type/AppVersion';
-import axios from 'axios';
 import {
   forwardRef,
   useCallback,
@@ -14,10 +9,16 @@ import {
   useImperativeHandle,
   useState,
 } from 'react';
+import { AiFillDelete } from 'react-icons/ai';
+import { BiSolidDownload, BiSolidShareAlt } from 'react-icons/bi';
+import { ImQrcode } from 'react-icons/im';
+import { MdOutlineClear } from 'react-icons/md';
+import { SiJirasoftware } from 'react-icons/si';
 import { toast } from 'react-toastify';
 import API from '../../app/util/api';
+import { AppVersion, AppVersionTag } from '../../app/util/type/AppVersion';
+import Tag from '../Chip/Tag';
 import DeleteAppVersionDialog from '../Dialog/DeleteAppVersionDialog';
-import { MdOutlineClear } from 'react-icons/md';
 
 type Props = {
   appId: string;
@@ -26,6 +27,7 @@ type Props = {
     data: AppVersion | null;
     open: boolean;
   }) => void;
+  setOpenJiraIssues: (data: { open: boolean; data: AppVersion | null }) => void;
 };
 
 export type TableRef = {
@@ -33,7 +35,10 @@ export type TableRef = {
 };
 
 const AppVersionTable = forwardRef<TableRef, Props>(
-  ({ appId, setOpenQRCode, setOpenShareInstallURL }: Props, ref) => {
+  (
+    { appId, setOpenQRCode, setOpenShareInstallURL, setOpenJiraIssues }: Props,
+    ref
+  ) => {
     const [appVersions, setAppVersions] = useState<AppVersion[]>([]);
     const [appVersionTags, setAppVersionTags] = useState<AppVersionTag[]>([]);
     //selected Tags
@@ -213,6 +218,7 @@ const AppVersionTable = forwardRef<TableRef, Props>(
                     createdAt,
                     fileURL,
                     file,
+                    jiraIssues,
                   } = data;
                   const isLast =
                     index ===
@@ -233,41 +239,70 @@ const AppVersionTable = forwardRef<TableRef, Props>(
                     <tr key={id} className="hover:bg-blue-gray-300/20">
                       <td className={classes}>
                         <div className="flex space-x-2">
-                          <Typography
-                            variant="small"
-                            color="blue-gray"
-                            className="p-2 font-medium rounded-full hover:bg-white"
-                            onClick={() => {
-                              setOpenQRCode({
-                                open: true,
-                                data: fileURL,
-                              });
-                            }}
-                          >
-                            <ImQrcode className="w-5 h-5" />
-                          </Typography>
-                          <Typography
-                            variant="small"
-                            color="blue-gray"
-                            className="p-2 font-medium rounded-full hover:bg-white"
-                            onClick={() => {
-                              setOpenShareInstallURL({
-                                open: true,
-                                data,
-                              });
-                            }}
-                          >
-                            <BiSolidShareAlt className="w-5 h-5" />
-                          </Typography>
-                          <Typography
-                            as="a"
-                            href={fileURL}
-                            variant="small"
-                            color="blue-gray"
-                            className="p-2 font-medium rounded-full hover:bg-white"
-                          >
-                            <BiSolidDownload className="w-5 h-5" />
-                          </Typography>
+                          <Tooltip content="Install QR Code">
+                            <Typography
+                              variant="small"
+                              color="blue-gray"
+                              className="p-2 font-medium rounded-full hover:bg-white"
+                              onClick={() => {
+                                setOpenQRCode({
+                                  open: true,
+                                  data: fileURL,
+                                });
+                              }}
+                            >
+                              <ImQrcode className="w-5 h-5" />
+                            </Typography>
+                          </Tooltip>
+                          <Tooltip content="Public Share URL">
+                            <Typography
+                              variant="small"
+                              color="blue-gray"
+                              className="p-2 font-medium rounded-full hover:bg-white"
+                              onClick={() => {
+                                setOpenShareInstallURL({
+                                  open: true,
+                                  data,
+                                });
+                              }}
+                            >
+                              <BiSolidShareAlt className="w-5 h-5" />
+                            </Typography>
+                          </Tooltip>
+                          <Tooltip content="Download file">
+                            <Typography
+                              as="a"
+                              href={fileURL}
+                              variant="small"
+                              color="blue-gray"
+                              className="p-2 font-medium rounded-full hover:bg-white"
+                            >
+                              <BiSolidDownload className="w-5 h-5" />
+                            </Typography>
+                          </Tooltip>
+                          {jiraIssues.length > 0 && (
+                            <Badge
+                              content={jiraIssues.length}
+                              withBorder
+                              color="blue"
+                            >
+                              <Tooltip content="Jira Issues">
+                                <Typography
+                                  variant="small"
+                                  color="blue-gray"
+                                  className="p-2 font-medium rounded-full hover:bg-white"
+                                  onClick={() => {
+                                    setOpenJiraIssues({
+                                      open: true,
+                                      data,
+                                    });
+                                  }}
+                                >
+                                  <SiJirasoftware className="w-5 h-5 text-blue-500" />
+                                </Typography>
+                              </Tooltip>
+                            </Badge>
+                          )}
                         </div>
                       </td>
                       <td className={classes}>

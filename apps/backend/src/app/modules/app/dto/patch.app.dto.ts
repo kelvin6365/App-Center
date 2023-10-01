@@ -1,25 +1,21 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Transform } from 'class-transformer';
-import { IsNotEmpty, IsOptional, IsString } from 'class-validator';
+import { IsObject, IsOptional, IsString, IsUUID } from 'class-validator';
 
-export class CreateAppVersionDTO {
+export class PatchAppDTO {
   @ApiProperty()
   @IsString()
-  @IsNotEmpty()
-  apiKey: string;
-
-  @ApiProperty()
-  @IsString()
-  @IsNotEmpty()
+  @IsOptional()
   name: string;
 
   @ApiProperty()
   @IsString()
-  @IsNotEmpty()
+  @IsOptional()
   description: string;
 
   @ApiProperty({ type: [String] })
   @IsOptional()
+  @IsUUID('4', { each: true })
   @Transform(({ value }) => {
     if (value) {
       const values = value.split(',');
@@ -29,20 +25,16 @@ export class CreateAppVersionDTO {
   })
   tags!: string[];
 
-  @ApiProperty({ type: [String] })
+  //json object call extra
+  @ApiProperty()
   @IsOptional()
+  @IsObject()
   @Transform(({ value }) => {
     if (value) {
-      const values = value.split(',');
+      const values = JSON.parse(value);
       return values;
     }
-    return [];
+    return {};
   })
-  jiraIssues?: string[];
-
-  //install password
-  @ApiProperty()
-  @IsString()
-  @IsNotEmpty()
-  installPassword: string;
+  extra: Record<string, unknown>;
 }

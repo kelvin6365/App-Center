@@ -34,6 +34,16 @@ export class ResponseCode {
     'Fail to delete',
     'Fail to delete'
   );
+  static readonly STATUS_1016_JIRA_NOT_ENABLE_YET = new ResponseStatus(
+    1016,
+    'Jira not enabled yet',
+    'Jira not enabled yet'
+  );
+  static readonly STATUS_1017_JIRA_CREDENTIAL_NOT_SET = new ResponseStatus(
+    1017,
+    'Jira credential not set',
+    'Jira credential not set'
+  );
   static readonly STATUS_9000_BAD_REQUEST = new ResponseStatus(
     9000,
     'Bad Request',

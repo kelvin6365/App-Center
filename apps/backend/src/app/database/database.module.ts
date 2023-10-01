@@ -33,6 +33,7 @@ import { CreateCredentialComponent1694362620123 } from './migrations/16943626201
 import { CreateSetting1695107265137 } from './migrations/1695107265137-Create-Setting';
 import { InsertSystemConfig1695658100920 } from './migrations/1695658100920-Insert-SystemConfig';
 import { InsertCredential1696162093605 } from './migrations/1696162093605-Insert-credential';
+import { AppVersionJiraIssue } from '../modules/app/entities/app.version.jira.issue.entity';
 
 @Module({
   imports: [
@@ -64,6 +65,7 @@ import { InsertCredential1696162093605 } from './migrations/1696162093605-Insert
             Tenant,
             UserTenant,
             Setting,
+            AppVersionJiraIssue,
           ],
           synchronize: configService.get('db.synchronize'),
           migrations: [

@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { DataSource, DeleteResult, In, Repository } from 'typeorm';
+import { DataSource, DeleteResult, In, Not, Repository } from 'typeorm';
 import { Credential } from '../../modules/credential/entities/credential.entity';
 
 @Injectable()
@@ -21,7 +21,10 @@ export class CredentialRepository extends Repository<Credential> {
     tenantIds?: string[]
   ): Promise<Credential> {
     const credential = await this.findOne({
-      where: { id: credentialId, tenantId: In(tenantIds) },
+      where: {
+        id: credentialId,
+        tenantId: tenantIds ? In(tenantIds) : Not(In([])),
+      },
       withDeleted: options.withDeleted,
     });
 
@@ -39,7 +42,12 @@ export class CredentialRepository extends Repository<Credential> {
     updatedBy?: string
   ): Promise<DeleteResult> {
     if (updatedBy) {
-      await this.update(credentialId, { updatedBy });
+      await this.update(
+        {
+          id: credentialId,
+        },
+        { updatedBy }
+      );
     }
     return await this.softDelete({ id: credentialId });
   }
@@ -49,11 +57,13 @@ export class CredentialRepository extends Repository<Credential> {
     options: { withDeleted?: boolean } = {
       withDeleted: false,
     },
-    tenantIds: string[]
+    tenantIds: string[],
+    name?: string
   ) {
     const credentials = await this.find({
       where: {
         tenantId: In(tenantIds),
+        credentialName: name,
       },
       withDeleted: options.withDeleted,
       order: {

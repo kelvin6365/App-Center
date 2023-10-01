@@ -33,6 +33,8 @@ import { App } from '../../util/type/App';
 import { maskingString } from '../../util/util';
 import ShareDialog from '../../../components/Dialog/ShareDialog';
 import { AppVersion } from '../../util/type/AppVersion';
+import JiraDialog from '../../../components/Dialog/JiraDialog';
+import JiraIssuesDialog from '../../../components/Dialog/JiraIssuesDialog';
 
 const ViewApp = () => {
   const { appId } = useParams();
@@ -48,6 +50,14 @@ const ViewApp = () => {
   const [openEditApp, setOpenEditApp] = useState(false);
   const [openUploadVersion, setOpenUploadVersion] = useState(false);
   const [openShareInstallURL, setOpenShareInstallURL] = useState<{
+    open: boolean;
+    data: AppVersion | null;
+  }>({
+    open: false,
+    data: null,
+  });
+  const [openJira, setOpenJira] = useState(false);
+  const [openJiraIssues, setOpenJiraIssues] = useState<{
     open: boolean;
     data: AppVersion | null;
   }>({
@@ -241,11 +251,7 @@ const ViewApp = () => {
               <IconButton
                 className="text-blue-500 bg-white"
                 onClick={() => {
-                  if (app?.extra?.jiraURL) {
-                    window.open(app.extra.jiraURL, '_blank');
-                  } else {
-                    toast.info('Jira URL is not set');
-                  }
+                  setOpenJira(true);
                 }}
               >
                 <SiJirasoftware className="w-5 h-5" />
@@ -294,6 +300,7 @@ const ViewApp = () => {
               appId={appId}
               setOpenQRCode={setOpenQRCode}
               setOpenShareInstallURL={setOpenShareInstallURL}
+              setOpenJiraIssues={setOpenJiraIssues}
             />
           )}
         </div>
@@ -362,6 +369,33 @@ const ViewApp = () => {
           }}
           open={openUploadVersion}
           app={app}
+        />
+      )}
+      {app && (
+        <JiraDialog
+          open={openJira}
+          title={'Jira'}
+          onClose={(reload: boolean) => {
+            if (reload && appId) {
+              fetchApp(appId);
+            }
+            setOpenJira(false);
+          }}
+          app={app}
+        />
+      )}
+      {app && (
+        <JiraIssuesDialog
+          open={openJiraIssues.open}
+          title={'Jira Issues'}
+          onClose={() => {
+            setOpenJiraIssues({
+              open: false,
+              data: null,
+            });
+          }}
+          app={app}
+          data={openJiraIssues.data}
         />
       )}
     </div>

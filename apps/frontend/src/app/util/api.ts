@@ -7,6 +7,7 @@ import { UserStatus } from './type/UserStatus';
 import { RoleType } from './type/RoleType';
 import { PortalUserProfile } from './type/PortalUserProfile';
 import { ResponseStatus } from './type/ResponseStatus';
+import { SearchJiraIssue } from './type/SearchJiraIssue';
 
 const API = {
   apiInstance: axios.create({
@@ -42,6 +43,8 @@ const API = {
         `/v1/portal/app/${appId}/install`,
       PUBLIC_INSTALL_PAGE_APP_VERSIONS: (appId: string, versionId: string) =>
         `/v1/portal/app/${appId}/version/${versionId}/install`,
+      SEARCH_JIRA_ISSUES: (appId: string) =>
+        `/v1/portal/app/${appId}/jira/search`,
     },
     USER: {
       SEARCH_USERS: (tenantId: string) =>
@@ -151,14 +154,48 @@ const API = {
     ) => {
       const { name, description, icon } = data;
       const form = new FormData();
-      form.append('name', name);
-      form.append('description', description);
+      if (name) {
+        form.append('name', name);
+      }
+      if (description) {
+        form.append('description', description);
+      }
       if (icon) {
         form.append('icon', icon);
       }
       form.append('extra', JSON.stringify(data.extra));
       console.log(form);
       return API.apiInstance.put(API.API_PATH.APP.UPDATE_APP(appId), form, {
+        headers: {
+          'Content-type': 'multipart/form-data',
+        },
+      });
+    },
+    patchApp: (
+      appId: string,
+      data: {
+        name?: string;
+        description?: string;
+        icon?: File | null;
+        extra: {
+          [key: string]: any;
+        };
+      }
+    ) => {
+      const { name, description, icon } = data;
+      const form = new FormData();
+      if (name) {
+        form.append('name', name);
+      }
+      if (description) {
+        form.append('description', description);
+      }
+      if (icon) {
+        form.append('icon', icon);
+      }
+      form.append('extra', JSON.stringify(data.extra));
+      console.log(form);
+      return API.apiInstance.patch(API.API_PATH.APP.UPDATE_APP(appId), form, {
         headers: {
           'Content-type': 'multipart/form-data',
         },
@@ -176,9 +213,18 @@ const API = {
         apiKey: string;
         tags: string;
         installPassword: string;
+        jiraIssues?: string;
       }
     ) => {
-      const { name, description, file, apiKey, tags, installPassword } = data;
+      const {
+        name,
+        description,
+        file,
+        apiKey,
+        tags,
+        installPassword,
+        jiraIssues,
+      } = data;
       const form = new FormData();
       form.append('name', name);
       form.append('description', description);
@@ -186,6 +232,9 @@ const API = {
       form.append('apiKey', apiKey);
       form.append('tags', tags);
       form.append('installPassword', installPassword);
+      if (jiraIssues) {
+        form.append('jiraIssues', jiraIssues);
+      }
       return API.apiInstance.post(
         API.API_PATH.APP.UPLOAD_APP_VERSION(appId),
         form,
@@ -215,6 +264,23 @@ const API = {
         API.API_PATH.APP.PUBLIC_INSTALL_PAGE_APP_VERSIONS(appId, versionId),
         { password }
       );
+    },
+    searchJiraIssues: (
+      appId: string,
+      query: string
+    ): Promise<
+      AxiosResponse<{
+        data: {
+          items: SearchJiraIssue[];
+        };
+        status: ResponseStatus;
+      }>
+    > => {
+      return API.apiInstance.get(API.API_PATH.APP.SEARCH_JIRA_ISSUES(appId), {
+        params: {
+          query,
+        },
+      });
     },
   },
   user: {
@@ -300,9 +366,14 @@ const API = {
     },
   },
   credential: {
-    getAllCredentials: (tenantId: string) => {
+    getAllCredentials: (tenantId: string, name?: string) => {
       return API.apiInstance.get(
-        API.API_PATH.CREDENTIAL.GET_ALL_CREDENTIALS(tenantId)
+        API.API_PATH.CREDENTIAL.GET_ALL_CREDENTIALS(tenantId),
+        {
+          params: {
+            name,
+          },
+        }
       );
     },
     getCredential: (id: string) => {

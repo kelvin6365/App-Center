@@ -5,9 +5,11 @@ import { AppRepository } from '../../database/repositories/app.repository';
 import { AppVersionRepository } from '../../database/repositories/app.version.repository';
 import { FileModule } from '../file/file.module';
 import { AppVersionTagRepository } from '../../database/repositories/app.version.tag.repository';
+import { JiraModule } from '../jira/jira.module';
+import { CredentialModule } from '../credential/credential.module';
 
 @Module({
-  imports: [FileModule],
+  imports: [FileModule, JiraModule, CredentialModule],
   controllers: [AppController],
   providers: [
     Logger,

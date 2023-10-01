@@ -7,9 +7,15 @@ import {
   Param,
   Post,
   Put,
+  Query,
   UseGuards,
 } from '@nestjs/common';
-import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
+import {
+  ApiBearerAuth,
+  ApiOperation,
+  ApiQuery,
+  ApiTags,
+} from '@nestjs/swagger';
 import { ApiResponseSchema } from '../../common/decorator/swagger.decorator';
 import { AppResponse } from '../../common/response/app.response';
 import { CurrentUser } from '../../common/decorator/user.decorator';
@@ -55,13 +61,15 @@ export class PortalCredentialController {
   //Get All Credentials
   @Get('/tenant/:tenantId')
   @ApiOperation({ summary: 'Get All Credentials' })
+  @ApiQuery({ required: false, name: 'name' })
   @ApiResponseSchema(HttpStatus.OK, 'OK')
   async getAllCredentials(
     @Param('tenantId') tenantId: string,
+    @Query('name') name: string,
     @CurrentUser() user: CurrentUserDTO
   ) {
     return new AppResponse(
-      await this.credentialService.getAllCredentials(tenantId, user)
+      await this.credentialService.getAllCredentials(tenantId, name, user)
     );
   }
 

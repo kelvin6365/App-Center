@@ -9,6 +9,7 @@ import {
   ParseFilePipe,
   ParseIntPipe,
   ParseUUIDPipe,
+  Patch,
   Post,
   Put,
   Query,
@@ -49,13 +50,16 @@ import { CreateAppDTO } from '../app/dto/create.app.dto';
 import { CreateAppVersionDTO } from '../app/dto/create.app.version.dto';
 import { InstallAppDTO } from '../app/dto/install.app.dto';
 import { InstallAppRequestDTO } from '../app/dto/install.app.request.dto';
+import { PatchAppDTO } from '../app/dto/patch.app.dto';
 import { UpdateAppDTO } from '../app/dto/update.app.dto';
 import { CurrentUserDTO } from '../auth/dto/current.user.dto';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { AppAllowedType } from '../file/enum/app.allowed.type.enum';
 import { ImageAllowedType } from '../file/enum/image.allowed.type.enum';
 import { FileService } from '../file/file.service';
+import { SearchJiraIssueDTO } from '../jira/dto/search.jira.issue.dto';
 import { RoleType } from '../role/enum/role.type.enum';
+import { MetaDTO } from '../../common/dto/meta.dto';
 
 @ApiTags('Portal')
 @ApiBearerAuth()
@@ -168,6 +172,50 @@ export class PortalAppController {
     );
   }
 
+  //patch an existing app
+  @Patch(':id')
+  @ApiConsumes('multipart/form-data')
+  @UseInterceptors(
+    FileInterceptor('icon', {
+      limits: {
+        files: 1,
+        fileSize: 1024 * 1024,
+      },
+      fileFilter: (req: any, file: any, cb: any) => {
+        if (
+          Object.keys(ImageAllowedType)
+            .map((t) => t.toLocaleLowerCase())
+            .indexOf(
+              (mime.extension(file.mimetype) as string).toLocaleLowerCase()
+            ) !== -1
+        ) {
+          // Allow storage of file
+          cb(null, true);
+        } else {
+          // Reject file
+          cb(
+            new AppException(
+              ResponseCode.STATUS_7000_UNSUPPORTED_FILE_TYPE(file.mimetype),
+              HttpStatus.BAD_REQUEST
+            ),
+            false
+          );
+        }
+      },
+    })
+  )
+  async patchApp(
+    @Param('id') id,
+    @UploadedFile()
+    file: Express.Multer.File,
+    @Body() patchApp: PatchAppDTO,
+    @CurrentUser() user: CurrentUserDTO
+  ): Promise<AppResponse<boolean>> {
+    return new AppResponse<boolean>(
+      await this.appService.patchApp(id, patchApp, file, user)
+    );
+  }
+
   //Update an existing app
   @Put(':id')
   @ApiConsumes('multipart/form-data')
@@ -207,7 +255,6 @@ export class PortalAppController {
     @Body() updateApp: UpdateAppDTO,
     @CurrentUser() user: CurrentUserDTO
   ): Promise<AppResponse<boolean>> {
-    console.log(file, updateApp, id);
     return new AppResponse<boolean>(
       await this.appService.updateApp(id, updateApp, file, user)
     );
@@ -406,6 +453,26 @@ export class PortalAppController {
   ) {
     return new AppResponse(
       await this.appService.deleteAppVersion(id, versionId, user)
+    );
+  }
+
+  //search app jira issues
+  @Get(':id/jira/search')
+  @ApiParam({ name: 'id', required: true })
+  @ApiQuery({ name: 'query', required: true })
+  @ApiPagingResponseSchema(HttpStatus.OK, 'OK', SearchJiraIssueDTO)
+  async searchJiraIssues(
+    @Param('id', new ParseUUIDPipe()) id: string,
+    @Query('query') query: string,
+    @CurrentUser() user: CurrentUserDTO
+  ): Promise<AppResponse<PageDTO<SearchJiraIssueDTO>>> {
+    return new AppResponse<PageDTO<SearchJiraIssueDTO>>(
+      new PageDTO<SearchJiraIssueDTO>(
+        (await this.appService.searchJiraIssues(id, query, user)).map(
+          (issue) => new SearchJiraIssueDTO(issue)
+        ),
+        new MetaDTO()
+      )
     );
   }
 }
