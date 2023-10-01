@@ -357,7 +357,7 @@ export class AppService {
     return appVersions.map(
       (appVersion) =>
         new AppVersionDTO(
-          appVersion,
+          { ...appVersion, jiraIssues: [] },
           appVersion.fileId
             ? this.configService.get('services.file.fileAPI') +
               appVersion.fileId +
