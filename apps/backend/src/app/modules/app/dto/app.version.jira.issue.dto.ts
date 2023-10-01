@@ -31,8 +31,8 @@ export class AppVersionJiraIssueDTO {
   ) {
     this.id = data.id;
     this.issueIdOrKey = data.issueIdOrKey;
-    this.iconUrl = data.issuetype.iconUrl;
-    this.issueType = data.issuetype.name;
+    this.iconUrl = data.issuetype?.iconUrl;
+    this.issueType = data.issuetype?.name;
     this.status = data.status;
     this.summary = data.summary;
     this.url = data.url;

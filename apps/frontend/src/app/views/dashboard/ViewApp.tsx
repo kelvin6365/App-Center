@@ -378,6 +378,7 @@ const ViewApp = () => {
           onClose={(reload: boolean) => {
             if (reload && appId) {
               fetchApp(appId);
+              tableRef.current?.reload();
             }
             setOpenJira(false);
           }}

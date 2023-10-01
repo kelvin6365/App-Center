@@ -287,56 +287,77 @@ export class AppService {
           ResponseCode.STATUS_1017_JIRA_CREDENTIAL_NOT_SET
         );
       }
-      const issuesRes = await Promise.all(
-        allIssuesFromDifferentVersions.map((issue) =>
-          this.jiraService.getJiraIssue(
-            issue,
-            jiraCredentials.encryptedData as {
-              jiraProjectKey: string;
-              jiraUsername: string;
-              jiraAPIToken: string;
-              jiraHost: string;
-            }
+      try {
+        const issuesRes = await Promise.all(
+          allIssuesFromDifferentVersions.map((issue) =>
+            this.jiraService.getJiraIssue(
+              issue,
+              jiraCredentials.encryptedData as {
+                jiraProjectKey: string;
+                jiraUsername: string;
+                jiraAPIToken: string;
+                jiraHost: string;
+              }
+            )
           )
-        )
-      );
-      issuesRes.forEach((issue) => {
-        jiraKeys[issue.key] = {
-          summary: issue.fields.summary,
-          status: issue.fields.status.name,
-          issuetype: {
-            iconUrl: issue.fields.issuetype.iconUrl,
-            name: issue.fields.issuetype.name,
-          },
-          url: `https://${jiraCredentials.encryptedData.jiraHost}/browse/${issue.key}`,
-        };
-      });
-      return appVersions.map((appVersion) => {
-        appVersion = {
-          ...appVersion,
-          jiraIssues: appVersion.jiraIssues.map((issue) => {
-            return {
-              ...issue,
-              key: issue.issueIdOrKey,
-              ...jiraKeys[issue.issueIdOrKey],
-            };
-          }),
-        };
-        return new AppVersionDTO(
-          appVersion,
-          appVersion.fileId
-            ? this.configService.get('services.file.fileAPI') +
-              appVersion.fileId +
-              '&download=true'
-            : null
         );
-      });
+        //TODO: handle deleted jira issues
+        issuesRes.forEach((issue) => {
+          jiraKeys[issue.key] = {
+            summary: issue.fields.summary,
+            status: issue.fields.status.name,
+            issuetype: {
+              iconUrl: issue.fields.issuetype.iconUrl,
+              name: issue.fields.issuetype.name,
+            },
+            url: `https://${jiraCredentials.encryptedData.jiraHost}/browse/${issue.key}`,
+          };
+        });
+        return appVersions.map((appVersion) => {
+          appVersion = {
+            ...appVersion,
+            jiraIssues: appVersion.jiraIssues.map((issue) => {
+              return {
+                ...issue,
+                key: issue.issueIdOrKey,
+                ...jiraKeys[issue.issueIdOrKey],
+              };
+            }),
+          };
+          return new AppVersionDTO(
+            appVersion,
+            appVersion.fileId
+              ? this.configService.get('services.file.fileAPI') +
+                appVersion.fileId +
+                '&download=true'
+              : null
+          );
+        });
+      } catch (error) {
+        //! All errors
+        console.error(error);
+        this.logger.error(error);
+        return appVersions.map((appVersion) => {
+          appVersion = {
+            ...appVersion,
+            jiraIssues: [],
+          };
+          return new AppVersionDTO(
+            appVersion,
+            appVersion.fileId
+              ? this.configService.get('services.file.fileAPI') +
+                appVersion.fileId +
+                '&download=true'
+              : null
+          );
+        });
+      }
     }
 
     return appVersions.map(
       (appVersion) =>
         new AppVersionDTO(
-          appVersion,
+          { ...appVersion, jiraIssues: [] },
           appVersion.fileId
             ? this.configService.get('services.file.fileAPI') +
               appVersion.fileId +
