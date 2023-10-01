@@ -130,13 +130,14 @@ const JiraDialog = ({ title, onClose, open, app }: Props) => {
             No Jira Board URL yet! Please add Jira Board URL for this App,
           </p>
         )}
-        <section className="py-4 my-2 border-t">
-          <Typography variant="h4" color="blue-gray">
+        <section className="pt-4 pb-2 my-2 border-t">
+          <Typography className="text-lg font-bold" color="blue-gray">
             Jira Integration
           </Typography>
           <Typography
+            variant="small"
             color="gray"
-            className="flex items-center gap-1 mt-2 font-normal whitespace-pre-wrap"
+            className="flex items-center gap-1 font-normal whitespace-pre-wrap"
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -157,7 +158,7 @@ const JiraDialog = ({ title, onClose, open, app }: Props) => {
           </Typography>
           <NavLink
             to="/setting?tab=credentials"
-            className="font-bold text-blue-500"
+            className="text-sm font-bold text-blue-500"
           >
             Go to Credentials.
           </NavLink>

@@ -29,6 +29,17 @@ export class CreateAppVersionDTO {
   })
   tags!: string[];
 
+  @ApiProperty({ type: [String] })
+  @IsOptional()
+  @Transform(({ value }) => {
+    if (value) {
+      const values = value.split(',');
+      return values;
+    }
+    return [];
+  })
+  jiraIssues?: string[];
+
   //install password
   @ApiProperty()
   @IsString()

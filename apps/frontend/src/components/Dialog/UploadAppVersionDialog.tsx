@@ -1,9 +1,11 @@
 import {
   Button,
+  Chip,
   Dialog,
   DialogBody,
   DialogFooter,
   DialogHeader,
+  Typography,
 } from '@material-tailwind/react';
 import axios from 'axios';
 import { useEffect } from 'react';
@@ -14,6 +16,7 @@ import { App } from '../../app/util/type/App';
 import FileUpload from '../Input/FileUpload';
 import TextInput from '../Input/Input';
 import Loading from '../Loading/Loading';
+import AsyncSelect from 'react-select/async';
 
 type Props = {
   title: string;
@@ -28,6 +31,7 @@ type EditAppFormInputs = {
   file: any;
   tags: string;
   installPassword: string;
+  jiraIssues: string[];
 };
 
 const UploadAppVersionDialog = ({ title, onClose, open, app }: Props) => {
@@ -37,6 +41,7 @@ const UploadAppVersionDialog = ({ title, onClose, open, app }: Props) => {
     formState: { errors, isSubmitting },
     control,
     reset,
+    setValue,
   } = useForm<EditAppFormInputs>({
     // resolver: yupResolver<Inputs>(schema),
     defaultValues: {
@@ -58,6 +63,7 @@ const UploadAppVersionDialog = ({ title, onClose, open, app }: Props) => {
           .map((tag) => tag.trim())
           .join(','),
         installPassword: values.installPassword.trim(),
+        jiraIssues: values.jiraIssues.map((i) => i.trim()).join(','),
       });
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const { status }: { data: any; status: any } = res.data;
@@ -72,6 +78,40 @@ const UploadAppVersionDialog = ({ title, onClose, open, app }: Props) => {
         toast.error(error.response?.data?.status?.displayMessage.toString());
       }
     }
+  };
+
+  const searchJiraIssues = async (inputValue: string) => {
+    try {
+      const res = await API.app.searchJiraIssues(app.id, inputValue);
+      const {
+        data: { items },
+      } = res.data;
+      return items;
+    } catch (error) {
+      console.error(error);
+      return [];
+    }
+  };
+
+  const promiseOptions = async (inputValue: string) => {
+    if (inputValue.length === 0) {
+      return [];
+    }
+    const issues = await searchJiraIssues(inputValue);
+    return issues.map((i) => {
+      return {
+        value: i.key,
+        label: (
+          <span className="flex">
+            <div
+              className="min-w-fit w-fit"
+              dangerouslySetInnerHTML={{ __html: i.keyHtml }}
+            />
+            <p className="ml-2 whitespace-pre-wrap">{i.summaryText}</p>
+          </span>
+        ),
+      };
+    });
   };
 
   useEffect(() => {
@@ -102,6 +142,9 @@ const UploadAppVersionDialog = ({ title, onClose, open, app }: Props) => {
             </div>
           )}
           <div className="flex flex-col gap-6 mb-4">
+            <Typography className="font-bold" color="blue-gray">
+              Version Info
+            </Typography>
             <Controller
               name="name"
               control={control}
@@ -181,14 +224,49 @@ const UploadAppVersionDialog = ({ title, onClose, open, app }: Props) => {
               }}
             />
           </div>
-          <FileUpload
-            {...register('file', {
-              required: 'File is required',
-            })}
-            loading={isSubmitting}
-            errors={errors}
-            accept=".ipa,.apk,application/iphone-package-archive,application/vnd.android.package-archive"
-          />
+          {app.extra?.jiraCredential && (
+            <div className="py-2 my-2 border-y">
+              <Typography className="font-bold" color="blue-gray">
+                Jira Issues Connect
+              </Typography>
+              <div className="my-2">
+                <Controller
+                  name="jiraIssues"
+                  control={control}
+                  rules={{
+                    required: false,
+                  }}
+                  render={({ field }) => {
+                    return (
+                      <AsyncSelect
+                        ref={field.ref}
+                        cacheOptions
+                        defaultOptions
+                        isMulti
+                        loadOptions={promiseOptions}
+                        onChange={(e) => {
+                          setValue(
+                            'jiraIssues',
+                            e.map((i) => i.value)
+                          );
+                        }}
+                      />
+                    );
+                  }}
+                />
+              </div>
+            </div>
+          )}
+          <div className="mt-4">
+            <FileUpload
+              {...register('file', {
+                required: 'File is required',
+              })}
+              loading={isSubmitting}
+              errors={errors}
+              accept=".ipa,.apk,application/iphone-package-archive,application/vnd.android.package-archive"
+            />
+          </div>
         </form>
       </DialogBody>
       <DialogFooter>

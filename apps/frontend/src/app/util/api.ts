@@ -7,6 +7,7 @@ import { UserStatus } from './type/UserStatus';
 import { RoleType } from './type/RoleType';
 import { PortalUserProfile } from './type/PortalUserProfile';
 import { ResponseStatus } from './type/ResponseStatus';
+import { SearchJiraIssue } from './type/SearchJiraIssue';
 
 const API = {
   apiInstance: axios.create({
@@ -42,6 +43,8 @@ const API = {
         `/v1/portal/app/${appId}/install`,
       PUBLIC_INSTALL_PAGE_APP_VERSIONS: (appId: string, versionId: string) =>
         `/v1/portal/app/${appId}/version/${versionId}/install`,
+      SEARCH_JIRA_ISSUES: (appId: string) =>
+        `/v1/portal/app/${appId}/jira/search`,
     },
     USER: {
       SEARCH_USERS: (tenantId: string) =>
@@ -210,9 +213,18 @@ const API = {
         apiKey: string;
         tags: string;
         installPassword: string;
+        jiraIssues?: string;
       }
     ) => {
-      const { name, description, file, apiKey, tags, installPassword } = data;
+      const {
+        name,
+        description,
+        file,
+        apiKey,
+        tags,
+        installPassword,
+        jiraIssues,
+      } = data;
       const form = new FormData();
       form.append('name', name);
       form.append('description', description);
@@ -220,6 +232,9 @@ const API = {
       form.append('apiKey', apiKey);
       form.append('tags', tags);
       form.append('installPassword', installPassword);
+      if (jiraIssues) {
+        form.append('jiraIssues', jiraIssues);
+      }
       return API.apiInstance.post(
         API.API_PATH.APP.UPLOAD_APP_VERSION(appId),
         form,
@@ -249,6 +264,23 @@ const API = {
         API.API_PATH.APP.PUBLIC_INSTALL_PAGE_APP_VERSIONS(appId, versionId),
         { password }
       );
+    },
+    searchJiraIssues: (
+      appId: string,
+      query: string
+    ): Promise<
+      AxiosResponse<{
+        data: {
+          items: SearchJiraIssue[];
+        };
+        status: ResponseStatus;
+      }>
+    > => {
+      return API.apiInstance.get(API.API_PATH.APP.SEARCH_JIRA_ISSUES(appId), {
+        params: {
+          query,
+        },
+      });
     },
   },
   user: {

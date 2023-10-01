@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable, Logger } from '@nestjs/common';
 import { CredentialRepository } from '../../database/repositories/credential.repository';
 import { CreateCredentialRequestDTO } from './dto/create.credential.request.dto';
 import { CredentialResponseDTO } from './dto/credential.response.dto';
@@ -18,9 +18,12 @@ import { omit } from 'lodash';
 @Injectable()
 export class CredentialService {
   constructor(
+    @Inject(Logger) private readonly logger: Logger,
     private credentialRepository: CredentialRepository,
     private credentialComponentRepository: CredentialComponentRepository
-  ) {}
+  ) {
+    this.logger = new Logger(CredentialService.name);
+  }
 
   //Get all Credentials
   async getAllCredentials(
@@ -47,24 +50,34 @@ export class CredentialService {
   //Get credential
   async getCredential(
     credentialId: string,
-    user: CurrentUserDTO
+    user: CurrentUserDTO,
+    showCredentials = false
   ): Promise<CredentialResponseDTO> {
     const credential = await this.credentialRepository.getCredential(
       credentialId,
       {},
       user.tenants.map((ut) => ut.tenant.id)
     );
+    if (!credential) {
+      throw new AppException(ResponseCode.STATUS_1011_NOT_FOUND);
+    }
     //get credential component
     const credentialComponent =
       await this.credentialComponentRepository.getCredentialComponentByCredentialName(
         credential.credentialName
       );
+    if (showCredentials) {
+      credential.encryptedData = await decryptCredentialData(
+        credential.encryptedData
+      );
+    } else {
+      credential.encryptedData = await decryptCredentialData(
+        credential.encryptedData,
+        credential.credentialName,
+        { [credential.credentialName]: credentialComponent }
+      );
+    }
 
-    credential.encryptedData = await decryptCredentialData(
-      credential.encryptedData,
-      credential.credentialName,
-      { [credential.credentialName]: credentialComponent }
-    );
     return new CredentialResponseDTO(credential);
   }
 
@@ -142,6 +155,8 @@ export class CredentialService {
       await this.credentialRepository.deleteCredential(credentialId, user.id);
       return true;
     } catch (error) {
+      console.log(error);
+      this.logger.error(error.message);
       throw new AppException(ResponseCode.STATUS_1015_FAIL_TO_DELETE);
     }
   }

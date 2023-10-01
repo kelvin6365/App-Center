@@ -34,6 +34,7 @@ import { maskingString } from '../../util/util';
 import ShareDialog from '../../../components/Dialog/ShareDialog';
 import { AppVersion } from '../../util/type/AppVersion';
 import JiraDialog from '../../../components/Dialog/JiraDialog';
+import JiraIssuesDialog from '../../../components/Dialog/JiraIssuesDialog';
 
 const ViewApp = () => {
   const { appId } = useParams();
@@ -56,6 +57,13 @@ const ViewApp = () => {
     data: null,
   });
   const [openJira, setOpenJira] = useState(false);
+  const [openJiraIssues, setOpenJiraIssues] = useState<{
+    open: boolean;
+    data: AppVersion | null;
+  }>({
+    open: false,
+    data: null,
+  });
 
   const tableRef = useRef<TableRef>(null);
 
@@ -292,6 +300,7 @@ const ViewApp = () => {
               appId={appId}
               setOpenQRCode={setOpenQRCode}
               setOpenShareInstallURL={setOpenShareInstallURL}
+              setOpenJiraIssues={setOpenJiraIssues}
             />
           )}
         </div>
@@ -373,6 +382,20 @@ const ViewApp = () => {
             setOpenJira(false);
           }}
           app={app}
+        />
+      )}
+      {app && (
+        <JiraIssuesDialog
+          open={openJiraIssues.open}
+          title={'Jira Issues'}
+          onClose={() => {
+            setOpenJiraIssues({
+              open: false,
+              data: null,
+            });
+          }}
+          app={app}
+          data={openJiraIssues.data}
         />
       )}
     </div>

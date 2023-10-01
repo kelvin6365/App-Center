@@ -11,6 +11,7 @@ export interface AppVersion {
   tags: AppVersionTag[];
   file: File;
   appId: string;
+  jiraIssues: AppVersionJiraIssue[];
 }
 
 export interface AppVersionTag {
@@ -18,4 +19,14 @@ export interface AppVersionTag {
   name: string;
   createdAt: string;
   appId: string;
+}
+
+export interface AppVersionJiraIssue {
+  id: string;
+  issueIdOrKey: string;
+  status: string;
+  summary: string;
+  issueType: string;
+  iconUrl: string;
+  url: string;
 }

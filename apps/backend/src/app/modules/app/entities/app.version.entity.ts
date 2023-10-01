@@ -10,6 +10,7 @@ import { BaseEntity } from '../../../database/entities/base.entity';
 import { App } from './app.entity';
 import { AppVersionTag } from './app.version.tag.entity';
 import { File } from '../../file/entities/file.entity';
+import { AppVersionJiraIssue } from './app.version.jira.issue.entity';
 
 @Entity('app_versions')
 export class AppVersion extends BaseEntity {
@@ -40,4 +41,14 @@ export class AppVersion extends BaseEntity {
   @OneToOne(() => File, (file) => file.appVersion)
   @JoinColumn({ name: 'file_id', referencedColumnName: 'id' })
   file: File;
+
+  @OneToMany(
+    () => AppVersionJiraIssue,
+    (appVersionJiraIssue) => appVersionJiraIssue.appVersion,
+    {
+      cascade: true,
+      eager: true,
+    }
+  )
+  jiraIssues: AppVersionJiraIssue[];
 }

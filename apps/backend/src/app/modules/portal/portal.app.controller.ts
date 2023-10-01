@@ -50,14 +50,16 @@ import { CreateAppDTO } from '../app/dto/create.app.dto';
 import { CreateAppVersionDTO } from '../app/dto/create.app.version.dto';
 import { InstallAppDTO } from '../app/dto/install.app.dto';
 import { InstallAppRequestDTO } from '../app/dto/install.app.request.dto';
+import { PatchAppDTO } from '../app/dto/patch.app.dto';
 import { UpdateAppDTO } from '../app/dto/update.app.dto';
 import { CurrentUserDTO } from '../auth/dto/current.user.dto';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { AppAllowedType } from '../file/enum/app.allowed.type.enum';
 import { ImageAllowedType } from '../file/enum/image.allowed.type.enum';
 import { FileService } from '../file/file.service';
+import { SearchJiraIssueDTO } from '../jira/dto/search.jira.issue.dto';
 import { RoleType } from '../role/enum/role.type.enum';
-import { PatchAppDTO } from '../app/dto/patch.app.dto';
+import { MetaDTO } from '../../common/dto/meta.dto';
 
 @ApiTags('Portal')
 @ApiBearerAuth()
@@ -451,6 +453,26 @@ export class PortalAppController {
   ) {
     return new AppResponse(
       await this.appService.deleteAppVersion(id, versionId, user)
+    );
+  }
+
+  //search app jira issues
+  @Get(':id/jira/search')
+  @ApiParam({ name: 'id', required: true })
+  @ApiQuery({ name: 'query', required: true })
+  @ApiPagingResponseSchema(HttpStatus.OK, 'OK', SearchJiraIssueDTO)
+  async searchJiraIssues(
+    @Param('id', new ParseUUIDPipe()) id: string,
+    @Query('query') query: string,
+    @CurrentUser() user: CurrentUserDTO
+  ): Promise<AppResponse<PageDTO<SearchJiraIssueDTO>>> {
+    return new AppResponse<PageDTO<SearchJiraIssueDTO>>(
+      new PageDTO<SearchJiraIssueDTO>(
+        (await this.appService.searchJiraIssues(id, query, user)).map(
+          (issue) => new SearchJiraIssueDTO(issue)
+        ),
+        new MetaDTO()
+      )
     );
   }
 }
