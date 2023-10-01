@@ -124,6 +124,7 @@ const CreateCredentialDialog = ({
                       {...field}
                       type={input.type as 'password' | 'text'}
                       // placeholder={input.placeholder}
+                      helperText={input.placeholder}
                       // variant="static"
                       disabled={isSubmitting}
                       error={error}

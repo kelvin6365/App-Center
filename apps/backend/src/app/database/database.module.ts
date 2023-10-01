@@ -30,10 +30,9 @@ import { role1693123446948 } from './migrations/1693123446948-role';
 import { Permission1693145873440 } from './migrations/1693145873440-permission';
 import { PermissionInsert1693145971058 } from './migrations/1693145971058-permission-insert';
 import { CreateCredentialComponent1694362620123 } from './migrations/1694362620123-CreateCredentialComponent';
-import { InsertCredentialComponent1694362717025 } from './migrations/1694362717025-InsertCredentialComponent';
-import { InsertCredentialComponent1694362717026 } from './migrations/1694362717026-InsertCredentialComponent';
 import { CreateSetting1695107265137 } from './migrations/1695107265137-Create-Setting';
 import { InsertSystemConfig1695658100920 } from './migrations/1695658100920-Insert-SystemConfig';
+import { InsertCredential1696162093605 } from './migrations/1696162093605-Insert-credential';
 
 @Module({
   imports: [
@@ -73,8 +72,7 @@ import { InsertSystemConfig1695658100920 } from './migrations/1695658100920-Inse
             Permission1693145873440,
             PermissionInsert1693145971058,
             CreateCredentialComponent1694362620123,
-            InsertCredentialComponent1694362717025,
-            InsertCredentialComponent1694362717026,
+            InsertCredential1696162093605,
             CreateSetting1695107265137,
             InsertSystemConfig1695658100920,
           ],
