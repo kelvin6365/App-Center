@@ -1,4 +1,8 @@
-# App Center
+# _App Center_
+
+[![Discord](https://img.shields.io/discord/1157973112030253137?label=Discord&logo=discord)](https://discord.gg/9m2GUGmH8V)
+[![GitHub star chart](https://img.shields.io/github/stars/kelvin6365/App-Center?style=social)](https://star-history.com/#kelvin6365/App-Center)
+[![GitHub fork](https://img.shields.io/github/forks/kelvin6365/App-Center?style=social)](https://github.com/kelvin6365/App-Center/fork)
 
 ## _Manage Your Apps with Ease_
 
@@ -64,3 +68,7 @@ Contributions are welcome! Please open an issue first to discuss changes you'd l
 App Center is licensed under MIT.
 
 **Free Software, Hell Yeah!**
+
+## Star History
+
+[![Star History Chart](https://api.star-history.com/svg?repos=kelvin6365/App-Center&type=Date)](https://star-history.com/#kelvin6365/App-Center)

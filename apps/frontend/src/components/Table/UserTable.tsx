@@ -131,6 +131,14 @@ const UserTable = ensuredForwardRef<UserTableRef, Props>(
         header: () => <span>Status</span>,
       },
       {
+        accessorFn: (row) =>
+          row.tenants.find((tenant) => tenant.id === selectedTenant?.id ?? '')
+            ?.name,
+        id: 'tenants.name',
+        cell: (info) => <i>{info.getValue<string>()}</i>,
+        header: () => <span>Tenant</span>,
+      },
+      {
         accessorFn: (row) => row.createdAt,
         id: 'createdAt',
         cell: (info) => (
