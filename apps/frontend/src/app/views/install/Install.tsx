@@ -9,7 +9,7 @@ import {
 import axios from 'axios';
 import moment from 'moment';
 import { useEffect, useState } from 'react';
-import { SubmitHandler, useForm } from 'react-hook-form';
+import { Controller, SubmitHandler, useForm } from 'react-hook-form';
 import { BiSolidDownload } from 'react-icons/bi';
 import { ImQrcode } from 'react-icons/im';
 import { useNavigate, useParams } from 'react-router-dom';
@@ -44,6 +44,7 @@ const Install = () => {
     handleSubmit,
     formState: { errors, isSubmitting },
     getValues,
+    control,
   } = useForm<InstallAppFormInputs>({
     defaultValues: {
       password: undefined,
@@ -205,14 +206,21 @@ const Install = () => {
                 className="flex flex-col gap-4 mt-2"
               >
                 <div className="mb-4">
-                  <TextInput
-                    {...register('password', {
-                      required: 'Password is required',
-                    })}
-                    type="password"
-                    label="Password"
-                    error={errors.password}
-                    disabled={isSubmitting}
+                  <Controller
+                    name="password"
+                    control={control}
+                    rules={{ required: 'Password is required' }}
+                    render={({ field, fieldState: { error } }) => {
+                      return (
+                        <TextInput
+                          {...field}
+                          type="password"
+                          label="Password"
+                          error={error}
+                          disabled={isSubmitting}
+                        />
+                      );
+                    }}
                   />
                 </div>
 
