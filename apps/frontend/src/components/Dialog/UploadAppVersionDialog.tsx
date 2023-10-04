@@ -63,7 +63,7 @@ const UploadAppVersionDialog = ({ title, onClose, open, app }: Props) => {
           .map((tag) => tag.trim())
           .join(','),
         installPassword: values.installPassword.trim(),
-        jiraIssues: values.jiraIssues.map((i) => i.trim()).join(','),
+        jiraIssues: values.jiraIssues?.map((i) => i.trim()).join(',') ?? null,
       });
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const { status }: { data: any; status: any } = res.data;

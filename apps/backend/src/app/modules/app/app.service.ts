@@ -276,43 +276,41 @@ export class AppService {
           allIssuesFromDifferentVersions.push(issue.issueIdOrKey)
         );
       });
-      //get jira credentials
-      const jiraCredentials = await this.credentialService.getCredential(
-        app.extra.jiraCredential as string,
-        user,
-        true
-      );
-      if (!jiraCredentials) {
-        throw new AppException(
-          ResponseCode.STATUS_1017_JIRA_CREDENTIAL_NOT_SET
-        );
-      }
+
       try {
-        const issuesRes = await Promise.all(
-          allIssuesFromDifferentVersions.map((issue) =>
-            this.jiraService.getJiraIssue(
-              issue,
-              jiraCredentials.encryptedData as {
-                jiraProjectKey: string;
-                jiraUsername: string;
-                jiraAPIToken: string;
-                jiraHost: string;
-              }
-            )
-          )
+        //get jira credentials
+        const jiraCredentials = await this.credentialService.getCredential(
+          app.extra.jiraCredential as string,
+          user,
+          true
         );
-        //TODO: handle deleted jira issues
-        issuesRes.forEach((issue) => {
-          jiraKeys[issue.key] = {
-            summary: issue.fields.summary,
-            status: issue.fields.status.name,
-            issuetype: {
-              iconUrl: issue.fields.issuetype.iconUrl,
-              name: issue.fields.issuetype.name,
-            },
-            url: `https://${jiraCredentials.encryptedData.jiraHost}/browse/${issue.key}`,
-          };
-        });
+        if (allIssuesFromDifferentVersions.length > 0) {
+          const issuesRes = await Promise.all(
+            allIssuesFromDifferentVersions.map((issue) =>
+              this.jiraService.getJiraIssue(
+                issue,
+                jiraCredentials.encryptedData as {
+                  jiraProjectKey: string;
+                  jiraUsername: string;
+                  jiraAPIToken: string;
+                  jiraHost: string;
+                }
+              )
+            )
+          );
+          //TODO: handle deleted jira issues
+          issuesRes.forEach((issue) => {
+            jiraKeys[issue.key] = {
+              summary: issue.fields.summary,
+              status: issue.fields.status.name,
+              issuetype: {
+                iconUrl: issue.fields.issuetype.iconUrl,
+                name: issue.fields.issuetype.name,
+              },
+              url: `https://${jiraCredentials.encryptedData.jiraHost}/browse/${issue.key}`,
+            };
+          });
+        }
         return appVersions.map((appVersion) => {
           appVersion = {
             ...appVersion,
