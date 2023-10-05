@@ -11,5 +11,5 @@
     "tw\\.[^`]+`([^`]*)`", // tw.xxx<xxx>`...`
     "tw\\(.*?\\).*?`([^`]*)" // tw(Component)<xxx>`...`
   ],
-  "cSpell.words": ["issuetype", "Jirasoftware"]
+  "cSpell.words": ["clsx", "issuetype", "Jirasoftware"]
 }

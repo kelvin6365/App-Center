@@ -339,7 +339,7 @@ export class PortalAppController {
     })
   )
   async addVersion(
-    @Param('id') id,
+    @Param('id') id: string,
     @UploadedFile(
       new ParseFilePipe({
         fileIsRequired: true,
@@ -473,6 +473,22 @@ export class PortalAppController {
         ),
         new MetaDTO()
       )
+    );
+  }
+
+  //remove app version jira issue
+  @Delete(':id/version/:versionId/jira/issue/:issueId/remove')
+  @ApiParam({ name: 'id', required: true })
+  @ApiParam({ name: 'versionId', required: true })
+  @ApiParam({ name: 'issueId', required: true })
+  async removeJiraIssue(
+    @Param('id', new ParseUUIDPipe()) id: string,
+    @Param('versionId', new ParseUUIDPipe()) versionId: string,
+    @Param('issueId', new ParseUUIDPipe()) issueId: string,
+    @CurrentUser() user: CurrentUserDTO
+  ): Promise<AppResponse<boolean>> {
+    return new AppResponse(
+      await this.appService.removeJiraIssue(id, versionId, issueId, user)
     );
   }
 }

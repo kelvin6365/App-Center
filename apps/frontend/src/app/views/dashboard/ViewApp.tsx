@@ -385,7 +385,7 @@ const ViewApp = () => {
           app={app}
         />
       )}
-      {app && (
+      {app && openJiraIssues?.data && (
         <JiraIssuesDialog
           open={openJiraIssues.open}
           title={'Jira Issues'}
@@ -397,6 +397,11 @@ const ViewApp = () => {
           }}
           app={app}
           data={openJiraIssues.data}
+          onReload={() => {
+            if (openJiraIssues.data?.id) {
+              tableRef.current?.reloadJira(openJiraIssues.data.id);
+            }
+          }}
         />
       )}
     </div>

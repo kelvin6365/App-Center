@@ -73,6 +73,19 @@ export class AppVersionRepository extends Repository<AppVersion> {
     return this.findOne({ where: { id }, withDeleted, relations: ['file'] });
   }
 
+  //Get a single file
+  getAppVersionByIdAndAppId(
+    id: string,
+    appId: string,
+    withDeleted = false
+  ): Promise<AppVersion> {
+    return this.findOne({
+      where: { id, appId },
+      withDeleted,
+      relations: ['file'],
+    });
+  }
+
   //Create a new file
   createAppVersion(version: AppVersion): Promise<AppVersion> {
     return this.save(version);

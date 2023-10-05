@@ -45,6 +45,8 @@ const API = {
         `/v1/portal/app/${appId}/version/${versionId}/install`,
       SEARCH_JIRA_ISSUES: (appId: string) =>
         `/v1/portal/app/${appId}/jira/search`,
+      REMOVE_JIRA_ISSUE: (appId: string, version: string, issueId: string) =>
+        `/v1/portal/app/${appId}/version/${version}/jira/issue/${issueId}/remove`,
     },
     USER: {
       SEARCH_USERS: (tenantId: string) =>
@@ -281,6 +283,11 @@ const API = {
           query,
         },
       });
+    },
+    removeJiraIssue: (appId: string, versionId: string, issueId: string) => {
+      return API.apiInstance.delete(
+        API.API_PATH.APP.REMOVE_JIRA_ISSUE(appId, versionId, issueId)
+      );
     },
   },
   user: {

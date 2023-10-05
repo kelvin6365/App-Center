@@ -25,6 +25,7 @@ import { App } from './entities/app.entity';
 import { AppVersion } from './entities/app.version.entity';
 import { AppVersionJiraIssue } from './entities/app.version.jira.issue.entity';
 import { AppVersionTag } from './entities/app.version.tag.entity';
+import { AppVersionJiraIssueRepository } from '../../database/repositories/app.version.jira.issue.repository';
 
 @Injectable()
 export class AppService {
@@ -33,6 +34,7 @@ export class AppService {
     private readonly appRepository: AppRepository,
     private readonly appVersionRepository: AppVersionRepository,
     private readonly appVersionTagRepository: AppVersionTagRepository,
+    private readonly appVersionJiraIssueRepository: AppVersionJiraIssueRepository,
     private readonly fileService: FileService,
     private readonly jiraService: JiraService,
     private readonly credentialService: CredentialService,
@@ -609,5 +611,29 @@ export class AppService {
         jiraHost: string;
       }
     );
+  }
+
+  //remove app version jira issue
+  async removeJiraIssue(
+    appId: string,
+    appVersionId: string,
+    issueId: string,
+    user: CurrentUserDTO
+  ): Promise<boolean> {
+    //check
+    const version = await this.appVersionRepository.getAppVersionByIdAndAppId(
+      appVersionId,
+      appId
+    );
+    if (!version) {
+      throw new AppException(ResponseCode.STATUS_1011_NOT_FOUND);
+    }
+    const deleted =
+      await this.appVersionJiraIssueRepository.deleteJiraIssueByIssueIdAndAppVersionId(
+        issueId,
+        appVersionId,
+        user.id
+      );
+    return deleted ? true : false;
   }
 }

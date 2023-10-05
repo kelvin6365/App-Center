@@ -3,16 +3,50 @@ import { SiJirasoftware } from 'react-icons/si';
 import { App } from '../../app/util/type/App';
 import { AppVersion } from '../../app/util/type/AppVersion';
 import { MdDelete } from 'react-icons/md';
+import API from '../../app/util/api';
+import { useState } from 'react';
+import { toast } from 'react-toastify';
+import axios from 'axios';
+import clsx from 'clsx';
 
 type Props = {
   title: string;
   onClose: () => void;
+  onReload: () => void;
   open: boolean;
   app: App;
-  data: AppVersion | null;
+  data: AppVersion;
 };
 
-const JiraIssuesDialog = ({ title, onClose, open, app, data }: Props) => {
+const JiraIssuesDialog = ({
+  title,
+  onClose,
+  onReload,
+  open,
+  app,
+  data,
+}: Props) => {
+  const [loading, setLoading] = useState(false);
+  const onDelete = async (issueId: string) => {
+    try {
+      setLoading(true);
+      const res = await API.app.removeJiraIssue(app.id, data.id, issueId);
+      const { data: rData } = res.data;
+      if (!rData) {
+        setLoading(false);
+
+        throw new Error('Delete failed');
+      }
+      setLoading(false);
+      onReload();
+      toast.success('Delete successfully');
+    } catch (error) {
+      console.error(error);
+      if (axios.isAxiosError(error)) {
+        toast.error(error.response?.data?.status?.displayMessage.toString());
+      }
+    }
+  };
   return (
     <Dialog
       open={open}
@@ -32,8 +66,23 @@ const JiraIssuesDialog = ({ title, onClose, open, app, data }: Props) => {
           {data?.jiraIssues.map((issue) => {
             return (
               <div className="flex justify-start">
-                <div className="h-fit my-[0.2rem] p-[.3rem] flex rounded-full cursor-pointer hover:bg-blue-gray-200/40">
-                  <MdDelete className="w-4 h-4 my-auto text-red-500" />
+                <div
+                  className={clsx(
+                    'h-fit my-[0.2rem] p-[.3rem] flex rounded-full',
+                    loading
+                      ? 'cursor-not-allowed'
+                      : 'cursor-pointer hover:bg-blue-gray-200/40'
+                  )}
+                >
+                  <MdDelete
+                    className="w-4 h-4 my-auto text-red-500"
+                    onClick={() => {
+                      if (loading) {
+                        return;
+                      }
+                      onDelete(issue.id);
+                    }}
+                  />
                 </div>
                 <a
                   href={issue.url}

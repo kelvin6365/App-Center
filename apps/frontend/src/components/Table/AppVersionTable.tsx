@@ -32,6 +32,7 @@ type Props = {
 
 export type TableRef = {
   reload: () => void;
+  reloadJira: (id: string) => void;
 };
 
 const AppVersionTable = forwardRef<TableRef, Props>(
@@ -57,21 +58,37 @@ const AppVersionTable = forwardRef<TableRef, Props>(
         fetchAppVersionTags();
         fetchAppVersion();
       },
+      reloadJira: (id: string) => {
+        fetchAppVersionTags();
+        fetchAppVersion().then((data: AppVersion[]) => {
+          const targetVersion = data.find(
+            (appVersion: AppVersion) => appVersion.id === id
+          );
+          if (targetVersion) {
+            setOpenJiraIssues({
+              open: true,
+              data: targetVersion,
+            });
+          }
+        });
+      },
     }));
 
     const fetchAppVersion = useCallback(async () => {
       if (appId == null) {
-        return;
+        return [];
       }
       try {
         const res = await API.app.appVersions(appId);
         const { data }: { data: AppVersion[] } = res.data;
         setAppVersions(data);
+        return data;
       } catch (error) {
         console.log(error);
         if (axios.isAxiosError(error)) {
           toast.error(error.response?.data?.status?.displayMessage.toString());
         }
+        return [];
       }
     }, [appId]);
 
