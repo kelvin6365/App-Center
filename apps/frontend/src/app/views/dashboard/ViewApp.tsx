@@ -397,9 +397,9 @@ const ViewApp = () => {
           }}
           app={app}
           data={openJiraIssues.data}
-          onReload={() => {
+          onReload={async () => {
             if (openJiraIssues.data?.id) {
-              tableRef.current?.reloadJira(openJiraIssues.data.id);
+              await tableRef.current?.reloadJira(openJiraIssues.data.id);
             }
           }}
         />

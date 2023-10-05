@@ -12,7 +12,7 @@ import clsx from 'clsx';
 type Props = {
   title: string;
   onClose: () => void;
-  onReload: () => void;
+  onReload: () => Promise<void>;
   open: boolean;
   app: App;
   data: AppVersion;
@@ -37,9 +37,9 @@ const JiraIssuesDialog = ({
 
         throw new Error('Delete failed');
       }
-      setLoading(false);
-      onReload();
+      await onReload();
       toast.success('Delete successfully');
+      setLoading(false);
     } catch (error) {
       console.error(error);
       if (axios.isAxiosError(error)) {

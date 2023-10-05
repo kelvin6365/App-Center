@@ -32,7 +32,7 @@ type Props = {
 
 export type TableRef = {
   reload: () => void;
-  reloadJira: (id: string) => void;
+  reloadJira: (id: string) => Promise<void>;
 };
 
 const AppVersionTable = forwardRef<TableRef, Props>(
@@ -58,9 +58,9 @@ const AppVersionTable = forwardRef<TableRef, Props>(
         fetchAppVersionTags();
         fetchAppVersion();
       },
-      reloadJira: (id: string) => {
+      reloadJira: async (id: string) => {
         fetchAppVersionTags();
-        fetchAppVersion().then((data: AppVersion[]) => {
+        await fetchAppVersion().then((data: AppVersion[]) => {
           const targetVersion = data.find(
             (appVersion: AppVersion) => appVersion.id === id
           );
