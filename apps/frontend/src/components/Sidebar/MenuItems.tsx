@@ -5,6 +5,7 @@ import {
   UserGroupIcon,
   UserPlusIcon,
 } from '@heroicons/react/24/solid';
+import { RoleType } from '../../app/util/type/RoleType';
 
 const MenuItems = [
   {
@@ -28,6 +29,7 @@ const MenuItems = [
     label: 'Users',
     icon: <UserGroupIcon strokeWidth={3} className="w-5 h-5" />,
     path: '/users',
+    role: RoleType.ADMIN,
     children: [
       {
         label: 'All Users',

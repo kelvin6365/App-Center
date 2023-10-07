@@ -1,3 +1,5 @@
+import { RoleType } from './RoleType';
+
 export interface PortalUserProfile {
   id: string;
   username: string;
@@ -34,7 +36,7 @@ interface Profile {
 }
 
 interface Role {
-  type: string;
+  type: RoleType;
   name: string;
   description: string;
 }

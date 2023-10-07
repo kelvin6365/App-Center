@@ -26,6 +26,9 @@ import { AppVersion } from './entities/app.version.entity';
 import { AppVersionJiraIssue } from './entities/app.version.jira.issue.entity';
 import { AppVersionTag } from './entities/app.version.tag.entity';
 import { AppVersionJiraIssueRepository } from '../../database/repositories/app.version.jira.issue.repository';
+import AppsPermission from '../permission/enum/apps.permission.enum';
+import { RoleType } from '../role/enum/role.type.enum';
+import { Pagination, IPaginationMeta } from 'nestjs-typeorm-paginate';
 
 @Injectable()
 export class AppService {
@@ -94,19 +97,46 @@ export class AppService {
     ],
     user: CurrentUserDTO
   ): Promise<PageDTO<AppDTO>> {
-    const userTenantsId = user.tenants.map((tenant) => tenant.tenant.id);
+    let result: Pagination<App, IPaginationMeta>;
 
-    const result = await this.appRepository.findAll(
-      userTenantsId,
-      searchQuery,
-      withDeleted,
-      {
-        page,
-        limit,
-      },
-      filters,
-      sorts
-    );
+    const userTenantsId = user.tenants.map((tenant) => tenant.tenant.id);
+    if (!user.roles.find((userRole) => userRole.role.type === RoleType.ADMIN)) {
+      const userPermissions = user.permissions;
+      //get all view permissions
+      const viewPermissions = userPermissions.filter(
+        (userPermission) =>
+          userPermission.permission.id === AppsPermission.VIEW_APP
+      );
+      filters = filters.filter((filter) => filter.key !== 'id');
+      filters.push({
+        key: 'id',
+        values: viewPermissions.map((viewPermission) => viewPermission.refId),
+      });
+      result = await this.appRepository.findAll(
+        userTenantsId,
+        searchQuery,
+        withDeleted,
+        {
+          page,
+          limit,
+        },
+        filters,
+        sorts
+      );
+    } else {
+      result = await this.appRepository.findAll(
+        userTenantsId,
+        searchQuery,
+        withDeleted,
+        {
+          page,
+          limit,
+        },
+        filters,
+        sorts
+      );
+    }
+
     return {
       ...result,
       items: result.items.map(
@@ -133,25 +163,7 @@ export class AppService {
     if (!app && errorIfNotFound) {
       throw new AppException(ResponseCode.STATUS_1011_NOT_FOUND);
     }
-    // //check permissions
-    // const permissions = user.permissions;
-    // if (
-    //   !permissions.filter((p) => p.permissionId === AppsPermission.VIEW_ALL_APP)
-    // ) {
-    //   if (
-    //     !permissions
-    //       .filter((p) => p.permissionId === AppsPermission.VIEW_APP)
-    //       .map((p) => p.refId)
-    //       .includes(app.id)
-    //   ) {
-    //     throw new AppException(ResponseCode.STATUS_8003_PERMISSION_DENIED);
-    //   }
-    // } else {
-    //   //view all apps permission also need to in same tenant
-    //   if (!user.tenants.map((ut) => ut.tenant.id).includes(app.tenantId)) {
-    //     throw new AppException(ResponseCode.STATUS_8003_PERMISSION_DENIED);
-    //   }
-    // }
+    this.checkUserPermissions(user, app.id, AppsPermission.VIEW_APP);
     return new AppDTO(
       forPublicInstallPage
         ? {
@@ -237,20 +249,11 @@ export class AppService {
     ],
     user: CurrentUserDTO
   ) {
-    // //check permissions
-    // const permissions = user.permissions;
-    // if (
-    //   !permissions
-    //     .filter((p) => p.permissionId === AppsPermission.VIEW_APP)
-    //     .map((p) => p.refId)
-    //     .includes(appId)
-    // ) {
-    //   throw new AppException(ResponseCode.STATUS_8003_PERMISSION_DENIED);
-    // }
     const app = await this.appRepository.findById(appId, withDeleted);
     if (!app) {
       throw new AppException(ResponseCode.STATUS_1011_NOT_FOUND);
     }
+    this.checkUserPermissions(user, app.id, AppsPermission.VIEW_APP);
     const appVersions = await this.appVersionRepository.getAllAppVersions(
       appId,
       searchQuery,
@@ -372,17 +375,7 @@ export class AppService {
     appId: string,
     user: CurrentUserDTO
   ): Promise<AppVersionTagDTO[]> {
-    // //check permissions
-    // const permissions = user.permissions;
-    // if (
-    //   !permissions
-    //     .filter((p) => p.permissionId === AppsPermission.VIEW_APP)
-    //     .map((p) => p.refId)
-    //     .includes(appId)
-    // ) {
-    //   throw new AppException(ResponseCode.STATUS_8003_PERMISSION_DENIED);
-    // }
-
+    this.checkUserPermissions(user, appId, AppsPermission.VIEW_APP);
     const appVersionTags = await this.appVersionTagRepository.getAllTagsByAppId(
       appId
     );
@@ -635,5 +628,26 @@ export class AppService {
         user.id
       );
     return deleted ? true : false;
+  }
+
+  private checkUserPermissions(
+    user: CurrentUserDTO,
+    appId: string,
+    permission: AppsPermission
+  ) {
+    if (!user.roles.find((userRole) => userRole.role.type === RoleType.ADMIN)) {
+      const userPermissions = user.permissions;
+      //get all view permissions
+      const viewPermissions = userPermissions.filter(
+        (userPermission) => userPermission.permission.id === permission
+      );
+      if (
+        !viewPermissions
+          .map((viewPermission) => viewPermission.refId)
+          .includes(appId)
+      ) {
+        throw new AppException(ResponseCode.STATUS_8003_PERMISSION_DENIED);
+      }
+    }
   }
 }

@@ -173,7 +173,12 @@ const Sidebar = () => {
         <hr className="my-2 border-blue-gray-50" />
         <List className="md:min-w-[240px] min-w-0 p-0 md:p2">
           {MenuItems.map((item, index) => {
-            const { icon, label, children } = item;
+            const { icon, label, children, role } = item;
+            if (role) {
+              if (!profile?.roles.map((r) => r.type).includes(role)) {
+                return null;
+              }
+            }
             return (
               <Accordion
                 key={index}

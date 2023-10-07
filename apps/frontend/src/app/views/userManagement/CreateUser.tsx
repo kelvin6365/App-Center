@@ -1,4 +1,10 @@
-import { Alert, Button, Typography } from '@material-tailwind/react';
+import {
+  Alert,
+  Button,
+  Option,
+  Select,
+  Typography,
+} from '@material-tailwind/react';
 import axios from 'axios';
 import { useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
@@ -13,6 +19,7 @@ type CreateUser = {
   email: string;
   password: string;
   confirmPassword: string;
+  role: RoleType;
 };
 const CreateUser = () => {
   const [profile, selectedTenant] = useAppStore((state) => [
@@ -37,6 +44,7 @@ const CreateUser = () => {
       email: '',
       password: '',
       confirmPassword: '',
+      role: undefined,
     },
   });
 
@@ -53,7 +61,7 @@ const CreateUser = () => {
         email: values.email,
         username: values.email,
         password: values.password,
-        roleTypes: [RoleType.ADMIN],
+        roleTypes: [values.role],
         permissions: [],
         tenantIds: [selectedTenant.id],
       });
@@ -87,7 +95,7 @@ const CreateUser = () => {
           Create User
         </Typography>
         <Typography color="gray" className="mt-1 font-normal">
-          Create a new user to the portal.
+          Create a new user.
         </Typography>
       </div>
       <div className="max-w-screen-sm mt-8 mb-2">
@@ -149,6 +157,30 @@ const CreateUser = () => {
                     type="email"
                     error={error}
                   />
+                );
+              }}
+            />
+          </div>
+          <div>
+            <Controller
+              name="role"
+              control={control}
+              render={({ field }) => {
+                return (
+                  <Select
+                    ref={field.ref}
+                    color="blue"
+                    label="Role"
+                    disabled={isSubmitting}
+                    value={field.value}
+                    onBlur={field.onBlur}
+                    onChange={(e) => {
+                      field.onChange(e);
+                    }}
+                  >
+                    <Option value={RoleType.ADMIN}>{'Admin'}</Option>
+                    <Option value={RoleType.USER}>{'User'}</Option>
+                  </Select>
                 );
               }}
             />
