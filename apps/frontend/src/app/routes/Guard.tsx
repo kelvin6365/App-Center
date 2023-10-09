@@ -47,7 +47,7 @@ const Guard = ({ children, auth }: Props) => {
         window.location.pathname,
         location.state
       );
-      const { redirectTo } = location.state;
+      const { redirectTo } = location?.state ?? {};
       return <Navigate to={redirectTo ?? '/apps/all'} replace></Navigate>;
     }
   }
