@@ -5,11 +5,11 @@ import { Controller, SubmitHandler, useForm } from 'react-hook-form';
 import { NavLink, useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import logo from '../../../assets/images/logo.jpg';
+import TextInput from '../../../components/Input/Input';
+import Loading from '../../../components/Loading/Loading';
 import API from '../../util/api';
 import { useAppStore, useBoundStore } from '../../util/store/store';
 import { Setting } from '../../util/type/Setting';
-import Loading from '../../../components/Loading/Loading';
-import TextInput from '../../../components/Input/Input';
 
 type LoginFormInputs = {
   email: string;

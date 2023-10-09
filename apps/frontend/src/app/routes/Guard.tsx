@@ -23,19 +23,32 @@ const Guard = ({ children, auth }: Props) => {
         console.log('[Init] Navigating to /apps/all');
         return <Navigate to="/apps/all" replace></Navigate>;
       } else {
-        console.log('[Init] Redirecting to login');
+        console.log('[Init] Redirecting to login', window.location.pathname);
         return <Navigate to="/login" replace></Navigate>;
       }
     } else {
       if (!isLoggedIn && location?.pathname !== '/login') {
-        console.log('[Init] Redirecting to login');
-        return <Navigate to="/login" replace></Navigate>;
+        console.log('[Init] Redirecting to login', window.location.pathname);
+        return (
+          <Navigate
+            to="/login"
+            state={{
+              redirectTo: location.pathname,
+            }}
+            replace
+          ></Navigate>
+        );
       }
     }
   } else {
     if (isLoggedIn) {
-      console.log('[Init] Redirecting to home');
-      return <Navigate to="/apps/all" replace></Navigate>;
+      console.log(
+        '[Init] Redirecting to home',
+        window.location.pathname,
+        location.state
+      );
+      const { redirectTo } = location.state;
+      return <Navigate to={redirectTo ?? '/apps/all'} replace></Navigate>;
     }
   }
 
