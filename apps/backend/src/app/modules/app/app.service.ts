@@ -160,10 +160,12 @@ export class AppService {
     user?: CurrentUserDTO
   ): Promise<AppDTO> {
     const app = await this.appRepository.findById(id, withDeleted);
-    if (!app && errorIfNotFound) {
-      throw new AppException(ResponseCode.STATUS_1011_NOT_FOUND);
+    if (!forPublicInstallPage) {
+      if (!app && errorIfNotFound) {
+        throw new AppException(ResponseCode.STATUS_1011_NOT_FOUND);
+      }
+      this.checkUserPermissions(user, app.id, AppsPermission.VIEW_APP);
     }
-    this.checkUserPermissions(user, app.id, AppsPermission.VIEW_APP);
     return new AppDTO(
       forPublicInstallPage
         ? {
