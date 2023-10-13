@@ -196,7 +196,6 @@ export class AppController {
     @Body() updateApp: UpdateAppDTO,
     @CurrentUser() user: CurrentUserDTO
   ): Promise<AppResponse<boolean>> {
-    console.log(file, updateApp, id);
     return new AppResponse<boolean>(
       await this.appService.updateApp(id, updateApp, file, user)
     );

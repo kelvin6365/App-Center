@@ -148,9 +148,6 @@ export class UserService {
   async getUserByIdWithDeletedFalse(
     userId: string
   ): Promise<PortalUserResponseDTO> {
-    console.log(
-      await this.usersRepository.findUserByUserIdWithDeletedFalse(userId)
-    );
     const user = await this.usersRepository.findUserByUserIdWithDeletedFalse(
       userId
     );
