@@ -180,7 +180,7 @@ jobs:
           context: .
           file: ./apps/frontend/Dockerfile
           push: true
-          tags: kelvin6365/app-center/frontend:${{steps.github-sha.outputs.sha}}
+          tags: kelvin6365/app-center:frontend-${{steps.github-sha.outputs.sha}}
 
   deploy_backend_docker_hub:
     if: ${{ needs.changes.outputs.backend == 'true' }}
@@ -211,4 +211,4 @@ jobs:
           context: .
           file: ./apps/backend/Dockerfile
           push: true
-          tags: kelvin6365/app-center/backend:${{steps.github-sha.outputs.sha}}
+          tags: kelvin6365/app-center:backend-${{steps.github-sha.outputs.sha}}
