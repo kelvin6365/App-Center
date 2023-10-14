@@ -6,6 +6,7 @@ import {
   HttpStatus,
   Param,
   ParseIntPipe,
+  ParseUUIDPipe,
   Post,
   Put,
   Query,
@@ -14,6 +15,7 @@ import {
 import {
   ApiBearerAuth,
   ApiOperation,
+  ApiParam,
   ApiQuery,
   ApiTags,
 } from '@nestjs/swagger';
@@ -35,13 +37,18 @@ import { PortalUserResponseDTO } from '../user/dto/portal.user.response.dto';
 import { UpdateUserDTO } from '../user/dto/update.user.dto';
 import { UpdateUserStatusRequestDTO } from '../user/dto/update.user.status.request.dto';
 import { UserService } from '../user/user.service';
+import { AddUserRequestDTO } from '../user/dto/add.user.request.dto';
+import { AppService } from '../app/app.service';
 
 @ApiTags('Portal')
 @ApiBearerAuth()
 @UseGuards(JwtAuthGuard)
 @Controller({ path: '/portal/user', version: ['1'] })
 export class PortalUserController {
-  constructor(private readonly userService: UserService) {}
+  constructor(
+    private readonly userService: UserService,
+    private readonly appService: AppService
+  ) {}
 
   //Get user tenants
   @Get('/tenants')
@@ -160,6 +167,22 @@ export class PortalUserController {
         id,
         updateUserStatusRequestDTO.status
       )
+    );
+  }
+
+  //Add user to View app
+  @Post('/:id/permission')
+  @Roles(RoleType.ADMIN)
+  @ApiParam({ name: 'id', required: true })
+  @ApiResponseSchema(HttpStatus.OK, 'OK')
+  async addUser(
+    @Param('id', new ParseUUIDPipe()) id: string,
+    @Body() dto: AddUserRequestDTO,
+    @CurrentUser() user: CurrentUserDTO
+  ) {
+    await this.appService.findById(dto.appId, false, true, false, user);
+    return new AppResponse(
+      await this.userService.addPermissions(id, dto, user)
     );
   }
 }

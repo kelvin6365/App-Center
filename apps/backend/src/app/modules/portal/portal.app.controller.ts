@@ -37,6 +37,7 @@ import { Roles } from '../../common/decorator/roles.decorator';
 import { ApiResponseSchema } from '../../common/decorator/swagger.decorator';
 import { ApiPagingResponseSchema } from '../../common/decorator/swagger.paging.decorator';
 import { CurrentUser } from '../../common/decorator/user.decorator';
+import { MetaDTO } from '../../common/dto/meta.dto';
 import { PageDTO } from '../../common/dto/page.dto';
 import { SearchQueryDTO } from '../../common/dto/search.dto';
 import { AppException } from '../../common/response/app.exception';
@@ -59,7 +60,6 @@ import { ImageAllowedType } from '../file/enum/image.allowed.type.enum';
 import { FileService } from '../file/file.service';
 import { SearchJiraIssueDTO } from '../jira/dto/search.jira.issue.dto';
 import { RoleType } from '../role/enum/role.type.enum';
-import { MetaDTO } from '../../common/dto/meta.dto';
 
 @ApiTags('Portal')
 @ApiBearerAuth()
@@ -302,7 +302,6 @@ export class PortalAppController {
   }
 
   //Add new version to an existing app
-  @Public()
   @Post(':id/version')
   @ApiConsumes('multipart/form-data')
   @ApiParam({ name: 'id', required: true })
@@ -346,11 +345,11 @@ export class PortalAppController {
       })
     )
     file: Express.Multer.File,
-    @Body() appVersion: CreateAppVersionDTO
-    // @CurrentUser() user: CurrentUserDTO
+    @Body() appVersion: CreateAppVersionDTO,
+    @CurrentUser() user: CurrentUserDTO
   ): Promise<AppResponse<boolean>> {
     return new AppResponse<boolean>(
-      await this.appService.createAppVersion(id, appVersion, file)
+      await this.appService.createAppVersion(id, appVersion, file, user, true)
     );
   }
 

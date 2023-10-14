@@ -17,13 +17,17 @@ import { UserRefreshToken } from './entities/user.refresh.token.entity';
 import { UserRole } from './entities/user.role.entity';
 import { UserTenant } from './entities/user.tenant.entity';
 import { UserStatus } from './enum/user.status.enum';
+import { AddUserRequestDTO } from './dto/add.user.request.dto';
+import { UserPermission } from './entities/user.permission.entity';
+import { UserPermissionRepository } from '../../database/repositories/user.permission.repository';
 
 @Injectable()
 export class UserService {
   constructor(
     @Inject(Logger) private readonly logger: LoggerService,
     private readonly usersRepository: UserRepository,
-    private readonly userRefreshTokenRepository: UserRefreshTokenRepository
+    private readonly userRefreshTokenRepository: UserRefreshTokenRepository,
+    private readonly userPermissionRepository: UserPermissionRepository
   ) {}
   async signUp(signUpDTO: SignUpDTO): Promise<User> {
     //! New User need to walk through onboarding to create a tenant.
@@ -224,5 +228,39 @@ export class UserService {
         currentUser
       );
     return new PortalUserResponseDTO(updatedUser);
+  }
+
+  async addPermissions(
+    userId: string,
+    dto: AddUserRequestDTO,
+    user: CurrentUserDTO
+  ) {
+    const targetUser =
+      await this.usersRepository.findUserByUserIdWithDeletedFalse(userId);
+    if (!targetUser) {
+      throw new AppException(ResponseCode.STATUS_8004_USER_NOT_EXIST);
+    }
+    //find user permissions based
+    const userPermissions =
+      await this.userPermissionRepository.findPermissionsByUser(userId);
+    const permissions = dto.permissions
+      .filter((p) => {
+        if (userPermissions.length === 0) {
+          return true;
+        }
+        return !userPermissions.find(
+          (up) => up.permissionId === p && up.refId === dto.appId
+        );
+      })
+      .map((permission) => {
+        const userPermission = new UserPermission();
+        userPermission.userId = targetUser.id;
+        userPermission.permissionId = permission;
+        userPermission.refId = dto.appId;
+        userPermission.createdBy = user.id;
+        return userPermission;
+      });
+    await this.userPermissionRepository.addPermissions(permissions);
+    return true;
   }
 }

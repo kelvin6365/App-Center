@@ -160,10 +160,10 @@ export class AppService {
     user?: CurrentUserDTO
   ): Promise<AppDTO> {
     const app = await this.appRepository.findById(id, withDeleted);
+    if (!app && errorIfNotFound) {
+      throw new AppException(ResponseCode.STATUS_1011_NOT_FOUND);
+    }
     if (!forPublicInstallPage) {
-      if (!app && errorIfNotFound) {
-        throw new AppException(ResponseCode.STATUS_1011_NOT_FOUND);
-      }
       this.checkUserPermissions(user, app.id, AppsPermission.VIEW_APP);
     }
     return new AppDTO(
@@ -185,8 +185,12 @@ export class AppService {
     appId: string,
     appVersion: CreateAppVersionDTO,
     file: Express.Multer.File,
-    user?: CurrentUserDTO
+    user?: CurrentUserDTO,
+    isFromPortal?: boolean
   ): Promise<boolean> {
+    if (user && isFromPortal) {
+      this.checkUserPermissions(user, appId, AppsPermission.CREATE_APP_VERSION);
+    }
     this.logger.log('Creating a new app version');
     const app = await this.appRepository.findById(appId);
     if (app) {
@@ -393,17 +397,7 @@ export class AppService {
     file: Express.Multer.File,
     user: CurrentUserDTO
   ): Promise<boolean> {
-    // //check permissions
-    // const permissions = user.permissions;
-    // if (
-    //   !permissions
-    //     .filter((p) => p.permissionId === AppsPermission.EDIT_APP)
-    //     .map((p) => p.refId)
-    //     .includes(id)
-    // ) {
-    //   throw new AppException(ResponseCode.STATUS_8003_PERMISSION_DENIED);
-    // }
-
+    this.checkUserPermissions(user, id, AppsPermission.EDIT_APP);
     this.logger.log('Updating an app');
     const appToUpdate = await this.appRepository.findById(id);
     if (appToUpdate) {
@@ -440,17 +434,7 @@ export class AppService {
     file: Express.Multer.File,
     user: CurrentUserDTO
   ): Promise<boolean> {
-    // //check permissions
-    // const permissions = user.permissions;
-    // if (
-    //   !permissions
-    //     .filter((p) => p.permissionId === AppsPermission.EDIT_APP)
-    //     .map((p) => p.refId)
-    //     .includes(id)
-    // ) {
-    //   throw new AppException(ResponseCode.STATUS_8003_PERMISSION_DENIED);
-    // }
-
+    this.checkUserPermissions(user, id, AppsPermission.EDIT_APP);
     this.logger.log('Patching an app');
     const appToUpdate = await this.appRepository.findById(id);
     if (appToUpdate) {
@@ -563,6 +547,7 @@ export class AppService {
     appVersionId: string,
     user: CurrentUserDTO
   ): Promise<boolean> {
+    this.checkUserPermissions(user, appId, AppsPermission.DELETE_APP_VERSION);
     const app = await this.appRepository.findById(appId);
     if (!app) {
       throw new AppException(ResponseCode.STATUS_1011_NOT_FOUND);

@@ -291,7 +291,7 @@ export class AppController {
     // @CurrentUser() user: CurrentUserDTO
   ): Promise<AppResponse<boolean>> {
     return new AppResponse<boolean>(
-      await this.appService.createAppVersion(id, appVersion, file)
+      await this.appService.createAppVersion(id, appVersion, file, null, false)
     );
   }
 

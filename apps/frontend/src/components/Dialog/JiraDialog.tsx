@@ -16,6 +16,8 @@ import { NavLink } from 'react-router-dom';
 import API from '../../app/util/api';
 import { useAppStore } from '../../app/util/store/store';
 import { App } from '../../app/util/type/App';
+import axios from 'axios';
+import { toast } from 'react-toastify';
 
 type Props = {
   title: string;
@@ -56,6 +58,9 @@ const JiraDialog = ({ title, onClose, open, app }: Props) => {
       setJiraCredentials(data);
     } catch (error) {
       console.error(error);
+      if (axios.isAxiosError(error)) {
+        toast.error(error.response?.data?.status?.displayMessage.toString());
+      }
     }
   };
 
@@ -74,6 +79,9 @@ const JiraDialog = ({ title, onClose, open, app }: Props) => {
       reset();
     } catch (error) {
       console.error(error);
+      if (axios.isAxiosError(error)) {
+        toast.error(error.response?.data?.status?.displayMessage.toString());
+      }
     }
   };
 

@@ -8,7 +8,7 @@ export class UserRefreshTokenRepository extends Repository<UserRefreshToken> {
     super(UserRefreshToken, dataSource.createEntityManager());
   }
 
-  createUserRefreshToken(
+  async createUserRefreshToken(
     userRefreshTokenEntity: UserRefreshToken
   ): Promise<UserRefreshToken> {
     return this.save(this.create(userRefreshTokenEntity));
