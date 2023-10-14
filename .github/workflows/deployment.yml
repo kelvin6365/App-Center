@@ -7,7 +7,28 @@ on:
       - 'main'
 
 jobs:
+  # JOB to run change detection
+  changes:
+    runs-on: ubuntu-latest
+    # Required permissions
+    permissions:
+      pull-requests: read
+    # Set job outputs to values from filter step
+    outputs:
+      backend: ${{ steps.filter.outputs.backend }}
+      frontend: ${{ steps.filter.outputs.frontend }}
+    steps:
+      - uses: dorny/paths-filter@v2
+        id: filter
+        with:
+          filters: |
+            frontend:
+              - 'apps/frontend/**'
+            backend:
+              - 'apps/backend/**'
+
   build:
+    needs: changes
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -33,53 +54,65 @@ jobs:
           key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
           restore-keys: |
             ${{ runner.os }}-pnpm-store-
-      - uses: dorny/paths-filter@v2
-        id: filter
+
+      # PNPM install
+      - run: pnpm install
+        if: ${{ needs.changes.outputs.frontend == 'true' || needs.changes.outputs.backend == 'true' }}
+      # Build App
+      - name: Build Frontend
+        if: needs.changes.outputs.frontend == 'true'
+        run: pnpm nx build frontend
+      - name: Build Backend
+        if: needs.changes.outputs.backend == 'true'
+        run: pnpm nx build backend
+
+      # Upload artifact
+      - name: Upload artifact for deployment job
+        uses: actions/upload-artifact@v2
         with:
-          filters: |
-            frontend:
-              - 'apps/frontend/**'
-            backend:
-              - 'apps/backend/**'
+          name: artifact
+          path: .
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download artifact from build job
+        uses: actions/download-artifact@v2
+        with:
+          name: artifact
+
       - name: Generate GITHUB_SHA
         id: github-sha
         shell: bash
         run: |
           SHORT_SHA=$(echo $GITHUB_SHA | head -c7)
           echo "::set-output name=sha::$SHORT_SHA"
-      - run: pnpm install
-        if: ${{ steps.filter.outputs.frontend == 'true' || steps.filter.outputs.backend == 'true' }}
-      - name: Build Frontend
-        if: steps.filter.outputs.frontend == 'true'
-        run: pnpm nx build frontend
-      - name: Build Backend
-        if: steps.filter.outputs.backend == 'true'
-        run: pnpm nx build backend
       - name: Install doctl
         uses: digitalocean/action-doctl@v2
         with:
           token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
 
       - name: Build Frontend container image
-        if: steps.filter.outputs.frontend == 'true'
+        if: needs.changes.outputs.frontend == 'true'
         run: docker build -f ./apps/frontend/Dockerfile . -t registry.digitalocean.com/two-rocks-studio/app-center/frontend:${{steps.github-sha.outputs.sha}}
       - name: Build Backend container image
-        if: steps.filter.outputs.backend == 'true'
+        if: needs.changes.outputs.backend == 'true'
         run: docker build -f ./apps/backend/Dockerfile . -t registry.digitalocean.com/two-rocks-studio/app-center/backend:${{steps.github-sha.outputs.sha}}
 
       - name: Log in to DigitalOcean Container Registry with short-lived credentials
-        if: ${{ steps.filter.outputs.frontend == 'true' || steps.filter.outputs.backend == 'true' }}
+        if: ${{ needs.changes.outputs.frontend == 'true' || needs.changes.outputs.backend == 'true' }}
         run: doctl registry login --expiry-seconds 1200
 
       - name: Push frontend image to DigitalOcean Container Registry
-        if: steps.filter.outputs.frontend == 'true'
+        if: needs.changes.outputs.frontend == 'true'
         run: docker push registry.digitalocean.com/two-rocks-studio/app-center/frontend:${{steps.github-sha.outputs.sha}}
       - name: Push backend image to DigitalOcean Container Registry
-        if: steps.filter.outputs.backend == 'true'
+        if: needs.changes.outputs.backend == 'true'
         run: docker push registry.digitalocean.com/two-rocks-studio/app-center/backend:${{steps.github-sha.outputs.sha}}
 
       - name: DigitalOcean App Platform deployment
-        if: steps.filter.outputs.frontend == 'true'
+        if: needs.changes.outputs.frontend == 'true'
         uses: digitalocean/app_action@v1.1.5
         with:
           app_name: app-center
@@ -96,7 +129,7 @@ jobs:
             ]'
 
       - name: DigitalOcean App Platform deployment
-        if: steps.filter.outputs.backend == 'true'
+        if: needs.changes.outputs.backend == 'true'
         uses: digitalocean/app_action@v1.1.5
         with:
           app_name: app-center
