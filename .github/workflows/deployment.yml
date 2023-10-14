@@ -180,11 +180,35 @@ jobs:
           context: .
           file: ./apps/frontend/Dockerfile
           push: true
-          tags: app-center/frontend:${{steps.github-sha.outputs.sha}}
+          tags: kelvin6365/app-center/frontend:${{steps.github-sha.outputs.sha}}
 
-      # - name: Build Frontend container image
-      #   if: needs.changes.outputs.frontend == 'true'
-      #   run: docker build -f ./apps/frontend/Dockerfile . -t registry.digitalocean.com/two-rocks-studio/app-center/frontend:${{steps.github-sha.outputs.sha}}
-      # - name: Build Backend container image
-      #   if: needs.changes.outputs.backend == 'true'
-      #   run: docker build -f ./apps/backend/Dockerfile . -t registry.digitalocean.com/two-rocks-studio/app-center/backend:${{steps.github-sha.outputs.sha}}
+  deploy_backend_docker_hub:
+    if: ${{ needs.changes.outputs.backend == 'true' }}
+    needs: [changes, build]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download artifact from build job
+        uses: actions/download-artifact@v2
+        with:
+          name: artifact
+
+      - name: Generate GITHUB_SHA
+        id: github-sha
+        shell: bash
+        run: |
+          SHORT_SHA=$(echo $GITHUB_SHA | head -c7)
+          echo "::set-output name=sha::$SHORT_SHA"
+
+      - name: Log in to Docker Hub
+        uses: docker/login-action@f4ef78c080cd8ba55a85445d5b36e214a81df20a
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          file: ./apps/backend/Dockerfile
+          push: true
+          tags: kelvin6365/app-center/backend:${{steps.github-sha.outputs.sha}}
