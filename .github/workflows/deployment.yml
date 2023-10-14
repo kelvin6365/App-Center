@@ -76,6 +76,7 @@ jobs:
           path: |
             ./apps/backend/Dockerfile
             ./apps/frontend/Dockerfile
+            ./apps/frontend/default.conf
             ./dist
 
   deploy:
