@@ -357,7 +357,7 @@ export class AppController {
     @Param('id', new ParseUUIDPipe()) id: string,
     @Res() res: Response
   ) {
-    await this.appService.findById(id, false, true);
+    await this.appService.findById(id, false, true, true);
     const appVersion = await this.appService.validateInstallPassword(
       versionId,
       password
