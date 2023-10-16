@@ -22,6 +22,7 @@ const GitLabCIDialog = ({ title, onClose, open, app }: Props) => {
   const [description, setDescription] = useState('APP_VERSION_DESCRIPTION');
   const [installPassword, setInstallPassword] = useState('INSTALL_PASSWORD');
   const [tags, setTags] = useState('Tag1,Tag2,Tag3');
+  const [jiraIssues, setJiraIssues] = useState('JIRA-001,JIRA-002,JIRA-003');
   const [filePath, setFilePath] = useState('/PATH-TO-FILE/FILE.{ipa/apk}');
   const reset = () => {
     setName('APP_VERSION_NAME');
@@ -29,6 +30,9 @@ const GitLabCIDialog = ({ title, onClose, open, app }: Props) => {
     setInstallPassword('INSTALL_PASSWORD');
     setTags('Tag1,Tag2,Tag3');
     setFilePath('./PATH-TO-FILE/FILE.{ipa/apk}');
+    if (app.extra?.jiraCredential) {
+      setJiraIssues('JIRA-001,JIRA-002,JIRA-003');
+    }
   };
   return (
     <Dialog
@@ -74,6 +78,16 @@ const GitLabCIDialog = ({ title, onClose, open, app }: Props) => {
             defaultValue={tags}
             autoFocus={false}
           />
+          {app.extra?.jiraCredential && (
+            <Input
+              label="Jira Issues"
+              onChange={(e) => {
+                setJiraIssues(e.target.value);
+              }}
+              defaultValue={jiraIssues}
+              autoFocus={false}
+            />
+          )}
           <Input
             label="File Path"
             onChange={(e) => {
@@ -106,12 +120,19 @@ upload_to_app_center:
     image: curlimages/curl:latest
     script: 
       - |
-        curl -f --location '${window.location.origin}/api/v1/app/${app.id}/version'  \\
+        curl -f --location '${window.location.origin}/api/v1/app/${
+            app.id
+          }/version'  \\
         --form 'name="${name}"'  \\
         --form 'description="${description}"'  \\
         --form 'file=@"${filePath}"'  \\
         --form 'apiKey="${app?.apiKey}"'  \\
-        --form 'tags="${tags}"'  \\
+        ${
+          app.extra?.jiraCredential
+            ? `--form 'tags="${tags}"'  \\
+        --form 'jiraIssues="${jiraIssues ?? ''}"'  \\`
+            : `--form 'tags="${tags}"'  \\`
+        }
         --form 'installPassword="${installPassword}"'`}
           language={'yaml'}
         />
