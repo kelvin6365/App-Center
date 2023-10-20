@@ -13,9 +13,12 @@ import General from './general/General';
 import Credentials from './credentials/Credentials';
 import { useQuery } from '../../util/util';
 import { useNavigate } from 'react-router-dom';
+import { useAppStore } from '../../util/store/store';
+import { RoleType } from '../../util/type/RoleType';
 
 const Setting = () => {
   const navigate = useNavigate();
+  const [profile] = useAppStore((state) => [state.profile]);
   const [init, setInit] = useState(false);
   const [activeTab, setActiveTab] = useState(1);
   const query = useQuery();
@@ -30,11 +33,15 @@ const Setting = () => {
       value: 2,
       desc: `Coming soon`,
     },
-    {
-      label: 'Credentials',
-      value: 3,
-      desc: <Credentials isActive={activeTab === 3} />,
-    },
+    ...(profile?.roles.map((r) => r.type).includes(RoleType.ADMIN) ?? false
+      ? [
+          {
+            label: 'Credentials',
+            value: 3,
+            desc: <Credentials isActive={activeTab === 3} />,
+          },
+        ]
+      : []),
     {
       label: 'Others',
       value: 4,

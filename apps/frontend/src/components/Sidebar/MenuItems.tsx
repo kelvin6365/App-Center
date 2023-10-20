@@ -22,6 +22,7 @@ const MenuItems = [
         label: 'Create App',
         icon: <PlusIcon strokeWidth={3} className="w-5 h-5" />,
         path: '/apps/create-app',
+        role: RoleType.ADMIN,
       },
     ],
   },

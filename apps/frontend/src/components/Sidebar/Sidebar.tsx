@@ -26,6 +26,7 @@ import MenuItems from './MenuItems';
 import { useAppStore } from '../../app/util/store/store';
 import { AppSlice } from '../../app/util/store/appSlice';
 import { Controller, SubmitHandler, useForm } from 'react-hook-form';
+import { RoleType } from '../../app/util/type/RoleType';
 
 const Sidebar = () => {
   const [setLogout, profile, availableTenants, setTenant, selectedTenant] =
@@ -216,7 +217,20 @@ const Sidebar = () => {
                         icon: childIcon,
                         label: childLabel,
                         path: childPath,
+                        role: childRole,
+                      }: {
+                        label: string;
+                        icon: JSX.Element;
+                        path: string;
+                        role?: undefined | RoleType;
                       } = child;
+                      if (childRole) {
+                        if (
+                          !profile?.roles.map((r) => r.type).includes(childRole)
+                        ) {
+                          return null;
+                        }
+                      }
                       return (
                         <NavLink
                           key={childIndex}

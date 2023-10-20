@@ -18,6 +18,7 @@ import { useAppStore } from '../../app/util/store/store';
 import { App } from '../../app/util/type/App';
 import axios from 'axios';
 import { toast } from 'react-toastify';
+import { RoleType } from '../../app/util/type/RoleType';
 
 type Props = {
   title: string;
@@ -27,7 +28,10 @@ type Props = {
 };
 
 const JiraDialog = ({ title, onClose, open, app }: Props) => {
-  const [selectedTenant] = useAppStore((state) => [state.selectedTenant]);
+  const [selectedTenant, profile] = useAppStore((state) => [
+    state.selectedTenant,
+    state.profile,
+  ]);
   const [jiraCredentials, setJiraCredentials] = useState([]);
 
   const {
@@ -138,119 +142,124 @@ const JiraDialog = ({ title, onClose, open, app }: Props) => {
             No Jira Board URL yet! Please add Jira Board URL for this App,
           </p>
         )}
-        <section className="pt-4 pb-2 my-2 border-t">
-          <Typography className="text-lg font-bold" color="blue-gray">
-            Jira Integration
-          </Typography>
-          <Typography
-            variant="small"
-            color="gray"
-            className="flex items-center gap-1 font-normal whitespace-pre-wrap"
-          >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              viewBox="0 0 24 24"
-              fill="currentColor"
-              className="w-4 h-4 -mt-px"
+        {(profile?.roles.map((r) => r.type).includes(RoleType.ADMIN) ??
+          false) && (
+          <>
+            <section className="pt-4 pb-2 my-2 border-t">
+              <Typography className="text-lg font-bold" color="blue-gray">
+                Jira Integration
+              </Typography>
+              <Typography
+                variant="small"
+                color="gray"
+                className="flex items-center gap-1 font-normal whitespace-pre-wrap"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 24 24"
+                  fill="currentColor"
+                  className="w-4 h-4 -mt-px"
+                >
+                  <path
+                    fillRule="evenodd"
+                    d="M2.25 12c0-5.385 4.365-9.75 9.75-9.75s9.75 4.365 9.75 9.75-4.365 9.75-9.75 9.75S2.25 17.385 2.25 12zm8.706-1.442c1.146-.573 2.437.463 2.126 1.706l-.709 2.836.042-.02a.75.75 0 01.67 1.34l-.04.022c-1.147.573-2.438-.463-2.127-1.706l.71-2.836-.042.02a.75.75 0 11-.671-1.34l.041-.022zM12 9a.75.75 0 100-1.5.75.75 0 000 1.5z"
+                    clipRule="evenodd"
+                  />
+                </svg>
+                <span>
+                  Please ensure that you have created the credential for your
+                  Jira Project.
+                </span>
+              </Typography>
+              <NavLink
+                to="/setting?tab=credentials"
+                className="text-sm font-bold text-blue-500"
+              >
+                Go to Credentials.
+              </NavLink>
+            </section>
+            <form
+              className="grid grid-cols-1 gap-4 mb-2"
+              onSubmit={handleSubmit(onSubmit)}
             >
-              <path
-                fillRule="evenodd"
-                d="M2.25 12c0-5.385 4.365-9.75 9.75-9.75s9.75 4.365 9.75 9.75-4.365 9.75-9.75 9.75S2.25 17.385 2.25 12zm8.706-1.442c1.146-.573 2.437.463 2.126 1.706l-.709 2.836.042-.02a.75.75 0 01.67 1.34l-.04.022c-1.147.573-2.438-.463-2.127-1.706l.71-2.836-.042.02a.75.75 0 11-.671-1.34l.041-.022zM12 9a.75.75 0 100-1.5.75.75 0 000 1.5z"
-                clipRule="evenodd"
+              <Controller
+                name="enabled"
+                control={control}
+                rules={{ required: false }}
+                render={({ field, fieldState: { error } }) => {
+                  return (
+                    <Switch
+                      ref={field.ref}
+                      checked={field.value}
+                      ripple={false}
+                      className="h-full w-full checked:bg-[#2ec946]"
+                      label={'Enable'}
+                      onChange={field.onChange}
+                      onBlur={field.onBlur}
+                      containerProps={{
+                        className: 'w-11 h-6',
+                        error: !!error,
+                      }}
+                      circleProps={{
+                        className: 'before:hidden left-0.5 border-none',
+                      }}
+                    />
+                  );
+                }}
               />
-            </svg>
-            <span>
-              Please ensure that you have created the credential for your Jira
-              Project.
-            </span>
-          </Typography>
-          <NavLink
-            to="/setting?tab=credentials"
-            className="text-sm font-bold text-blue-500"
-          >
-            Go to Credentials.
-          </NavLink>
-        </section>
-        <form
-          className="grid grid-cols-1 gap-4 mb-2"
-          onSubmit={handleSubmit(onSubmit)}
-        >
-          <Controller
-            name="enabled"
-            control={control}
-            rules={{ required: false }}
-            render={({ field, fieldState: { error } }) => {
-              return (
-                <Switch
-                  ref={field.ref}
-                  checked={field.value}
-                  ripple={false}
-                  className="h-full w-full checked:bg-[#2ec946]"
-                  label={'Enable'}
-                  onChange={field.onChange}
-                  onBlur={field.onBlur}
-                  containerProps={{
-                    className: 'w-11 h-6',
-                    error: !!error,
+              {watch('enabled') && (
+                <Controller
+                  name="selectedId"
+                  control={control}
+                  rules={{
+                    required: 'Please select a Jira Credential',
                   }}
-                  circleProps={{
-                    className: 'before:hidden left-0.5 border-none',
+                  render={({ field, fieldState: { error } }) => {
+                    return (
+                      <div>
+                        <Select
+                          ref={field.ref}
+                          color="blue"
+                          label="Jira Credential"
+                          // disabled={availableTenants.length <= 1}
+                          value={field.value}
+                          onBlur={field.onBlur}
+                          error={!!error}
+                          onChange={(e) => {
+                            field.onChange(e);
+                          }}
+                        >
+                          {jiraCredentials.map(
+                            (jiraCredential: { id: string; name: string }) => {
+                              return (
+                                <Option
+                                  key={jiraCredential.id}
+                                  value={jiraCredential.id}
+                                >
+                                  {jiraCredential.name}
+                                </Option>
+                              );
+                            }
+                          )}
+                        </Select>
+                        {error?.message && (
+                          <Typography
+                            variant="small"
+                            color="red"
+                            className="flex items-center gap-1 mt-2 font-normal"
+                          >
+                            {error.message}
+                          </Typography>
+                        )}
+                      </div>
+                    );
                   }}
                 />
-              );
-            }}
-          />
-          {watch('enabled') && (
-            <Controller
-              name="selectedId"
-              control={control}
-              rules={{
-                required: 'Please select a Jira Credential',
-              }}
-              render={({ field, fieldState: { error } }) => {
-                return (
-                  <div>
-                    <Select
-                      ref={field.ref}
-                      color="blue"
-                      label="Jira Credential"
-                      // disabled={availableTenants.length <= 1}
-                      value={field.value}
-                      onBlur={field.onBlur}
-                      error={!!error}
-                      onChange={(e) => {
-                        field.onChange(e);
-                      }}
-                    >
-                      {jiraCredentials.map(
-                        (jiraCredential: { id: string; name: string }) => {
-                          return (
-                            <Option
-                              key={jiraCredential.id}
-                              value={jiraCredential.id}
-                            >
-                              {jiraCredential.name}
-                            </Option>
-                          );
-                        }
-                      )}
-                    </Select>
-                    {error?.message && (
-                      <Typography
-                        variant="small"
-                        color="red"
-                        className="flex items-center gap-1 mt-2 font-normal"
-                      >
-                        {error.message}
-                      </Typography>
-                    )}
-                  </div>
-                );
-              }}
-            />
-          )}
-          <MainButton type="submit">Save</MainButton>
-        </form>
+              )}
+              <MainButton type="submit">Save</MainButton>
+            </form>
+          </>
+        )}
       </DialogBody>
     </Dialog>
   );
