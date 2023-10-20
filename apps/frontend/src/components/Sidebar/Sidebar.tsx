@@ -122,7 +122,7 @@ const Sidebar = () => {
             }
             className="border border-blue-500 shadow-xl shadow-blue-900/20 ring-4 ring-blue-500/30"
           />
-          <div>
+          <div className="hidden sm:block">
             <Typography
               variant="p"
               className="text-base font-bold"
@@ -135,7 +135,10 @@ const Sidebar = () => {
             </Typography>
           </div>
         </NavLink>
-        <form className="mt-3 mb-4" onSubmit={handleSubmit(onSelectTenant)}>
+        <form
+          className="mt-3 mb-4 hidden md:block"
+          onSubmit={handleSubmit(onSelectTenant)}
+        >
           {/* <Typography className="text-sm font-bold">Tenants</Typography> */}
           <Controller
             name="selectedTenantId"

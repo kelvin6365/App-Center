@@ -10,7 +10,8 @@ const CustomPageContent = tw(Card)`
   mx-2
   md:mx-4
   my-4
-  p-12
+  p-4
+  md:p-12
 `;
 const PageContent = ({ children }: PropsWithChildren) => {
   return (

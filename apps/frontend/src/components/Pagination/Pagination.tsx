@@ -47,7 +47,8 @@ export function DefaultPagination({
         onClick={prev}
         disabled={active === 1}
       >
-        <ArrowLeftIcon strokeWidth={2} className="w-4 h-4" /> Previous
+        <ArrowLeftIcon strokeWidth={2} className="w-4 h-4" />{' '}
+        <p className="hidden md:block">Previous</p>
       </Button>
       <div className="flex items-center gap-2">
         {[...Array(totalPages)].map((_, index) => (
@@ -63,7 +64,7 @@ export function DefaultPagination({
         onClick={next}
         disabled={active === totalPages}
       >
-        Next
+        <p className="hidden md:block">Next</p>
         <ArrowRightIcon strokeWidth={2} className="w-4 h-4" />
       </Button>
     </div>
