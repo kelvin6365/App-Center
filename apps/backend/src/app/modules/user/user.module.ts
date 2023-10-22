@@ -4,6 +4,7 @@ import { UserController } from './user.controller';
 import { UserRefreshTokenRepository } from '../../database/repositories/user.refresh.token.repository';
 import { UserRepository } from '../../database/repositories/users.repository';
 import { UserPermissionRepository } from '../../database/repositories/user.permission.repository';
+import { UserUtil } from './user.util';
 
 @Module({
   controllers: [UserController],
@@ -13,6 +14,7 @@ import { UserPermissionRepository } from '../../database/repositories/user.permi
     UserRefreshTokenRepository,
     UserRepository,
     UserPermissionRepository,
+    UserUtil,
   ],
   exports: [UserService],
 })

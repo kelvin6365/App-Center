@@ -8,6 +8,7 @@ import { AppVersionTagRepository } from '../../database/repositories/app.version
 import { JiraModule } from '../jira/jira.module';
 import { CredentialModule } from '../credential/credential.module';
 import { AppVersionJiraIssueRepository } from '../../database/repositories/app.version.jira.issue.repository';
+import { UserUtil } from '../user/user.util';
 
 @Module({
   imports: [FileModule, JiraModule, CredentialModule],
@@ -19,6 +20,7 @@ import { AppVersionJiraIssueRepository } from '../../database/repositories/app.v
     AppVersionRepository,
     AppVersionTagRepository,
     AppVersionJiraIssueRepository,
+    UserUtil,
   ],
   exports: [AppService],
 })

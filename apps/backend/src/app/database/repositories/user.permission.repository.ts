@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
-import { DataSource, Repository } from 'typeorm';
+import { DataSource, In, Repository } from 'typeorm';
 import { UserPermission } from '../../modules/user/entities/user.permission.entity';
+import AppsPermission from '../../modules/permission/enum/apps.permission.enum';
 
 @Injectable()
 export class UserPermissionRepository extends Repository<UserPermission> {
@@ -21,6 +22,29 @@ export class UserPermissionRepository extends Repository<UserPermission> {
       where: {
         userId: userId,
       },
+    });
+  }
+
+  async softDeleteByUserIdAndAppId(
+    userId: string,
+    appId: string,
+    targetPermissionIds: AppsPermission[],
+    updatedBy?: string
+  ) {
+    if (updatedBy) {
+      await this.update(
+        {
+          userId,
+          refId: appId,
+          permissionId: In(targetPermissionIds),
+        },
+        { updatedBy }
+      );
+    }
+    return await this.softDelete({
+      userId,
+      refId: appId,
+      permissionId: In(targetPermissionIds),
     });
   }
 }

@@ -35,8 +35,14 @@ import ShareDialog from '../../../components/Dialog/ShareDialog';
 import { AppVersion } from '../../util/type/AppVersion';
 import JiraDialog from '../../../components/Dialog/JiraDialog';
 import JiraIssuesDialog from '../../../components/Dialog/JiraIssuesDialog';
+import { MdGroupAdd } from 'react-icons/md';
+import { RoleType } from '../../util/type/RoleType';
+import { AppSlice } from '../../util/store/appSlice';
+import { useAppStore } from '../../util/store/store';
+import UserAppPermissionDialog from '../../../components/Dialog/UserAppPermissionDialog';
 
 const ViewApp = () => {
+  const [profile] = useAppStore((state: AppSlice) => [state.profile]);
   const { appId } = useParams();
   const [loading, setLoading] = useState(true);
   const [app, setApp] = useState<App | null>(null);
@@ -66,6 +72,7 @@ const ViewApp = () => {
     open: false,
     data: null,
   });
+  const [openUserAppPermissions, setOpenUserAppPermissions] = useState(false);
 
   const tableRef = useRef<TableRef>(null);
 
@@ -308,6 +315,19 @@ const ViewApp = () => {
                   >
                     <BiEdit className="w-5 h-5" />
                   </IconButton>
+
+                  {profile?.roles
+                    .map((r) => r.type)
+                    .includes(RoleType.ADMIN) && (
+                    <IconButton
+                      className="text-gray-500 bg-white"
+                      onClick={() => {
+                        setOpenUserAppPermissions(true);
+                      }}
+                    >
+                      <MdGroupAdd className="w-5 h-5" />
+                    </IconButton>
+                  )}
                 </div>
               </div>
             </Card>
@@ -386,6 +406,16 @@ const ViewApp = () => {
                 setOpenUploadVersion(false);
               }}
               open={openUploadVersion}
+              app={app}
+            />
+          )}
+          {app && (
+            <UserAppPermissionDialog
+              title={'Users App Permissions'}
+              onClose={() => {
+                setOpenUserAppPermissions(false);
+              }}
+              open={openUserAppPermissions}
               app={app}
             />
           )}

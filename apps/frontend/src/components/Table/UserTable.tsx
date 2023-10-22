@@ -191,16 +191,10 @@ const UserTable = ensuredForwardRef<UserTableRef, Props>(
           setIsLoading(true);
         }
         //search api
-        const res = await API.user.searchUsers(
-          //   {
-          //   page: page,
-          //   limit: itemsPerPage,
-          //   query: JSON.stringify({
-          //     query: supperSearch ?? '',
-          //   }),
-          // }
-          selectedTenant.id
-        );
+        const res = await API.user.searchUsers(selectedTenant.id, {
+          page: 1,
+          limit: 9999,
+        });
         const { data }: { data: { items: []; meta: Meta } } = res.data;
         const { items, meta }: { items: []; meta: Meta } = data;
         setData(items);

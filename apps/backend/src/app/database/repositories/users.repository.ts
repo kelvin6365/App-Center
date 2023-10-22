@@ -4,6 +4,7 @@ import {
   FindManyOptions,
   ILike,
   In,
+  IsNull,
   Repository,
   UpdateResult,
 } from 'typeorm';
@@ -17,6 +18,7 @@ import {
 import { UserStatus } from '../../modules/user/enum/user.status.enum';
 import { AppException } from '../../common/response/app.exception';
 import { ResponseCode } from '../../common/response/response.code';
+import AppsPermission from '../../modules/permission/enum/apps.permission.enum';
 
 @Injectable()
 export class UserRepository extends Repository<User> {
@@ -183,6 +185,25 @@ export class UserRepository extends Repository<User> {
     return await this.findOne({
       where: { id: id },
       relations: ['profile', 'roles', 'permissions', 'tenants'],
+      withDeleted: false,
+    });
+  }
+
+  async findAppPermissionsByRefIdGroupByUserId(refId: string) {
+    return await this.find({
+      where: {
+        permissions: {
+          refId,
+          permissionId: In([
+            AppsPermission.CREATE_APP_VERSION,
+            AppsPermission.DELETE_APP_VERSION,
+            AppsPermission.VIEW_APP,
+            AppsPermission.EDIT_APP,
+          ]),
+          deletedAt: IsNull(),
+        },
+      },
+      relations: ['permissions', 'profile'],
       withDeleted: false,
     });
   }

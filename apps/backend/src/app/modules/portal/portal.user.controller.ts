@@ -66,6 +66,7 @@ export class PortalUserController {
 
   //Get All Users
   @Get('/tenant/:tenantId/search')
+  @Roles(RoleType.ADMIN)
   @ApiOperation({ summary: 'Get all Admins with filter / sort / paging' })
   @ApiQuery({
     name: 'query',
@@ -109,6 +110,7 @@ export class PortalUserController {
 
   //Get Single User
   @Get(':id')
+  @Roles(RoleType.ADMIN)
   @ApiResponseSchema(HttpStatus.OK, 'OK')
   async getSingleUser(
     @Param('id') id: string
@@ -143,7 +145,6 @@ export class PortalUserController {
 
   //update user
   @Put('')
-  @Roles(RoleType.ADMIN)
   @ApiResponseSchema(HttpStatus.OK, 'OK')
   async updateCurrentUser(
     @Body() updateUserDTO: UpdateUserDTO,
@@ -183,6 +184,16 @@ export class PortalUserController {
     await this.appService.findById(dto.appId, false, true, false, user);
     return new AppResponse(
       await this.userService.addPermissions(id, dto, user)
+    );
+  }
+
+  //Find users with permissions for the specified app
+  @Get('app/:appId/permissions')
+  @Roles(RoleType.ADMIN)
+  @ApiResponseSchema(HttpStatus.OK, 'OK')
+  async findUserByEmailWithPassword(@Param('id') id: string) {
+    return new AppResponse<PortalUserResponseDTO[]>(
+      await this.userService.findUseAppPermissionsListByAppId(id)
     );
   }
 }

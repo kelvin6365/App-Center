@@ -20,6 +20,7 @@ import { UserStatus } from './enum/user.status.enum';
 import { AddUserRequestDTO } from './dto/add.user.request.dto';
 import { UserPermission } from './entities/user.permission.entity';
 import { UserPermissionRepository } from '../../database/repositories/user.permission.repository';
+import AppsPermission from '../permission/enum/apps.permission.enum';
 
 @Injectable()
 export class UserService {
@@ -155,6 +156,9 @@ export class UserService {
     const user = await this.usersRepository.findUserByUserIdWithDeletedFalse(
       userId
     );
+    if (!user) {
+      throw new AppException(ResponseCode.STATUS_8004_USER_NOT_EXIST);
+    }
     return new PortalUserResponseDTO(user);
   }
 
@@ -240,27 +244,34 @@ export class UserService {
     if (!targetUser) {
       throw new AppException(ResponseCode.STATUS_8004_USER_NOT_EXIST);
     }
-    //find user permissions based
-    const userPermissions =
-      await this.userPermissionRepository.findPermissionsByUser(userId);
-    const permissions = dto.permissions
-      .filter((p) => {
-        if (userPermissions.length === 0) {
-          return true;
-        }
-        return !userPermissions.find(
-          (up) => up.permissionId === p && up.refId === dto.appId
-        );
-      })
-      .map((permission) => {
-        const userPermission = new UserPermission();
-        userPermission.userId = targetUser.id;
-        userPermission.permissionId = permission;
-        userPermission.refId = dto.appId;
-        userPermission.createdBy = user.id;
-        return userPermission;
-      });
+
+    //clean user permissions based
+    await this.userPermissionRepository.softDeleteByUserIdAndAppId(
+      targetUser.id,
+      dto.appId,
+      [
+        AppsPermission.VIEW_APP,
+        AppsPermission.CREATE_APP_VERSION,
+        AppsPermission.EDIT_APP,
+        AppsPermission.DELETE_APP_VERSION,
+      ],
+      user.id
+    );
+    const permissions = dto.permissions.map((permission) => {
+      const userPermission = new UserPermission();
+      userPermission.userId = targetUser.id;
+      userPermission.permissionId = permission;
+      userPermission.refId = dto.appId;
+      userPermission.createdBy = user.id;
+      return userPermission;
+    });
     await this.userPermissionRepository.addPermissions(permissions);
     return true;
+  }
+
+  async findUseAppPermissionsListByAppId(appId: string) {
+    const users =
+      await this.usersRepository.findAppPermissionsByRefIdGroupByUserId(appId);
+    return users.map((user) => new PortalUserResponseDTO(user));
   }
 }

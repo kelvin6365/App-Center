@@ -41,6 +41,7 @@ const TextInput = ensuredForwardRef<
       helperText,
       variant,
       icon,
+      autoFocus,
     }: Props & Omit<InputProps, 'error' | 'type'>,
     ref: React.Ref<HTMLInputElement>
   ) => {
@@ -66,6 +67,8 @@ const TextInput = ensuredForwardRef<
           id={id}
           variant={variant}
           icon={icon}
+          autoFocus={autoFocus}
+          autoComplete={'off'}
         />
         {helperText && (
           <Typography

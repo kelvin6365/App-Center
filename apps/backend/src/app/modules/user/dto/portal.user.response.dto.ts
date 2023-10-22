@@ -19,7 +19,7 @@ export class PortalUserResponseDTO {
     this.id = partial.id;
     this.username = partial.username;
     this.status = partial.status;
-    this.roles = partial.roles?.map((role) => new RoleDTO(role.role));
+    this.roles = partial?.roles?.map((role) => new RoleDTO(role.role));
     this.profile = partial.profile;
     this.permissions = partial.permissions?.map(
       (permission) => new PermissionDTO(permission.permission, permission.refId)

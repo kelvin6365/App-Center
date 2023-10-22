@@ -29,6 +29,7 @@ import { AppVersionJiraIssueRepository } from '../../database/repositories/app.v
 import AppsPermission from '../permission/enum/apps.permission.enum';
 import { RoleType } from '../role/enum/role.type.enum';
 import { Pagination, IPaginationMeta } from 'nestjs-typeorm-paginate';
+import { UserUtil } from '../user/user.util';
 
 @Injectable()
 export class AppService {
@@ -41,7 +42,8 @@ export class AppService {
     private readonly fileService: FileService,
     private readonly jiraService: JiraService,
     private readonly credentialService: CredentialService,
-    private readonly configService: ConfigService
+    private readonly configService: ConfigService,
+    private readonly userUtil: UserUtil
   ) {
     this.logger = new Logger('AppService');
   }
@@ -164,7 +166,11 @@ export class AppService {
       throw new AppException(ResponseCode.STATUS_1011_NOT_FOUND);
     }
     if (!forPublicInstallPage) {
-      this.checkUserPermissions(user, app.id, AppsPermission.VIEW_APP);
+      this.userUtil.checkUserAppPermissions(
+        user,
+        app.id,
+        AppsPermission.VIEW_APP
+      );
     }
     return new AppDTO(
       forPublicInstallPage
@@ -189,7 +195,11 @@ export class AppService {
     isFromPortal?: boolean
   ): Promise<boolean> {
     if (user && isFromPortal) {
-      this.checkUserPermissions(user, appId, AppsPermission.CREATE_APP_VERSION);
+      this.userUtil.checkUserAppPermissions(
+        user,
+        appId,
+        AppsPermission.CREATE_APP_VERSION
+      );
     }
     this.logger.log('Creating a new app version');
     const app = await this.appRepository.findById(appId);
@@ -259,7 +269,11 @@ export class AppService {
     if (!app) {
       throw new AppException(ResponseCode.STATUS_1011_NOT_FOUND);
     }
-    this.checkUserPermissions(user, app.id, AppsPermission.VIEW_APP);
+    this.userUtil.checkUserAppPermissions(
+      user,
+      app.id,
+      AppsPermission.VIEW_APP
+    );
     const appVersions = await this.appVersionRepository.getAllAppVersions(
       appId,
       searchQuery,
@@ -381,7 +395,7 @@ export class AppService {
     appId: string,
     user: CurrentUserDTO
   ): Promise<AppVersionTagDTO[]> {
-    this.checkUserPermissions(user, appId, AppsPermission.VIEW_APP);
+    this.userUtil.checkUserAppPermissions(user, appId, AppsPermission.VIEW_APP);
     const appVersionTags = await this.appVersionTagRepository.getAllTagsByAppId(
       appId
     );
@@ -397,7 +411,7 @@ export class AppService {
     file: Express.Multer.File,
     user: CurrentUserDTO
   ): Promise<boolean> {
-    this.checkUserPermissions(user, id, AppsPermission.EDIT_APP);
+    this.userUtil.checkUserAppPermissions(user, id, AppsPermission.EDIT_APP);
     this.logger.log('Updating an app');
     const appToUpdate = await this.appRepository.findById(id);
     if (appToUpdate) {
@@ -434,7 +448,7 @@ export class AppService {
     file: Express.Multer.File,
     user: CurrentUserDTO
   ): Promise<boolean> {
-    this.checkUserPermissions(user, id, AppsPermission.EDIT_APP);
+    this.userUtil.checkUserAppPermissions(user, id, AppsPermission.EDIT_APP);
     this.logger.log('Patching an app');
     const appToUpdate = await this.appRepository.findById(id);
     if (appToUpdate) {
@@ -547,7 +561,11 @@ export class AppService {
     appVersionId: string,
     user: CurrentUserDTO
   ): Promise<boolean> {
-    this.checkUserPermissions(user, appId, AppsPermission.DELETE_APP_VERSION);
+    this.userUtil.checkUserAppPermissions(
+      user,
+      appId,
+      AppsPermission.DELETE_APP_VERSION
+    );
     const app = await this.appRepository.findById(appId);
     if (!app) {
       throw new AppException(ResponseCode.STATUS_1011_NOT_FOUND);
@@ -615,26 +633,5 @@ export class AppService {
         user.id
       );
     return deleted ? true : false;
-  }
-
-  private checkUserPermissions(
-    user: CurrentUserDTO,
-    appId: string,
-    permission: AppsPermission
-  ) {
-    if (!user.roles.find((userRole) => userRole.role.type === RoleType.ADMIN)) {
-      const userPermissions = user.permissions;
-      //get all view permissions
-      const viewPermissions = userPermissions.filter(
-        (userPermission) => userPermission.permission.id === permission
-      );
-      if (
-        !viewPermissions
-          .map((viewPermission) => viewPermission.refId)
-          .includes(appId)
-      ) {
-        throw new AppException(ResponseCode.STATUS_8003_PERMISSION_DENIED);
-      }
-    }
   }
 }

@@ -58,6 +58,10 @@ const API = {
       PROFILE: '/v1/portal/user',
       UPDATE_PROFILE: '/v1/portal/user',
       TENANTS: '/v1/portal/user/tenants',
+      APP_PERMISSIONS_LIST: (appId: string) =>
+        `/v1/portal/user/app/${appId}/permissions`,
+      ADD_APP_PERMISSIONS: (userId: string) =>
+        `v1/portal/user/${userId}/permission`,
     },
     SETTING: {
       GET_ALL_SETTINGS: '/v1/portal/setting',
@@ -291,8 +295,25 @@ const API = {
     },
   },
   user: {
-    searchUsers: (tenantId: string) => {
-      return API.apiInstance.get(API.API_PATH.USER.SEARCH_USERS(tenantId));
+    searchUsers: (
+      tenantId: string,
+      {
+        page = 1,
+        limit = 10,
+        query,
+      }: {
+        page?: number;
+        limit?: number;
+        query?: string;
+      }
+    ) => {
+      return API.apiInstance.get(API.API_PATH.USER.SEARCH_USERS(tenantId), {
+        params: {
+          page: page,
+          limit: limit,
+          query,
+        },
+      });
     },
     getUser: (userId: string) => {
       return API.apiInstance.get(API.API_PATH.USER.GET_USER(userId));
@@ -352,6 +373,26 @@ const API = {
     },
     getAvailableTenants: () => {
       return API.apiInstance.get(API.API_PATH.USER.TENANTS);
+    },
+    getUserAppPermissionsList: (appId: string) => {
+      return API.apiInstance.get(API.API_PATH.USER.APP_PERMISSIONS_LIST(appId));
+    },
+    addAppPermissions: ({
+      userId,
+      appId,
+      permissions,
+    }: {
+      userId: string;
+      appId: string;
+      permissions: string[];
+    }) => {
+      return API.apiInstance.post(
+        API.API_PATH.USER.ADD_APP_PERMISSIONS(userId),
+        {
+          appId,
+          permissions,
+        }
+      );
     },
   },
   setting: {
