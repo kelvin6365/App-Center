@@ -73,6 +73,12 @@
         "linter": "eslint",
         "unitTestRunner": "vitest"
       }
+    },
+    "@nx/next": {
+      "application": {
+        "style": "styled-components",
+        "linter": "eslint"
+      }
     }
   }
 }
