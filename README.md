@@ -6,7 +6,7 @@
 
 ## _Manage Your Apps with Ease_
 
-App Center is a SaaS platform that makes it easy for teams to build,
+App Center is a SaaS platform that makes it easy for teams to centralize,
 distribute, and manage their apps in one place.
 
 ## Introduction
