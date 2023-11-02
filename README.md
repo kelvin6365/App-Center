@@ -14,22 +14,24 @@ distribute, and manage their apps in one place.
 As a developer, I built this platform because managing the entire app lifecycle was always a headache.
 There were too many disjointed tools and too much complexity.
 
+Managing app versions and their lifecycles can be a daunting task. The need for multiple tools and the complexity of the process can be overwhelming.
+
 I designed App Center to simplify the process by bringing everything together in a unified dashboard. Now teams can:
 
-- Quickly build and configure iOS, Android, web, and desktop apps
-- Easily manage releases across multiple environments
-- Distribute apps to public and private markets
-- Get powerful analytics around adoption, usage, demographics etc.
-- Integrate with existing tools like Jira and Slack
-- With App Center, developers can focus on creating great apps rather than wrestling with complexity. And it's easy for anyone to start managing their apps smarter.
+- **Upload Different App Versions**: Easily upload and organize various versions of your app.
+- **Search App Versions**: Find all the versions that have been uploaded in the past. Easily manage releases across multiple environments by using tags
+- **Integrate with Jira**: Map each uploaded version to related Jira Stories/Tasks for better organization and traceability.
+- **Enable Testing**: IT QA/Tester teams can download different versions for testing purposes.
+- **Public Install Page**: Provide a public install page for non-users to access the app with a password code.
+
+With App Center, you can focus on efficient version management, making it easier for everyone, whether you're a company or a freelancer, to centralize and manage their app versions in one place.
 
 ## Features
 
-- App Creation - Easily build and configure new apps
-- Version Control - Manage releases and track build history
-- App Distribution - Distribute to app stores and internal testers
-- Drag and drop markdown and HTML files into Dillinger
-- Analytics - Get insights into adoption, engagement and performance
+- **Version Upload**: Easily upload different app versions for organization and distribution.
+- **Version Search**: Quickly find all versions of an app using a search feature.
+- **Jira Integration**: Map app versions to related Jira Stories/Tasks for easy tracking.
+- **Public Install Page**: Offer a public install page with password protection for non-users.
 
 ## Integrates with Your Favorite Tools
 
@@ -59,9 +61,11 @@ Contributions are welcome! Please open an issue first to discuss changes you'd l
 
 ## Road map
 
-- Support multiple tenants for a user's account
+- **Multiple Tenants**: Support multiple tenants for a user's account
 - Master Administration
-- Support integrated with jira
+- **Enhanced Version Control**: Additional features for better version management.
+- **Integration with More Tools**: Expanding integrations with popular tools.
+- **Improved Public Install Page**: Enhancements to the public install page.
 
 ## License
 
