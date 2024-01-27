@@ -16,13 +16,13 @@ const Header = () => {
             viewBox="0 0 194 116"
             xmlns="http://www.w3.org/2000/svg"
           >
-            <g fill-rule="evenodd">
+            <g fillRule="evenodd">
               <path d="M96.869 0L30 116h104l-9.88-17.134H59.64l47.109-81.736zM0 116h19.831L77 17.135 67.088 0z"></path>
               <path d="M87 68.732l9.926 17.143 29.893-51.59L174.15 116H194L126.817 0z"></path>
             </g>
           </svg>
           <span className="ml-3 text-xl text-gray-800">
-            Landmark<span className="text-pink-500">.</span>
+            App Center<span className="text-pink-500">.</span>
           </span>
         </a>
 
@@ -94,12 +94,12 @@ const Header = () => {
           >
             <defs>
               <linearGradient x1="0%" y1="0%" x2="100%" y2="100%" id="c">
-                <stop stop-color="#E614F2" offset="0%" />
-                <stop stop-color="#FC3832" offset="100%" />
+                <stop stopColor="#E614F2" offset="0%" />
+                <stop stopColor="#FC3832" offset="100%" />
               </linearGradient>
               <linearGradient x1="0%" y1="0%" x2="100%" y2="100%" id="f">
-                <stop stop-color="#657DE9" offset="0%" />
-                <stop stop-color="#1C0FD7" offset="100%" />
+                <stop stopColor="#657DE9" offset="0%" />
+                <stop stopColor="#1C0FD7" offset="100%" />
               </linearGradient>
               <filter
                 x="-4.7%"
@@ -148,7 +148,7 @@ const Header = () => {
                 id="e"
               />
             </defs>
-            <g fill="none" fill-rule="evenodd" opacity=".9">
+            <g fill="none" fillRule="evenodd" opacity=".9">
               <g transform="rotate(65 416.452 409.167)">
                 <use fill="#000" filter="url(#a)" xlinkHref="#b" />
                 <use fill="url(#c)" xlinkHref="#b" />

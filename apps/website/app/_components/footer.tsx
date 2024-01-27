@@ -16,7 +16,7 @@ const Footer = () => {
                 viewBox="0 0 194 116"
                 xmlns="http://www.w3.org/2000/svg"
               >
-                <g fill-rule="evenodd">
+                <g fillRule="evenodd">
                   <path d="M96.869 0L30 116h104l-9.88-17.134H59.64l47.109-81.736zM0 116h19.831L77 17.135 67.088 0z"></path>
                   <path d="M87 68.732l9.926 17.143 29.893-51.59L174.15 116H194L126.817 0z"></path>
                 </g>
@@ -92,7 +92,7 @@ const Footer = () => {
             </li>
             <li>
               <a
-                href="https://devdojo.com/tailwindcss/components"
+                href=""
                 className="inline-block px-3 py-2 text-gray-500 no-underline hover:text-gray-600"
               >
                 Tailwind Components
@@ -100,7 +100,7 @@ const Footer = () => {
             </li>
             <li>
               <a
-                href="https://devdojo.com/tailwindcss/templates"
+                href=""
                 className="inline-block px-3 py-2 text-gray-500 no-underline hover:text-gray-600"
               >
                 Tailwind Templates
@@ -108,7 +108,7 @@ const Footer = () => {
             </li>
             <li>
               <a
-                href="https://devdojo.com/tails"
+                href=""
                 className="inline-block px-3 py-2 text-gray-500 no-underline hover:text-gray-600"
               >
                 Tails
@@ -124,7 +124,7 @@ const Footer = () => {
                 className="flex items-center block mr-6 text-gray-400 no-underline hover:text-gray-600"
                 target="_blank"
                 rel="noopener noreferrer"
-                href="https://devdojo.com"
+                href=""
               >
                 <svg
                   viewBox="0 0 24 24"
@@ -138,7 +138,7 @@ const Footer = () => {
                 className="flex items-center block mr-6 text-gray-400 no-underline hover:text-gray-600"
                 target="_blank"
                 rel="noopener noreferrer"
-                href="https://devdojo.com"
+                href=""
               >
                 <svg
                   viewBox="0 0 24 24"
@@ -152,7 +152,7 @@ const Footer = () => {
                 className="flex items-center block text-gray-400 no-underline hover:text-gray-600"
                 target="_blank"
                 rel="noopener noreferrer"
-                href="https://devdojo.com"
+                href=""
               >
                 <svg
                   viewBox="0 0 24 24"
