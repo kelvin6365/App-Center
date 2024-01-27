@@ -54,6 +54,53 @@
         ]
       }
     },
+    "backend-e2e": {
+      "name": "backend-e2e",
+      "type": "lib",
+      "data": {
+        "name": "backend-e2e",
+        "root": "apps/backend-e2e",
+        "$schema": "../../node_modules/nx/schemas/project-schema.json",
+        "implicitDependencies": [
+          "backend"
+        ],
+        "targets": {
+          "e2e": {
+            "inputs": [
+              "default",
+              "^production"
+            ],
+            "executor": "@nx/jest:jest",
+            "outputs": [
+              "{workspaceRoot}/coverage/{e2eProjectRoot}"
+            ],
+            "options": {
+              "jestConfig": "apps/backend-e2e/jest.config.ts",
+              "passWithNoTests": true
+            },
+            "configurations": {}
+          },
+          "lint": {
+            "inputs": [
+              "default",
+              "{workspaceRoot}/.eslintrc.json",
+              "{workspaceRoot}/.eslintignore"
+            ],
+            "executor": "@nx/linter:eslint",
+            "outputs": [
+              "{options.outputFile}"
+            ],
+            "options": {
+              "lintFilePatterns": [
+                "apps/backend-e2e/**/*.{js,ts}"
+              ]
+            },
+            "configurations": {}
+          }
+        },
+        "tags": []
+      }
+    },
     "website-e2e": {
       "name": "website-e2e",
       "type": "lib",
@@ -102,53 +149,6 @@
         "implicitDependencies": [
           "website"
         ]
-      }
-    },
-    "backend-e2e": {
-      "name": "backend-e2e",
-      "type": "lib",
-      "data": {
-        "name": "backend-e2e",
-        "root": "apps/backend-e2e",
-        "$schema": "../../node_modules/nx/schemas/project-schema.json",
-        "implicitDependencies": [
-          "backend"
-        ],
-        "targets": {
-          "e2e": {
-            "inputs": [
-              "default",
-              "^production"
-            ],
-            "executor": "@nx/jest:jest",
-            "outputs": [
-              "{workspaceRoot}/coverage/{e2eProjectRoot}"
-            ],
-            "options": {
-              "jestConfig": "apps/backend-e2e/jest.config.ts",
-              "passWithNoTests": true
-            },
-            "configurations": {}
-          },
-          "lint": {
-            "inputs": [
-              "default",
-              "{workspaceRoot}/.eslintrc.json",
-              "{workspaceRoot}/.eslintignore"
-            ],
-            "executor": "@nx/linter:eslint",
-            "outputs": [
-              "{options.outputFile}"
-            ],
-            "options": {
-              "lintFilePatterns": [
-                "apps/backend-e2e/**/*.{js,ts}"
-              ]
-            },
-            "configurations": {}
-          }
-        },
-        "tags": []
       }
     },
     "shared-ui": {
@@ -2268,18 +2268,18 @@
         "hash": "sha512-gJB6HLm5rYwSLI6PQa+X1t5CFGrv1J1TWG+sOyMCeKz2ojaj6Fnl/rZEspogG+cvqbt4AE/2eIyD2QfLKTBNlQ=="
       }
     },
-    "npm:@emotion/is-prop-valid@0.8.8": {
+    "npm:@emotion/is-prop-valid": {
       "type": "npm",
-      "name": "npm:@emotion/is-prop-valid@0.8.8",
+      "name": "npm:@emotion/is-prop-valid",
       "data": {
         "version": "0.8.8",
         "packageName": "@emotion/is-prop-valid",
         "hash": "sha512-u5WtneEAr5IDG2Wv65yhunPSMLIpuKsbuOktRojfrEiEvRyC85LgPMZI63cr7NUqT8ZIGdSVg8ZKGxIug4lXcA=="
       }
     },
-    "npm:@emotion/is-prop-valid": {
+    "npm:@emotion/is-prop-valid@1.2.1": {
       "type": "npm",
-      "name": "npm:@emotion/is-prop-valid",
+      "name": "npm:@emotion/is-prop-valid@1.2.1",
       "data": {
         "version": "1.2.1",
         "packageName": "@emotion/is-prop-valid",
@@ -2860,6 +2860,15 @@
         "version": "0.1.4",
         "packageName": "@floating-ui/utils",
         "hash": "sha512-qprfWkn82Iw821mcKofJ5Pk9wgioHicxcQMxx+5zt5GSKoqdWvgG5AxVmpmUUjzTLPVSH5auBrhI93Deayn/DA=="
+      }
+    },
+    "npm:@formatjs/intl-localematcher": {
+      "type": "npm",
+      "name": "npm:@formatjs/intl-localematcher",
+      "data": {
+        "version": "0.5.4",
+        "packageName": "@formatjs/intl-localematcher",
+        "hash": "sha512-zTwEpWOzZ2CiKcB93BLngUX59hQkuZjT2+SAQEscSm52peDW/getsawMcWF1rGRpMCX6D7nSJA3CzJ8gn13N/g=="
       }
     },
     "npm:@hapi/hoek": {
@@ -6478,6 +6487,15 @@
         "version": "1.4.7",
         "packageName": "@types/multer",
         "hash": "sha512-/SNsDidUFCvqqcWDwxv2feww/yqhNeTRL5CVoL3jU4Goc4kKEL10T7Eye65ZqPNi4HRx8sAEX59pV1aEH7drNA=="
+      }
+    },
+    "npm:@types/negotiator": {
+      "type": "npm",
+      "name": "npm:@types/negotiator",
+      "data": {
+        "version": "0.6.3",
+        "packageName": "@types/negotiator",
+        "hash": "sha512-JkXTOdKs5MF086b/pt8C3+yVp3iDUwG635L7oCH6HvJvvr6lSUU5oe/gLXnPEfYRROHjJIPgCV6cuAg8gGkntQ=="
       }
     },
     "npm:@types/node-fetch": {
@@ -11577,6 +11595,15 @@
     "npm:framer-motion": {
       "type": "npm",
       "name": "npm:framer-motion",
+      "data": {
+        "version": "11.0.3",
+        "packageName": "framer-motion",
+        "hash": "sha512-6x2poQpIWBdbZwLd73w6cKZ1I9IEPIU94C6/Swp1Zt3LJ+sB5bPe1E2wC6EH5hSISXNkMJ4afH7AdwS7MrtkWw=="
+      }
+    },
+    "npm:framer-motion@6.5.1": {
+      "type": "npm",
+      "name": "npm:framer-motion@6.5.1",
       "data": {
         "version": "6.5.1",
         "packageName": "framer-motion",
@@ -17505,6 +17532,15 @@
         "hash": "sha512-pZcd1MCJoiKiBR2NRxeCRg13uCXbydPnmB4EOeRrY7480qNWO8IIgQG6zlDkm6uRMsURXPuKq0GWtiM59a5Q6g=="
       }
     },
+    "npm:react-type-animation": {
+      "type": "npm",
+      "name": "npm:react-type-animation",
+      "data": {
+        "version": "3.2.0",
+        "packageName": "react-type-animation",
+        "hash": "sha512-WXTe0i3rRNKjmggPvT5ntye1QBt0ATGbijeW6V3cQe2W0jaMABXXlPPEdtofnS9tM7wSRHchEvI9SUw+0kUohw=="
+      }
+    },
     "npm:react-universal-interface": {
       "type": "npm",
       "name": "npm:react-universal-interface",
@@ -18250,6 +18286,15 @@
         "version": "1.15.0",
         "packageName": "serve-static",
         "hash": "sha512-XGuRDNjXUijsUL0vl6nSD7cwURuzEgglbOaFuZM9g3kwDXOWVTck0jLzjPzGD+TazWbboZYu52/9/XPdUgne9g=="
+      }
+    },
+    "npm:server-only": {
+      "type": "npm",
+      "name": "npm:server-only",
+      "data": {
+        "version": "0.0.1",
+        "packageName": "server-only",
+        "hash": "sha512-qepMx2JxAa5jjfzxG79yPPq+8BuFToHd1hm7kI+Z4zAq1ftQiP7HcxMhDDItrbtwVeLg/cY2JnKnrcFkmiswNA=="
       }
     },
     "npm:set-blocking": {
@@ -21070,6 +21115,18 @@
         "type": "static"
       }
     ],
+    "backend-e2e": [
+      {
+        "source": "backend-e2e",
+        "target": "backend",
+        "type": "implicit"
+      },
+      {
+        "source": "backend-e2e",
+        "target": "npm:axios",
+        "type": "static"
+      }
+    ],
     "website-e2e": [
       {
         "source": "website-e2e",
@@ -21084,18 +21141,6 @@
       {
         "source": "website-e2e",
         "target": "npm:cypress",
-        "type": "static"
-      }
-    ],
-    "backend-e2e": [
-      {
-        "source": "backend-e2e",
-        "target": "backend",
-        "type": "implicit"
-      },
-      {
-        "source": "backend-e2e",
-        "target": "npm:axios",
         "type": "static"
       }
     ],
@@ -21351,7 +21396,17 @@
       },
       {
         "source": "website",
+        "target": "npm:framer-motion",
+        "type": "static"
+      },
+      {
+        "source": "website",
         "target": "npm:next",
+        "type": "static"
+      },
+      {
+        "source": "website",
+        "target": "npm:react-type-animation",
         "type": "static"
       },
       {
@@ -21386,7 +21441,27 @@
       },
       {
         "source": "website",
+        "target": "npm:server-only",
+        "type": "static"
+      },
+      {
+        "source": "website",
+        "target": "npm:negotiator",
+        "type": "static"
+      },
+      {
+        "source": "website",
+        "target": "npm:@formatjs/intl-localematcher",
+        "type": "static"
+      },
+      {
+        "source": "website",
         "target": "npm:@nx/next",
+        "type": "static"
+      },
+      {
+        "source": "website",
+        "target": "npm:@nx/react",
         "type": "static"
       }
     ],
@@ -25916,16 +25991,16 @@
         "type": "static"
       }
     ],
-    "npm:@emotion/is-prop-valid@0.8.8": [
+    "npm:@emotion/is-prop-valid": [
       {
-        "source": "npm:@emotion/is-prop-valid@0.8.8",
+        "source": "npm:@emotion/is-prop-valid",
         "target": "npm:@emotion/memoize@0.7.4",
         "type": "static"
       }
     ],
-    "npm:@emotion/is-prop-valid": [
+    "npm:@emotion/is-prop-valid@1.2.1": [
       {
-        "source": "npm:@emotion/is-prop-valid",
+        "source": "npm:@emotion/is-prop-valid@1.2.1",
         "target": "npm:@emotion/memoize",
         "type": "static"
       }
@@ -26152,6 +26227,13 @@
       {
         "source": "npm:@floating-ui/react",
         "target": "npm:tabbable",
+        "type": "static"
+      }
+    ],
+    "npm:@formatjs/intl-localematcher": [
+      {
+        "source": "npm:@formatjs/intl-localematcher",
+        "target": "npm:tslib@2.6.2",
         "type": "static"
       }
     ],
@@ -27592,7 +27674,7 @@
       },
       {
         "source": "npm:@material-tailwind/react",
-        "target": "npm:framer-motion",
+        "target": "npm:framer-motion@6.5.1",
         "type": "static"
       },
       {
@@ -41334,26 +41416,6 @@
     "npm:framer-motion": [
       {
         "source": "npm:framer-motion",
-        "target": "npm:@motionone/dom",
-        "type": "static"
-      },
-      {
-        "source": "npm:framer-motion",
-        "target": "npm:framesync",
-        "type": "static"
-      },
-      {
-        "source": "npm:framer-motion",
-        "target": "npm:hey-listen",
-        "type": "static"
-      },
-      {
-        "source": "npm:framer-motion",
-        "target": "npm:popmotion",
-        "type": "static"
-      },
-      {
-        "source": "npm:framer-motion",
         "target": "npm:react",
         "type": "static"
       },
@@ -41364,17 +41426,59 @@
       },
       {
         "source": "npm:framer-motion",
-        "target": "npm:style-value-types",
-        "type": "static"
-      },
-      {
-        "source": "npm:framer-motion",
         "target": "npm:tslib@2.6.2",
         "type": "static"
       },
       {
         "source": "npm:framer-motion",
-        "target": "npm:@emotion/is-prop-valid@0.8.8",
+        "target": "npm:@emotion/is-prop-valid",
+        "type": "static"
+      }
+    ],
+    "npm:framer-motion@6.5.1": [
+      {
+        "source": "npm:framer-motion@6.5.1",
+        "target": "npm:@motionone/dom",
+        "type": "static"
+      },
+      {
+        "source": "npm:framer-motion@6.5.1",
+        "target": "npm:framesync",
+        "type": "static"
+      },
+      {
+        "source": "npm:framer-motion@6.5.1",
+        "target": "npm:hey-listen",
+        "type": "static"
+      },
+      {
+        "source": "npm:framer-motion@6.5.1",
+        "target": "npm:popmotion",
+        "type": "static"
+      },
+      {
+        "source": "npm:framer-motion@6.5.1",
+        "target": "npm:react",
+        "type": "static"
+      },
+      {
+        "source": "npm:framer-motion@6.5.1",
+        "target": "npm:react-dom",
+        "type": "static"
+      },
+      {
+        "source": "npm:framer-motion@6.5.1",
+        "target": "npm:style-value-types",
+        "type": "static"
+      },
+      {
+        "source": "npm:framer-motion@6.5.1",
+        "target": "npm:tslib@2.6.2",
+        "type": "static"
+      },
+      {
+        "source": "npm:framer-motion@6.5.1",
+        "target": "npm:@emotion/is-prop-valid",
         "type": "static"
       }
     ],
@@ -49597,6 +49701,23 @@
         "type": "static"
       }
     ],
+    "npm:react-type-animation": [
+      {
+        "source": "npm:react-type-animation",
+        "target": "npm:prop-types",
+        "type": "static"
+      },
+      {
+        "source": "npm:react-type-animation",
+        "target": "npm:react",
+        "type": "static"
+      },
+      {
+        "source": "npm:react-type-animation",
+        "target": "npm:react-dom",
+        "type": "static"
+      }
+    ],
     "npm:react-universal-interface": [
       {
         "source": "npm:react-universal-interface",
@@ -51278,7 +51399,7 @@
       },
       {
         "source": "npm:styled-components",
-        "target": "npm:@emotion/is-prop-valid",
+        "target": "npm:@emotion/is-prop-valid@1.2.1",
         "type": "static"
       },
       {

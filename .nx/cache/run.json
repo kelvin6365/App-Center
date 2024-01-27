@@ -1,8 +1,8 @@
 {
   "run": {
-    "command": "nx affected:lint --files=apps/website/app/_components/features.tsx,apps/website/app/_components/footer.tsx,apps/website/app/_components/header.tsx,apps/website/app/_components/hero.tsx,apps/website/app/_components/pricing.tsx,apps/website/app/_components/testimonials.tsx,apps/website/components/i18n-server.tsx,apps/website/components/i18n.tsx,apps/website/config/index.ts,apps/website/context/i18n.ts,apps/website/dictionaries/en.json,apps/website/dictionaries/zh-Hans.json,apps/website/i18n/client.ts,apps/website/i18n/i18next-config.ts,apps/website/i18n/i18next-serverside-config.ts,apps/website/i18n/index.ts,apps/website/tsconfig.json",
-    "startTime": "2024-01-27T14:04:24.186Z",
-    "endTime": "2024-01-27T14:04:25.379Z",
+    "command": "nx affected:lint --files=apps/website/app/_components/header.tsx,apps/website/app/_components/hero.tsx",
+    "startTime": "2024-01-27T17:49:42.882Z",
+    "endTime": "2024-01-27T17:49:44.406Z",
     "inner": false
   },
   "tasks": [
@@ -10,23 +10,23 @@
       "taskId": "website-e2e:lint",
       "target": "lint",
       "projectName": "website-e2e",
-      "hash": "8797595013339352156",
-      "startTime": "2024-01-27T14:04:24.202Z",
-      "endTime": "2024-01-27T14:04:24.940Z",
+      "hash": "4950054682611845245",
+      "startTime": "2024-01-27T17:49:42.894Z",
+      "endTime": "2024-01-27T17:49:42.914Z",
       "params": "",
-      "cacheStatus": "cache-miss",
+      "cacheStatus": "local-cache-hit",
       "status": 0
     },
     {
       "taskId": "website:lint",
       "target": "lint",
       "projectName": "website",
-      "hash": "17678037378335203810",
-      "startTime": "2024-01-27T14:04:24.202Z",
-      "endTime": "2024-01-27T14:04:25.379Z",
+      "hash": "13446522792153149517",
+      "startTime": "2024-01-27T17:49:42.894Z",
+      "endTime": "2024-01-27T17:49:44.406Z",
       "params": "",
       "cacheStatus": "cache-miss",
-      "status": 1
+      "status": 0
     }
   ]
 }

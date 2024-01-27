@@ -1,0 +1,8 @@
+
+Linting "website"...
+
+/Users/kelvinkwong/Documents/GitHub/Products/App-Center/apps/website/i18n/i18next-serverside-config.ts
+  28:27  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+✖ 1 problem (0 errors, 1 warning)
+

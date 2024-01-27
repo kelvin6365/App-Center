@@ -1,0 +1,14 @@
+
+Linting "website"...
+
+/Users/kelvinkwong/Documents/GitHub/Products/App-Center/apps/website/components/motion/page-transition.tsx
+  2:10  warning  'HTMLMotionProps' is defined but never used  @typescript-eslint/no-unused-vars
+
+/Users/kelvinkwong/Documents/GitHub/Products/App-Center/apps/website/i18n/i18next-serverside-config.ts
+  28:27  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/Users/kelvinkwong/Documents/GitHub/Products/App-Center/apps/website/i18n/server.ts
+  37:40  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+✖ 3 problems (0 errors, 3 warnings)
+
