@@ -38,6 +38,7 @@ testem.log
 .DS_Store
 Thumbs.db
 
+.nx/cache
 
 #Backend
 /apps/backend/.env
