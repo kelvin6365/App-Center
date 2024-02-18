@@ -4,6 +4,7 @@ import { ToastProvider } from '@/components/providers/toast-provider';
 import SessionProvider from '@/components/providers/session-provider';
 
 import { notFound } from 'next/navigation';
+import { ThemeProvider } from '@/components/providers/theme-provider';
 
 export const metadata = {
   title: 'App Center',
@@ -27,10 +28,17 @@ export default function LocaleLayout({
     <html className="h-screen" lang={locale} suppressHydrationWarning>
       <NextIntlClientProvider locale={locale} messages={messages}>
         <body className="h-full">
-          <SessionProvider>
-            {children}
-            <ToastProvider />
-          </SessionProvider>
+          <ThemeProvider
+            attribute="class"
+            defaultTheme="system"
+            enableSystem
+            disableTransitionOnChange
+          >
+            <SessionProvider>
+              {children}
+              <ToastProvider />
+            </SessionProvider>
+          </ThemeProvider>
         </body>
       </NextIntlClientProvider>
     </html>

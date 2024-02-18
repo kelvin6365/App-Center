@@ -1,17 +1,12 @@
-import { Card } from '@material-tailwind/react';
 import { PropsWithChildren } from 'react';
-import { Scrollbars } from 'react-custom-scrollbars-2';
+import { ScrollArea } from '@app-center/shadcn/ui';
 import tw from 'tailwind-styled-components';
-const CustomScrollbars = tw(Scrollbars)`
+const CustomScrollbars = tw(ScrollArea)`
   w-full
-  min-h-screen
+  h-full
 `;
-const CustomPageContent = tw(Card)`
-  mx-2
-  md:mx-4
-  my-4
-  p-4
-  md:p-12
+const CustomPageContent = tw.div`
+  flex-1 space-y-4 p-4 md:p-8 pt-6
 `;
 const PageContent = ({ children }: PropsWithChildren) => {
   return (
