@@ -34,6 +34,7 @@ const dictionaries = {
   en: () => import('@/dictionaries/en.json').then((module) => module.default),
   'zh-Hans': () =>
     import('@/dictionaries/zh-Hans.json').then((module) => module.default),
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
 } as { [locale: string]: () => Promise<any> };
 
 export const getDictionary = async (locale: Locale = 'en') => {

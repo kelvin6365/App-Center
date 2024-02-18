@@ -1,0 +1,12 @@
+{
+  "Index": {
+    "title": "title1"
+  },
+  "Auth": {
+    "Status": {
+      "LoginFailed": "Login Failed"
+    },
+    "Password": "Password",
+    "Login": "Login"
+  }
+}

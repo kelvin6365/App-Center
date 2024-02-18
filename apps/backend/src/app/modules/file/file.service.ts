@@ -90,7 +90,6 @@ export class FileService {
           responseType: 'buffer',
         }
       );
-
       return successUploadFile;
     } catch (error) {
       this.logger.error(

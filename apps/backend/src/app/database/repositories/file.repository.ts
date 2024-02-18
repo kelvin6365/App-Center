@@ -10,7 +10,7 @@ export class FileRepository extends Repository<File> {
 
   //create file
   async createFile(file: File): Promise<File> {
-    return await this.save(file);
+    return this.create(await this.save(file));
   }
 
   //get file by id

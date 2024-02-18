@@ -25,6 +25,10 @@ export class AppExceptionFilter implements ExceptionFilter {
     const ctx = host.switchToHttp();
     const response = ctx.getResponse();
     let status, responseStatus;
+
+    let responseMessages: string[] | string;
+    let systemMessage: string;
+
     switch (true) {
       case exception instanceof AppException:
         status = exception.getStatus();
@@ -56,9 +60,9 @@ export class AppExceptionFilter implements ExceptionFilter {
         break;
 
       case exception instanceof TypeError:
-        status = HttpStatus.INTERNAL_SERVER_ERROR;
+        status = HttpStatus.BAD_REQUEST;
         responseStatus = new ResponseStatus(
-          exception.getStatus,
+          status,
           exception.name,
           exception.message
         );
@@ -73,16 +77,25 @@ export class AppExceptionFilter implements ExceptionFilter {
 
       case exception instanceof Error:
         console.log(exception);
-        status = HttpStatus.INTERNAL_SERVER_ERROR;
-        // eslint-disable-next-line no-case-declarations
-        const responseMessages = exception.getResponse
-          ? exception.getResponse().message
-          : exception.toString();
+        console.log(exception['response']);
+        if (exception['response']) {
+          if (exception['response']['statusCode']) {
+            status = exception['response']['statusCode'];
+            systemMessage = exception['response']['error'];
+            responseMessages = exception['response']['message'];
+          } else {
+            status = exception['status'];
+            systemMessage = exception.name;
+            responseMessages = exception.message;
+          }
+        } else {
+          status = HttpStatus.INTERNAL_SERVER_ERROR;
+          responseMessages = exception.message;
+          systemMessage = exception.name;
+        }
         responseStatus = new ResponseStatus(
-          exception.getStatus ? exception.getStatus() : 500,
-          exception.getResponse
-            ? exception.getResponse().error
-            : exception.toString(),
+          status,
+          systemMessage,
           isArray(responseMessages) ? responseMessages : [responseMessages]
         );
         this.logger.error(

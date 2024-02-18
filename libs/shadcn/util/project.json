@@ -1,0 +1,29 @@
+{
+  "name": "shadcn-util",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/shadcn/util/src",
+  "projectType": "library",
+  "targets": {
+    "build": {
+      "executor": "@nx/js:swc",
+      "outputs": ["{options.outputPath}"],
+      "options": {
+        "outputPath": "dist/libs/shadcn/util",
+        "main": "libs/shadcn/util/src/index.ts",
+        "tsConfig": "libs/shadcn/util/tsconfig.lib.json",
+        "assets": ["libs/shadcn/util/*.md"]
+      }
+    },
+    "lint": {
+      "executor": "@nx/eslint:lint"
+    },
+    "test": {
+      "executor": "@nx/jest:jest",
+      "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
+      "options": {
+        "jestConfig": "libs/shadcn/util/jest.config.ts"
+      }
+    }
+  },
+  "tags": []
+}

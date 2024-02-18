@@ -11,5 +11,8 @@
     "tw\\.[^`]+`([^`]*)`", // tw.xxx<xxx>`...`
     "tw\\(.*?\\).*?`([^`]*)" // tw(Component)<xxx>`...`
   ],
-  "cSpell.words": ["clsx", "issuetype", "Jirasoftware"]
+  "cSpell.words": ["clsx", "issuetype", "Jirasoftware"],
+  "i18n-ally.localesPaths": ["apps/portal/langs", "apps/website/i18n"],
+  "i18n-ally.sourceLanguage": "en",
+  "i18n-ally.keystyle": "nested"
 }

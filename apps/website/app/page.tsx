@@ -6,7 +6,7 @@ import Hero from '@/app/_components/hero';
 import Pricing from '@/app/_components/pricing';
 import Testimonials from '@/app/_components/testimonials';
 
-export default async function Page() {
+export default function Page() {
   return (
     <div className="wrapper">
       <Hero />

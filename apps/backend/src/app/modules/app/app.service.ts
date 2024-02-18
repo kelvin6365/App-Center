@@ -79,6 +79,11 @@ export class AppService {
         file,
         createdApp.createdBy
       );
+      if (!appIconFile) {
+        throw new AppException(
+          ResponseCode.STATUS_1012_FAIL_TO_CREATE('File Upload Failed')
+        );
+      }
       createdApp.iconFileId = appIconFile.id;
       //TODO: User
       createdApp.updatedBy = null;

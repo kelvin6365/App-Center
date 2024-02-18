@@ -15,6 +15,10 @@
     "skipDefaultLibCheck": true,
     "baseUrl": ".",
     "paths": {
+      "@app-center/shadcn/ui": ["libs/shadcn/ui/src/index.ts"],
+      "@app-center/shadcn/ui/*": ["libs/shadcn/ui/src/*"],
+      "@app-center/shadcn/util": ["libs/shadcn/util/src/index.ts"],
+      "@app-center/shadcn/util/*": ["libs/shadcn/util/src/*"],
       "@app-center/shared-ui": ["libs/shared-ui/src/index.ts"]
     }
   },

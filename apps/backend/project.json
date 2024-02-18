@@ -23,9 +23,8 @@
         "main": "apps/backend/src/main.ts",
         "tsConfig": "apps/backend/tsconfig.app.json",
         "assets": ["apps/backend/src/assets"],
-        "isolatedConfig": true,
-        "webpackConfig": "apps/backend/webpack.config.js",
-        "generatePackageJson": true
+        "generatePackageJson": true,
+        "webpackConfig": "apps/backend/webpack.config.js"
       },
       "configurations": {
         "development": {},
@@ -48,24 +47,14 @@
       }
     },
     "lint": {
-      "executor": "@nx/linter:eslint",
-      "outputs": ["{options.outputFile}"],
-      "options": {
-        "lintFilePatterns": ["apps/backend/**/*.ts"]
-      }
+      "executor": "@nx/eslint:lint",
+      "outputs": ["{options.outputFile}"]
     },
     "test": {
       "executor": "@nx/jest:jest",
       "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
       "options": {
-        "jestConfig": "apps/backend/jest.config.ts",
-        "passWithNoTests": true
-      },
-      "configurations": {
-        "ci": {
-          "ci": true,
-          "codeCoverage": true
-        }
+        "jestConfig": "apps/backend/jest.config.ts"
       }
     }
   },

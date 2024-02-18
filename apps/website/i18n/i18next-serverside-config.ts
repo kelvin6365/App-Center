@@ -25,6 +25,7 @@ const initI18next = async (lng: Locale, ns: string) => {
 export async function useTranslation(
   lng: Locale,
   ns = '',
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   options: Record<string, any> = {}
 ) {
   const i18nextInstance = await initI18next(lng, ns);
