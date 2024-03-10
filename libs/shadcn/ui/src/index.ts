@@ -5,3 +5,8 @@ export * from './lib/ui/scroll-area';
 export * from './lib/ui/dropdown-menu';
 export * from './lib/ui/sheet';
 export * from './lib/ui/avatar';
+export * from './lib/ui/dialog';
+export * from './lib/ui/command';
+export * from './lib/ui/popover';
+export * from './lib/ui/select';
+export * from './lib/ui/label';

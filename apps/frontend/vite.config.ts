@@ -15,7 +15,7 @@ export default defineConfig({
   cacheDir: '../../node_modules/.vite/frontend',
 
   server: {
-    port: 4200,
+    port: 4300,
     host: 'localhost',
     proxy: {
       '/api': {
@@ -27,7 +27,7 @@ export default defineConfig({
   },
 
   preview: {
-    port: 4300,
+    port: 4400,
     host: 'localhost',
   },
 
