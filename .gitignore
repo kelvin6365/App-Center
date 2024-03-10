@@ -46,3 +46,8 @@ Thumbs.db
 
 # Next.js
 .next
+
+# Docker compose data
+docker/data/db/*
+docker/data/redis/*
+docker/data/minio/*

@@ -1,0 +1,50 @@
+version: '3'
+name: local-app-center
+
+services:
+  db:
+    image: postgres:latest
+    restart: always
+    environment:
+      POSTGRES_USER: pgsqladmin
+      POSTGRES_PASSWORD: Pass!23456
+      POSTGRES_DB: local_app_center
+    volumes:
+      - ./data/db:/var/lib/postgresql/data
+    ports:
+      - '5432:5432'
+
+  redis:
+    image: redis:latest
+    restart: always
+    volumes:
+      - ./data/redis:/data
+    ports:
+      - '6379:6379'
+
+  minio:
+    image: minio/minio:latest
+    restart: always
+    hostname: minio
+    environment:
+      MINIO_ROOT_USER: minoadmin
+      MINIO_ROOT_PASSWORD: Pass!23456
+      MINIO_DEFAULT_BUCKETS: local-app-center-bucket
+    volumes:
+      - ./data/minio:/data
+    ports:
+      - '9000:9000'
+      - '9001:9001'
+    command: server /data --console-address ":9001"
+
+  createbuckets:
+    image: minio/mc
+    depends_on:
+      - minio
+    entrypoint: >
+      /bin/sh -c "
+      /usr/bin/mc config;
+      /usr/bin/mc config host add minio http://minio:9000 minoadmin Pass!23456;
+      /usr/bin/mc mb minio/local-app-center-bucket;
+      exit 0;
+      "
