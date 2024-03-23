@@ -3,7 +3,8 @@
     "plugin:@nx/react-typescript",
     "next",
     "next/core-web-vitals",
-    "../../.eslintrc.json"
+    "../../.eslintrc.json",
+    "plugin:@tanstack/eslint-plugin-query/recommended"
   ],
   "ignorePatterns": ["!**/*", ".next/**/*"],
   "overrides": [
@@ -33,5 +34,6 @@
         "jest": true
       }
     }
-  ]
+  ],
+  "plugins": ["@tanstack/query"]
 }

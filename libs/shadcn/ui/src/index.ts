@@ -10,3 +10,4 @@ export * from './lib/ui/command';
 export * from './lib/ui/popover';
 export * from './lib/ui/select';
 export * from './lib/ui/label';
+export * from './lib/ui/skeleton';

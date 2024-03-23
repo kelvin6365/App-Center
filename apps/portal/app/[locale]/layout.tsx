@@ -5,6 +5,9 @@ import SessionProvider from '@/components/providers/session-provider';
 
 import { notFound } from 'next/navigation';
 import { ThemeProvider } from '@/components/providers/theme-provider';
+import { ReactQueryProvider } from '@/components/providers/react-query-provider';
+import { Suspense } from 'react';
+import Loading from '@/components/loading';
 
 export const metadata = {
   title: 'App Center',
@@ -35,7 +38,11 @@ export default function LocaleLayout({
             disableTransitionOnChange
           >
             <SessionProvider>
-              {children}
+              <ReactQueryProvider>
+                <Suspense fallback={<Loading fullScreen />}>
+                  {children}
+                </Suspense>
+              </ReactQueryProvider>
               <ToastProvider />
             </SessionProvider>
           </ThemeProvider>

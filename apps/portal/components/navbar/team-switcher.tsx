@@ -27,8 +27,10 @@ import {
   SelectTrigger,
   SelectValue,
   Label,
+  Skeleton,
 } from '@app-center/shadcn/ui';
 import { cn } from '@app-center/shadcn/util';
+import { useQuery } from '@tanstack/react-query';
 
 import {
   CaretSortIcon,
@@ -36,33 +38,13 @@ import {
   PlusCircledIcon,
 } from '@radix-ui/react-icons';
 import React from 'react';
+import API from '@/services/api';
 
 const groups = [
   {
-    label: 'Personal Account',
-    teams: [
-      {
-        label: 'Alicia Koch',
-        value: 'personal',
-      },
-    ],
-  },
-  {
     label: 'Teams',
-    teams: [
-      {
-        label: 'Acme Inc.',
-        value: 'acme-inc',
-      },
-      {
-        label: 'Monsters Inc.',
-        value: 'monsters',
-      },
-    ],
   },
 ];
-
-type Team = typeof groups[number]['teams'][number];
 
 type PopoverTriggerProps = React.ComponentPropsWithoutRef<
   typeof PopoverTrigger
@@ -73,33 +55,50 @@ type TeamSwitcherProps = PopoverTriggerProps;
 export default function TeamSwitcher({ className }: TeamSwitcherProps) {
   const [open, setOpen] = React.useState(false);
   const [showNewTeamDialog, setShowNewTeamDialog] = React.useState(false);
-  const [selectedTeam, setSelectedTeam] = React.useState<Team>(
-    groups[0].teams[0]
-  );
+  const [selectedTeam, setSelectedTeam] = React.useState<any>(null);
 
+  // Queries
+  const { data, isLoading } = useQuery({
+    queryKey: ['availableTenants', selectedTeam],
+    queryFn: async () => {
+      const { data } = await API.user.getAvailableTenants();
+      if (!selectedTeam) {
+        setSelectedTeam(data.data.items[0]);
+      }
+      return data.data;
+    },
+  });
+  const availableTenants = React.useMemo(() => data?.items ?? [], [data]);
+
+  console.log(availableTenants);
   return (
     <Dialog open={showNewTeamDialog} onOpenChange={setShowNewTeamDialog}>
       <Popover open={open} onOpenChange={setOpen}>
         <PopoverTrigger asChild>
-          <Button
-            variant="outline"
-            role="combobox"
-            aria-expanded={open}
-            aria-label="Select a team"
-            className={cn('w-full justify-between', className)}
-          >
-            <Avatar className="w-5 h-5 mr-2">
-              <AvatarImage
-                src={`https://avatar.vercel.sh/${selectedTeam.value}.png`}
-                alt={selectedTeam.label}
-                className="grayscale"
-              />
-              <AvatarFallback>SC</AvatarFallback>
-            </Avatar>
-            {selectedTeam.label}
-            <CaretSortIcon className="w-4 h-4 ml-auto opacity-50 shrink-0" />
-          </Button>
+          {selectedTeam ? (
+            <Button
+              variant="outline"
+              role="combobox"
+              aria-expanded={open}
+              aria-label="Select a team"
+              className={cn('w-full justify-between', className)}
+            >
+              <Avatar className="w-5 h-5 mr-2">
+                <AvatarImage
+                  src={`https://avatar.vercel.sh/${selectedTeam.name}.png`}
+                  alt={selectedTeam.name}
+                  className="grayscale"
+                />
+                <AvatarFallback>SC</AvatarFallback>
+              </Avatar>
+              {selectedTeam.name}
+              <CaretSortIcon className="w-4 h-4 ml-auto opacity-50 shrink-0" />
+            </Button>
+          ) : (
+            <Skeleton className="w-full h-[36px] rounded-md mb-4" />
+          )}
         </PopoverTrigger>
+
         <PopoverContent className="w-full p-0">
           <Command>
             <CommandList>
@@ -107,34 +106,37 @@ export default function TeamSwitcher({ className }: TeamSwitcherProps) {
               <CommandEmpty>No team found.</CommandEmpty>
               {groups.map((group) => (
                 <CommandGroup key={group.label} heading={group.label}>
-                  {group.teams.map((team) => (
-                    <CommandItem
-                      key={team.value}
-                      onSelect={() => {
-                        setSelectedTeam(team);
-                        setOpen(false);
-                      }}
-                      className="text-sm"
-                    >
-                      <Avatar className="w-5 h-5 mr-2">
-                        <AvatarImage
-                          src={`https://avatar.vercel.sh/${team.value}.png`}
-                          alt={team.label}
-                          className="grayscale"
+                  {availableTenants.map(
+                    ({ id, name }: { id: string; name: string }) => (
+                      <CommandItem
+                        key={id}
+                        onSelect={() => {
+                          setSelectedTeam({
+                            id,
+                            name,
+                          });
+                          setOpen(false);
+                        }}
+                        className="text-sm"
+                      >
+                        <Avatar className="w-5 h-5 mr-2">
+                          <AvatarImage
+                            src={`https://avatar.vercel.sh/${name}.png`}
+                            alt={name}
+                            className="grayscale"
+                          />
+                          <AvatarFallback>SC</AvatarFallback>
+                        </Avatar>
+                        {name}
+                        <CheckIcon
+                          className={cn(
+                            'ml-auto h-4 w-4',
+                            selectedTeam.id === id ? 'opacity-100' : 'opacity-0'
+                          )}
                         />
-                        <AvatarFallback>SC</AvatarFallback>
-                      </Avatar>
-                      {team.label}
-                      <CheckIcon
-                        className={cn(
-                          'ml-auto h-4 w-4',
-                          selectedTeam.value === team.value
-                            ? 'opacity-100'
-                            : 'opacity-0'
-                        )}
-                      />
-                    </CommandItem>
-                  ))}
+                      </CommandItem>
+                    )
+                  )}
                 </CommandGroup>
               ))}
             </CommandList>

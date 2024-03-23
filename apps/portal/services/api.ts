@@ -383,7 +383,12 @@ const API = {
         oldPassword,
       });
     },
-    getAvailableTenants: () => {
+    getAvailableTenants: (): Promise<
+      AxiosResponse<{
+        data: any;
+        status: ResponseStatus;
+      }>
+    > => {
       return API.apiInstance.get(API.API_PATH.USER.TENANTS);
     },
     getUserAppPermissionsList: (appId: string) => {
