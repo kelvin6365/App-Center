@@ -11,3 +11,5 @@ export * from './lib/ui/popover';
 export * from './lib/ui/select';
 export * from './lib/ui/label';
 export * from './lib/ui/skeleton';
+export * from './lib/ui/accordion';
+export * from './lib/ui/separator';

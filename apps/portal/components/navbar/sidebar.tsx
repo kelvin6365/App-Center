@@ -23,7 +23,7 @@ export default function Sidebar() {
                 {
                   title: 'Dashboard',
                   icon: 'dashboard',
-                  href: '/',
+                  href: '/console',
                 },
                 {
                   title: 'Apps',
