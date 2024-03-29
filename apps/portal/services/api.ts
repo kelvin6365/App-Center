@@ -1,4 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
+import { App } from '@/types/App';
+import { Meta } from '@/types/Meta';
 import { PortalUserProfile } from '@/types/PortalUserProfile';
 import { ResponseStatus } from '@/types/ResponseStatus';
 import { RoleType } from '@/types/RoleType';
@@ -127,7 +129,15 @@ const API = {
       page?: number;
       limit?: number;
       query?: string;
-    }) => {
+    }): Promise<
+      AxiosResponse<{
+        data: {
+          items: App[];
+          meta: Meta;
+        };
+        status: ResponseStatus;
+      }>
+    > => {
       return API.apiInstance.get(API.API_PATH.APP.SEARCH, {
         params: {
           page: page,

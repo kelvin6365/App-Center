@@ -39,6 +39,8 @@ import {
 } from '@radix-ui/react-icons';
 import React from 'react';
 import API from '@/services/api';
+import useTeamSelectionStore from '@/stores/useTeamSelectionStore';
+import useAvailableTenantsStore from '@/queries/useAvailableTenantsQuery';
 
 const groups = [
   {
@@ -53,33 +55,30 @@ type PopoverTriggerProps = React.ComponentPropsWithoutRef<
 type TeamSwitcherProps = PopoverTriggerProps;
 
 export default function TeamSwitcher({ className }: TeamSwitcherProps) {
-  const [open, setOpen] = React.useState(false);
-  const [showNewTeamDialog, setShowNewTeamDialog] = React.useState(false);
-  const [selectedTeam, setSelectedTeam] = React.useState<any>(null);
+  const { selectedTeam, setSelectedTeam } = useTeamSelectionStore();
+  const [isTenantSelectOpen, setIsTenantSelectOpen] = React.useState(false);
+  const [showNewTenantDialog, setShowNewTenantDialog] = React.useState(false);
+  const { availableTenants, isLoading, isError, error, refetch } =
+    useAvailableTenantsStore();
 
-  // Queries
-  const { data, isLoading } = useQuery({
-    queryKey: ['availableTenants', selectedTeam],
-    queryFn: async () => {
-      const { data } = await API.user.getAvailableTenants();
-      if (!selectedTeam) {
-        setSelectedTeam(data.data.items[0]);
-      }
-      return data.data;
-    },
-  });
-  const availableTenants = React.useMemo(() => data?.items ?? [], [data]);
+  React.useEffect(() => {
+    if (!selectedTeam && availableTenants.length > 0) {
+      setSelectedTeam({
+        id: availableTenants[0].id,
+        name: availableTenants[0].name,
+      });
+    }
+  }, [availableTenants, selectedTeam, setSelectedTeam]);
 
-  console.log(availableTenants);
   return (
-    <Dialog open={showNewTeamDialog} onOpenChange={setShowNewTeamDialog}>
-      <Popover open={open} onOpenChange={setOpen}>
+    <Dialog open={showNewTenantDialog} onOpenChange={setShowNewTenantDialog}>
+      <Popover open={isTenantSelectOpen} onOpenChange={setIsTenantSelectOpen}>
         <PopoverTrigger asChild>
-          {selectedTeam ? (
+          {selectedTeam && !isLoading ? (
             <Button
               variant="outline"
               role="combobox"
-              aria-expanded={open}
+              aria-expanded={isTenantSelectOpen}
               aria-label="Select a team"
               className={cn('w-full justify-between', className)}
             >
@@ -95,7 +94,9 @@ export default function TeamSwitcher({ className }: TeamSwitcherProps) {
               <CaretSortIcon className="w-4 h-4 ml-auto opacity-50 shrink-0" />
             </Button>
           ) : (
-            <Skeleton className="w-full h-[36px] rounded-md mb-4" />
+            <>
+              <Skeleton className="w-full h-[36px] rounded-md mb-4" />
+            </>
           )}
         </PopoverTrigger>
 
@@ -106,37 +107,40 @@ export default function TeamSwitcher({ className }: TeamSwitcherProps) {
               <CommandEmpty>No team found.</CommandEmpty>
               {groups.map((group) => (
                 <CommandGroup key={group.label} heading={group.label}>
-                  {availableTenants.map(
-                    ({ id, name }: { id: string; name: string }) => (
-                      <CommandItem
-                        key={id}
-                        onSelect={() => {
-                          setSelectedTeam({
-                            id,
-                            name,
-                          });
-                          setOpen(false);
-                        }}
-                        className="text-sm"
-                      >
-                        <Avatar className="w-5 h-5 mr-2">
-                          <AvatarImage
-                            src={`https://avatar.vercel.sh/${name}.png`}
-                            alt={name}
-                            className="grayscale"
+                  {selectedTeam &&
+                    availableTenants.map(
+                      ({ id, name }: { id: string; name: string }) => (
+                        <CommandItem
+                          key={id}
+                          onSelect={() => {
+                            setSelectedTeam({
+                              id,
+                              name,
+                            });
+                            setIsTenantSelectOpen(false);
+                          }}
+                          className="text-sm"
+                        >
+                          <Avatar className="w-5 h-5 mr-2">
+                            <AvatarImage
+                              src={`https://avatar.vercel.sh/${name}.png`}
+                              alt={name}
+                              className="grayscale"
+                            />
+                            <AvatarFallback>SC</AvatarFallback>
+                          </Avatar>
+                          {name}
+                          <CheckIcon
+                            className={cn(
+                              'ml-auto h-4 w-4',
+                              selectedTeam.id === id
+                                ? 'opacity-100'
+                                : 'opacity-0'
+                            )}
                           />
-                          <AvatarFallback>SC</AvatarFallback>
-                        </Avatar>
-                        {name}
-                        <CheckIcon
-                          className={cn(
-                            'ml-auto h-4 w-4',
-                            selectedTeam.id === id ? 'opacity-100' : 'opacity-0'
-                          )}
-                        />
-                      </CommandItem>
-                    )
-                  )}
+                        </CommandItem>
+                      )
+                    )}
                 </CommandGroup>
               ))}
             </CommandList>
@@ -146,8 +150,8 @@ export default function TeamSwitcher({ className }: TeamSwitcherProps) {
                 <DialogTrigger asChild>
                   <CommandItem
                     onSelect={() => {
-                      setOpen(false);
-                      setShowNewTeamDialog(true);
+                      setIsTenantSelectOpen(false);
+                      setShowNewTenantDialog(true);
                     }}
                   >
                     <PlusCircledIcon className="w-5 h-5 mr-2" />
@@ -197,7 +201,10 @@ export default function TeamSwitcher({ className }: TeamSwitcherProps) {
           </div>
         </div>
         <DialogFooter>
-          <Button variant="outline" onClick={() => setShowNewTeamDialog(false)}>
+          <Button
+            variant="outline"
+            onClick={() => setShowNewTenantDialog(false)}
+          >
             Cancel
           </Button>
           <Button type="submit">Continue</Button>
