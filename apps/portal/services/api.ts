@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { App } from '@/types/App';
+import { AppVersion, AppVersionTag } from '@/types/AppVersion';
 import { Meta } from '@/types/Meta';
 import { PortalUserProfile } from '@/types/PortalUserProfile';
 import { ResponseStatus } from '@/types/ResponseStatus';
@@ -146,8 +147,33 @@ const API = {
         },
       });
     },
-    appVersions: (appId: string) => {
-      return API.apiInstance.get(API.API_PATH.APP.SEARCH_APP_VERSIONS(appId));
+    searchAppVersions: (
+      appId: string,
+      {
+        page = 1,
+        limit = 10,
+        query,
+      }: {
+        page?: number;
+        limit?: number;
+        query?: string;
+      }
+    ): Promise<
+      AxiosResponse<{
+        data: {
+          items: AppVersion[];
+          meta: Meta;
+        };
+        status: ResponseStatus;
+      }>
+    > => {
+      return API.apiInstance.get(API.API_PATH.APP.SEARCH_APP_VERSIONS(appId), {
+        params: {
+          page: page,
+          limit: limit,
+          query,
+        },
+      });
     },
     getApp: (
       appId: string
@@ -159,7 +185,14 @@ const API = {
     > => {
       return API.apiInstance.get(API.API_PATH.APP.GET_APP(appId));
     },
-    getAppVersionTags: (appId: string) => {
+    getAppVersionTags: (
+      appId: string
+    ): Promise<
+      AxiosResponse<{
+        data: AppVersionTag[];
+        status: ResponseStatus;
+      }>
+    > => {
       return API.apiInstance.get(API.API_PATH.APP.GET_APP_VERSION_TAGS(appId));
     },
     updateApp: (

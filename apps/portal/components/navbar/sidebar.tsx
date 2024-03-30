@@ -1,6 +1,7 @@
 // import { DashboardNav } from "@/components/dashboard-nav";
 // import { navItems } from "@/constants/data";
 import { DashboardNav } from '@/components/navbar/dashboard-nav';
+import { MenuItems } from '@/components/navbar/menuItems';
 import TeamSwitcher from '@/components/navbar/team-switcher';
 import { cn } from '@app-center/shadcn/util';
 
@@ -18,27 +19,7 @@ export default function Sidebar() {
             <h2 className="px-4 mb-2 text-xl font-semibold tracking-tight">
               Overview
             </h2>
-            <DashboardNav
-              items={[
-                {
-                  title: 'Dashboard',
-                  icon: 'dashboard',
-                  href: '/console',
-                },
-                {
-                  title: 'Apps',
-                  icon: 'layers',
-                  href: '/apps',
-                  items: [
-                    {
-                      title: 'All Apps',
-                      icon: 'layers',
-                      href: '/all',
-                    },
-                  ],
-                },
-              ]}
-            />
+            <DashboardNav items={MenuItems} />
           </div>
         </div>
       </div>

@@ -3,7 +3,7 @@ import CustomBreadcrumb from '@/components/breadcrumb/breadcrumb';
 import PageTitle from '@/components/content/pageTitle';
 import useAppQuery from '@/queries/useAppQuery';
 import { IconButton, Spinner } from '@material-tailwind/react';
-import React, { useState } from 'react';
+import React, { useRef, useState } from 'react';
 import { LazyLoadImage } from 'react-lazy-load-image-component';
 import { BiEdit, BiLogoGitlab, BiLogoPlayStore } from 'react-icons/bi';
 import { BsGit } from 'react-icons/bs';
@@ -27,6 +27,10 @@ import useUserProfileQuery from '@/queries/useUserProfileQuery';
 import { RoleType } from '@/types/RoleType';
 import toast from 'react-hot-toast';
 import { useTranslations } from 'next-intl';
+import AppVersionTable, { TableRef } from '@/components/table/appVersionTable';
+import { AppVersion } from '@/types/AppVersion';
+import ShareDialog from '@/components/dialog/shareDialog';
+import QRCodeDialog from '@/components/dialog/qrCodeDialog';
 
 const AppPage = ({ params }: { params: { appId: string } }) => {
   const t = useTranslations('Apps');
@@ -43,6 +47,35 @@ const AppPage = ({ params }: { params: { appId: string } }) => {
   } = useUserProfileQuery();
   const [copied, setCopied] = useState(false);
   const [keyLoading, setKeyLoading] = useState(false);
+
+  //[Open Models]---[Start]
+  const [openPostman, setOpenPostman] = useState(false);
+  const [openQRCode, setOpenQRCode] = useState({
+    open: false,
+    data: '',
+  });
+  const [openGitLab, setOpenGitLab] = useState(false);
+  const [openEditApp, setOpenEditApp] = useState(false);
+  const [openUploadVersion, setOpenUploadVersion] = useState(false);
+  const [openShareInstallURL, setOpenShareInstallURL] = useState<{
+    open: boolean;
+    data: AppVersion | null;
+  }>({
+    open: false,
+    data: null,
+  });
+  const [openJira, setOpenJira] = useState(false);
+  const [openJiraIssues, setOpenJiraIssues] = useState<{
+    open: boolean;
+    data: AppVersion | null;
+  }>({
+    open: false,
+    data: null,
+  });
+  const [openUserAppPermissions, setOpenUserAppPermissions] = useState(false);
+  //[Open Models]----[End]
+
+  const tableRef = useRef<TableRef>(null);
 
   //get API Key
   const getAPIKey = async () => {
@@ -124,7 +157,7 @@ const AppPage = ({ params }: { params: { appId: string } }) => {
               ) : (
                 <div className="m-auto">
                   <TooltipProvider>
-                    <Tooltip>
+                    <Tooltip defaultOpen>
                       <TooltipTrigger asChild>
                         <div className="relative">
                           <IoIosCopy className="mx-3" />
@@ -297,8 +330,42 @@ const AppPage = ({ params }: { params: { appId: string } }) => {
             </div>
           </div>
         </div>
-        <div className="w-full overflow-auto">table</div>
+        <div className="w-full p-1">
+          {app && (
+            <AppVersionTable
+              ref={tableRef}
+              appId={app.id}
+              setOpenQRCode={setOpenQRCode}
+              setOpenShareInstallURL={setOpenShareInstallURL}
+              setOpenJiraIssues={setOpenJiraIssues}
+            />
+          )}
+        </div>
       </div>
+      <QRCodeDialog
+        title={t('QR Code')}
+        description={t('Scan this QR code to install this app')}
+        open={openQRCode.open}
+        onClose={() =>
+          setOpenQRCode({
+            open: false,
+            data: '',
+          })
+        }
+        qrCodeValue={openQRCode.data}
+      />
+      <ShareDialog
+        title={t('Share link')}
+        description={t('Anyone who has this link will be able to view this')}
+        onClose={() =>
+          setOpenShareInstallURL({
+            open: false,
+            data: null,
+          })
+        }
+        open={openShareInstallURL.open}
+        data={openShareInstallURL.data}
+      />
     </div>
   );
 };

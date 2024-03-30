@@ -1,5 +1,7 @@
 'use client';
 import { Icons } from '@/components/icons';
+import { DashboardNav } from '@/components/navbar/dashboard-nav';
+import { MenuItems } from '@/components/navbar/menuItems';
 // import { DashboardNav } from "@/components/dashboard-nav";
 import { Sheet, SheetContent, SheetTrigger } from '@app-center/shadcn/ui';
 import { useState } from 'react';
@@ -23,7 +25,7 @@ export function MobileSidebar({ className }: SidebarProps) {
                 Overview
               </h2>
               <div className="space-y-1">
-                {/* <DashboardNav items={navItems} setOpen={setOpen} /> */}
+                <DashboardNav items={MenuItems} setOpen={setOpen} />
               </div>
             </div>
           </div>

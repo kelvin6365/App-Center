@@ -7,6 +7,26 @@
     "Copied": "Copied",
     "Apps": "Apps",
     "All Apps": "All Apps",
-    "All apps can be found here": "All apps can be found here."
+    "All apps can be found here": "All apps can be found here.",
+    "Clear All": "Clear All",
+    "Filter Name or description": "Filter Name or description...",
+    "Created At": "Created At",
+    "File Name": "File Name",
+    "Install QR Code": "Install QR Code",
+    "Public Share URL": "Public Share URL",
+    "Download file": "Download file",
+    "Name": "Name",
+    "Quick Actions": "Quick Actions",
+    "Columns": "Columns",
+    "Description": "Description",
+    "Tags": "Tags",
+    "Share link": "Share link",
+    "Anyone who has this link will be able to view this": "Anyone who has this link will be able to view this.",
+    "Done": "Done",
+    "QR Code": "QR Code",
+    "Scan this QR code to install this app": "Scan this QR code to install this app",
+    "No results": "No results.",
+    "Previous": "Previous",
+    "Next": "Next"
   }
 }

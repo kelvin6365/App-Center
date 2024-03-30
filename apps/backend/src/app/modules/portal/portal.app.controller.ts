@@ -286,14 +286,20 @@ export class PortalAppController {
   @ApiResponseSchema(HttpStatus.OK, 'OK')
   async getAppVersions(
     @JSONQuery('query') query: SearchQueryDTO,
+    @Query('page', new DefaultValuePipe(1), ParseIntPipe) page = 1,
+    @Query('limit', new DefaultValuePipe(10), ParseIntPipe) limit = 10,
     @Param('id', new ParseUUIDPipe()) id: string,
     @CurrentUser() currentUser: CurrentUserDTO
-  ): Promise<AppResponse<AppVersionDTO[]>> {
-    return new AppResponse<AppVersionDTO[]>(
+  ): Promise<AppResponse<PageDTO<AppVersionDTO>>> {
+    return new AppResponse<PageDTO<AppVersionDTO>>(
       await this.appService.getAllAppVersions(
         id,
         query?.query ?? '',
         query?.withDeleted != null ? query.withDeleted : false,
+        {
+          page,
+          limit,
+        },
         query?.filters ?? [],
         query?.sorts ?? [{ key: 'createdAt', value: 'DESC' }],
         currentUser

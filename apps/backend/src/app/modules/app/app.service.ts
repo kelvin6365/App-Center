@@ -264,12 +264,13 @@ export class AppService {
     appId: string,
     searchQuery = '',
     withDeleted = false,
+    { page = 1, limit = 10 },
     filters: { key: string; values: string | boolean | any[] | number[] }[],
     sorts: { key: string; value: 'ASC' | 'DESC' }[] = [
       { key: 'createdAt', value: 'DESC' },
     ],
     user: CurrentUserDTO
-  ) {
+  ): Promise<PageDTO<AppVersionDTO>> {
     const app = await this.appRepository.findById(appId, withDeleted);
     if (!app) {
       throw new AppException(ResponseCode.STATUS_1011_NOT_FOUND);
@@ -279,16 +280,20 @@ export class AppService {
       app.id,
       AppsPermission.VIEW_APP
     );
-    const appVersions = await this.appVersionRepository.getAllAppVersions(
+    const result = await this.appVersionRepository.getAllAppVersions(
       appId,
       searchQuery,
       withDeleted,
+      {
+        page,
+        limit,
+      },
       filters,
       sorts
     );
 
-    for (let i = 0; i < appVersions.length; i++) {
-      const appVersion = appVersions[i];
+    for (let i = 0; i < result.items.length; i++) {
+      const appVersion = result.items[i];
       //find app version tags by app version id
       const appVersionTags =
         await this.appVersionTagRepository.getAllTagsByAppVersionId(
@@ -301,7 +306,7 @@ export class AppService {
       const jiraKeys = {};
       //Fetch jira issues details
       const allIssuesFromDifferentVersions = [];
-      appVersions.forEach((appVersion) => {
+      result.items.forEach((appVersion) => {
         appVersion.jiraIssues.forEach((issue) =>
           allIssuesFromDifferentVersions.push(issue.issueIdOrKey)
         );
@@ -341,58 +346,67 @@ export class AppService {
             };
           });
         }
-        return appVersions.map((appVersion) => {
-          appVersion = {
-            ...appVersion,
-            jiraIssues: appVersion.jiraIssues.map((issue) => {
-              return {
-                ...issue,
-                key: issue.issueIdOrKey,
-                ...jiraKeys[issue.issueIdOrKey],
-              };
-            }),
-          };
-          return new AppVersionDTO(
-            appVersion,
-            appVersion.fileId
-              ? this.configService.get('services.file.fileAPI') +
-                appVersion.fileId +
-                '&download=true'
-              : null
-          );
-        });
+        return {
+          items: result.items.map((appVersion) => {
+            appVersion = {
+              ...appVersion,
+              jiraIssues: appVersion.jiraIssues.map((issue) => {
+                return {
+                  ...issue,
+                  key: issue.issueIdOrKey,
+                  ...jiraKeys[issue.issueIdOrKey],
+                };
+              }),
+            };
+            return new AppVersionDTO(
+              appVersion,
+              appVersion.fileId
+                ? this.configService.get('services.file.fileAPI') +
+                  appVersion.fileId +
+                  '&download=true'
+                : null
+            );
+          }),
+          meta: result.meta,
+        };
       } catch (error) {
         //! All errors
         console.error(error);
         this.logger.error(error);
-        return appVersions.map((appVersion) => {
-          appVersion = {
-            ...appVersion,
-            jiraIssues: [],
-          };
-          return new AppVersionDTO(
-            appVersion,
+        return {
+          items: result.items.map((appVersion) => {
+            appVersion = {
+              ...appVersion,
+              jiraIssues: [],
+            };
+            return new AppVersionDTO(
+              appVersion,
+              appVersion.fileId
+                ? this.configService.get('services.file.fileAPI') +
+                  appVersion.fileId +
+                  '&download=true'
+                : null
+            );
+          }),
+          meta: result.meta,
+        };
+      }
+    }
+
+    return {
+      items: result.items.map(
+        (appVersion) =>
+          new AppVersionDTO(
+            { ...appVersion, jiraIssues: [] },
             appVersion.fileId
               ? this.configService.get('services.file.fileAPI') +
                 appVersion.fileId +
                 '&download=true'
               : null
-          );
-        });
-      }
-    }
-
-    return appVersions.map(
-      (appVersion) =>
-        new AppVersionDTO(
-          { ...appVersion, jiraIssues: [] },
-          appVersion.fileId
-            ? this.configService.get('services.file.fileAPI') +
-              appVersion.fileId +
-              '&download=true'
-            : null
-        )
-    );
+          )
+      ),
+      meta: result.meta,
+    };
   }
 
   //get all app version tags by app id

@@ -10,6 +10,12 @@ import {
 import { AppException } from '../../common/response/app.exception';
 import { ResponseCode } from '../../common/response/response.code';
 import { AppVersion } from '../../modules/app/entities/app.version.entity';
+import {
+  IPaginationMeta,
+  IPaginationOptions,
+  paginate,
+  Pagination,
+} from 'nestjs-typeorm-paginate';
 
 @Injectable()
 export class AppVersionRepository extends Repository<AppVersion> {
@@ -22,11 +28,12 @@ export class AppVersionRepository extends Repository<AppVersion> {
     appId: string,
     searchQuery = '',
     withDeleted = false,
+    options: IPaginationOptions = { page: 1, limit: 10 },
     filters: { key: string; values: string | boolean | any[] | number[] }[],
     sorts: { key: string; value: 'ASC' | 'DESC' }[] = [
       { key: 'createdAt', value: 'DESC' },
     ]
-  ): Promise<AppVersion[]> {
+  ): Promise<Pagination<AppVersion, IPaginationMeta>> {
     let findOptions: FindManyOptions<AppVersion> = {};
     findOptions = {
       where: [],
@@ -65,7 +72,7 @@ export class AppVersionRepository extends Repository<AppVersion> {
         findOptions.order[sort.key] = sort.value;
       }
     }
-    return this.find(findOptions);
+    return paginate<AppVersion>(this, options, findOptions);
   }
 
   //Get a single file

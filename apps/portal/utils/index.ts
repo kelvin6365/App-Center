@@ -1,4 +1,5 @@
 import axios from 'axios';
+import dayjs from 'dayjs';
 import React from 'react';
 import { Children } from 'react';
 import { useLocation } from 'react-router-dom';
@@ -61,3 +62,8 @@ export default function isUuid(uuid: string, isNullable = false): boolean {
         uuid
       );
 }
+
+//Date format
+export const formatDate = (date: string) => {
+  return dayjs(date).format('YYYY-MM-DD HH:mm:ss');
+};

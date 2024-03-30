@@ -7,6 +7,26 @@
     "Copied": "已複製",
     "All Apps": "所有應用程式",
     "Apps": "應用",
-    "All apps can be found here": "所有應用程式都可以在這裡找到。"
+    "All apps can be found here": "所有應用程式都可以在這裡找到。",
+    "Clear All": "全部清除",
+    "Filter Name or description": "搜尋名稱或描述...",
+    "Created At": "創建於",
+    "File Name": "檔案名稱",
+    "Install QR Code": "安裝二維碼",
+    "Public Share URL": "分享網址",
+    "Download file": "下載文件",
+    "Name": "名稱",
+    "Quick Actions": "快速行動",
+    "Columns": "列",
+    "Description": "描述",
+    "Tags": "標籤",
+    "Share link": "分享連結",
+    "Anyone who has this link will be able to view this": "任何擁有此連結的人都可以查看此內容。",
+    "Done": "完畢",
+    "Scan this QR code to install this app": "掃描此二維碼安裝此應用程式",
+    "QR Code": "QR 圖碼",
+    "No results": "沒有結果。",
+    "Previous": "以前的",
+    "Next": "下一個"
   }
 }

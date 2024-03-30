@@ -17,3 +17,6 @@ export * from './lib/ui/breadcrumb';
 export * from './lib/ui/card';
 export * from './lib/ui/pagination';
 export * from './lib/ui/tooltip';
+export * from './lib/ui/table';
+export * from './lib/ui/checkbox';
+export * from './lib/ui/badge';

@@ -80,9 +80,9 @@ const AppVersionTable = forwardRef<TableRef, Props>(
       }
       try {
         const res = await API.app.appVersions(appId);
-        const { data }: { data: AppVersion[] } = res.data;
-        setAppVersions(data);
-        return data;
+        const { data }: { data: { items: AppVersion[] } } = res.data;
+        setAppVersions(data.items);
+        return data.items;
       } catch (error) {
         console.log(error);
         if (axios.isAxiosError(error)) {

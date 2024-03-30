@@ -2,6 +2,7 @@ import { MobileSidebar } from '@/components/navbar/mobile-sidebar';
 import { ModeToggle } from '@/components/navbar/mode-toggle';
 import { UserNav } from '@/components/navbar/user-nav';
 import { cn } from '@app-center/shadcn/util';
+import Image from 'next/image';
 import Link from 'next/link';
 
 export default function Header() {
@@ -13,18 +14,7 @@ export default function Header() {
             href={'https://github.com/Kiranism/next-shadcn-dashboard-starter'}
             target="_blank"
           >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              className="w-6 h-6 mr-2"
-            >
-              <path d="M15 6v12a3 3 0 1 0 3-3H6a3 3 0 1 0 3 3V6a3 3 0 1 0-3 3h12a3 3 0 1 0-3-3" />
-            </svg>
+            <Image src="/images/logo.jpg" alt="logo" width={24} height={24} />
           </Link>
         </div>
         <div className={cn('block lg:!hidden')}>
