@@ -16,3 +16,4 @@ export * from './lib/ui/separator';
 export * from './lib/ui/breadcrumb';
 export * from './lib/ui/card';
 export * from './lib/ui/pagination';
+export * from './lib/ui/tooltip';

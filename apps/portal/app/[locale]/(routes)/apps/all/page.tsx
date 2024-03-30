@@ -7,9 +7,12 @@ import { CustomPagination } from '@/components/pagination/pagination';
 import useSearchAppsQuery from '@/queries/useSearchAppsQuery';
 import useTeamSelectionStore from '@/stores/useTeamSelectionStore';
 import { useEffect, useState } from 'react';
+import Link from 'next/link';
+import { useTranslations } from 'next-intl';
 const AllAppsPage = () => {
   const searchParams = useSearchParams();
   const router = useRouter();
+  const t = useTranslations('Apps');
   const { selectedTeam } = useTeamSelectionStore();
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage] = useState(10);
@@ -39,26 +42,31 @@ const AllAppsPage = () => {
       <CustomBreadcrumb
         items={[
           {
-            label: 'Apps',
+            label: t('Apps'),
             href: '/apps',
           },
           {
-            label: 'All Apps',
+            label: t('All Apps'),
             href: '/apps/all',
           },
         ]}
       />
-      <PageTitle title="All Apps" description="All apps can be found here." />
+      <PageTitle
+        title={t('All Apps')}
+        description={t('All apps can be found here')}
+      />
 
       <div className="grid grid-cols-2 gap-8 py-2 md:grid-cols-4 lg:grid-cols-5">
         {apps.map(({ name, description, iconFileURL, id }, i) => {
           return (
-            <AppCard
-              key={i}
-              name={name}
-              description={description}
-              icon={iconFileURL}
-            />
+            <Link key={id} href={`/apps/${id}`}>
+              <AppCard
+                key={i}
+                name={name}
+                description={description}
+                icon={iconFileURL}
+              />
+            </Link>
           );
         })}
       </div>

@@ -149,7 +149,14 @@ const API = {
     appVersions: (appId: string) => {
       return API.apiInstance.get(API.API_PATH.APP.SEARCH_APP_VERSIONS(appId));
     },
-    getApp: (appId: string) => {
+    getApp: (
+      appId: string
+    ): Promise<
+      AxiosResponse<{
+        data: App;
+        status: ResponseStatus;
+      }>
+    > => {
       return API.apiInstance.get(API.API_PATH.APP.GET_APP(appId));
     },
     getAppVersionTags: (appId: string) => {

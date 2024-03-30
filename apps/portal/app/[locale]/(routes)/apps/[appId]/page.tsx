@@ -1,0 +1,306 @@
+'use client';
+import CustomBreadcrumb from '@/components/breadcrumb/breadcrumb';
+import PageTitle from '@/components/content/pageTitle';
+import useAppQuery from '@/queries/useAppQuery';
+import { IconButton, Spinner } from '@material-tailwind/react';
+import React, { useState } from 'react';
+import { LazyLoadImage } from 'react-lazy-load-image-component';
+import { BiEdit, BiLogoGitlab, BiLogoPlayStore } from 'react-icons/bi';
+import { BsGit } from 'react-icons/bs';
+import { FaCloudUploadAlt, FaKey } from 'react-icons/fa';
+import { MdGroupAdd } from 'react-icons/md';
+import { GrAppleAppStore } from 'react-icons/gr';
+import { IoIosCopy } from 'react-icons/io';
+import { SiConfluence, SiJirasoftware, SiPostman } from 'react-icons/si';
+import { TiTick } from 'react-icons/ti';
+import { maskingString } from '@/utils';
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from '@app-center/shadcn/ui/lib/ui/tooltip';
+import { Button } from '@app-center/shadcn/ui';
+import API from '@/services/api';
+import axios from 'axios';
+import useUserProfileQuery from '@/queries/useUserProfileQuery';
+import { RoleType } from '@/types/RoleType';
+import toast from 'react-hot-toast';
+import { useTranslations } from 'next-intl';
+
+const AppPage = ({ params }: { params: { appId: string } }) => {
+  const t = useTranslations('Apps');
+  //Fetch App data
+  const { app, isLoading, isError, error, refetch } = useAppQuery({
+    appId: params.appId,
+  });
+
+  const {
+    userProfile,
+    isLoading: isLoadingUserProfile,
+    isError: isErrorUserProfile,
+    refetch: refetchUserProfile,
+  } = useUserProfileQuery();
+  const [copied, setCopied] = useState(false);
+  const [keyLoading, setKeyLoading] = useState(false);
+
+  //get API Key
+  const getAPIKey = async () => {
+    if (!app) {
+      return;
+    }
+    try {
+      setKeyLoading(true);
+      const res = await API.app.getAPIKey(app.id);
+      const { data } = res.data;
+      setCopied(true);
+      setKeyLoading(false);
+      navigator.clipboard.writeText(data ?? '');
+      toast.success(t('Messages.API Key Copied'));
+      setTimeout(() => {
+        setCopied(false);
+      }, 3000);
+    } catch (error) {
+      setKeyLoading(false);
+      console.log(error);
+      if (axios.isAxiosError(error)) {
+        toast.error(error.response?.data?.status?.displayMessage.toString());
+      }
+    }
+  };
+
+  return (
+    <div>
+      <CustomBreadcrumb
+        items={[
+          {
+            label: t('Apps'),
+            href: '/apps',
+          },
+          {
+            label: t('All Apps'),
+            href: '/apps/all',
+          },
+          {
+            label: `${app?.name ?? ''}`,
+            href: `/apps/${params.appId}`,
+          },
+        ]}
+      />
+      <PageTitle
+        isLoading={isLoading}
+        title={app?.name ?? ''}
+        description={app?.description ?? ''}
+      />
+      <div className="flex flex-wrap py-4 md:flex-nowrap sm:space-x-6">
+        <div className="w-[180px] m-auto md:m-0">
+          <LazyLoadImage
+            className="max-w-full rounded-lg border min-w-[180px] w-[180px] h-[170px] sm:h-[180px]"
+            src={app?.iconFileURL}
+            alt={app?.name}
+            placeholder={
+              <div className="max-w-full rounded-lg border w-[180px] h-[170px] sm:h-[180px] animate-pulse bg-blue-gray-200/30"></div>
+            }
+            effect="opacity"
+          />
+          <div className="flex py-2">
+            <span
+              className="inline-flex text-sm text-gray-900 bg-gray-200 border border-r-0 border-gray-300 cursor-pointer rounded-l-md dark:bg-gray-600 dark:text-gray-400 dark:border-gray-600"
+              onClick={() => {
+                if (!copied) {
+                  getAPIKey();
+                }
+              }}
+            >
+              {!copied ? (
+                <div className="relative flex">
+                  <FaKey className="m-auto mx-3" />
+                  {keyLoading && (
+                    <div className="absolute top-0 bottom-0 left-0 right-0 flex bg-blue-gray-400/50">
+                      <Spinner className="w-5 h-5 m-auto" />
+                    </div>
+                  )}
+                </div>
+              ) : (
+                <div className="m-auto">
+                  <TooltipProvider>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <div className="relative">
+                          <IoIosCopy className="mx-3" />
+                          <TiTick className="absolute right-[0px] bottom-[-8px] text-green-400" />
+                        </div>
+                      </TooltipTrigger>
+                      <TooltipContent>{t('Copied')}</TooltipContent>
+                    </Tooltip>
+                  </TooltipProvider>
+                </div>
+              )}
+            </span>
+            <input
+              type="text"
+              id="website-admin"
+              className="rounded-none rounded-r-lg bg-gray-50 border text-gray-900 focus:ring-blue-500 focus:border-blue-500 block flex-1 min-w-0 w-full text-sm border-gray-300 p-2.5  dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+              value={
+                app?.apiKey
+                  ? maskingString(app.apiKey, 4, app.apiKey.length)
+                  : ''
+              }
+              readOnly
+            />
+          </div>
+          <div className="my-2 border border-gray-200 rounded bg-gray-50 dark:border-gray-600 dark:bg-gray-700">
+            <p className="px-4 pt-4 font-normal text-blue-gray-400">
+              {t('Quick Access')}
+            </p>
+            <div className="grid grid-cols-3 gap-2 p-4">
+              {/* Apple Store */}
+              <Button
+                variant="outline"
+                size="icon"
+                className="w-[40px] h-[40px] bg-white text-cyan-500"
+                // onClick={() => {
+                //   if (app?.extra?.appStoreURL) {
+                //     window.open(app.extra.appStoreURL, '_blank');
+                //   } else {
+                //     toast.info('App Store URL is not set');
+                //   }
+                // }}
+              >
+                <GrAppleAppStore className="w-5 h-5 m-auto" />
+              </Button>
+
+              {/* Play Store */}
+              <Button
+                variant="outline"
+                size="icon"
+                className="w-[40px] h-[40px] bg-white text-cyan-500"
+                onClick={() => {
+                  //   if (app?.extra?.playStoreURL) {
+                  //     window.open(app.extra.playStoreURL, '_blank');
+                  //   } else {
+                  //     toast.info('Play Store URL is not set');
+                  //   }
+                }}
+              >
+                <BiLogoPlayStore className="w-5 h-5" />
+              </Button>
+
+              {/* Project Git */}
+              <Button
+                variant="outline"
+                size="icon"
+                className="w-[40px] h-[40px] text-orange-500 bg-white"
+                onClick={() => {
+                  //   if (app?.extra?.repoURL) {
+                  //     window.open(app.extra.repoURL, '_blank');
+                  //   } else {
+                  //     toast.info('Git Repository URL is not set');
+                  //   }
+                }}
+              >
+                <BsGit className="w-5 h-5" />
+              </Button>
+
+              {/* Postman */}
+              <Button
+                variant="outline"
+                size="icon"
+                className="w-[40px] h-[40px] text-orange-500 bg-white"
+                onClick={() => {
+                  //   setOpenPostman(true);
+                }}
+              >
+                <SiPostman className="w-5 h-5" />
+              </Button>
+
+              {/* GitLab CI */}
+              <Button
+                variant="outline"
+                size="icon"
+                className="w-[40px] h-[40px] text-orange-500 bg-white"
+                onClick={() => {
+                  //   setOpenGitLab(true);
+                }}
+              >
+                <BiLogoGitlab className="w-5 h-5" />
+              </Button>
+
+              {/* Jira */}
+              <Button
+                variant="outline"
+                size="icon"
+                className="w-[40px] h-[40px] text-blue-500 bg-white"
+                onClick={() => {
+                  //   setOpenJira(true);
+                }}
+              >
+                <SiJirasoftware className="w-5 h-5" />
+              </Button>
+
+              {/* Confluence */}
+              <Button
+                variant="outline"
+                size="icon"
+                className="w-[40px] h-[40px] text-blue-500 bg-white"
+                onClick={() => {
+                  //   if (app?.extra?.confluenceURL) {
+                  //     window.open(app.extra.confluenceURL, '_blank');
+                  //   } else {
+                  //     toast.info('Confluence URL is not set');
+                  //   }
+                }}
+              >
+                <SiConfluence className="w-5 h-5" />
+              </Button>
+
+              {/* Upload New Version */}
+              <Button
+                variant="outline"
+                size="icon"
+                className="w-[40px] h-[40px] text-gray-500 bg-white"
+                onClick={() => {
+                  //   setOpenUploadVersion(true);
+                }}
+              >
+                <FaCloudUploadAlt className="w-5 h-5" />
+              </Button>
+
+              {/* Edit App */}
+              <Button
+                variant="outline"
+                size="icon"
+                className="w-[40px] h-[40px] text-gray-500 bg-white"
+                onClick={() => {
+                  //   setOpenEditApp(true);
+                }}
+              >
+                <BiEdit className="w-5 h-5" />
+              </Button>
+
+              {!isLoadingUserProfile &&
+                !isErrorUserProfile &&
+                userProfile?.roles
+                  .map((r) => r.type)
+                  .includes(RoleType.ADMIN) && (
+                  <Button
+                    variant="outline"
+                    size="icon"
+                    className="text-gray-500 bg-white"
+                    onClick={() => {
+                      // setOpenUserAppPermissions(true);
+                    }}
+                  >
+                    <MdGroupAdd className="w-5 h-5" />
+                  </Button>
+                )}
+            </div>
+          </div>
+        </div>
+        <div className="w-full overflow-auto">table</div>
+      </div>
+    </div>
+  );
+};
+
+export default AppPage;
