@@ -27,6 +27,10 @@
     "Scan this QR code to install this app": "Scan this QR code to install this app",
     "No results": "No results.",
     "Previous": "Previous",
-    "Next": "Next"
+    "Next": "Next",
+    "App not found": "App not found!",
+    "Invalid App ID": "Invalid App ID",
+    "Invalid App ID description": "Oops! It seems like the app ID you entered is not valid. Please make sure you have the correct app ID and try again. If the problem persists, please contact our support team for further assistance.",
+    "Back to All Apps": "Back to All Apps"
   }
 }

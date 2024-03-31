@@ -1,42 +1,53 @@
 'use client';
+import Custom404 from '@/components/404';
 import CustomBreadcrumb from '@/components/breadcrumb/breadcrumb';
 import PageTitle from '@/components/content/pageTitle';
+import QRCodeDialog from '@/components/dialog/qrCodeDialog';
+import ShareDialog from '@/components/dialog/shareDialog';
+import AppVersionTable, { TableRef } from '@/components/table/appVersionTable';
 import useAppQuery from '@/queries/useAppQuery';
-import { IconButton, Spinner } from '@material-tailwind/react';
-import React, { useRef, useState } from 'react';
-import { LazyLoadImage } from 'react-lazy-load-image-component';
-import { BiEdit, BiLogoGitlab, BiLogoPlayStore } from 'react-icons/bi';
-import { BsGit } from 'react-icons/bs';
-import { FaCloudUploadAlt, FaKey } from 'react-icons/fa';
-import { MdGroupAdd } from 'react-icons/md';
-import { GrAppleAppStore } from 'react-icons/gr';
-import { IoIosCopy } from 'react-icons/io';
-import { SiConfluence, SiJirasoftware, SiPostman } from 'react-icons/si';
-import { TiTick } from 'react-icons/ti';
+import useUserProfileQuery from '@/queries/useUserProfileQuery';
+import API from '@/services/api';
+import { AppVersion } from '@/types/AppVersion';
+import { RoleType } from '@/types/RoleType';
 import { maskingString } from '@/utils';
+import { Button } from '@app-center/shadcn/ui';
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
 } from '@app-center/shadcn/ui/lib/ui/tooltip';
-import { Button } from '@app-center/shadcn/ui';
-import API from '@/services/api';
+import { Spinner } from '@material-tailwind/react';
 import axios from 'axios';
-import useUserProfileQuery from '@/queries/useUserProfileQuery';
-import { RoleType } from '@/types/RoleType';
-import toast from 'react-hot-toast';
 import { useTranslations } from 'next-intl';
-import AppVersionTable, { TableRef } from '@/components/table/appVersionTable';
-import { AppVersion } from '@/types/AppVersion';
-import ShareDialog from '@/components/dialog/shareDialog';
-import QRCodeDialog from '@/components/dialog/qrCodeDialog';
+import Image from 'next/image';
+import { useRouter } from 'next/navigation';
+import { useRef, useState } from 'react';
+import toast from 'react-hot-toast';
+import { BiEdit, BiLogoGitlab, BiLogoPlayStore } from 'react-icons/bi';
+import { BsGit } from 'react-icons/bs';
+import { FaCloudUploadAlt, FaKey } from 'react-icons/fa';
+import { GrAppleAppStore } from 'react-icons/gr';
+import { IoIosCopy } from 'react-icons/io';
+import { MdGroupAdd } from 'react-icons/md';
+import { SiConfluence, SiJirasoftware, SiPostman } from 'react-icons/si';
+import { TiTick } from 'react-icons/ti';
+import * as z from 'zod';
+
+const paramsSchema = z.object({
+  appId: z.string().uuid(),
+});
 
 const AppPage = ({ params }: { params: { appId: string } }) => {
+  const isAppIdValid = paramsSchema.safeParse({ appId: params.appId }).success;
   const t = useTranslations('Apps');
+  const router = useRouter();
+
   //Fetch App data
   const { app, isLoading, isError, error, refetch } = useAppQuery({
     appId: params.appId,
+    ready: isAppIdValid,
   });
 
   const {
@@ -102,6 +113,39 @@ const AppPage = ({ params }: { params: { appId: string } }) => {
     }
   };
 
+  if (isAppIdValid === false) {
+    return (
+      <div>
+        <CustomBreadcrumb
+          items={[
+            {
+              label: t('Apps'),
+              href: '/apps',
+            },
+            {
+              label: t('All Apps'),
+              href: '/apps/all',
+            },
+            {
+              label: `${'-'}`,
+              href: `/apps/${params.appId}`,
+            },
+          ]}
+        />
+        <div className="py-4">
+          <Custom404
+            title={t('Invalid App ID')}
+            description={t('Invalid App ID description')}
+            backBtnText={t('Back to All Apps')}
+            backBtnOnClick={() => {
+              router.push('/apps/all');
+            }}
+          />
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div>
       <CustomBreadcrumb
@@ -127,15 +171,20 @@ const AppPage = ({ params }: { params: { appId: string } }) => {
       />
       <div className="flex flex-wrap py-4 md:flex-nowrap sm:space-x-6">
         <div className="w-[180px] m-auto md:m-0">
-          <LazyLoadImage
-            className="max-w-full rounded-lg border min-w-[180px] w-[180px] h-[170px] sm:h-[180px]"
-            src={app?.iconFileURL}
-            alt={app?.name}
-            placeholder={
-              <div className="max-w-full rounded-lg border w-[180px] h-[170px] sm:h-[180px] animate-pulse bg-blue-gray-200/30"></div>
-            }
-            effect="opacity"
-          />
+          {app ? (
+            <Image
+              className="max-w-full rounded-lg border min-w-[180px] w-[180px] h-[170px] sm:h-[180px] mb-2"
+              src={app?.iconFileURL}
+              alt={app?.name}
+              width={180}
+              height={170}
+              // placeholder={
+              //   <div className="max-w-full rounded-lg border w-[180px] h-[170px] sm:h-[180px] animate-pulse bg-blue-gray-200/30"></div>
+              // }
+            />
+          ) : (
+            <div className="max-w-full rounded-lg border w-[180px] h-[170px] sm:h-[180px] animate-pulse bg-blue-gray-200/30 mb-2"></div>
+          )}
           <div className="flex py-2">
             <span
               className="inline-flex text-sm text-gray-900 bg-gray-200 border border-r-0 border-gray-300 cursor-pointer rounded-l-md dark:bg-gray-600 dark:text-gray-400 dark:border-gray-600"

@@ -19,6 +19,9 @@ const nextConfig = {
       fullUrl: true,
     },
   },
+  images: {
+    domains: ['localhost'],
+  },
 
   compiler: {
     // For other options, see https://styled-components.com/docs/tooling#babel-plugin

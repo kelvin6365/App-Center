@@ -27,6 +27,10 @@
     "QR Code": "QR 圖碼",
     "No results": "沒有結果。",
     "Previous": "以前的",
-    "Next": "下一個"
+    "Next": "下一個",
+    "App not found": "未找到應用程式！",
+    "Invalid App ID": "應用程式 ID 無效",
+    "Invalid App ID description": "噢!您輸入的應用程式 ID 似乎無效。請確認您輸入了正確的應用程式 ID,然後重試。如果問題持續存在,請聯繫我們的支援團隊尋求進一步協助。",
+    "Back to All Apps": "返回所有應用程式"
   }
 }

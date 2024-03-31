@@ -17,10 +17,10 @@ const PageTitle = ({ title, description, isLoading = false }: Props) => {
         </>
       ) : (
         <>
-          <h4 className="block font-sans text-2xl antialiased font-semibold leading-snug tracking-normal text-blue-gray-900">
+          <h4 className="block font-sans text-2xl antialiased font-semibold leading-snug tracking-normal text-blue-gray-900 dark:text-white">
             {title}
           </h4>
-          <p className="block mt-1 font-sans text-base antialiased font-normal leading-relaxed text-gray-700">
+          <p className="block mt-1 font-sans text-base antialiased font-normal leading-relaxed text-gray-700 dark:text-gray-300">
             {description}
           </p>
         </>

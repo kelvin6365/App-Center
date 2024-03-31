@@ -164,7 +164,7 @@ const AppVersionTable = React.forwardRef<TableRef, Props>(
                   <Tooltip>
                     <TooltipTrigger asChild>
                       <div
-                        className="p-2 font-medium rounded-full cursor-pointer hover:bg-white"
+                        className="p-2 font-medium rounded-full cursor-pointer hover:bg-white dark:hover:bg-gray-600"
                         onClick={() => {
                           setOpenQRCode({
                             open: true,
@@ -181,7 +181,7 @@ const AppVersionTable = React.forwardRef<TableRef, Props>(
                   <Tooltip>
                     <TooltipTrigger asChild>
                       <div
-                        className="p-2 font-medium rounded-full cursor-pointer hover:bg-white"
+                        className="p-2 font-medium rounded-full cursor-pointer hover:bg-white dark:hover:bg-gray-600"
                         onClick={() => {
                           setOpenShareInstallURL({
                             open: true,
@@ -198,7 +198,7 @@ const AppVersionTable = React.forwardRef<TableRef, Props>(
                   <Tooltip>
                     <TooltipTrigger asChild>
                       <a
-                        className="p-2 font-medium rounded-full hover:bg-white"
+                        className="p-2 font-medium rounded-full hover:bg-white dark:hover:bg-gray-600"
                         href={fileURL}
                       >
                         <BiSolidDownload className="w-5 h-5" />
