@@ -1,14 +1,17 @@
 'use client';
+import useDialogState from '@/app/[locale]/(routes)/apps/[appId]/_helper/useDialogState';
 import Custom404 from '@/components/404';
 import CustomBreadcrumb from '@/components/breadcrumb/breadcrumb';
 import PageTitle from '@/components/content/pageTitle';
+import GitLabCICodeDialog from '@/components/dialog/gitlabCICodeDialog';
+import JiraDialog from '@/components/dialog/jiraDialog';
+import PostmanDialog from '@/components/dialog/postmanDialog';
 import QRCodeDialog from '@/components/dialog/qrCodeDialog';
 import ShareDialog from '@/components/dialog/shareDialog';
 import AppVersionTable, { TableRef } from '@/components/table/appVersionTable';
 import useAppQuery from '@/queries/useAppQuery';
 import useUserProfileQuery from '@/queries/useUserProfileQuery';
 import API from '@/services/api';
-import { AppVersion } from '@/types/AppVersion';
 import { RoleType } from '@/types/RoleType';
 import { maskingString } from '@/utils';
 import { Button } from '@app-center/shadcn/ui';
@@ -60,30 +63,26 @@ const AppPage = ({ params }: { params: { appId: string } }) => {
   const [keyLoading, setKeyLoading] = useState(false);
 
   //[Open Models]---[Start]
-  const [openPostman, setOpenPostman] = useState(false);
-  const [openQRCode, setOpenQRCode] = useState({
-    open: false,
-    data: '',
-  });
-  const [openGitLab, setOpenGitLab] = useState(false);
-  const [openEditApp, setOpenEditApp] = useState(false);
-  const [openUploadVersion, setOpenUploadVersion] = useState(false);
-  const [openShareInstallURL, setOpenShareInstallURL] = useState<{
-    open: boolean;
-    data: AppVersion | null;
-  }>({
-    open: false,
-    data: null,
-  });
-  const [openJira, setOpenJira] = useState(false);
-  const [openJiraIssues, setOpenJiraIssues] = useState<{
-    open: boolean;
-    data: AppVersion | null;
-  }>({
-    open: false,
-    data: null,
-  });
-  const [openUserAppPermissions, setOpenUserAppPermissions] = useState(false);
+  const {
+    openPostman,
+    setOpenPostman,
+    openQRCode,
+    setOpenQRCode,
+    openGitLab,
+    setOpenGitLab,
+    openEditApp,
+    setOpenEditApp,
+    openUploadVersion,
+    setOpenUploadVersion,
+    openShareInstallURL,
+    setOpenShareInstallURL,
+    openJira,
+    setOpenJira,
+    openJiraIssues,
+    setOpenJiraIssues,
+    openUserAppPermissions,
+    setOpenUserAppPermissions,
+  } = useDialogState();
   //[Open Models]----[End]
 
   const tableRef = useRef<TableRef>(null);
@@ -235,148 +234,160 @@ const AppPage = ({ params }: { params: { appId: string } }) => {
             <p className="px-4 pt-4 font-normal text-blue-gray-400">
               {t('Quick Access')}
             </p>
-            <div className="grid grid-cols-3 gap-2 p-4">
-              {/* Apple Store */}
-              <Button
-                variant="outline"
-                size="icon"
-                className="w-[40px] h-[40px] bg-white text-cyan-500"
-                // onClick={() => {
-                //   if (app?.extra?.appStoreURL) {
-                //     window.open(app.extra.appStoreURL, '_blank');
-                //   } else {
-                //     toast.info('App Store URL is not set');
-                //   }
-                // }}
-              >
-                <GrAppleAppStore className="w-5 h-5 m-auto" />
-              </Button>
+            <TooltipProvider>
+              <div className="grid grid-cols-3 gap-2 p-4">
+                {/* Apple Store */}
+                <Button
+                  variant="outline"
+                  size="icon"
+                  className="w-[40px] h-[40px] bg-white text-cyan-500"
+                  onClick={() => {
+                    if (app?.extra?.appStoreURL) {
+                      window.open(app.extra.appStoreURL, '_blank');
+                    } else {
+                      toast.error(t('App Store URL is not set'));
+                    }
+                  }}
+                >
+                  <GrAppleAppStore className="w-5 h-5 m-auto" />
+                </Button>
 
-              {/* Play Store */}
-              <Button
-                variant="outline"
-                size="icon"
-                className="w-[40px] h-[40px] bg-white text-cyan-500"
-                onClick={() => {
-                  //   if (app?.extra?.playStoreURL) {
-                  //     window.open(app.extra.playStoreURL, '_blank');
-                  //   } else {
-                  //     toast.info('Play Store URL is not set');
-                  //   }
-                }}
-              >
-                <BiLogoPlayStore className="w-5 h-5" />
-              </Button>
+                {/* Play Store */}
+                <Button
+                  variant="outline"
+                  size="icon"
+                  className="w-[40px] h-[40px] bg-white text-cyan-500"
+                  onClick={() => {
+                    if (app?.extra?.playStoreURL) {
+                      window.open(app.extra.playStoreURL, '_blank');
+                    } else {
+                      toast.error(t('Play Store URL is not set'));
+                    }
+                  }}
+                >
+                  <BiLogoPlayStore className="w-5 h-5" />
+                </Button>
 
-              {/* Project Git */}
-              <Button
-                variant="outline"
-                size="icon"
-                className="w-[40px] h-[40px] text-orange-500 bg-white"
-                onClick={() => {
-                  //   if (app?.extra?.repoURL) {
-                  //     window.open(app.extra.repoURL, '_blank');
-                  //   } else {
-                  //     toast.info('Git Repository URL is not set');
-                  //   }
-                }}
-              >
-                <BsGit className="w-5 h-5" />
-              </Button>
+                {/* Project Git */}
+                <Button
+                  variant="outline"
+                  size="icon"
+                  className="w-[40px] h-[40px] text-orange-500 bg-white"
+                  onClick={() => {
+                    if (app?.extra?.repoURL) {
+                      window.open(app.extra.repoURL, '_blank');
+                    } else {
+                      toast.error(t('Git Repository URL is not set'));
+                    }
+                  }}
+                >
+                  <BsGit className="w-5 h-5" />
+                </Button>
 
-              {/* Postman */}
-              <Button
-                variant="outline"
-                size="icon"
-                className="w-[40px] h-[40px] text-orange-500 bg-white"
-                onClick={() => {
-                  //   setOpenPostman(true);
-                }}
-              >
-                <SiPostman className="w-5 h-5" />
-              </Button>
+                {/* Postman */}
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Button
+                      variant="outline"
+                      size="icon"
+                      className="w-[40px] h-[40px] text-orange-500 bg-white"
+                      onClick={() => {
+                        setOpenPostman(true);
+                      }}
+                    >
+                      <SiPostman className="w-5 h-5" />
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent>{t('Postman')}</TooltipContent>
+                </Tooltip>
+                {/* GitLab CI */}
 
-              {/* GitLab CI */}
-              <Button
-                variant="outline"
-                size="icon"
-                className="w-[40px] h-[40px] text-orange-500 bg-white"
-                onClick={() => {
-                  //   setOpenGitLab(true);
-                }}
-              >
-                <BiLogoGitlab className="w-5 h-5" />
-              </Button>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Button
+                      variant="outline"
+                      size="icon"
+                      className="w-[40px] h-[40px] text-orange-500 bg-white"
+                      onClick={() => {
+                        setOpenGitLab(true);
+                      }}
+                    >
+                      <BiLogoGitlab className="w-5 h-5" />
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent>{t('GitLab CI')}</TooltipContent>
+                </Tooltip>
 
-              {/* Jira */}
-              <Button
-                variant="outline"
-                size="icon"
-                className="w-[40px] h-[40px] text-blue-500 bg-white"
-                onClick={() => {
-                  //   setOpenJira(true);
-                }}
-              >
-                <SiJirasoftware className="w-5 h-5" />
-              </Button>
+                {/* Jira */}
+                <Button
+                  variant="outline"
+                  size="icon"
+                  className="w-[40px] h-[40px] text-blue-500 bg-white"
+                  onClick={() => {
+                    setOpenJira(true);
+                  }}
+                >
+                  <SiJirasoftware className="w-5 h-5" />
+                </Button>
 
-              {/* Confluence */}
-              <Button
-                variant="outline"
-                size="icon"
-                className="w-[40px] h-[40px] text-blue-500 bg-white"
-                onClick={() => {
-                  //   if (app?.extra?.confluenceURL) {
-                  //     window.open(app.extra.confluenceURL, '_blank');
-                  //   } else {
-                  //     toast.info('Confluence URL is not set');
-                  //   }
-                }}
-              >
-                <SiConfluence className="w-5 h-5" />
-              </Button>
+                {/* Confluence */}
+                <Button
+                  variant="outline"
+                  size="icon"
+                  className="w-[40px] h-[40px] text-blue-500 bg-white"
+                  onClick={() => {
+                    if (app?.extra?.confluenceURL) {
+                      window.open(app.extra.confluenceURL, '_blank');
+                    } else {
+                      toast.error(t('Confluence URL is not set'));
+                    }
+                  }}
+                >
+                  <SiConfluence className="w-5 h-5" />
+                </Button>
 
-              {/* Upload New Version */}
-              <Button
-                variant="outline"
-                size="icon"
-                className="w-[40px] h-[40px] text-gray-500 bg-white"
-                onClick={() => {
-                  //   setOpenUploadVersion(true);
-                }}
-              >
-                <FaCloudUploadAlt className="w-5 h-5" />
-              </Button>
+                {/* Upload New Version */}
+                <Button
+                  variant="outline"
+                  size="icon"
+                  className="w-[40px] h-[40px] text-gray-500 bg-white"
+                  onClick={() => {
+                    //   setOpenUploadVersion(true);
+                  }}
+                >
+                  <FaCloudUploadAlt className="w-5 h-5" />
+                </Button>
 
-              {/* Edit App */}
-              <Button
-                variant="outline"
-                size="icon"
-                className="w-[40px] h-[40px] text-gray-500 bg-white"
-                onClick={() => {
-                  //   setOpenEditApp(true);
-                }}
-              >
-                <BiEdit className="w-5 h-5" />
-              </Button>
+                {/* Edit App */}
+                <Button
+                  variant="outline"
+                  size="icon"
+                  className="w-[40px] h-[40px] text-gray-500 bg-white"
+                  onClick={() => {
+                    //   setOpenEditApp(true);
+                  }}
+                >
+                  <BiEdit className="w-5 h-5" />
+                </Button>
 
-              {!isLoadingUserProfile &&
-                !isErrorUserProfile &&
-                userProfile?.roles
-                  .map((r) => r.type)
-                  .includes(RoleType.ADMIN) && (
-                  <Button
-                    variant="outline"
-                    size="icon"
-                    className="text-gray-500 bg-white"
-                    onClick={() => {
-                      // setOpenUserAppPermissions(true);
-                    }}
-                  >
-                    <MdGroupAdd className="w-5 h-5" />
-                  </Button>
-                )}
-            </div>
+                {!isLoadingUserProfile &&
+                  !isErrorUserProfile &&
+                  userProfile?.roles
+                    .map((r) => r.type)
+                    .includes(RoleType.ADMIN) && (
+                    <Button
+                      variant="outline"
+                      size="icon"
+                      className="text-gray-500 bg-white"
+                      onClick={() => {
+                        // setOpenUserAppPermissions(true);
+                      }}
+                    >
+                      <MdGroupAdd className="w-5 h-5" />
+                    </Button>
+                  )}
+              </div>
+            </TooltipProvider>
           </div>
         </div>
         <div className="w-full p-1">
@@ -414,6 +425,33 @@ const AppPage = ({ params }: { params: { appId: string } }) => {
         }
         open={openShareInstallURL.open}
         data={openShareInstallURL.data}
+      />
+      <PostmanDialog
+        title={t('Postman')}
+        description={t('Generate cURL script for importing into Postman')}
+        onClose={() => setOpenPostman(false)}
+        open={openPostman}
+        app={app}
+      />
+      <GitLabCICodeDialog
+        title={t('GitLab CI')}
+        description={t('Generate cURL script for importing into GitLab CI')}
+        onClose={() => setOpenGitLab(false)}
+        open={openGitLab}
+        app={app}
+      />
+      <JiraDialog
+        open={openJira}
+        title={t('Jira Integration')}
+        description={t('Allow you to connect to Jira')}
+        onClose={(reload: boolean) => {
+          if (reload && app?.id) {
+            refetch();
+            tableRef.current?.reload();
+          }
+          setOpenJira(false);
+        }}
+        app={app}
       />
     </div>
   );
