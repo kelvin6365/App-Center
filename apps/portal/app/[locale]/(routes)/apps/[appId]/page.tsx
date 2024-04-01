@@ -8,6 +8,7 @@ import JiraDialog from '@/components/dialog/jiraDialog';
 import PostmanDialog from '@/components/dialog/postmanDialog';
 import QRCodeDialog from '@/components/dialog/qrCodeDialog';
 import ShareDialog from '@/components/dialog/shareDialog';
+import UploadVersionDialog from '@/components/dialog/uploadVersionDialog';
 import AppVersionTable, { TableRef } from '@/components/table/appVersionTable';
 import useAppQuery from '@/queries/useAppQuery';
 import useUserProfileQuery from '@/queries/useUserProfileQuery';
@@ -352,7 +353,7 @@ const AppPage = ({ params }: { params: { appId: string } }) => {
                   size="icon"
                   className="w-[40px] h-[40px] text-gray-500 bg-white"
                   onClick={() => {
-                    //   setOpenUploadVersion(true);
+                    setOpenUploadVersion(true);
                   }}
                 >
                   <FaCloudUploadAlt className="w-5 h-5" />
@@ -451,6 +452,19 @@ const AppPage = ({ params }: { params: { appId: string } }) => {
           }
           setOpenJira(false);
         }}
+        app={app}
+      />
+      <UploadVersionDialog
+        title={t('Upload New Version')}
+        description={t('Upload a new version of this app')}
+        onClose={(reload: boolean) => {
+          if (reload && app?.id) {
+            refetch();
+            tableRef.current?.reload();
+          }
+          setOpenUploadVersion(false);
+        }}
+        open={openUploadVersion}
         app={app}
       />
     </div>

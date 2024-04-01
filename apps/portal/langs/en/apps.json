@@ -56,6 +56,17 @@
     "Jira Integration": "Jira Integration",
     "No Jira Board URL yet Please add Jira Board URL for this App": "No Jira Board URL yet! Please add Jira Board URL for this App,",
     "Go to Jira Board": "Go to Jira Board",
-    "Allow you to connect to Jira": "Allow you to connect to Jira"
+    "Allow you to connect to Jira": "Allow you to connect to Jira",
+    "File is required": "File is required",
+    "This is the password for the install page": "This is the password for the install page.",
+    "Install Password is required": "Install Password is required",
+    "eg": "eg",
+    "Tags is required": "Tags is required",
+    "This is the description of the version": "This is the description of the version.",
+    "Version Description is required": "Version Description is required",
+    "Version Name is required": "Version Name is required",
+    "Jira Issues Connect": "Jira Issues Connect",
+    "Upload New Version": "Upload New Version",
+    "Upload a new version of this app": "Upload a new version of this app"
   }
 }

@@ -18,6 +18,7 @@ import {
   DialogTitle,
   DialogTrigger,
   Input,
+  Label,
   Popover,
   PopoverContent,
   PopoverTrigger,
@@ -26,27 +27,19 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
-  Label,
   Skeleton,
 } from '@app-center/shadcn/ui';
 import { cn } from '@app-center/shadcn/util';
-import { useQuery } from '@tanstack/react-query';
 
+import useAvailableTenantsStore from '@/queries/useAvailableTenantsQuery';
+import useTeamSelectionStore from '@/stores/useTeamSelectionStore';
 import {
   CaretSortIcon,
   CheckIcon,
   PlusCircledIcon,
 } from '@radix-ui/react-icons';
+import { useTranslations } from 'next-intl';
 import React from 'react';
-import API from '@/services/api';
-import useTeamSelectionStore from '@/stores/useTeamSelectionStore';
-import useAvailableTenantsStore from '@/queries/useAvailableTenantsQuery';
-
-const groups = [
-  {
-    label: 'Teams',
-  },
-];
 
 type PopoverTriggerProps = React.ComponentPropsWithoutRef<
   typeof PopoverTrigger
@@ -55,11 +48,18 @@ type PopoverTriggerProps = React.ComponentPropsWithoutRef<
 type TeamSwitcherProps = PopoverTriggerProps;
 
 export default function TeamSwitcher({ className }: TeamSwitcherProps) {
+  const t = useTranslations('Common');
   const { selectedTeam, setSelectedTeam } = useTeamSelectionStore();
   const [isTenantSelectOpen, setIsTenantSelectOpen] = React.useState(false);
   const [showNewTenantDialog, setShowNewTenantDialog] = React.useState(false);
   const { availableTenants, isLoading, isError, error, refetch } =
     useAvailableTenantsStore();
+
+  const groups = [
+    {
+      label: t('Teams'),
+    },
+  ];
 
   React.useEffect(() => {
     if (!selectedTeam && availableTenants.length > 0) {
@@ -68,7 +68,7 @@ export default function TeamSwitcher({ className }: TeamSwitcherProps) {
         name: availableTenants[0].name,
       });
     }
-  }, [availableTenants, selectedTeam, setSelectedTeam]);
+  }, [availableTenants]);
 
   return (
     <Dialog open={showNewTenantDialog} onOpenChange={setShowNewTenantDialog}>
@@ -79,16 +79,15 @@ export default function TeamSwitcher({ className }: TeamSwitcherProps) {
               variant="outline"
               role="combobox"
               aria-expanded={isTenantSelectOpen}
-              aria-label="Select a team"
+              aria-label={t('Select a team')}
               className={cn('w-full justify-between', className)}
             >
               <Avatar className="w-5 h-5 mr-2">
                 <AvatarImage
-                  src={`https://avatar.vercel.sh/${selectedTeam.name}.png`}
+                  src={`https://ui-avatars.com/api/?name=${selectedTeam.name}`}
                   alt={selectedTeam.name}
-                  className="grayscale"
                 />
-                <AvatarFallback>SC</AvatarFallback>
+                <AvatarFallback>-</AvatarFallback>
               </Avatar>
               {selectedTeam.name}
               <CaretSortIcon className="w-4 h-4 ml-auto opacity-50 shrink-0" />
@@ -103,8 +102,8 @@ export default function TeamSwitcher({ className }: TeamSwitcherProps) {
         <PopoverContent className="w-full p-0">
           <Command>
             <CommandList>
-              <CommandInput placeholder="Search team..." />
-              <CommandEmpty>No team found.</CommandEmpty>
+              <CommandInput placeholder={t('Search team') + '...'} />
+              <CommandEmpty>{t('No team found')}</CommandEmpty>
               {groups.map((group) => (
                 <CommandGroup key={group.label} heading={group.label}>
                   {selectedTeam &&
@@ -123,11 +122,10 @@ export default function TeamSwitcher({ className }: TeamSwitcherProps) {
                         >
                           <Avatar className="w-5 h-5 mr-2">
                             <AvatarImage
-                              src={`https://avatar.vercel.sh/${name}.png`}
+                              src={`https://ui-avatars.com/api/?name=${name}`}
                               alt={name}
-                              className="grayscale"
                             />
-                            <AvatarFallback>SC</AvatarFallback>
+                            <AvatarFallback>-</AvatarFallback>
                           </Avatar>
                           {name}
                           <CheckIcon
@@ -155,7 +153,7 @@ export default function TeamSwitcher({ className }: TeamSwitcherProps) {
                     }}
                   >
                     <PlusCircledIcon className="w-5 h-5 mr-2" />
-                    Create Team
+                    {t('Create Team')}
                   </CommandItem>
                 </DialogTrigger>
               </CommandGroup>
@@ -165,15 +163,15 @@ export default function TeamSwitcher({ className }: TeamSwitcherProps) {
       </Popover>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Create team</DialogTitle>
+          <DialogTitle>{t('Create Team')}</DialogTitle>
           <DialogDescription>
-            Add a new team to manage products and customers.
+            {t('Add a new team to manage products and customers')}
           </DialogDescription>
         </DialogHeader>
         <div>
           <div className="py-2 pb-4 space-y-4">
             <div className="space-y-2">
-              <Label htmlFor="name">Team name</Label>
+              <Label htmlFor="name">{t('Team name')}</Label>
               <Input id="name" placeholder="Acme Inc." />
             </div>
             <div className="space-y-2">
@@ -205,9 +203,9 @@ export default function TeamSwitcher({ className }: TeamSwitcherProps) {
             variant="outline"
             onClick={() => setShowNewTenantDialog(false)}
           >
-            Cancel
+            {t('Cancel')}
           </Button>
-          <Button type="submit">Continue</Button>
+          <Button type="submit">{t('Continue')}</Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>

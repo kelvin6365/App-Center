@@ -6,6 +6,7 @@ import {
   BreadcrumbSeparator,
   BreadcrumbPage,
 } from '@app-center/shadcn/ui';
+import Link from 'next/link';
 import React from 'react';
 
 const CustomBreadcrumb = ({
@@ -24,7 +25,9 @@ const CustomBreadcrumb = ({
             {index > 0 && <BreadcrumbSeparator />}
             <BreadcrumbItem>
               {item.href ? (
-                <BreadcrumbLink href={item.href}>{item.label}</BreadcrumbLink>
+                <BreadcrumbLink asChild>
+                  <Link href={item.href}>{item.label}</Link>
+                </BreadcrumbLink>
               ) : (
                 <BreadcrumbPage>{item.label}</BreadcrumbPage>
               )}

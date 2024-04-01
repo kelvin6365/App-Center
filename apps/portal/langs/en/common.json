@@ -8,5 +8,16 @@
     },
     "Password": "Password",
     "Login": "Login"
+  },
+  "Common": {
+    "No team found": "No team found.",
+    "Create Team": "Create Team",
+    "Add a new team to manage products and customers": "Add a new team to manage products and customers.",
+    "Team name": "Team name",
+    "Continue": "Continue",
+    "Cancel": "Cancel",
+    "Select a team": "Select a team",
+    "Search team": "Search team",
+    "Teams": "Teams"
   }
 }

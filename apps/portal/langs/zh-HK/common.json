@@ -8,5 +8,15 @@
     },
     "Password": "密碼",
     "Login": "登入"
+  },
+  "Common": {
+    "No team found": "沒有找到團隊。",
+    "Create Team": "創建團隊",
+    "Cancel": "取消",
+    "Continue": "繼續",
+    "Select a team": "選擇團隊",
+    "Search team": "搜尋團隊",
+    "Teams": "團隊",
+    "Add a new team to manage products and customers": "新增團隊來管理產品和客戶。"
   }
 }

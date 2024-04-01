@@ -50,7 +50,7 @@ import {
 } from '@tanstack/react-table';
 import { useTranslations } from 'next-intl';
 import * as React from 'react';
-import { useState } from 'react';
+import { useImperativeHandle, useState } from 'react';
 import { BiSolidDownload, BiSolidShareAlt } from 'react-icons/bi';
 import { ImQrcode } from 'react-icons/im';
 import { MdOutlineClear } from 'react-icons/md';
@@ -397,6 +397,26 @@ const AppVersionTable = React.forwardRef<TableRef, Props>(
         rowSelection,
       },
     });
+
+    useImperativeHandle(ref, () => ({
+      reload: () => {
+        refetchTags();
+        refetchVersions();
+      },
+      reloadJira: async (id: string) => {
+        refetchTags();
+        const { data } = await refetchVersions();
+        const targetVersion = data?.items.find(
+          (appVersion: AppVersion) => appVersion.id === id
+        );
+        if (targetVersion) {
+          setOpenJiraIssues({
+            open: true,
+            data: targetVersion,
+          });
+        }
+      },
+    }));
 
     return (
       <div className="w-full">

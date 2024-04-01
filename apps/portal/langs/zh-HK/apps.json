@@ -56,6 +56,17 @@
     "Jira Integration": "Jira集成",
     "No Jira Board URL yet Please add Jira Board URL for this App": "還沒有 Jira Board URL！\n請添加此應用程式的 Jira Board URL，",
     "Go to Jira Board": "前往 Jira 開發板",
-    "Allow you to connect to Jira": "允許您連接到 Jira"
+    "Allow you to connect to Jira": "允許您連接到 Jira",
+    "File is required": "需要文件",
+    "This is the password for the install page": "這是安裝頁面的密碼。",
+    "Install Password is required": "安裝需要密碼",
+    "eg": "例如",
+    "Tags is required": "標籤為必填項",
+    "This is the description of the version": "這是版本的描述。",
+    "Version Description is required": "版本說明為必填項",
+    "Version Name is required": "版本名稱為必填項",
+    "Jira Issues Connect": "Jira 問題連接",
+    "Upload New Version": "上傳新版本",
+    "Upload a new version of this app": "上傳此應用程式的新版本"
   }
 }
