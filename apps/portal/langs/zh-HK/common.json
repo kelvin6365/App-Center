@@ -1,24 +1,25 @@
 {
-  "Index": {
-    "title": "title1"
-  },
   "Auth": {
+    "Login": "登入",
+    "Or continue with": "或繼續",
+    "Password": "密碼",
     "Status": {
       "LoginFailed": "登入失敗"
     },
-    "Password": "密碼",
-    "Login": "登入",
-    "Or continue with": "或繼續",
     "Username": "使用者名稱"
   },
   "Common": {
-    "No team found": "沒有找到團隊。",
-    "Create Team": "創建團隊",
+    "Add a new team to manage products and customers": "新增團隊來管理產品和客戶。",
     "Cancel": "取消",
     "Continue": "繼續",
-    "Select a team": "選擇團隊",
+    "Create Team": "創建團隊",
+    "No team found": "沒有找到團隊。",
     "Search team": "搜尋團隊",
+    "Select a team": "選擇團隊",
     "Teams": "團隊",
-    "Add a new team to manage products and customers": "新增團隊來管理產品和客戶。"
+    "Team name": "隊名"
+  },
+  "Index": {
+    "title": "title1"
   }
 }

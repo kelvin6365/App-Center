@@ -4,6 +4,7 @@ import Custom404 from '@/components/404';
 import CustomBreadcrumb from '@/components/breadcrumb/breadcrumb';
 import PageTitle from '@/components/content/pageTitle';
 import EditAppDialog from '@/components/dialog/editAppDialog';
+import EditAppUserPermissionDialog from '@/components/dialog/editAppUserPermissionDialog';
 import GitLabCICodeDialog from '@/components/dialog/gitlabCICodeDialog';
 import JiraDialog from '@/components/dialog/jiraDialog';
 import PostmanDialog from '@/components/dialog/postmanDialog';
@@ -382,7 +383,7 @@ const AppPage = ({ params }: { params: { appId: string } }) => {
                       size="icon"
                       className="text-gray-500 bg-white"
                       onClick={() => {
-                        // setOpenUserAppPermissions(true);
+                        setOpenUserAppPermissions(true);
                       }}
                     >
                       <MdGroupAdd className="w-5 h-5" />
@@ -478,6 +479,15 @@ const AppPage = ({ params }: { params: { appId: string } }) => {
           }
           setOpenEditApp(false);
         }}
+        app={app}
+      />
+      <EditAppUserPermissionDialog
+        title={t('Users App Permissions')}
+        description={t('Allows you to assign users to this app')}
+        onClose={() => {
+          setOpenUserAppPermissions(false);
+        }}
+        open={openUserAppPermissions}
         app={app}
       />
     </div>

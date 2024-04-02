@@ -81,6 +81,22 @@
     "Edit App": "Edit App",
     "Edit this app": "Edit this app",
     "Reset": "Reset",
-    "You have not changed anything in the form please submit again": "You have not changed anything in the form, please submit again."
+    "You have not changed anything in the form please submit again": "You have not changed anything in the form, please submit again.",
+    "Search by email": "Search by email",
+    "Searching": "Searching",
+    "Users with permissions": "Users with permissions",
+    "Search": "Search",
+    "Updated Successfully": "Updated Successfully",
+    "This user is Admin": "This user is Admin!",
+    "No user found": "No user found!",
+    "Delete Version": "Delete Version",
+    "Upload Version": "Upload Version",
+    "Edit": "Edit",
+    "View": "View",
+    "User": "User",
+    "Users App Permissions": "Users App Permissions",
+    "Allows you to assign users to this app": "Allows you to assign users to this app",
+    "Email is required": "Email is required",
+    "Email is invalid": "Email is invalid"
   }
 }

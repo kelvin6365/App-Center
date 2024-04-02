@@ -81,6 +81,22 @@
     "Edit App": "編輯應用程式",
     "Edit this app": "編輯這個應用程式",
     "Reset": "重置",
-    "You have not changed anything in the form please submit again": "您沒有更改表格中的任何內容，請重新提交。"
+    "You have not changed anything in the form please submit again": "您沒有更改表格中的任何內容，請重新提交。",
+    "Search by email": "透過電子郵件搜尋",
+    "Searching": "搜尋中",
+    "Search": "搜尋",
+    "Users with permissions": "有權限的用戶",
+    "Updated Successfully": "更新成功",
+    "This user is Admin": "該使用者是管理員！",
+    "No user found": "沒有找到用戶！",
+    "Delete Version": "刪除版本",
+    "Upload Version": "上傳版本",
+    "Edit": "編輯",
+    "View": "查看",
+    "User": "使用者",
+    "Users App Permissions": "使用者應用程式權限",
+    "Allows you to assign users to this app": "允許您將用戶指派給此應用程式",
+    "Email is required": "電子郵件為必填項",
+    "Email is invalid": "電子郵件無效"
   }
 }

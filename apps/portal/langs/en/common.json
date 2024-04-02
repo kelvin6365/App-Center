@@ -1,25 +1,25 @@
 {
-  "Index": {
-    "title": "title1"
-  },
   "Auth": {
+    "Login": "Login",
+    "Or continue with": "Or continue with",
+    "Password": "Password",
     "Status": {
       "LoginFailed": "Login Failed"
     },
-    "Password": "Password",
-    "Login": "Login",
-    "Username": "Username",
-    "Or continue with": "Or continue with"
+    "Username": "Username"
   },
   "Common": {
-    "No team found": "No team found.",
-    "Create Team": "Create Team",
     "Add a new team to manage products and customers": "Add a new team to manage products and customers.",
-    "Team name": "Team name",
-    "Continue": "Continue",
     "Cancel": "Cancel",
-    "Select a team": "Select a team",
+    "Continue": "Continue",
+    "Create Team": "Create Team",
+    "No team found": "No team found.",
     "Search team": "Search team",
+    "Select a team": "Select a team",
+    "Team name": "Team name",
     "Teams": "Teams"
+  },
+  "Index": {
+    "title": "title1"
   }
 }
