@@ -67,6 +67,20 @@
     "Version Name is required": "Version Name is required",
     "Jira Issues Connect": "Jira Issues Connect",
     "Upload New Version": "Upload New Version",
-    "Upload a new version of this app": "Upload a new version of this app"
+    "Upload a new version of this app": "Upload a new version of this app",
+    "Update Successfully": "Update Successfully",
+    "App Name is required": "App Name is required",
+    "Description is required": "Description is required",
+    "This is the description of the app": "This is the description of the app",
+    "Play Store URL": "Play Store URL",
+    "App Store URL": "App Store URL",
+    "Git Repository URL": "Git Repository URL",
+    "Jira URL": "Jira URL",
+    "Confluence URL": "Confluence URL",
+    "App Name": "App Name",
+    "Edit App": "Edit App",
+    "Edit this app": "Edit this app",
+    "Reset": "Reset",
+    "You have not changed anything in the form please submit again": "You have not changed anything in the form, please submit again."
   }
 }

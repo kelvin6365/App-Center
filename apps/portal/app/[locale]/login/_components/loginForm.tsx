@@ -1,10 +1,10 @@
 'use client';
-import { useTranslations } from 'next-intl';
 import { loginFormSchema } from '@/schema/auth';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { useTranslations } from 'next-intl';
 import { useForm } from 'react-hook-form';
-import { z } from 'zod';
 import toast from 'react-hot-toast';
+import { z } from 'zod';
 
 import {
   Button,
@@ -17,9 +17,10 @@ import {
   Input,
 } from '@app-center/shadcn/ui';
 import { signIn } from 'next-auth/react';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 const LoginForm = () => {
   const router = useRouter();
+  const query = useSearchParams();
   const t = useTranslations('Auth');
   const form = useForm<z.infer<typeof loginFormSchema>>({
     resolver: zodResolver(loginFormSchema),
@@ -45,7 +46,13 @@ const LoginForm = () => {
       toast.error(t('Status.LoginFailed'));
     } else {
       //Login success.
-      router.push('/console');
+      //check have callbackUrl in query string
+      const callbackUrl = query.get('callbackUrl');
+      if (callbackUrl) {
+        router.push(callbackUrl);
+      } else {
+        router.push('/console');
+      }
     }
   };
 
@@ -58,7 +65,7 @@ const LoginForm = () => {
             name="username"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Username</FormLabel>
+                <FormLabel>{t('Username')}</FormLabel>
                 <FormControl>
                   <Input
                     placeholder="example@mail.com"
@@ -94,7 +101,7 @@ const LoginForm = () => {
         </div>
         <div className="relative flex justify-center text-xs uppercase">
           <span className="px-2 bg-background text-muted-foreground">
-            Or continue with
+            {t('Or continue with')}
           </span>
         </div>
       </div>

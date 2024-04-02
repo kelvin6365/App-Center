@@ -7,7 +7,9 @@
       "LoginFailed": "Login Failed"
     },
     "Password": "Password",
-    "Login": "Login"
+    "Login": "Login",
+    "Username": "Username",
+    "Or continue with": "Or continue with"
   },
   "Common": {
     "No team found": "No team found.",

@@ -3,6 +3,7 @@ import useDialogState from '@/app/[locale]/(routes)/apps/[appId]/_helper/useDial
 import Custom404 from '@/components/404';
 import CustomBreadcrumb from '@/components/breadcrumb/breadcrumb';
 import PageTitle from '@/components/content/pageTitle';
+import EditAppDialog from '@/components/dialog/editAppDialog';
 import GitLabCICodeDialog from '@/components/dialog/gitlabCICodeDialog';
 import JiraDialog from '@/components/dialog/jiraDialog';
 import PostmanDialog from '@/components/dialog/postmanDialog';
@@ -365,7 +366,7 @@ const AppPage = ({ params }: { params: { appId: string } }) => {
                   size="icon"
                   className="w-[40px] h-[40px] text-gray-500 bg-white"
                   onClick={() => {
-                    //   setOpenEditApp(true);
+                    setOpenEditApp(true);
                   }}
                 >
                   <BiEdit className="w-5 h-5" />
@@ -465,6 +466,18 @@ const AppPage = ({ params }: { params: { appId: string } }) => {
           setOpenUploadVersion(false);
         }}
         open={openUploadVersion}
+        app={app}
+      />
+      <EditAppDialog
+        title={t('Edit App')}
+        description={t('Edit this app')}
+        open={openEditApp}
+        onClose={(reload: boolean) => {
+          if (reload && app?.id) {
+            refetch();
+          }
+          setOpenEditApp(false);
+        }}
         app={app}
       />
     </div>

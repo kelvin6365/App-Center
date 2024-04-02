@@ -145,179 +145,193 @@ const UploadVersionDialog = ({
   }, [reset]);
 
   return (
-    <Dialog
-      open={open}
-      onOpenChange={() => {
-        if (!isSubmitting) {
-          reset();
-          onClose(false);
-        }
-      }}
-    >
-      <DialogContent className="!max-w-[70%] !w-full max-h-[85%] overflow-scroll">
-        <DialogHeader>
-          <DialogTitle>{title}</DialogTitle>
-          <DialogDescription>{description}</DialogDescription>
-        </DialogHeader>
-        <Form {...form}>
-          <form
-            id="edit-form"
-            onSubmit={handleSubmit(onSubmit)}
-            className="max-w-screen-sm mx-auto mt-8 mb-2"
-          >
-            {isSubmitting && (
-              <div className="absolute top-0 bottom-0 left-0 right-0 z-10 bg-blue-gray-400/20">
-                <Loading fullScreen />
+    <>
+      {isSubmitting && (
+        <div className="absolute top-0 bottom-0 left-0 right-0 z-[99999] bg-blue-gray-400/20">
+          <Loading fullScreen />
+        </div>
+      )}
+      <Dialog
+        open={open}
+        onOpenChange={() => {
+          if (!isSubmitting) {
+            reset();
+            onClose(false);
+          }
+        }}
+      >
+        <DialogContent
+          onEscapeKeyDown={(e) => {
+            if (isSubmitting) {
+              e.preventDefault();
+            }
+          }}
+          onInteractOutside={(e) => {
+            if (isSubmitting) {
+              e.preventDefault();
+            }
+          }}
+          className="!max-w-[70%] !w-full max-h-[85%] overflow-scroll"
+        >
+          <DialogHeader>
+            <DialogTitle>{title}</DialogTitle>
+            <DialogDescription>{description}</DialogDescription>
+          </DialogHeader>
+          <Form {...form}>
+            <form
+              id="edit-form"
+              onSubmit={handleSubmit(onSubmit)}
+              className="max-w-screen-sm mx-auto mt-8 mb-2"
+            >
+              <div className="flex flex-col gap-2 mb-4">
+                <FormField
+                  name="name"
+                  control={control}
+                  rules={{
+                    required: t('Version Name is required'),
+                  }}
+                  render={({ field }) => {
+                    return (
+                      <FormItem>
+                        <FormLabel className="font-bold" color="blue-gray">
+                          {t('Version Name')}
+                        </FormLabel>
+                        <Input {...field} disabled={isSubmitting} />
+                        <FormDescription>
+                          {t('eg')}: &apos;Version 1.0.0&apos;
+                        </FormDescription>
+                        <FormMessage />
+                      </FormItem>
+                    );
+                  }}
+                />
+                <FormField
+                  name="description"
+                  control={control}
+                  rules={{
+                    required: t('Version Description is required'),
+                  }}
+                  render={({ field }) => {
+                    return (
+                      <FormItem>
+                        <FormLabel className="font-bold" color="blue-gray">
+                          {t('Description')}
+                        </FormLabel>
+                        <Textarea {...field} disabled={isSubmitting} />
+                        <FormDescription>
+                          {t('This is the description of the version')}
+                        </FormDescription>
+                        <FormMessage />
+                      </FormItem>
+                    );
+                  }}
+                />
               </div>
-            )}
-            <div className="flex flex-col gap-2 mb-4">
-              <FormField
-                name="name"
-                control={control}
-                rules={{
-                  required: t('Version Name is required'),
-                }}
-                render={({ field }) => {
-                  return (
-                    <FormItem>
-                      <FormLabel className="font-bold" color="blue-gray">
-                        {t('Version Name')}
-                      </FormLabel>
-                      <Input {...field} disabled={isSubmitting} />
-                      <FormDescription>
-                        {t('eg')}: &apos;Version 1.0.0&apos;
-                      </FormDescription>
-                      <FormMessage />
-                    </FormItem>
-                  );
-                }}
-              />
-              <FormField
-                name="description"
-                control={control}
-                rules={{
-                  required: t('Version Description is required'),
-                }}
-                render={({ field }) => {
-                  return (
-                    <FormItem>
-                      <FormLabel className="font-bold" color="blue-gray">
-                        {t('Description')}
-                      </FormLabel>
-                      <Textarea {...field} disabled={isSubmitting} />
-                      <FormDescription>
-                        {t('This is the description of the version')}
-                      </FormDescription>
-                      <FormMessage />
-                    </FormItem>
-                  );
-                }}
-              />
-            </div>
-            <div className="grid grid-cols-2 gap-6 mb-6">
-              <FormField
-                name="tags"
-                control={control}
-                rules={{
-                  required: t('Tags is required'),
-                }}
-                render={({ field }) => {
-                  return (
-                    <FormItem>
-                      <FormLabel className="font-bold" color="blue-gray">
-                        {t('Tags')}
-                      </FormLabel>
-                      <Input {...field} disabled={isSubmitting} />
-                      <FormDescription>
-                        {t('eg')}: &apos;Android,UAT,APK&apos;
-                      </FormDescription>
-                      <FormMessage />
-                    </FormItem>
-                  );
-                }}
-              />
+              <div className="grid grid-cols-2 gap-6 mb-6">
+                <FormField
+                  name="tags"
+                  control={control}
+                  rules={{
+                    required: t('Tags is required'),
+                  }}
+                  render={({ field }) => {
+                    return (
+                      <FormItem>
+                        <FormLabel className="font-bold" color="blue-gray">
+                          {t('Tags')}
+                        </FormLabel>
+                        <Input {...field} disabled={isSubmitting} />
+                        <FormDescription>
+                          {t('eg')}: &apos;Android,UAT,APK&apos;
+                        </FormDescription>
+                        <FormMessage />
+                      </FormItem>
+                    );
+                  }}
+                />
 
-              <FormField
-                name="installPassword"
-                control={control}
-                rules={{
-                  required: t('Install Password is required'),
-                }}
-                render={({ field }) => {
-                  return (
-                    <FormItem>
-                      <FormLabel>{t('Install Password')}</FormLabel>
-                      <Input {...field} disabled={isSubmitting} />
-                      <FormDescription>
-                        {t('This is the password for the install page')}
-                      </FormDescription>
-                      <FormMessage />
-                    </FormItem>
-                  );
-                }}
-              />
-            </div>
-            {app?.extra?.jiraCredential && (
-              <div className="py-2 my-2 border-y">
-                <div className="my-2">
-                  <FormField
-                    name="jiraIssues"
-                    control={control}
-                    rules={{
-                      required: false,
-                    }}
-                    render={({ field }) => {
-                      return (
-                        <FormItem>
-                          <FormLabel className="font-bold" color="blue-gray">
-                            {t('Jira Issues Connect')}
-                          </FormLabel>
-                          <AsyncSelect
-                            ref={field.ref}
-                            cacheOptions
-                            defaultOptions
-                            isMulti
-                            loadOptions={promiseOptions}
-                            onChange={(e) => {
-                              setValue(
-                                'jiraIssues',
-                                e.map((i) => i.value)
-                              );
-                            }}
-                          />
-                          <FormMessage />
-                        </FormItem>
-                      );
-                    }}
-                  />
-                </div>
+                <FormField
+                  name="installPassword"
+                  control={control}
+                  rules={{
+                    required: t('Install Password is required'),
+                  }}
+                  render={({ field }) => {
+                    return (
+                      <FormItem>
+                        <FormLabel>{t('Install Password')}</FormLabel>
+                        <Input {...field} disabled={isSubmitting} />
+                        <FormDescription>
+                          {t('This is the password for the install page')}
+                        </FormDescription>
+                        <FormMessage />
+                      </FormItem>
+                    );
+                  }}
+                />
               </div>
-            )}
-            <div className="mt-4">
-              <FileUpload
-                {...register('file', {
-                  required: t('File is required'),
-                })}
-                loading={isSubmitting}
-                errors={errors}
-                accept=".ipa,.apk,application/iphone-package-archive,application/vnd.android.package-archive"
-              />
-            </div>
-          </form>
-        </Form>
-        <DialogFooter>
-          <Button
-            onClick={() => {
-              if (!isSubmitting) {
-                form.handleSubmit(onSubmit)();
-              }
-            }}
-          >
-            <span>{t('Done')}</span>
-          </Button>
-        </DialogFooter>
-      </DialogContent>
-    </Dialog>
+              {app?.extra?.jiraCredential && (
+                <div className="py-2 my-2 border-y">
+                  <div className="my-2">
+                    <FormField
+                      name="jiraIssues"
+                      control={control}
+                      rules={{
+                        required: false,
+                      }}
+                      render={({ field }) => {
+                        return (
+                          <FormItem>
+                            <FormLabel className="font-bold" color="blue-gray">
+                              {t('Jira Issues Connect')}
+                            </FormLabel>
+                            <AsyncSelect
+                              ref={field.ref}
+                              cacheOptions
+                              defaultOptions
+                              isMulti
+                              loadOptions={promiseOptions}
+                              onChange={(e) => {
+                                setValue(
+                                  'jiraIssues',
+                                  e.map((i) => i.value)
+                                );
+                              }}
+                            />
+                            <FormMessage />
+                          </FormItem>
+                        );
+                      }}
+                    />
+                  </div>
+                </div>
+              )}
+              <div className="mt-4">
+                <FileUpload
+                  {...register('file', {
+                    required: t('File is required'),
+                  })}
+                  loading={isSubmitting}
+                  errors={errors}
+                  accept=".ipa,.apk,application/iphone-package-archive,application/vnd.android.package-archive"
+                />
+              </div>
+            </form>
+          </Form>
+          <DialogFooter>
+            <Button
+              onClick={() => {
+                if (!isSubmitting) {
+                  form.handleSubmit(onSubmit)();
+                }
+              }}
+            >
+              <span>{t('Done')}</span>
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+    </>
   );
 };
 

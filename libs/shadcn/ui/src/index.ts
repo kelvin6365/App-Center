@@ -22,3 +22,4 @@ export * from './lib/ui/checkbox';
 export * from './lib/ui/badge';
 export * from './lib/ui/switch';
 export * from './lib/ui/textarea';
+export * from './lib/ui/tabs';
