@@ -205,7 +205,12 @@ const API = {
           [key: string]: any;
         };
       }
-    ) => {
+    ): Promise<
+      AxiosResponse<{
+        data: any;
+        status: ResponseStatus;
+      }>
+    > => {
       const { name, description, icon } = data;
       const form = new FormData();
       if (name) {
@@ -299,7 +304,15 @@ const API = {
         }
       );
     },
-    deleteVersion: (appId: string, versionId: string) => {
+    deleteVersion: (
+      appId: string,
+      versionId: string
+    ): Promise<
+      AxiosResponse<{
+        status: ResponseStatus;
+        data: any;
+      }>
+    > => {
       return API.apiInstance.delete(
         API.API_PATH.APP.DELETE_VERSION(appId, versionId)
       );

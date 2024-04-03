@@ -18,4 +18,16 @@ export const MenuItems: NavItemWithOptionalChildren[] = [
       },
     ],
   },
+  {
+    title: 'Users',
+    icon: 'users',
+    href: '/users',
+    items: [
+      {
+        title: 'All Users',
+        icon: 'users',
+        href: '/all',
+      },
+    ],
+  },
 ];

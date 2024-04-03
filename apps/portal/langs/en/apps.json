@@ -97,6 +97,17 @@
     "Users App Permissions": "Users App Permissions",
     "Allows you to assign users to this app": "Allows you to assign users to this app",
     "Email is required": "Email is required",
-    "Email is invalid": "Email is invalid"
+    "Email is invalid": "Email is invalid",
+    "Confirm to Delete": "Confirm to Delete",
+    "Delete App Version": "Delete App Version",
+    "Are you sure you want to delete this version": "Are you sure you want to delete this version",
+    "Delete Successfully": "Delete Successfully",
+    "Delete": "Delete",
+    "Copy Version ID": "Copy Version ID",
+    "Actions": "Actions",
+    "Open menu": "Open menu",
+    "rows selected": "row(s) selected",
+    "of": "of",
+    "Copied to clipboard": "Copied to clipboard"
   }
 }

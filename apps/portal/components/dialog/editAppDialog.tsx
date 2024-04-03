@@ -105,7 +105,7 @@ const EditAppDialog = ({ title, onClose, open, app, description }: Props) => {
         },
       });
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const { status }: { data: any; status: any } = res.data;
+      const { status } = res.data;
       if (status.code === 1000) {
         onClose(true);
         toast.success(t('Update Successfully'));

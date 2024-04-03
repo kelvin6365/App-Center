@@ -97,6 +97,17 @@
     "Users App Permissions": "使用者應用程式權限",
     "Allows you to assign users to this app": "允許您將用戶指派給此應用程式",
     "Email is required": "電子郵件為必填項",
-    "Email is invalid": "電子郵件無效"
+    "Email is invalid": "電子郵件無效",
+    "Confirm to Delete": "確認刪除",
+    "Delete App Version": "刪除應用程式版本",
+    "Are you sure you want to delete this version": "您確定要刪除此版本嗎",
+    "Delete Successfully": "刪除成功",
+    "Delete": "刪除",
+    "Copy Version ID": "複製版本 ID",
+    "Actions": "行動",
+    "Open menu": "開啟選單",
+    "rows selected": "已選擇行",
+    "of": "的",
+    "Copied to clipboard": "已複製到剪貼簿"
   }
 }

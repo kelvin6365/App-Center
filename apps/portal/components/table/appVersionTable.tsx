@@ -1,5 +1,6 @@
 'use client';
 
+import DeleteAppVersionDialog from '@/components/dialog/deleteVersionDialog';
 import useAppVersionTagsQuery from '@/queries/useAppVersionTagsQuery';
 import useSearchAppVersionsQuery from '@/queries/useSearchAppVersionsQuery';
 import { AppVersion, AppVersionTag } from '@/types/AppVersion';
@@ -36,6 +37,7 @@ import {
   ChevronDownIcon,
   DotsHorizontalIcon,
 } from '@radix-ui/react-icons';
+import { AiFillDelete } from 'react-icons/ai';
 import {
   ColumnDef,
   ColumnFiltersState,
@@ -55,6 +57,7 @@ import { BiSolidDownload, BiSolidShareAlt } from 'react-icons/bi';
 import { ImQrcode } from 'react-icons/im';
 import { MdOutlineClear } from 'react-icons/md';
 import { useDebounce } from 'use-debounce';
+import toast from 'react-hot-toast';
 
 type Props = {
   appId: string;
@@ -89,6 +92,15 @@ const AppVersionTable = React.forwardRef<TableRef, Props>(
     const [searchQuery, setSearchQuery] = useState('');
     const [debouncedSearchQuery] = useDebounce(searchQuery, 500);
     const [selectedTags, setSelectedTags] = useState<AppVersionTag[]>([]);
+
+    //Delete Dialog
+    const [openDeleteDialog, setOpenDeleteDialog] = useState<{
+      open: boolean;
+      data: AppVersion | null;
+    }>({
+      open: false,
+      data: null,
+    });
 
     const {
       appVersionTags,
@@ -346,26 +358,39 @@ const AppVersionTable = React.forwardRef<TableRef, Props>(
           id: 'actions',
           enableHiding: false,
           cell: ({ row }) => {
-            const payment = row.original;
+            const version = row.original;
 
             return (
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <Button variant="ghost" className="w-8 h-8 p-0">
-                    <span className="sr-only">Open menu</span>
+                    <span className="sr-only">{t('Open menu')}</span>
                     <DotsHorizontalIcon className="w-4 h-4" />
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end">
-                  <DropdownMenuLabel>Actions</DropdownMenuLabel>
+                  <DropdownMenuLabel>{t('Actions')}</DropdownMenuLabel>
                   <DropdownMenuItem
-                    onClick={() => navigator.clipboard.writeText(payment.id)}
+                    onClick={() => {
+                      navigator.clipboard.writeText(version.id).then(() => {
+                        toast.success(t('Copied to clipboard'));
+                      });
+                    }}
                   >
-                    Copy payment ID
+                    {t('Copy Version ID')}
                   </DropdownMenuItem>
                   <DropdownMenuSeparator />
-                  <DropdownMenuItem>View customer</DropdownMenuItem>
-                  <DropdownMenuItem>View payment details</DropdownMenuItem>
+                  <DropdownMenuItem
+                    onClick={() => {
+                      setOpenDeleteDialog({
+                        open: true,
+                        data: row.original,
+                      });
+                    }}
+                  >
+                    <AiFillDelete className="w-5 h-5 text-red-500" />{' '}
+                    <p className="ml-2">{t('Delete')}</p>
+                  </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
             );
@@ -557,8 +582,8 @@ const AppVersionTable = React.forwardRef<TableRef, Props>(
         </div>
         <div className="flex items-center justify-end py-4 space-x-2">
           <div className="flex-1 text-sm text-muted-foreground">
-            {table.getFilteredSelectedRowModel().rows.length} of{' '}
-            {table.getFilteredRowModel().rows.length} row(s) selected.
+            {table.getFilteredSelectedRowModel().rows.length} {t('of')}{' '}
+            {table.getFilteredRowModel().rows.length} {t('rows selected')}.
           </div>
           <div className="space-x-2">
             <Button
@@ -579,6 +604,19 @@ const AppVersionTable = React.forwardRef<TableRef, Props>(
             </Button>
           </div>
         </div>
+        <DeleteAppVersionDialog
+          open={openDeleteDialog.open}
+          version={openDeleteDialog.data}
+          onClose={() => {
+            setOpenDeleteDialog({
+              open: false,
+              data: null,
+            });
+            refetchVersions();
+            refetchTags();
+          }}
+          title={t('Delete App Version')}
+        />
       </div>
     );
   }

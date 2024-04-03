@@ -31,6 +31,7 @@ import {
   X,
   MenuIcon,
   Layers,
+  UsersRound,
 } from 'lucide-react';
 export type Icon = LucideIcon;
 
@@ -55,6 +56,7 @@ export const Icons = {
   add: Plus,
   warning: AlertTriangle,
   user: User,
+  users: UsersRound,
   arrowRight: ArrowRight,
   help: HelpCircle,
   pizza: Pizza,

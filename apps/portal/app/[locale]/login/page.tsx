@@ -1,5 +1,6 @@
 import LoginForm from '@/app/[locale]/login/_components/loginForm';
 import { Metadata } from 'next';
+import { useTranslations } from 'next-intl';
 
 export const metadata: Metadata = {
   title: `Login - App Center`,
@@ -7,6 +8,7 @@ export const metadata: Metadata = {
 };
 
 const LoginPage = () => {
+  const t = useTranslations('Auth');
   return (
     <section className="h-full">
       <div className="container relative flex-col items-center justify-center h-full md:grid lg:max-w-none lg:grid-cols-2 lg:px-0">
@@ -28,9 +30,11 @@ const LoginPage = () => {
         <div className="lg:p-8">
           <div className="mx-auto flex w-full p-4 flex-col justify-center space-y-6 sm:w-[350px]">
             <div className="flex flex-col space-y-2 text-center">
-              <h1 className="text-2xl font-semibold tracking-tight">Login</h1>
+              <h1 className="text-2xl font-semibold tracking-tight">
+                {t('Login')}
+              </h1>
               <p className="text-sm text-muted-foreground">
-                Sign in to your account
+                {t('Sign in to your account')}
               </p>
             </div>
             <div className="grid gap-6">

@@ -91,7 +91,7 @@ const UploadVersionDialog = ({
       if (status.code === 1000) {
         onClose(true);
         reset();
-        toast.success('Update successfully');
+        toast.success(t('Update Successfully'));
       }
     } catch (error) {
       console.error(error);

@@ -6,7 +6,8 @@
     "Status": {
       "LoginFailed": "Login Failed"
     },
-    "Username": "Username"
+    "Username": "Username",
+    "Sign in to your account": "Sign in to your account"
   },
   "Common": {
     "Add a new team to manage products and customers": "Add a new team to manage products and customers.",
