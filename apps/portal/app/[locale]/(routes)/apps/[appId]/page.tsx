@@ -15,8 +15,13 @@ import AppVersionTable, { TableRef } from '@/components/table/appVersionTable';
 import useAppQuery from '@/queries/useAppQuery';
 import useUserProfileQuery from '@/queries/useUserProfileQuery';
 import API from '@/services/api';
+import PermissionEnum from '@/types/Permission';
 import { RoleType } from '@/types/RoleType';
 import { maskingString } from '@/utils';
+import {
+  checkAllowAppActionPermission,
+  checkAllowModifyAppUserPermission,
+} from '@/utils/permissionChecking';
 import { Button } from '@app-center/shadcn/ui';
 import {
   Tooltip,
@@ -362,22 +367,29 @@ const AppPage = ({ params }: { params: { appId: string } }) => {
                 </Button>
 
                 {/* Edit App */}
-                <Button
-                  variant="outline"
-                  size="icon"
-                  className="w-[40px] h-[40px] text-gray-500 bg-white"
-                  onClick={() => {
-                    setOpenEditApp(true);
-                  }}
-                >
-                  <BiEdit className="w-5 h-5" />
-                </Button>
+                {!isLoadingUserProfile &&
+                  !isErrorUserProfile &&
+                  userProfile &&
+                  checkAllowAppActionPermission(userProfile, [
+                    PermissionEnum.EDIT_APP,
+                  ]) && (
+                    <Button
+                      variant="outline"
+                      size="icon"
+                      className="w-[40px] h-[40px] text-gray-500 bg-white"
+                      onClick={() => {
+                        setOpenEditApp(true);
+                      }}
+                    >
+                      <BiEdit className="w-5 h-5" />
+                    </Button>
+                  )}
 
                 {!isLoadingUserProfile &&
                   !isErrorUserProfile &&
-                  userProfile?.roles
-                    .map((r) => r.type)
-                    .includes(RoleType.ADMIN) && (
+                  checkAllowModifyAppUserPermission(
+                    userProfile?.roles ?? []
+                  ) && (
                     <Button
                       variant="outline"
                       size="icon"

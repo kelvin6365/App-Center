@@ -35,7 +35,7 @@ interface Profile {
   avatar?: any;
 }
 
-interface Role {
+export interface Role {
   type: RoleType;
   name: string;
   description: string;

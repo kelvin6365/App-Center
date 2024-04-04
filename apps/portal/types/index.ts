@@ -1,4 +1,5 @@
 import { Icons } from '@/components/icons';
+import { RoleType } from '@/types/RoleType';
 
 export interface NavItem {
   title: string;
@@ -8,6 +9,7 @@ export interface NavItem {
   icon?: keyof typeof Icons;
   label?: string;
   description?: string;
+  roles: RoleType[];
 }
 
 export interface NavItemWithOptionalChildren extends NavItem {

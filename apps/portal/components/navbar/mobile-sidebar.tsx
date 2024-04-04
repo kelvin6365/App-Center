@@ -2,6 +2,8 @@
 import { Icons } from '@/components/icons';
 import { DashboardNav } from '@/components/navbar/dashboard-nav';
 import { MenuItems } from '@/components/navbar/menuItems';
+import useUserProfileQuery from '@/queries/useUserProfileQuery';
+import { filterMenuByRoles } from '@/utils/permissionChecking';
 // import { DashboardNav } from "@/components/dashboard-nav";
 import { Sheet, SheetContent, SheetTrigger } from '@app-center/shadcn/ui';
 import { useState } from 'react';
@@ -12,6 +14,12 @@ type SidebarProps = React.HTMLAttributes<HTMLDivElement>;
 
 export function MobileSidebar({ className }: SidebarProps) {
   const [open, setOpen] = useState(false);
+  const {
+    userProfile,
+    isLoading: isLoadingUserProfile,
+    isError: isErrorUserProfile,
+    refetch: refetchUserProfile,
+  } = useUserProfileQuery();
   return (
     <>
       <Sheet open={open} onOpenChange={setOpen}>
@@ -25,7 +33,15 @@ export function MobileSidebar({ className }: SidebarProps) {
                 Overview
               </h2>
               <div className="space-y-1">
-                <DashboardNav items={MenuItems} setOpen={setOpen} />
+                <DashboardNav
+                  items={
+                    userProfile && !isErrorUserProfile
+                      ? filterMenuByRoles(MenuItems, userProfile)
+                      : []
+                  }
+                  setOpen={setOpen}
+                  isLoading={isLoadingUserProfile}
+                />
               </div>
             </div>
           </div>

@@ -3,9 +3,17 @@
 import { DashboardNav } from '@/components/navbar/dashboard-nav';
 import { MenuItems } from '@/components/navbar/menuItems';
 import TeamSwitcher from '@/components/navbar/team-switcher';
+import useUserProfileQuery from '@/queries/useUserProfileQuery';
+import { filterMenuByRoles } from '@/utils/permissionChecking';
 import { cn } from '@app-center/shadcn/util';
 
 export default function Sidebar() {
+  const {
+    userProfile,
+    isLoading: isLoadingUserProfile,
+    isError: isErrorUserProfile,
+    refetch: refetchUserProfile,
+  } = useUserProfileQuery();
   return (
     <nav
       className={cn(
@@ -19,7 +27,14 @@ export default function Sidebar() {
             <h2 className="px-4 mb-2 text-xl font-semibold tracking-tight">
               Overview
             </h2>
-            <DashboardNav items={MenuItems} />
+            <DashboardNav
+              items={
+                userProfile && !isErrorUserProfile
+                  ? filterMenuByRoles(MenuItems, userProfile)
+                  : []
+              }
+              isLoading={isLoadingUserProfile}
+            />
           </div>
         </div>
       </div>

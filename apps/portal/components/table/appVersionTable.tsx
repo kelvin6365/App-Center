@@ -58,6 +58,9 @@ import { ImQrcode } from 'react-icons/im';
 import { MdOutlineClear } from 'react-icons/md';
 import { useDebounce } from 'use-debounce';
 import toast from 'react-hot-toast';
+import useUserProfileQuery from '@/queries/useUserProfileQuery';
+import { checkAllowAppActionPermission } from '@/utils/permissionChecking';
+import PermissionEnum from '@/types/Permission';
 
 type Props = {
   appId: string;
@@ -78,6 +81,13 @@ const AppVersionTable = React.forwardRef<TableRef, Props>(
     ref
   ) => {
     const t = useTranslations('Apps');
+
+    const {
+      userProfile,
+      isLoading: isLoadingUserProfile,
+      isError: isErrorUserProfile,
+      refetch: refetchUserProfile,
+    } = useUserProfileQuery();
 
     const [sorting, setSorting] = React.useState<SortingState>([]);
     const [columnFilters, setColumnFilters] =
@@ -380,24 +390,30 @@ const AppVersionTable = React.forwardRef<TableRef, Props>(
                     {t('Copy Version ID')}
                   </DropdownMenuItem>
                   <DropdownMenuSeparator />
-                  <DropdownMenuItem
-                    onClick={() => {
-                      setOpenDeleteDialog({
-                        open: true,
-                        data: row.original,
-                      });
-                    }}
-                  >
-                    <AiFillDelete className="w-5 h-5 text-red-500" />{' '}
-                    <p className="ml-2">{t('Delete')}</p>
-                  </DropdownMenuItem>
+                  {!isLoadingUserProfile &&
+                    userProfile &&
+                    checkAllowAppActionPermission(userProfile, [
+                      PermissionEnum.DELETE_APP_VERSION,
+                    ]) && (
+                      <DropdownMenuItem
+                        onClick={() => {
+                          setOpenDeleteDialog({
+                            open: true,
+                            data: row.original,
+                          });
+                        }}
+                      >
+                        <AiFillDelete className="w-5 h-5 text-red-500" />{' '}
+                        <p className="ml-2">{t('Delete')}</p>
+                      </DropdownMenuItem>
+                    )}
                 </DropdownMenuContent>
               </DropdownMenu>
             );
           },
         },
       ],
-      []
+      [userProfile]
     );
 
     const data = React.useMemo(() => {
