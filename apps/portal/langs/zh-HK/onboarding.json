@@ -1,0 +1,18 @@
+{
+  "OnBoarding": {
+    "Im a freelancer": "我是自由工作者",
+    "I belong to a company": "我屬於一家公司",
+    "Are you a freelancer or part of a company": "您是自由工作者還是公司成員？",
+    "Workspace Setup": "工作區設定",
+    "Next": "下一個",
+    "Personal Information": "個人資訊",
+    "Please enter your name": "請輸入你的名字",
+    "Name is required": "姓名為必填項",
+    "Your Name": "你的名字",
+    "Create Your Team": "創建你的團隊",
+    "Give your team a name to collaborate and work together effectively": "為您的團隊命名，以便有效地協作和協同工作。",
+    "Team Name": "隊名",
+    "Enter your team name": "輸入您的團隊名稱",
+    "Submit": "提交"
+  }
+}

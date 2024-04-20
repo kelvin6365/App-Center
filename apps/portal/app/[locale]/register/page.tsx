@@ -1,4 +1,4 @@
-import LoginForm from '@/app/[locale]/login/_components/loginForm';
+import RegisterForm from '@/app/[locale]/register/_components/registerForm';
 import { Metadata } from 'next';
 import { useTranslations } from 'next-intl';
 import Link from 'next/link';
@@ -8,7 +8,7 @@ export const metadata: Metadata = {
   description: '',
 };
 
-const LoginPage = () => {
+const RegisterPage = () => {
   const t = useTranslations('Auth');
   return (
     <section className="h-full">
@@ -32,22 +32,22 @@ const LoginPage = () => {
           <div className="mx-auto flex w-full p-4 flex-col justify-center space-y-6 sm:w-[350px]">
             <div className="flex flex-col space-y-2 text-center">
               <h1 className="text-2xl font-semibold tracking-tight">
-                {t('Login')}
+                {t('Create an account')}
               </h1>
               <p className="text-sm text-muted-foreground">
-                {t('Sign in to your account')}
+                {t('Enter your email below to create your account')}
               </p>
             </div>
             <div className="grid gap-6">
-              <LoginForm />
+              <RegisterForm />
             </div>
             <p className="px-8 text-sm text-center text-muted-foreground">
-              {t('Dont have an account')}{' '}
+              {t('Already have an account')}{' '}
               <Link
                 className="underline underline-offset-4 hover:text-primary"
-                href="/register"
+                href="/login"
               >
-                {t('Sign Up')}
+                {t('Login')}
               </Link>
             </p>
           </div>
@@ -57,4 +57,4 @@ const LoginPage = () => {
   );
 };
 
-export default LoginPage;
+export default RegisterPage;

@@ -16,13 +16,12 @@ import useAppQuery from '@/queries/useAppQuery';
 import useUserProfileQuery from '@/queries/useUserProfileQuery';
 import API from '@/services/api';
 import PermissionEnum from '@/types/Permission';
-import { RoleType } from '@/types/RoleType';
 import { maskingString } from '@/utils';
 import {
   checkAllowAppActionPermission,
   checkAllowModifyAppUserPermission,
 } from '@/utils/permissionChecking';
-import { Button } from '@app-center/shadcn/ui';
+import { Button, Skeleton } from '@app-center/shadcn/ui';
 import {
   Tooltip,
   TooltipContent,
@@ -60,7 +59,6 @@ const AppPage = ({ params }: { params: { appId: string } }) => {
     appId: params.appId,
     ready: isAppIdValid,
   });
-
   const {
     userProfile,
     isLoading: isLoadingUserProfile,
@@ -120,7 +118,7 @@ const AppPage = ({ params }: { params: { appId: string } }) => {
     }
   };
 
-  if (isAppIdValid === false) {
+  if (isAppIdValid === false || isError) {
     return (
       <div>
         <CustomBreadcrumb
@@ -192,218 +190,224 @@ const AppPage = ({ params }: { params: { appId: string } }) => {
           ) : (
             <div className="max-w-full rounded-lg border w-[180px] h-[170px] sm:h-[180px] animate-pulse bg-blue-gray-200/30 mb-2"></div>
           )}
-          <div className="flex py-2">
-            <span
-              className="inline-flex text-sm text-gray-900 bg-gray-200 border border-r-0 border-gray-300 cursor-pointer rounded-l-md dark:bg-gray-600 dark:text-gray-400 dark:border-gray-600"
-              onClick={() => {
-                if (!copied) {
-                  getAPIKey();
+          {!isLoading ? (
+            <div className="flex py-2">
+              <span
+                className="inline-flex text-sm text-gray-900 bg-gray-200 border border-r-0 border-gray-300 cursor-pointer rounded-l-md dark:bg-gray-600 dark:text-gray-400 dark:border-gray-600"
+                onClick={() => {
+                  if (!copied) {
+                    getAPIKey();
+                  }
+                }}
+              >
+                {!copied ? (
+                  <div className="relative flex">
+                    <FaKey className="m-auto mx-3" />
+                    {keyLoading && (
+                      <div className="absolute top-0 bottom-0 left-0 right-0 flex bg-blue-gray-400/50">
+                        <Spinner className="w-5 h-5 m-auto" />
+                      </div>
+                    )}
+                  </div>
+                ) : (
+                  <div className="m-auto">
+                    <TooltipProvider>
+                      <Tooltip defaultOpen>
+                        <TooltipTrigger asChild>
+                          <div className="relative">
+                            <IoIosCopy className="mx-3" />
+                            <TiTick className="absolute right-[0px] bottom-[-8px] text-green-400" />
+                          </div>
+                        </TooltipTrigger>
+                        <TooltipContent>{t('Copied')}</TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
+                  </div>
+                )}
+              </span>
+              <input
+                type="text"
+                id="website-admin"
+                className="rounded-none rounded-r-lg bg-gray-50 border text-gray-900 focus:ring-blue-500 focus:border-blue-500 block flex-1 min-w-0 w-full text-sm border-gray-300 p-2.5  dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                value={
+                  app?.apiKey
+                    ? maskingString(app.apiKey, 4, app.apiKey.length)
+                    : ''
                 }
-              }}
-            >
-              {!copied ? (
-                <div className="relative flex">
-                  <FaKey className="m-auto mx-3" />
-                  {keyLoading && (
-                    <div className="absolute top-0 bottom-0 left-0 right-0 flex bg-blue-gray-400/50">
-                      <Spinner className="w-5 h-5 m-auto" />
-                    </div>
-                  )}
+                readOnly
+              />
+            </div>
+          ) : (
+            <Skeleton className="h-[42px] my-4" />
+          )}
+          {!isLoading && (
+            <div className="my-2 border border-gray-200 rounded bg-gray-50 dark:border-gray-600 dark:bg-gray-700">
+              <p className="px-4 pt-4 font-normal text-blue-gray-400">
+                {t('Quick Access')}
+              </p>
+              <TooltipProvider>
+                <div className="grid grid-cols-3 gap-2 p-4">
+                  {/* Apple Store */}
+                  <Button
+                    variant="outline"
+                    size="icon"
+                    className="w-[40px] h-[40px] bg-white text-cyan-500"
+                    onClick={() => {
+                      if (app?.extra?.appStoreURL) {
+                        window.open(app.extra.appStoreURL, '_blank');
+                      } else {
+                        toast.error(t('App Store URL is not set'));
+                      }
+                    }}
+                  >
+                    <GrAppleAppStore className="w-5 h-5 m-auto" />
+                  </Button>
+
+                  {/* Play Store */}
+                  <Button
+                    variant="outline"
+                    size="icon"
+                    className="w-[40px] h-[40px] bg-white text-cyan-500"
+                    onClick={() => {
+                      if (app?.extra?.playStoreURL) {
+                        window.open(app.extra.playStoreURL, '_blank');
+                      } else {
+                        toast.error(t('Play Store URL is not set'));
+                      }
+                    }}
+                  >
+                    <BiLogoPlayStore className="w-5 h-5" />
+                  </Button>
+
+                  {/* Project Git */}
+                  <Button
+                    variant="outline"
+                    size="icon"
+                    className="w-[40px] h-[40px] text-orange-500 bg-white"
+                    onClick={() => {
+                      if (app?.extra?.repoURL) {
+                        window.open(app.extra.repoURL, '_blank');
+                      } else {
+                        toast.error(t('Git Repository URL is not set'));
+                      }
+                    }}
+                  >
+                    <BsGit className="w-5 h-5" />
+                  </Button>
+
+                  {/* Postman */}
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Button
+                        variant="outline"
+                        size="icon"
+                        className="w-[40px] h-[40px] text-orange-500 bg-white"
+                        onClick={() => {
+                          setOpenPostman(true);
+                        }}
+                      >
+                        <SiPostman className="w-5 h-5" />
+                      </Button>
+                    </TooltipTrigger>
+                    <TooltipContent>{t('Postman')}</TooltipContent>
+                  </Tooltip>
+                  {/* GitLab CI */}
+
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Button
+                        variant="outline"
+                        size="icon"
+                        className="w-[40px] h-[40px] text-orange-500 bg-white"
+                        onClick={() => {
+                          setOpenGitLab(true);
+                        }}
+                      >
+                        <BiLogoGitlab className="w-5 h-5" />
+                      </Button>
+                    </TooltipTrigger>
+                    <TooltipContent>{t('GitLab CI')}</TooltipContent>
+                  </Tooltip>
+
+                  {/* Jira */}
+                  <Button
+                    variant="outline"
+                    size="icon"
+                    className="w-[40px] h-[40px] text-blue-500 bg-white"
+                    onClick={() => {
+                      setOpenJira(true);
+                    }}
+                  >
+                    <SiJirasoftware className="w-5 h-5" />
+                  </Button>
+
+                  {/* Confluence */}
+                  <Button
+                    variant="outline"
+                    size="icon"
+                    className="w-[40px] h-[40px] text-blue-500 bg-white"
+                    onClick={() => {
+                      if (app?.extra?.confluenceURL) {
+                        window.open(app.extra.confluenceURL, '_blank');
+                      } else {
+                        toast.error(t('Confluence URL is not set'));
+                      }
+                    }}
+                  >
+                    <SiConfluence className="w-5 h-5" />
+                  </Button>
+
+                  {/* Upload New Version */}
+                  <Button
+                    variant="outline"
+                    size="icon"
+                    className="w-[40px] h-[40px] text-gray-500 bg-white"
+                    onClick={() => {
+                      setOpenUploadVersion(true);
+                    }}
+                  >
+                    <FaCloudUploadAlt className="w-5 h-5" />
+                  </Button>
+
+                  {/* Edit App */}
+                  {!isLoadingUserProfile &&
+                    !isErrorUserProfile &&
+                    userProfile &&
+                    checkAllowAppActionPermission(userProfile, [
+                      PermissionEnum.EDIT_APP,
+                    ]) && (
+                      <Button
+                        variant="outline"
+                        size="icon"
+                        className="w-[40px] h-[40px] text-gray-500 bg-white"
+                        onClick={() => {
+                          setOpenEditApp(true);
+                        }}
+                      >
+                        <BiEdit className="w-5 h-5" />
+                      </Button>
+                    )}
+
+                  {!isLoadingUserProfile &&
+                    !isErrorUserProfile &&
+                    checkAllowModifyAppUserPermission(
+                      userProfile?.roles ?? []
+                    ) && (
+                      <Button
+                        variant="outline"
+                        size="icon"
+                        className="text-gray-500 bg-white"
+                        onClick={() => {
+                          setOpenUserAppPermissions(true);
+                        }}
+                      >
+                        <MdGroupAdd className="w-5 h-5" />
+                      </Button>
+                    )}
                 </div>
-              ) : (
-                <div className="m-auto">
-                  <TooltipProvider>
-                    <Tooltip defaultOpen>
-                      <TooltipTrigger asChild>
-                        <div className="relative">
-                          <IoIosCopy className="mx-3" />
-                          <TiTick className="absolute right-[0px] bottom-[-8px] text-green-400" />
-                        </div>
-                      </TooltipTrigger>
-                      <TooltipContent>{t('Copied')}</TooltipContent>
-                    </Tooltip>
-                  </TooltipProvider>
-                </div>
-              )}
-            </span>
-            <input
-              type="text"
-              id="website-admin"
-              className="rounded-none rounded-r-lg bg-gray-50 border text-gray-900 focus:ring-blue-500 focus:border-blue-500 block flex-1 min-w-0 w-full text-sm border-gray-300 p-2.5  dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-              value={
-                app?.apiKey
-                  ? maskingString(app.apiKey, 4, app.apiKey.length)
-                  : ''
-              }
-              readOnly
-            />
-          </div>
-          <div className="my-2 border border-gray-200 rounded bg-gray-50 dark:border-gray-600 dark:bg-gray-700">
-            <p className="px-4 pt-4 font-normal text-blue-gray-400">
-              {t('Quick Access')}
-            </p>
-            <TooltipProvider>
-              <div className="grid grid-cols-3 gap-2 p-4">
-                {/* Apple Store */}
-                <Button
-                  variant="outline"
-                  size="icon"
-                  className="w-[40px] h-[40px] bg-white text-cyan-500"
-                  onClick={() => {
-                    if (app?.extra?.appStoreURL) {
-                      window.open(app.extra.appStoreURL, '_blank');
-                    } else {
-                      toast.error(t('App Store URL is not set'));
-                    }
-                  }}
-                >
-                  <GrAppleAppStore className="w-5 h-5 m-auto" />
-                </Button>
-
-                {/* Play Store */}
-                <Button
-                  variant="outline"
-                  size="icon"
-                  className="w-[40px] h-[40px] bg-white text-cyan-500"
-                  onClick={() => {
-                    if (app?.extra?.playStoreURL) {
-                      window.open(app.extra.playStoreURL, '_blank');
-                    } else {
-                      toast.error(t('Play Store URL is not set'));
-                    }
-                  }}
-                >
-                  <BiLogoPlayStore className="w-5 h-5" />
-                </Button>
-
-                {/* Project Git */}
-                <Button
-                  variant="outline"
-                  size="icon"
-                  className="w-[40px] h-[40px] text-orange-500 bg-white"
-                  onClick={() => {
-                    if (app?.extra?.repoURL) {
-                      window.open(app.extra.repoURL, '_blank');
-                    } else {
-                      toast.error(t('Git Repository URL is not set'));
-                    }
-                  }}
-                >
-                  <BsGit className="w-5 h-5" />
-                </Button>
-
-                {/* Postman */}
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <Button
-                      variant="outline"
-                      size="icon"
-                      className="w-[40px] h-[40px] text-orange-500 bg-white"
-                      onClick={() => {
-                        setOpenPostman(true);
-                      }}
-                    >
-                      <SiPostman className="w-5 h-5" />
-                    </Button>
-                  </TooltipTrigger>
-                  <TooltipContent>{t('Postman')}</TooltipContent>
-                </Tooltip>
-                {/* GitLab CI */}
-
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <Button
-                      variant="outline"
-                      size="icon"
-                      className="w-[40px] h-[40px] text-orange-500 bg-white"
-                      onClick={() => {
-                        setOpenGitLab(true);
-                      }}
-                    >
-                      <BiLogoGitlab className="w-5 h-5" />
-                    </Button>
-                  </TooltipTrigger>
-                  <TooltipContent>{t('GitLab CI')}</TooltipContent>
-                </Tooltip>
-
-                {/* Jira */}
-                <Button
-                  variant="outline"
-                  size="icon"
-                  className="w-[40px] h-[40px] text-blue-500 bg-white"
-                  onClick={() => {
-                    setOpenJira(true);
-                  }}
-                >
-                  <SiJirasoftware className="w-5 h-5" />
-                </Button>
-
-                {/* Confluence */}
-                <Button
-                  variant="outline"
-                  size="icon"
-                  className="w-[40px] h-[40px] text-blue-500 bg-white"
-                  onClick={() => {
-                    if (app?.extra?.confluenceURL) {
-                      window.open(app.extra.confluenceURL, '_blank');
-                    } else {
-                      toast.error(t('Confluence URL is not set'));
-                    }
-                  }}
-                >
-                  <SiConfluence className="w-5 h-5" />
-                </Button>
-
-                {/* Upload New Version */}
-                <Button
-                  variant="outline"
-                  size="icon"
-                  className="w-[40px] h-[40px] text-gray-500 bg-white"
-                  onClick={() => {
-                    setOpenUploadVersion(true);
-                  }}
-                >
-                  <FaCloudUploadAlt className="w-5 h-5" />
-                </Button>
-
-                {/* Edit App */}
-                {!isLoadingUserProfile &&
-                  !isErrorUserProfile &&
-                  userProfile &&
-                  checkAllowAppActionPermission(userProfile, [
-                    PermissionEnum.EDIT_APP,
-                  ]) && (
-                    <Button
-                      variant="outline"
-                      size="icon"
-                      className="w-[40px] h-[40px] text-gray-500 bg-white"
-                      onClick={() => {
-                        setOpenEditApp(true);
-                      }}
-                    >
-                      <BiEdit className="w-5 h-5" />
-                    </Button>
-                  )}
-
-                {!isLoadingUserProfile &&
-                  !isErrorUserProfile &&
-                  checkAllowModifyAppUserPermission(
-                    userProfile?.roles ?? []
-                  ) && (
-                    <Button
-                      variant="outline"
-                      size="icon"
-                      className="text-gray-500 bg-white"
-                      onClick={() => {
-                        setOpenUserAppPermissions(true);
-                      }}
-                    >
-                      <MdGroupAdd className="w-5 h-5" />
-                    </Button>
-                  )}
-              </div>
-            </TooltipProvider>
-          </div>
+              </TooltipProvider>
+            </div>
+          )}
         </div>
         <div className="w-full p-1">
           {app && (

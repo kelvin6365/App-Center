@@ -1,0 +1,18 @@
+{
+  "OnBoarding": {
+    "Im a freelancer": "I'm a freelancer",
+    "I belong to a company": "I belong to a company",
+    "Are you a freelancer or part of a company": "Are you a freelancer or part of a company?",
+    "Workspace Setup": "Workspace Setup",
+    "Next": "Next",
+    "Personal Information": "Personal Information",
+    "Please enter your name": "Please enter your name",
+    "Name is required": "Name is required",
+    "Your Name": "Your Name",
+    "Create Your Team": "Create Your Team",
+    "Give your team a name to collaborate and work together effectively": "Give your team a name to collaborate and work together effectively.",
+    "Team Name": "Team Name",
+    "Enter your team name": "Enter your team name",
+    "Submit": "Submit"
+  }
+}

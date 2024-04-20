@@ -9,6 +9,7 @@ import { SearchJiraIssue } from '@/types/SearchJiraIssue';
 import { UserStatus } from '@/types/UserStatus';
 import axios, { AxiosResponse } from 'axios';
 import { getSession, signOut } from 'next-auth/react';
+import { onboardingFormSchema } from '../schema/onboarding';
 const API = {
   apiInstance: axios.create({
     baseURL: process.env.NEXT_PUBLIC_API_HOST,
@@ -25,7 +26,7 @@ const API = {
     AUTH: {
       LOGIN: '/v1/auth/sign-in',
       REGISTER: '/v1/auth/sign-up',
-      // REFRESH_TOKEN: '/v1/auth/refresh-token',
+      REFRESH_TOKEN: '/v1/auth/refresh',
     },
     APP: {
       CREATE: '/v1/portal/app',
@@ -63,6 +64,7 @@ const API = {
         `/v1/portal/user/app/${appId}/permissions`,
       ADD_APP_PERMISSIONS: (userId: string) =>
         `v1/portal/user/${userId}/permission`,
+      ONBOARDING: '/v1/portal/user/onboarding',
     },
     SETTING: {
       GET_ALL_SETTINGS: '/v1/portal/setting',
@@ -90,11 +92,34 @@ const API = {
         password,
       });
     },
-    register: async (email: string, password: string, name: string) => {
+    register: async (
+      email: string,
+      password: string,
+      name: string
+    ): Promise<
+      AxiosResponse<{
+        data: boolean;
+        status: ResponseStatus;
+      }>
+    > => {
       return API.apiInstance.post(API.API_PATH.AUTH.REGISTER, {
         username: email,
         password,
         name,
+      });
+    },
+    refreshToken: async (
+      refreshToken: string
+    ): Promise<
+      AxiosResponse<{
+        data: any;
+        status: ResponseStatus;
+      }>
+    > => {
+      return API.apiInstance.get(API.API_PATH.AUTH.REFRESH_TOKEN, {
+        headers: {
+          'x-refresh-token': refreshToken,
+        },
       });
     },
   },
@@ -356,6 +381,18 @@ const API = {
     },
   },
   user: {
+    onBoarding: (data: {
+      name: string;
+      type: string;
+      tenantName: string;
+    }): Promise<
+      AxiosResponse<{
+        data: boolean;
+        status: ResponseStatus;
+      }>
+    > => {
+      return API.apiInstance.post(API.API_PATH.USER.ONBOARDING, data);
+    },
     searchUsers: (
       tenantId: string,
       {
@@ -558,14 +595,13 @@ API.apiInstance.interceptors.response.use(
   (res) => {
     return Promise.resolve(res);
   },
-  (err) => {
+  async (err) => {
     if (err && err.response?.status === 401) {
-      // const { isLoggedIn, setLogout }: AppSlice = useAppStore.getState();
-      // if (isLoggedIn) {
-      //   console.log('%c401 detected, logout now', 'color: #ff0000');
-      //   setLogout();
-      // }
-      signOut();
+      const newSession = await getSession();
+      if (newSession?.user?.error) {
+        // Token refresh failed, log out the user
+        signOut();
+      }
     }
     return Promise.reject(err);
   }

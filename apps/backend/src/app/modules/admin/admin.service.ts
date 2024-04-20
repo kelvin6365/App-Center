@@ -67,7 +67,9 @@ export class AdminService {
     const accessTokenExpires = moment()
       .add(
         this.configService.get<number>('jwt.user.accessTokenExpiresIn'),
-        'days'
+        this.configService.get<moment.unitOfTime.DurationConstructor>(
+          'jwt.user.timeFormats'
+        )
       )
       .toDate();
     const accessToken = this.jwtService.sign(payloadAccess);

@@ -31,7 +31,13 @@ const authMiddleware = withAuth(
 );
 
 export default async function middleware(req: NextRequest) {
-  const publicPages = ['/', '/login'];
+  const publicPages = [
+    '/',
+    '/login',
+    '/register',
+    '/forgot-password',
+    '/reset-password',
+  ];
   const publicPathnameRegex = RegExp(
     `^(/(${locales.join('|')}))?(${publicPages.join('|')})?/?$`,
     'i'

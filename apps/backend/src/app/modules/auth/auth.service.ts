@@ -50,13 +50,17 @@ export class AuthService {
     const refreshTokenExpiresDate = moment()
       .add(
         this.configService.get<number>('jwt.user.refreshTokenExpiresIn'),
-        'days'
+        this.configService.get<moment.unitOfTime.DurationConstructor>(
+          'jwt.user.timeFormats'
+        )
       )
       .toDate();
     const refreshToken = this.jwtService.sign(payloadRefresh, {
       expiresIn: `${this.configService.get<number>(
         'jwt.user.refreshTokenExpiresIn'
-      )} days`,
+      )}${this.configService.get<moment.unitOfTime.DurationConstructor>(
+        'jwt.user.timeFormats'
+      )}`,
     });
     await this.userService.updateUserRefreshToken(
       user.id,
@@ -66,11 +70,12 @@ export class AuthService {
     const accessTokenExpires = moment()
       .add(
         this.configService.get<number>('jwt.user.accessTokenExpiresIn'),
-        'days'
+        this.configService.get<moment.unitOfTime.DurationConstructor>(
+          'jwt.user.timeFormats'
+        )
       )
       .toDate();
     const accessToken = this.jwtService.sign(payloadAccess);
-
     return {
       accessToken: accessToken,
       refreshToken: refreshToken,
@@ -93,7 +98,7 @@ export class AuthService {
         ResponseCode.STATUS_8001_USER_USERNAME_OR_PASSWORD_NOT_MATCH
       );
     }
-    if (user.status !== UserStatus.Activated) {
+    if (user.status === UserStatus.Inactive) {
       throw new AppException(ResponseCode.STATUS_8014_USER_IS_NOT_ACTIVE);
     }
     user.password = undefined;

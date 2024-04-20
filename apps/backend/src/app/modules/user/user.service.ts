@@ -21,6 +21,12 @@ import { AddUserRequestDTO } from './dto/add.user.request.dto';
 import { UserPermission } from './entities/user.permission.entity';
 import { UserPermissionRepository } from '../../database/repositories/user.permission.repository';
 import AppsPermission from '../permission/enum/apps.permission.enum';
+import { OnBoardingDTO } from '@/modules/user/dto/onboarding.dto';
+import { TenantRepository } from '@/database/repositories/tenant.repository';
+import { Tenant } from '@/modules/tenant/entities/tenant.entity';
+import { UserTenantRepository } from '@/database/repositories/user.tenent.repository';
+import { TenantUtil } from '@/modules/tenant/tenant.util';
+import { TenantService } from '../tenant/tenant.service';
 
 @Injectable()
 export class UserService {
@@ -28,7 +34,11 @@ export class UserService {
     @Inject(Logger) private readonly logger: LoggerService,
     private readonly usersRepository: UserRepository,
     private readonly userRefreshTokenRepository: UserRefreshTokenRepository,
-    private readonly userPermissionRepository: UserPermissionRepository
+    private readonly userPermissionRepository: UserPermissionRepository,
+    private readonly tenantRepository: TenantRepository,
+    private readonly userTenantRepository: UserTenantRepository,
+    private readonly tenantUtil: TenantUtil,
+    private readonly tenantService: TenantService
   ) {}
   async signUp(signUpDTO: SignUpDTO): Promise<User> {
     //! New User need to walk through onboarding to create a tenant.
@@ -71,12 +81,13 @@ export class UserService {
     refreshToken: string,
     refreshTokenExpiresDate: Date
   ) {
-    return this.userRefreshTokenRepository.update(
-      { userId },
+    return this.userRefreshTokenRepository.upsert(
       {
+        userId,
         refreshToken,
         refreshTokenExpires: refreshTokenExpiresDate,
-      }
+      },
+      ['userId']
     );
   }
 
@@ -273,5 +284,46 @@ export class UserService {
     const users =
       await this.usersRepository.findAppPermissionsByRefIdGroupByUserId(appId);
     return users.map((user) => new PortalUserResponseDTO(user));
+  }
+
+  async onBoarding(onBoardingDTO: OnBoardingDTO, user: CurrentUserDTO) {
+    //check user already onboarded
+    const currentUser = await this.usersRepository.findUserByEmailWithPassword(
+      user.username
+    );
+    if (!currentUser) {
+      throw new AppException(ResponseCode.STATUS_8004_USER_NOT_EXIST);
+    }
+    if (currentUser.status !== UserStatus.Pending) {
+      throw new AppException(
+        ResponseCode.STATUS_8015_USER_NOT_AVAILABLE_TO_ONBOARDING
+      );
+    }
+
+    //update user status
+    currentUser.status = UserStatus.Activated;
+    currentUser.profile.name = onBoardingDTO.name;
+    await this.usersRepository.updateUserProfileNameOrPassword(
+      user.id,
+      currentUser,
+      user.id
+    );
+
+    //create tenant
+    const tenant = new Tenant();
+    tenant.name = onBoardingDTO.tenantName;
+    tenant.createdBy = user.id;
+    tenant.domainName = await this.tenantService.generateSlug(
+      onBoardingDTO.tenantName
+    );
+    await this.tenantRepository.createTenant(tenant);
+
+    //create user tenant
+    const userTenant = new UserTenant();
+    userTenant.userId = user.id;
+    userTenant.tenantId = tenant.id;
+    await this.userTenantRepository.createUserTenant(userTenant);
+
+    return true;
   }
 }

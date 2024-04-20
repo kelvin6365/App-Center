@@ -74,23 +74,30 @@ export default function TeamSwitcher({ className }: TeamSwitcherProps) {
     <Dialog open={showNewTenantDialog} onOpenChange={setShowNewTenantDialog}>
       <Popover open={isTenantSelectOpen} onOpenChange={setIsTenantSelectOpen}>
         <PopoverTrigger asChild>
-          {selectedTeam && !isLoading ? (
+          {(selectedTeam || availableTenants.length === 0) && !isLoading ? (
             <Button
               variant="outline"
               role="combobox"
               aria-expanded={isTenantSelectOpen}
               aria-label={t('Select a team')}
+              disabled={availableTenants.length === 0}
               className={cn('w-full justify-between', className)}
             >
-              <Avatar className="w-5 h-5 mr-2">
-                <AvatarImage
-                  src={`https://ui-avatars.com/api/?name=${selectedTeam.name}`}
-                  alt={selectedTeam.name}
-                />
-                <AvatarFallback>-</AvatarFallback>
-              </Avatar>
-              {selectedTeam.name}
-              <CaretSortIcon className="w-4 h-4 ml-auto opacity-50 shrink-0" />
+              {selectedTeam ? (
+                <>
+                  <Avatar className="w-5 h-5 mr-2">
+                    <AvatarImage
+                      src={`https://ui-avatars.com/api/?name=${selectedTeam.name}`}
+                      alt={selectedTeam.name}
+                    />
+                    <AvatarFallback>-</AvatarFallback>
+                  </Avatar>
+                  {selectedTeam.name}
+                  <CaretSortIcon className="w-4 h-4 ml-auto opacity-50 shrink-0" />
+                </>
+              ) : (
+                <p>{t('You did not have any team yet')}</p>
+              )}
             </Button>
           ) : (
             <>

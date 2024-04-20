@@ -7,7 +7,13 @@
       "LoginFailed": "Login Failed"
     },
     "Username": "Username",
-    "Sign in to your account": "Sign in to your account"
+    "Sign in to your account": "Sign in to your account",
+    "Sign Up": "Sign Up",
+    "Dont have an account": "Don't have an account?",
+    "Enter your email below to create your account": "Enter your email below to create your account",
+    "Create an account": "Create an account",
+    "Already have an account": "Already have an account?",
+    "Email invalid or already taken": "Email invalid or already taken"
   },
   "Common": {
     "Add a new team to manage products and customers": "Add a new team to manage products and customers.",
@@ -18,7 +24,8 @@
     "Search team": "Search team",
     "Select a team": "Select a team",
     "Team name": "Team name",
-    "Teams": "Teams"
+    "Teams": "Teams",
+    "You did not have any team yet": "You did not have any team yet."
   },
   "Index": {
     "title": "title1"

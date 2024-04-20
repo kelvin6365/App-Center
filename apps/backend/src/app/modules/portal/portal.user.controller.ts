@@ -39,6 +39,7 @@ import { UpdateUserStatusRequestDTO } from '../user/dto/update.user.status.reque
 import { UserService } from '../user/user.service';
 import { AddUserRequestDTO } from '../user/dto/add.user.request.dto';
 import { AppService } from '../app/app.service';
+import { OnBoardingDTO } from '@/modules/user/dto/onboarding.dto';
 
 @ApiTags('Portal')
 @ApiBearerAuth()
@@ -194,6 +195,18 @@ export class PortalUserController {
   async findUserByEmailWithPassword(@Param('id') id: string) {
     return new AppResponse<PortalUserResponseDTO[]>(
       await this.userService.findUseAppPermissionsListByAppId(id)
+    );
+  }
+
+  //onboarding
+  @Post('/onboarding')
+  @ApiResponseSchema(HttpStatus.OK, 'OK')
+  async onBoarding(
+    @Body() dto: OnBoardingDTO,
+    @CurrentUser() user: CurrentUserDTO
+  ) {
+    return new AppResponse<boolean>(
+      await this.userService.onBoarding(dto, user)
     );
   }
 }

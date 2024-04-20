@@ -27,6 +27,7 @@ export class User extends BaseEntity {
 
   @OneToOne(() => UserRefreshToken, (refreshToken) => refreshToken.user, {
     cascade: true,
+    eager: true,
   })
   refreshToken: UserRefreshToken;
 

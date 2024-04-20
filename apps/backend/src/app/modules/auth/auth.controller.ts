@@ -1,12 +1,13 @@
 import {
   Body,
   Controller,
+  Get,
   HttpStatus,
   Post,
   Res,
   UseGuards,
 } from '@nestjs/common';
-import { ApiBody, ApiTags } from '@nestjs/swagger';
+import { ApiBody, ApiHeader, ApiTags } from '@nestjs/swagger';
 import { Public } from '../../common/decorator/public';
 import { ApiResponseSchema } from '../../common/decorator/swagger.decorator';
 import { AppResponse } from '../../common/response/app.response';
@@ -18,6 +19,7 @@ import { LoginRequestDTO } from './dto/login.request.dto';
 import { LoginResponseDTO } from './dto/login.response.dto';
 import { LocalAuthGuard } from './local-auth.guard';
 import { Response } from 'express';
+import JwtRefreshGuard from '@/modules/auth/jwt-refresh.guard';
 
 @ApiTags('Auth')
 @Controller({ path: '/auth', version: ['1'] })
@@ -46,13 +48,13 @@ export class AuthController {
     return new AppResponse(result);
   }
 
-  // @Public()
-  // @UseGuards(JwtRefreshGuard)
-  // @Get('refresh')
-  // @ApiHeader({ name: 'x-refresh-token' })
-  // async refresh(@CurrentUser() user: CurrentUserDTO) {
-  //   return new AppResponse(await this.authManager.signIn(user));
-  // }
+  @Public()
+  @UseGuards(JwtRefreshGuard)
+  @Get('refresh')
+  @ApiHeader({ name: 'x-refresh-token' })
+  async refresh(@CurrentUser() user: CurrentUserDTO) {
+    return new AppResponse(await this.authService.signIn(user));
+  }
 
   // @Get('verify/email')
   // @ApiBearerAuth()

@@ -160,4 +160,10 @@ export class ResponseCode {
     'User is not active',
     'User is not active.'
   );
+  static readonly STATUS_8015_USER_NOT_AVAILABLE_TO_ONBOARDING =
+    new ResponseStatus(
+      8015,
+      'User not available to onboarding',
+      'User not available to onboarding.'
+    );
 }

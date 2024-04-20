@@ -30,14 +30,16 @@ import { JiraModule } from '../jira/jira.module';
     PassportModule,
     JwtModule.registerAsync({
       imports: [ConfigModule],
-      useFactory: async (configService: ConfigService) => ({
-        secret: configService.get<string>('jwt.secret'),
-        signOptions: {
-          expiresIn: `${configService.get<number>(
-            'jwt.user.accessTokenExpiresIn'
-          )} Days`,
-        },
-      }),
+      useFactory: async (configService: ConfigService) => {
+        return {
+          secret: configService.get<string>('jwt.secret'),
+          signOptions: {
+            expiresIn: `${configService.get<number>(
+              'jwt.user.accessTokenExpiresIn'
+            )}${configService.get<number>('jwt.user.timeFormats')}`,
+          },
+        };
+      },
       inject: [ConfigService],
     }),
   ],

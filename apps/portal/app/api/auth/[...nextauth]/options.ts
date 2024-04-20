@@ -2,6 +2,8 @@ import API from '@/services/api';
 import { NextAuthOptions } from 'next-auth';
 import CredentialsProvider from 'next-auth/providers/credentials';
 import dayjs from 'dayjs';
+import { JWT } from 'next-auth/jwt';
+import { UserStatus } from '@/types/UserStatus';
 export const authOptions: NextAuthOptions = {
   providers: [
     CredentialsProvider({
@@ -19,6 +21,7 @@ export const authOptions: NextAuthOptions = {
         accessToken: {},
         refreshToken: {},
         accessTokenExpires: {},
+        status: {},
       },
       async authorize(credentials, req) {
         try {
@@ -40,6 +43,7 @@ export const authOptions: NextAuthOptions = {
             refreshToken: loginResponse.refreshToken,
             username: user.username,
             accessTokenExpires: loginResponse.accessTokenExpires,
+            status: user.status as UserStatus,
           };
         } catch (e) {
           console.error('Authorize fail, ', e);
@@ -53,6 +57,7 @@ export const authOptions: NextAuthOptions = {
   },
   callbacks: {
     async jwt({ token, account, user }) {
+      console.log('token', token);
       const updateToken = structuredClone(token);
       if (account && account.type === 'credentials') {
         return {
@@ -61,13 +66,20 @@ export const authOptions: NextAuthOptions = {
         };
       }
       // Return previous token if the access token has not expired yet
-      if (dayjs().isAfter(dayjs(updateToken.accessTokenExpires))) {
-        console.log('[Token expired]');
-        return token;
+      if (dayjs().isBefore(dayjs(updateToken.accessTokenExpires))) {
+        console.log('[Token valid]');
+        //[2] Get user info
+        const { data: user } = (await API.user.profile(updateToken.accessToken))
+          .data;
+        return {
+          ...token,
+          status: user.status as UserStatus,
+        };
       }
+      console.log('[Token expired]');
       // Access token has expired, try to update it
-      // return refreshAccessToken(token);
-      return token;
+      return await refreshAccessToken(token);
+      // return token;
     },
     async session({ session, token }) {
       session.user = token; //(3)
@@ -79,34 +91,26 @@ export const authOptions: NextAuthOptions = {
   },
 };
 
-// /**
-//  * Takes a token, and returns a new token with updated
-//  * `accessToken` and `accessTokenExpires`. If an error occurs,
-//  * returns the old token and an error property
-//  */
-// async function refreshAccessToken(token:CommonUserProperties) {
-//   try {
-
-//     const response = await API.auth.
-
-//     const refreshedTokens = await response.json()
-
-//     if (!response.ok) {
-//       throw refreshedTokens
-//     }
-
-//     return {
-//       ...token,
-//       accessToken: refreshedTokens.access_token,
-//       accessTokenExpires: Date.now() + refreshedTokens.expires_in * 1000,
-//       refreshToken: refreshedTokens.refresh_token ?? token.refreshToken, // Fall back to old refresh token
-//     }
-//   } catch (error) {
-//     console.log(error)
-
-//     return {
-//       ...token,
-//       error: "RefreshAccessTokenError",
-//     }
-//   }
-// }
+/**
+ * Takes a token, and returns a new token with updated
+ * `accessToken` and `accessTokenExpires`. If an error occurs,
+ * returns the old token and an error property
+ */
+async function refreshAccessToken(token: JWT) {
+  try {
+    const { data: loginResponse } = (
+      await API.auth.refreshToken(token.refreshToken)
+    ).data;
+    return {
+      ...token,
+      accessToken: loginResponse.accessToken,
+      accessTokenExpires: loginResponse.accessTokenExpires,
+      refreshToken: loginResponse.refreshToken, // Fall back to old refresh token
+    };
+  } catch (error) {
+    return {
+      ...token,
+      error: 'RefreshAccessTokenError',
+    };
+  }
+}

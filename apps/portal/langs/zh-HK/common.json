@@ -7,7 +7,13 @@
       "LoginFailed": "登入失敗"
     },
     "Username": "使用者名稱",
-    "Sign in to your account": "登入您的帳戶"
+    "Sign in to your account": "登入您的帳戶",
+    "Sign Up": "註冊",
+    "Dont have an account": "沒有帳戶？",
+    "Create an account": "建立一個帳戶",
+    "Enter your email below to create your account": "在下面輸入您的電子郵件以建立您的帳戶",
+    "Already have an account": "已經有帳戶？",
+    "Email invalid or already taken": "電子郵件無效或已被佔用"
   },
   "Common": {
     "Add a new team to manage products and customers": "新增團隊來管理產品和客戶。",
@@ -18,7 +24,8 @@
     "Search team": "搜尋團隊",
     "Select a team": "選擇團隊",
     "Teams": "團隊",
-    "Team name": "隊名"
+    "Team name": "隊名",
+    "You did not have any team yet": "您還沒有任何團隊。"
   },
   "Index": {
     "title": "title1"

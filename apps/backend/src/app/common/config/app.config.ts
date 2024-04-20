@@ -13,6 +13,7 @@ export default () => ({
   jwt: {
     secret: process.env.JWT_SECRET,
     user: {
+      timeFormats: process.env.JWT_TIME_FORMATS || 'days',
       accessTokenExpiresIn: process.env.JWT_USER_ACCESS_TOKEN_EXPIRES_IN || 30,
       refreshTokenExpiresIn:
         process.env.JWT_USER_REFRESH_TOKEN_EXPIRES_IN || 60,
@@ -31,6 +32,7 @@ export default () => ({
       fileAPI: process.env.FILE_API,
       publicAPI: process.env.PUBLIC_API,
     },
+    slugify: {},
   },
   static: {
     defaultTenant: {
