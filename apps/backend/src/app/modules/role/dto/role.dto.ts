@@ -1,13 +1,15 @@
-import { Role } from '../entities/role.entity';
+import { UserRole } from '../../user/entities/user.role.entity';
 import { RoleType } from '../enum/role.type.enum';
 
 export class RoleDTO {
   type: RoleType;
   name: string;
   description: string;
-  constructor(partial: Partial<Role>) {
-    this.type = partial.type;
-    this.name = partial.name;
-    this.description = partial.description;
+  tenantId: string;
+  constructor(partial: Partial<UserRole>) {
+    this.type = partial.role.type;
+    this.name = partial.role.name;
+    this.description = partial.role.description;
+    this.tenantId = partial.tenantId;
   }
 }

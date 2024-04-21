@@ -25,7 +25,14 @@
     "Select a team": "選擇團隊",
     "Teams": "團隊",
     "Team name": "隊名",
-    "You did not have any team yet": "您還沒有任何團隊。"
+    "You did not have any team yet": "您還沒有任何團隊。",
+    "Created Tenant Successfully": "創建租戶成功",
+    "Settings": "設定",
+    "Team": "團隊",
+    "All Members": "全部會員",
+    "Dashboard": "主頁",
+    "Apps": "應用程式",
+    "All Apps": "全部應用程式"
   },
   "Index": {
     "title": "title1"

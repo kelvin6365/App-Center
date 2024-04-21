@@ -6,6 +6,7 @@ import TeamSwitcher from '@/components/navbar/team-switcher';
 import useUserProfileQuery from '@/queries/useUserProfileQuery';
 import { filterMenuByRoles } from '@/utils/permissionChecking';
 import { cn } from '@app-center/shadcn/util';
+import useTeamSelectionStore from '../../stores/useTeamSelectionStore';
 
 export default function Sidebar() {
   const {
@@ -14,6 +15,7 @@ export default function Sidebar() {
     isError: isErrorUserProfile,
     refetch: refetchUserProfile,
   } = useUserProfileQuery();
+  const { selectedTeam } = useTeamSelectionStore();
   return (
     <nav
       className={cn(
@@ -29,8 +31,8 @@ export default function Sidebar() {
             </h2>
             <DashboardNav
               items={
-                userProfile && !isErrorUserProfile
-                  ? filterMenuByRoles(MenuItems, userProfile)
+                userProfile && !isErrorUserProfile && selectedTeam
+                  ? filterMenuByRoles(MenuItems, userProfile, selectedTeam.id)
                   : []
               }
               isLoading={isLoadingUserProfile}

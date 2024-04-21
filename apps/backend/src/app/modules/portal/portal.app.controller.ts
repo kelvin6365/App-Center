@@ -4,6 +4,7 @@ import {
   DefaultValuePipe,
   Delete,
   Get,
+  Headers,
   HttpStatus,
   Param,
   ParseFilePipe,
@@ -98,6 +99,7 @@ export class PortalAppController {
     @JSONQuery('query') query: SearchQueryDTO,
     @Query('page', new DefaultValuePipe(1), ParseIntPipe) page = 1,
     @Query('limit', new DefaultValuePipe(10), ParseIntPipe) limit = 10,
+    @Headers('x-tenant-id') tenantId: string,
     @CurrentUser() currentUser: CurrentUserDTO
   ): Promise<AppResponse<PageDTO<AppDTO>>> {
     return new AppResponse<PageDTO<AppDTO>>(
@@ -108,7 +110,8 @@ export class PortalAppController {
         limit,
         query?.filters ?? [],
         query?.sorts ?? [{ key: 'createdAt', value: 'DESC' }],
-        currentUser
+        currentUser,
+        tenantId
       )
     );
   }

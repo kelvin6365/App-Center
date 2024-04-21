@@ -25,7 +25,14 @@
     "Select a team": "Select a team",
     "Team name": "Team name",
     "Teams": "Teams",
-    "You did not have any team yet": "You did not have any team yet."
+    "You did not have any team yet": "You did not have any team yet.",
+    "Created Tenant Successfully": "Created Tenant Successfully",
+    "Settings": "Settings",
+    "Team": "Team",
+    "All Members": "All Members",
+    "Dashboard": "Dashboard",
+    "Apps": "Apps",
+    "All Apps": "All Apps"
   },
   "Index": {
     "title": "title1"

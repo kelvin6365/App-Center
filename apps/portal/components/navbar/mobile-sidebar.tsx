@@ -7,6 +7,7 @@ import { filterMenuByRoles } from '@/utils/permissionChecking';
 // import { DashboardNav } from "@/components/dashboard-nav";
 import { Sheet, SheetContent, SheetTrigger } from '@app-center/shadcn/ui';
 import { useState } from 'react';
+import useTeamSelectionStore from '../../stores/useTeamSelectionStore';
 
 // import { Playlist } from "../data/playlists";
 
@@ -20,6 +21,7 @@ export function MobileSidebar({ className }: SidebarProps) {
     isError: isErrorUserProfile,
     refetch: refetchUserProfile,
   } = useUserProfileQuery();
+  const { selectedTeam } = useTeamSelectionStore();
   return (
     <>
       <Sheet open={open} onOpenChange={setOpen}>
@@ -35,8 +37,12 @@ export function MobileSidebar({ className }: SidebarProps) {
               <div className="space-y-1">
                 <DashboardNav
                   items={
-                    userProfile && !isErrorUserProfile
-                      ? filterMenuByRoles(MenuItems, userProfile)
+                    userProfile && !isErrorUserProfile && selectedTeam
+                      ? filterMenuByRoles(
+                          MenuItems,
+                          userProfile,
+                          selectedTeam.id
+                        )
                       : []
                   }
                   setOpen={setOpen}

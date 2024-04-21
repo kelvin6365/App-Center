@@ -125,16 +125,21 @@ const API = {
       page = 1,
       limit = 10,
       query,
+      tenantId,
     }: {
       page?: number;
       limit?: number;
       query?: string;
+      tenantId?: string;
     }) => {
       return API.apiInstance.get(API.API_PATH.APP.SEARCH, {
         params: {
           page: page,
           limit: limit,
           query,
+        },
+        headers: {
+          'x-tenant-id': tenantId,
         },
       });
     },

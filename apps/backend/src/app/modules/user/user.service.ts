@@ -27,6 +27,8 @@ import { Tenant } from '@/modules/tenant/entities/tenant.entity';
 import { UserTenantRepository } from '@/database/repositories/user.tenent.repository';
 import { TenantUtil } from '@/modules/tenant/tenant.util';
 import { TenantService } from '../tenant/tenant.service';
+import { RoleType } from '../role/enum/role.type.enum';
+import { UserRoleRepository } from '../../database/repositories/user.role.repository';
 
 @Injectable()
 export class UserService {
@@ -37,6 +39,7 @@ export class UserService {
     private readonly userPermissionRepository: UserPermissionRepository,
     private readonly tenantRepository: TenantRepository,
     private readonly userTenantRepository: UserTenantRepository,
+    private readonly userRoleRepository: UserRoleRepository,
     private readonly tenantUtil: TenantUtil,
     private readonly tenantService: TenantService
   ) {}
@@ -245,6 +248,59 @@ export class UserService {
     return new PortalUserResponseDTO(updatedUser);
   }
 
+  //update user profile by Id
+  async updateUserProfileById(
+    updateProfile: UpdateUserDTO,
+    id: string,
+    tenantId: string
+  ) {
+    //check if user exists
+    const currentUser =
+      await this.usersRepository.findUserByUserIdWithDeletedFalse(id);
+    if (!currentUser) {
+      throw new AppException(ResponseCode.STATUS_8004_USER_NOT_EXIST);
+    }
+    if (updateProfile.password) {
+      if (
+        !(await isMatchPassword(
+          updateProfile.oldPassword,
+          currentUser.password
+        ))
+      ) {
+        throw new AppException(
+          ResponseCode.STATUS_8005_USER_PASSWORD_NOT_MATCH
+        );
+      }
+      currentUser.password = await hashPassword(updateProfile.password);
+    }
+    if (updateProfile.name) {
+      currentUser.profile.name = updateProfile.name;
+    }
+    //Role
+    if (updateProfile.role && tenantId) {
+      //get current user role
+      const userRole =
+        await this.userRoleRepository.findUserRoleByUserIdAndTenantId(
+          id,
+          tenantId
+        );
+      if (!userRole) {
+        throw new AppException(ResponseCode.STATUS_8016_USER_ROLE_NOT_EXIST);
+      }
+      //update role
+      userRole.roleId = RoleId[updateProfile.role];
+      delete userRole.role;
+      await this.userRoleRepository.updateUserRole(userRole);
+      delete currentUser.roles;
+    }
+    const updatedUser =
+      await this.usersRepository.updateUserProfileNameOrPassword(
+        id,
+        currentUser
+      );
+    return new PortalUserResponseDTO(updatedUser);
+  }
+
   async addPermissions(
     userId: string,
     dto: AddUserRequestDTO,
@@ -303,6 +359,7 @@ export class UserService {
     //update user status
     currentUser.status = UserStatus.Activated;
     currentUser.profile.name = onBoardingDTO.name;
+
     await this.usersRepository.updateUserProfileNameOrPassword(
       user.id,
       currentUser,
@@ -323,6 +380,14 @@ export class UserService {
     userTenant.userId = user.id;
     userTenant.tenantId = tenant.id;
     await this.userTenantRepository.createUserTenant(userTenant);
+
+    //create user role
+    const userRole = new UserRole();
+    userRole.roleId = RoleId[RoleType.ADMIN];
+    userRole.tenantId = tenant.id;
+    userRole.userId = user.id;
+
+    await this.userRoleRepository.createUserRole(userRole);
 
     return true;
   }

@@ -4,6 +4,7 @@ import {
   DefaultValuePipe,
   Delete,
   Get,
+  Headers,
   HttpStatus,
   Param,
   ParseFilePipe,
@@ -14,7 +15,6 @@ import {
   Query,
   Res,
   UploadedFile,
-  UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
@@ -35,8 +35,6 @@ import { AppException } from '../../common/response/app.exception';
 import { AppResponse } from '../../common/response/app.response';
 import { ResponseCode } from '../../common/response/response.code';
 import { CurrentUserDTO } from '../auth/dto/current.user.dto';
-import AppsPermission from '../permission/enum/apps.permission.enum';
-import PermissionGuard from '../auth/permission.guard';
 import { AppAllowedType } from '../file/enum/app.allowed.type.enum';
 import { ImageAllowedType } from '../file/enum/image.allowed.type.enum';
 import { FileService } from '../file/file.service';
@@ -83,7 +81,8 @@ export class AppController {
     @JSONQuery('query') query: SearchQueryDTO,
     @Query('page', new DefaultValuePipe(1), ParseIntPipe) page = 1,
     @Query('limit', new DefaultValuePipe(10), ParseIntPipe) limit = 10,
-    @CurrentUser() currentUser: CurrentUserDTO
+    @CurrentUser() currentUser: CurrentUserDTO,
+    @Headers('x-tenant-id') tenantId: string
   ): Promise<AppResponse<PageDTO<AppDTO>>> {
     return new AppResponse<PageDTO<AppDTO>>(
       await this.appService.findAll(
@@ -93,7 +92,8 @@ export class AppController {
         limit,
         query?.filters ?? [],
         query?.sorts ?? [{ key: 'createdAt', value: 'DESC' }],
-        currentUser
+        currentUser,
+        tenantId
       )
     );
   }

@@ -1,3 +1,5 @@
+import useAvailableTenantsStore from '@/queries/useAvailableTenantsQuery';
+import useTeamSelectionStore from '@/stores/useTeamSelectionStore';
 import {
   Avatar,
   AvatarFallback,
@@ -17,6 +19,12 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
   Input,
   Label,
   Popover,
@@ -30,16 +38,20 @@ import {
   Skeleton,
 } from '@app-center/shadcn/ui';
 import { cn } from '@app-center/shadcn/util';
-
-import useAvailableTenantsStore from '@/queries/useAvailableTenantsQuery';
-import useTeamSelectionStore from '@/stores/useTeamSelectionStore';
+import { zodResolver } from '@hookform/resolvers/zod';
 import {
   CaretSortIcon,
   CheckIcon,
   PlusCircledIcon,
 } from '@radix-ui/react-icons';
+import axios from 'axios';
 import { useTranslations } from 'next-intl';
 import React from 'react';
+import { useForm } from 'react-hook-form';
+import toast from 'react-hot-toast';
+import { z } from 'zod';
+import { createTeamFormSchema } from '../../schema/tenant';
+import API from '../../services/api';
 
 type PopoverTriggerProps = React.ComponentPropsWithoutRef<
   typeof PopoverTrigger
@@ -55,11 +67,50 @@ export default function TeamSwitcher({ className }: TeamSwitcherProps) {
   const { availableTenants, isLoading, isError, error, refetch } =
     useAvailableTenantsStore();
 
+  const form = useForm<z.infer<typeof createTeamFormSchema>>({
+    resolver: zodResolver(createTeamFormSchema),
+    defaultValues: {
+      name: '',
+    },
+  });
+  const {
+    handleSubmit,
+    formState: { isSubmitting },
+    reset,
+  } = form;
+
   const groups = [
     {
       label: t('Teams'),
     },
   ];
+
+  const onSubmit = async (values: z.infer<typeof createTeamFormSchema>) => {
+    try {
+      const {
+        data: {
+          data: { id, name },
+        },
+      } = await API.tenant.createTenant({
+        name: values.name,
+      });
+      if (id) {
+        toast.success(t('Created Tenant Successfully'));
+        refetch();
+        setSelectedTeam({
+          id,
+          name,
+        });
+        setShowNewTenantDialog(false);
+        reset();
+      }
+    } catch (error) {
+      console.error(error);
+      if (axios.isAxiosError(error)) {
+        toast.error(error.response?.data?.status?.displayMessage.toString());
+      }
+    }
+  };
 
   React.useEffect(() => {
     if (!selectedTeam && availableTenants.length > 0) {
@@ -68,7 +119,7 @@ export default function TeamSwitcher({ className }: TeamSwitcherProps) {
         name: availableTenants[0].name,
       });
     }
-  }, [availableTenants]);
+  }, [availableTenants, selectedTeam, setSelectedTeam]);
 
   return (
     <Dialog open={showNewTenantDialog} onOpenChange={setShowNewTenantDialog}>
@@ -169,51 +220,76 @@ export default function TeamSwitcher({ className }: TeamSwitcherProps) {
         </PopoverContent>
       </Popover>
       <DialogContent>
-        <DialogHeader>
-          <DialogTitle>{t('Create Team')}</DialogTitle>
-          <DialogDescription>
-            {t('Add a new team to manage products and customers')}
-          </DialogDescription>
-        </DialogHeader>
-        <div>
-          <div className="py-2 pb-4 space-y-4">
-            <div className="space-y-2">
-              <Label htmlFor="name">{t('Team name')}</Label>
-              <Input id="name" placeholder="Acme Inc." />
+        <Form {...form}>
+          <form onSubmit={handleSubmit(onSubmit)}>
+            <DialogHeader>
+              <DialogTitle>{t('Create Team')}</DialogTitle>
+              <DialogDescription>
+                {t('Add a new team to manage products and customers')}
+              </DialogDescription>
+            </DialogHeader>
+            <div>
+              <div className="py-2 pb-4 space-y-4">
+                <div className="space-y-2">
+                  {/* <Label htmlFor="name">{t('Team name')}</Label>
+                  <Input id="name" placeholder="Acme Inc." /> */}
+
+                  <FormField
+                    control={form.control}
+                    name="name"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>{t('Team name')}</FormLabel>
+                        <FormControl>
+                          <Input
+                            placeholder="Acme Inc."
+                            {...field}
+                            disabled={isSubmitting}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="plan">Subscription plan</Label>
+                  <Select>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select a plan" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="free">
+                        <span className="font-medium">Free</span> -{' '}
+                        <span className="text-muted-foreground">
+                          Trial for two weeks
+                        </span>
+                      </SelectItem>
+                      <SelectItem value="pro">
+                        <span className="font-medium">Pro</span> -{' '}
+                        <span className="text-muted-foreground">
+                          $9/month per user
+                        </span>
+                      </SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
             </div>
-            <div className="space-y-2">
-              <Label htmlFor="plan">Subscription plan</Label>
-              <Select>
-                <SelectTrigger>
-                  <SelectValue placeholder="Select a plan" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="free">
-                    <span className="font-medium">Free</span> -{' '}
-                    <span className="text-muted-foreground">
-                      Trial for two weeks
-                    </span>
-                  </SelectItem>
-                  <SelectItem value="pro">
-                    <span className="font-medium">Pro</span> -{' '}
-                    <span className="text-muted-foreground">
-                      $9/month per user
-                    </span>
-                  </SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-          </div>
-        </div>
-        <DialogFooter>
-          <Button
-            variant="outline"
-            onClick={() => setShowNewTenantDialog(false)}
-          >
-            {t('Cancel')}
-          </Button>
-          <Button type="submit">{t('Continue')}</Button>
-        </DialogFooter>
+            <DialogFooter>
+              <Button
+                variant="outline"
+                disabled={isSubmitting}
+                onClick={() => setShowNewTenantDialog(false)}
+              >
+                {t('Cancel')}
+              </Button>
+              <Button disabled={isSubmitting} type="submit">
+                {t('Continue')}
+              </Button>
+            </DialogFooter>
+          </form>
+        </Form>
       </DialogContent>
     </Dialog>
   );

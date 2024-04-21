@@ -166,4 +166,9 @@ export class ResponseCode {
       'User not available to onboarding',
       'User not available to onboarding.'
     );
+  static readonly STATUS_8016_USER_ROLE_NOT_EXIST = new ResponseStatus(
+    8016,
+    'User Role Not Found',
+    'User role not exist.'
+  );
 }

@@ -3,6 +3,7 @@ import {
   Controller,
   DefaultValuePipe,
   Get,
+  Headers,
   HttpStatus,
   Param,
   ParseIntPipe,
@@ -153,6 +154,20 @@ export class PortalUserController {
   ): Promise<AppResponse<PortalUserResponseDTO>> {
     return new AppResponse<PortalUserResponseDTO>(
       await this.userService.updateUserProfile(updateUserDTO, user)
+    );
+  }
+
+  //Update User by id
+  @Put(':id')
+  @Roles(RoleType.ADMIN)
+  @ApiResponseSchema(HttpStatus.OK, 'OK')
+  async updateUserById(
+    @Param('id') id: string,
+    @Body() updateUserDTO: UpdateUserDTO,
+    @Headers('x-tenant-id') tenantId: string
+  ): Promise<AppResponse<PortalUserResponseDTO>> {
+    return new AppResponse<PortalUserResponseDTO>(
+      await this.userService.updateUserProfileById(updateUserDTO, id, tenantId)
     );
   }
 

@@ -39,6 +39,7 @@ export interface Role {
   type: RoleType;
   name: string;
   description: string;
+  tenantId: string;
 }
 
 export interface Tenant {

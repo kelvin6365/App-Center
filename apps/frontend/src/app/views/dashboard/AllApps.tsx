@@ -64,6 +64,7 @@ const AllApps = () => {
               ]
             : [],
         }),
+        tenantId: selectedTenant.id,
       });
       const { data }: { data: { items: App[]; meta: Meta } } = res.data;
       const { items, meta }: { items: App[]; meta: Meta } = data;

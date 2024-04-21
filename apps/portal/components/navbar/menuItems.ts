@@ -23,15 +23,21 @@ export const MenuItems: NavItemWithOptionalChildren[] = [
     ],
   },
   {
-    title: 'Users',
+    title: 'Team',
     icon: 'users',
-    href: '/users',
+    href: '/team',
     roles: [RoleType.ADMIN],
     items: [
       {
-        title: 'All Users',
+        title: 'All Members',
         icon: 'users',
-        href: '/all',
+        href: '/members',
+        roles: [RoleType.ADMIN],
+      },
+      {
+        title: 'Settings',
+        icon: 'users',
+        href: '/settings',
         roles: [RoleType.ADMIN],
       },
     ],

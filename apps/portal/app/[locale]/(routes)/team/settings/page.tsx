@@ -4,7 +4,7 @@ import PageTitle from '@/components/content/pageTitle';
 import { useTranslations } from 'next-intl';
 import React from 'react';
 
-const AllUsers = () => {
+const Settings = () => {
   const t = useTranslations('Users');
   return (
     <div>
@@ -24,9 +24,9 @@ const AllUsers = () => {
         title={t('All Users')}
         description={t('All users can be found here')}
       />
-      AllUsers
+      Settings
     </div>
   );
 };
 
-export default AllUsers;
+export default Settings;

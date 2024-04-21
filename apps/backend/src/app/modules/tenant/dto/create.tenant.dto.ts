@@ -1,1 +1,8 @@
-export class CreateTenantDto {}
+import { ApiProperty } from '@nestjs/swagger';
+import { IsString } from 'class-validator';
+
+export class CreateTenantDTO {
+  @ApiProperty()
+  @IsString()
+  name: string;
+}

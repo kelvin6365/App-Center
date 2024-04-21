@@ -29,9 +29,12 @@ export const checkAllowAppActionPermission = (
 };
 export const filterMenuByRoles = (
   menu: NavItemWithOptionalChildren[],
-  user: PortalUserProfile
+  user: PortalUserProfile,
+  tenantId: string
 ): NavItemWithOptionalChildren[] => {
-  const userRoles = user.roles.map((role) => role.type);
+  const userRoles = user.roles
+    .filter((r) => r.tenantId === tenantId)
+    .map((role) => role.type);
   const filteredMenu: NavItemWithOptionalChildren[] = [];
 
   for (const item of menu) {

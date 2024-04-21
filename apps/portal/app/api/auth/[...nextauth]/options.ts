@@ -57,7 +57,6 @@ export const authOptions: NextAuthOptions = {
   },
   callbacks: {
     async jwt({ token, account, user }) {
-      console.log('token', token);
       const updateToken = structuredClone(token);
       if (account && account.type === 'credentials') {
         return {

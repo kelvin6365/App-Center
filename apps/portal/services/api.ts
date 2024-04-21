@@ -2,14 +2,15 @@
 import { App } from '@/types/App';
 import { AppVersion, AppVersionTag } from '@/types/AppVersion';
 import { Meta } from '@/types/Meta';
-import { PortalUserProfile } from '@/types/PortalUserProfile';
+import { PortalUserProfile, Tenant } from '@/types/PortalUserProfile';
 import { ResponseStatus } from '@/types/ResponseStatus';
 import { RoleType } from '@/types/RoleType';
 import { SearchJiraIssue } from '@/types/SearchJiraIssue';
 import { UserStatus } from '@/types/UserStatus';
 import axios, { AxiosResponse } from 'axios';
 import { getSession, signOut } from 'next-auth/react';
-import { onboardingFormSchema } from '../schema/onboarding';
+import useTeamSelectionStore from '../stores/useTeamSelectionStore';
+import { RoleIdType } from '../types/RoleIdType';
 const API = {
   apiInstance: axios.create({
     baseURL: process.env.NEXT_PUBLIC_API_HOST,
@@ -59,6 +60,7 @@ const API = {
       CREATE_USER: '/v1/portal/user',
       PROFILE: '/v1/portal/user',
       UPDATE_PROFILE: '/v1/portal/user',
+      UPDATE_PROFILE_BY_ID: (id: string) => `/v1/portal/user/${id}`,
       TENANTS: '/v1/portal/user/tenants',
       APP_PERMISSIONS_LIST: (appId: string) =>
         `/v1/portal/user/app/${appId}/permissions`,
@@ -82,6 +84,12 @@ const API = {
       GET_ALL_CREDENTIAL_COMPONENTS: '/v1/portal/credential/component',
       GET_CREDENTIAL_COMPONENT: (name: string) =>
         `/v1/portal/credential/component/${name}`,
+    },
+    TENANT: {
+      GET_TENANT: (id: string) => `/v1/portal/tenant/${id}`,
+      CREATE_TENANT: '/v1/portal/tenant',
+      UPDATE_TENANT: (id: string) => `/v1/portal/tenant/${id}`,
+      DELETE_TENANT: (id: string) => `/v1/portal/tenant/${id}`,
     },
   },
 
@@ -404,7 +412,15 @@ const API = {
         limit?: number;
         query?: string;
       }
-    ) => {
+    ): Promise<
+      AxiosResponse<{
+        data: {
+          items: PortalUserProfile[];
+          meta: Meta;
+        };
+        status: ResponseStatus;
+      }>
+    > => {
       return API.apiInstance.get(API.API_PATH.USER.SEARCH_USERS(tenantId), {
         params: {
           page: page,
@@ -413,7 +429,14 @@ const API = {
         },
       });
     },
-    getUser: (userId: string) => {
+    getUser: (
+      userId: string
+    ): Promise<
+      AxiosResponse<{
+        data: PortalUserProfile;
+        status: ResponseStatus;
+      }>
+    > => {
       return API.apiInstance.get(API.API_PATH.USER.GET_USER(userId));
     },
     updateUserStatus: (userId: string, status: UserStatus) => {
@@ -466,6 +489,25 @@ const API = {
         name,
       });
     },
+    updateProfileNyId: ({
+      id,
+      name,
+      role,
+    }: {
+      id: string;
+      name?: string;
+      role: RoleIdType;
+    }): Promise<
+      AxiosResponse<{
+        data: PortalUserProfile;
+        status: ResponseStatus;
+      }>
+    > => {
+      return API.apiInstance.put(API.API_PATH.USER.UPDATE_PROFILE_BY_ID(id), {
+        name,
+        role,
+      });
+    },
     changePassword: ({
       password,
       oldPassword,
@@ -485,7 +527,9 @@ const API = {
     },
     getAvailableTenants: (): Promise<
       AxiosResponse<{
-        data: any;
+        data: {
+          items: Tenant[];
+        };
         status: ResponseStatus;
       }>
     > => {
@@ -577,6 +621,18 @@ const API = {
       );
     },
   },
+  tenant: {
+    createTenant: (data: {
+      name: string;
+    }): Promise<
+      AxiosResponse<{
+        data: Tenant;
+        status: ResponseStatus;
+      }>
+    > => {
+      return API.apiInstance.post(API.API_PATH.TENANT.CREATE_TENANT, data);
+    },
+  },
 };
 
 API.apiInstance.defaults.withCredentials = true;
@@ -586,6 +642,8 @@ API.apiInstance.interceptors.request.use(async (config) => {
   if (session) {
     if (config && config.headers) {
       config.headers['Authorization'] = `Bearer ${session.user.accessToken}`;
+      const tenantId = useTeamSelectionStore.getState().selectedTeam?.id;
+      config.headers['x-tenant-id'] = tenantId;
     }
   }
   return config;

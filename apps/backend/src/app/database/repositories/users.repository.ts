@@ -136,10 +136,20 @@ export class UserRepository extends Repository<User> {
             ? In(tenantIds)
             : In(['00000000-0000-0000-0000-000000000000']),
         },
+        roles: {
+          tenantId: tenantIds
+            ? In(tenantIds)
+            : In(['00000000-0000-0000-0000-000000000000']),
+        },
       },
       {
         username: ILike(`%${searchQuery}%`),
         tenants: {
+          tenantId: tenantIds
+            ? In(tenantIds)
+            : In(['00000000-0000-0000-0000-000000000000']),
+        },
+        roles: {
           tenantId: tenantIds
             ? In(tenantIds)
             : In(['00000000-0000-0000-0000-000000000000']),

@@ -1,18 +1,52 @@
 import { Injectable } from '@nestjs/common';
-import { CreateTenantDto } from './dto/create.tenant.dto';
-import { UpdateTenantDto } from './dto/update.tenant.dto';
+import { ConfigService } from '@nestjs/config';
+import { nanoid } from 'nanoid';
 import { OptionsSlugify, slugify } from 'transliteration';
 import { TenantRepository } from '../../database/repositories/tenant.repository';
-import { nanoid } from 'nanoid';
-import { ConfigService } from '@nestjs/config';
+import { UserRoleRepository } from '../../database/repositories/user.role.repository';
+import { UserTenantRepository } from '../../database/repositories/user.tenent.repository';
+import { CurrentUserDTO } from '../auth/dto/current.user.dto';
+import { RoleId } from '../role/enum/role.id.enum';
+import { RoleType } from '../role/enum/role.type.enum';
+import { UserRole } from '../user/entities/user.role.entity';
+import { UserTenant } from '../user/entities/user.tenant.entity';
+import { CreateTenantDTO } from './dto/create.tenant.dto';
+import { UpdateTenantDto } from './dto/update.tenant.dto';
+import { Tenant } from './entities/tenant.entity';
+import { TenantDTO } from './dto/tenant.dto';
 @Injectable()
 export class TenantService {
   constructor(
     private readonly configService: ConfigService,
-    private readonly tenantRepository: TenantRepository
+    private readonly tenantRepository: TenantRepository,
+    private readonly userRoleRepository: UserRoleRepository,
+    private readonly userTenantRepository: UserTenantRepository
   ) {}
-  create(createTenantDto: CreateTenantDto) {
-    return 'This action adds a new tenant';
+  async createTenantAndJoinTenant(
+    createTenantDto: CreateTenantDTO,
+    user: CurrentUserDTO
+  ) {
+    const tenant = new Tenant();
+    tenant.name = createTenantDto.name;
+    tenant.domainName = await this.generateSlug(createTenantDto.name);
+    tenant.createdBy = user.id;
+    const createdTenant = await this.tenantRepository.createTenant(tenant);
+
+    //create user tenant
+    const userTenant = new UserTenant();
+    userTenant.userId = user.id;
+    userTenant.tenantId = createdTenant.id;
+    await this.userTenantRepository.createUserTenant(userTenant);
+
+    //create user role
+    const userRole = new UserRole();
+    userRole.roleId = RoleId[RoleType.ADMIN];
+    userRole.tenantId = createdTenant.id;
+    userRole.userId = user.id;
+
+    await this.userRoleRepository.createUserRole(userRole);
+
+    return new TenantDTO(createdTenant);
   }
 
   findAll() {

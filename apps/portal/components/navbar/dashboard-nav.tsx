@@ -15,6 +15,7 @@ import {
 } from '@app-center/shadcn/ui';
 import { cn } from '@app-center/shadcn/util/cn';
 import { Dispatch, SetStateAction } from 'react';
+import { useTranslations } from 'next-intl';
 
 interface DashboardNavProps {
   items: NavItemWithOptionalChildren[];
@@ -28,6 +29,7 @@ export function DashboardNav({
   isLoading = false,
 }: DashboardNavProps) {
   const path = usePathname();
+  const t = useTranslations('Common');
 
   return (
     <nav className="grid items-start gap-2">
@@ -59,10 +61,10 @@ export function DashboardNav({
                   >
                     <span className="flex items-center w-full text-sm font-medium group">
                       <Icon className="w-4 h-4 mr-2" />
-                      <span>{item.title}</span>
+                      <span>{t(item.title)}</span>
                     </span>
                   </AccordionTrigger>
-                  <AccordionContent className="flex gap-2 pt-2 pb-2">
+                  <AccordionContent className="flex flex-col gap-2 pt-2 pb-2">
                     {item.items?.map(
                       (subItem, subIndex) =>
                         subItem.href && (
@@ -72,7 +74,7 @@ export function DashboardNav({
                               subItem.disabled ? '/' : item.href + subItem.href
                             }
                             className={buttonVariants({
-                              variant: path.includes(item.href ?? '')
+                              variant: path.includes(item.href + subItem.href)
                                 ? 'default'
                                 : 'ghost',
                               className:
@@ -80,11 +82,11 @@ export function DashboardNav({
                             })}
                           >
                             <span className="relative flex items-center w-full text-sm font-medium group">
-                              {path.includes(item.href ?? '') && (
+                              {path.includes(item.href + subItem.href) && (
                                 <div className="w-1 rounded mr-[1px] bg-white absolute top-[-0.15rem] left-[-0.65rem] bottom-[-0.15rem]" />
                               )}
                               <Icon className="w-4 h-4 mr-2" />
-                              <span>{subItem.title}</span>
+                              <span>{t(subItem.title)}</span>
                             </span>
                           </Link>
                         )
@@ -115,7 +117,7 @@ export function DashboardNav({
                   )}
                 >
                   <Icon className="w-4 h-4 mr-2" />
-                  <span>{item.title}</span>
+                  <span>{t(item.title)}</span>
                 </span>
               </Link>
             )

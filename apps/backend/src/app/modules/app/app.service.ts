@@ -102,12 +102,29 @@ export class AppService {
     sorts: { key: string; value: 'ASC' | 'DESC' }[] = [
       { key: 'createdAt', value: 'DESC' },
     ],
-    user: CurrentUserDTO
+    user: CurrentUserDTO,
+    tenantId: string
   ): Promise<PageDTO<AppDTO>> {
+    if (!tenantId) {
+      //If Header TenantId is not provided, throw exception
+      throw new AppException(ResponseCode.STATUS_8003_PERMISSION_DENIED);
+    }
     let result: Pagination<App, IPaginationMeta>;
 
-    const userTenantsId = user.tenants.map((tenant) => tenant.tenant.id);
-    if (!user.roles.find((userRole) => userRole.role.type === RoleType.ADMIN)) {
+    //Check tenant id
+    const userTenantsId = user.tenants
+      .filter((t) => t.tenant.id === tenantId)
+      .map((tenant) => tenant.tenant.id);
+    if (userTenantsId.length === 0) {
+      throw new AppException(ResponseCode.STATUS_8003_PERMISSION_DENIED);
+    }
+    // filters = filters.filter((filter) => filter.key !== 'tenantId');
+    // filters.push({ key: 'tenantId', values: tenantId });
+    if (
+      !user.roles
+        .filter((r) => r.tenantId === tenantId)
+        .find((userRole) => userRole.role.type === RoleType.ADMIN)
+    ) {
       const userPermissions = user.permissions;
       //get all view permissions
       const viewPermissions = userPermissions.filter(
