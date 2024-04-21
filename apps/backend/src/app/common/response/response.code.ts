@@ -171,4 +171,9 @@ export class ResponseCode {
     'User Role Not Found',
     'User role not exist.'
   );
+  static readonly STATUS_8017_ADMIN_LESS_THAN_ONE = new ResponseStatus(
+    8017,
+    'Admin less than one',
+    'Admin less than one.'
+  );
 }

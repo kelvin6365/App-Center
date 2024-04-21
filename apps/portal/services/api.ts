@@ -67,6 +67,7 @@ const API = {
       ADD_APP_PERMISSIONS: (userId: string) =>
         `v1/portal/user/${userId}/permission`,
       ONBOARDING: '/v1/portal/user/onboarding',
+      REMOVE_USER_FROM_TENANT: (userId: string) => `/v1/portal/user/${userId}`,
     },
     SETTING: {
       GET_ALL_SETTINGS: '/v1/portal/setting',
@@ -553,6 +554,11 @@ const API = {
           appId,
           permissions,
         }
+      );
+    },
+    removeUserFromTenant: ({ userId }: { userId: string }) => {
+      return API.apiInstance.delete(
+        API.API_PATH.USER.REMOVE_USER_FROM_TENANT(userId)
       );
     },
   },

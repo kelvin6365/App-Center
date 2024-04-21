@@ -29,6 +29,10 @@
     "Name is required": "姓名為必填項",
     "Updated Successfully": "更新成功",
     "Role is required": "角色為必填項",
-    "Please select a role": "請選擇角色"
+    "Please select a role": "請選擇角色",
+    "Remove from team": "從團隊中刪除",
+    "Are you sure you want to remove this user": "您確定要刪除該使用者嗎？",
+    "Confirm to Remove": "確認刪除",
+    "Remove Successfully": "刪除成功"
   }
 }

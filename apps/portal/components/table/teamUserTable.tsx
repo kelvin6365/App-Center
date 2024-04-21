@@ -52,11 +52,12 @@ import useSearchTeamUsersQuery from '../../queries/useSearchTeamUsersQuery';
 import useTeamSelectionStore from '../../stores/useTeamSelectionStore';
 import { PortalUserProfile } from '../../types/PortalUserProfile';
 import { RoleType } from '../../types/RoleType';
+import DeleteUserFromTeamDialog from '../dialog/deleteDeleteUserFromTeamDialog';
 
 export type TableRef = {
   reload: () => void;
 };
-const TeamMemberTable = React.forwardRef<TableRef>((ref) => {
+const TeamMemberTable = React.forwardRef<TableRef>((_, ref) => {
   //Init state
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage] = useState(10);
@@ -100,6 +101,16 @@ const TeamMemberTable = React.forwardRef<TableRef>((ref) => {
       value: s.desc ? 'DESC' : 'ASC',
     })),
   });
+
+  //Delete Dialog
+  const [openDeleteDialog, setOpenDeleteDialog] = useState<{
+    open: boolean;
+    data: PortalUserProfile | null;
+  }>({
+    open: false,
+    data: null,
+  });
+
   const columns = React.useMemo(
     (): ColumnDef<PortalUserProfile>[] => [
       {
@@ -340,24 +351,28 @@ const TeamMemberTable = React.forwardRef<TableRef>((ref) => {
                   {t('Copy Member ID')}
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
-                <Link href={`/team/${row.original.id}`}>
-                  <DropdownMenuItem>
-                    <AiFillEdit className="w-5 h-5" />{' '}
-                    <p className="ml-2">{t('Edit')}</p>
-                  </DropdownMenuItem>
-                </Link>
+                {userProfile && userProfile?.id !== row.original.id && (
+                  <Link href={`/team/${row.original.id}`}>
+                    <DropdownMenuItem>
+                      <AiFillEdit className="w-5 h-5" />{' '}
+                      <p className="ml-2">{t('Edit')}</p>
+                    </DropdownMenuItem>
+                  </Link>
+                )}
 
-                <DropdownMenuItem
-                  onClick={() => {
-                    // setOpenDeleteDialog({
-                    //   open: true,
-                    //   data: row.original,
-                    // });
-                  }}
-                >
-                  <AiFillDelete className="w-5 h-5 text-red-500" />{' '}
-                  <p className="ml-2">{t('Delete')}</p>
-                </DropdownMenuItem>
+                {userProfile && userProfile?.id !== row.original.id && (
+                  <DropdownMenuItem
+                    onClick={() => {
+                      setOpenDeleteDialog({
+                        open: true,
+                        data: row.original,
+                      });
+                    }}
+                  >
+                    <AiFillDelete className="w-5 h-5 text-red-500" />{' '}
+                    <p className="ml-2">{t('Remove from team')}</p>
+                  </DropdownMenuItem>
+                )}
               </DropdownMenuContent>
             </DropdownMenu>
           );
@@ -516,6 +531,18 @@ const TeamMemberTable = React.forwardRef<TableRef>((ref) => {
           </Button>
         </div>
       </div>
+      <DeleteUserFromTeamDialog
+        open={openDeleteDialog.open}
+        user={openDeleteDialog.data}
+        onClose={() => {
+          setOpenDeleteDialog({
+            open: false,
+            data: null,
+          });
+          refetchTeamMembers();
+        }}
+        title={t('Remove from team')}
+      />
     </div>
   );
 });

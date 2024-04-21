@@ -2,6 +2,7 @@ import {
   Body,
   Controller,
   DefaultValuePipe,
+  Delete,
   Get,
   Headers,
   HttpStatus,
@@ -41,6 +42,7 @@ import { UserService } from '../user/user.service';
 import { AddUserRequestDTO } from '../user/dto/add.user.request.dto';
 import { AppService } from '../app/app.service';
 import { OnBoardingDTO } from '@/modules/user/dto/onboarding.dto';
+import { CurrentTenant } from '../../common/decorator/tenant.decorator';
 
 @ApiTags('Portal')
 @ApiBearerAuth()
@@ -93,7 +95,7 @@ export class PortalUserController {
     @JSONQuery('query') query: SearchQueryDTO,
     @Query('page', new DefaultValuePipe(1), ParseIntPipe) page = 1,
     @Query('limit', new DefaultValuePipe(10), ParseIntPipe) limit = 10,
-    @Param('tenantId') tenantId: string,
+    @CurrentTenant() tenantId: string,
     @CurrentUser() user: CurrentUserDTO
   ): Promise<AppResponse<PageDTO<PortalUserResponseDTO>>> {
     return new AppResponse<PageDTO<PortalUserResponseDTO>>(
@@ -164,10 +166,24 @@ export class PortalUserController {
   async updateUserById(
     @Param('id') id: string,
     @Body() updateUserDTO: UpdateUserDTO,
-    @Headers('x-tenant-id') tenantId: string
+    @CurrentTenant() tenantId: string
   ): Promise<AppResponse<PortalUserResponseDTO>> {
     return new AppResponse<PortalUserResponseDTO>(
       await this.userService.updateUserProfileById(updateUserDTO, id, tenantId)
+    );
+  }
+
+  //Delete user from team by id
+  @Delete(':id')
+  @Roles(RoleType.ADMIN)
+  @ApiResponseSchema(HttpStatus.OK, 'OK')
+  async deleteUserById(
+    @Param('id') id: string,
+    @CurrentTenant() tenantId: string,
+    @CurrentUser() user: CurrentUserDTO
+  ): Promise<AppResponse<boolean>> {
+    return new AppResponse<boolean>(
+      await this.userService.deleteUserFromTenant(id, tenantId, user)
     );
   }
 

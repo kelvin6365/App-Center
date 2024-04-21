@@ -29,6 +29,10 @@
     "Updated Successfully": "Updated Successfully",
     "Name is required": "Name is required",
     "Role is required": "Role is required",
-    "Please select a role": "Please select a role"
+    "Please select a role": "Please select a role",
+    "Remove from team": "Remove from team",
+    "Are you sure you want to remove this user": "Are you sure you want to remove this user ?",
+    "Confirm to Remove": "Confirm to Remove",
+    "Remove Successfully": "Remove Successfully"
   }
 }

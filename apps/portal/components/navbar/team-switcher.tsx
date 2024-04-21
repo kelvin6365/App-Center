@@ -177,6 +177,7 @@ export default function TeamSwitcher({ className }: TeamSwitcherProps) {
                             setIsTenantSelectOpen(false);
                           }}
                           className="text-sm"
+                          value={id}
                         >
                           <Avatar className="w-5 h-5 mr-2">
                             <AvatarImage

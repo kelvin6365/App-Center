@@ -64,7 +64,7 @@ export function DashboardNav({
                       <span>{t(item.title)}</span>
                     </span>
                   </AccordionTrigger>
-                  <AccordionContent className="flex flex-col gap-2 pt-2 pb-2">
+                  <AccordionContent className="flex flex-col gap-2 pt-2 pb-2 ml-5">
                     {item.items?.map(
                       (subItem, subIndex) =>
                         subItem.href && (

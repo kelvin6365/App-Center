@@ -391,4 +391,53 @@ export class UserService {
 
     return true;
   }
+
+  //Delete user from tenant
+  async deleteUserFromTenant(
+    userId: string,
+    tenantId: string,
+    user: CurrentUserDTO
+  ) {
+    //check if user exists
+    const targetUser =
+      await this.usersRepository.findUserByUserIdWithDeletedFalse(userId);
+    if (!targetUser) {
+      throw new AppException(ResponseCode.STATUS_8004_USER_NOT_EXIST);
+    }
+    //check if user is admin
+    const userRole =
+      await this.userRoleRepository.findUserRoleByUserIdAndTenantId(
+        targetUser.id,
+        tenantId
+      );
+    if (!userRole) {
+      throw new AppException(ResponseCode.STATUS_8016_USER_ROLE_NOT_EXIST);
+    }
+
+    //check this user is it the last admin with tenantId userId and role
+    const admins =
+      await this.userRoleRepository.findUserRoleByTenantIdAndRoleIdNotIncludeUserId(
+        targetUser.id,
+        tenantId,
+        RoleId[RoleType.ADMIN]
+      );
+    if (admins.length === 0) {
+      throw new AppException(ResponseCode.STATUS_8017_ADMIN_LESS_THAN_ONE);
+    }
+
+    //delete user role
+    await this.userRoleRepository.removeUserRoleByUserIdAndTenantId(
+      targetUser.id,
+      tenantId,
+      user.id
+    );
+    //remove user tenant
+    await this.userTenantRepository.removeUserTenantByUserIdAndTenantId(
+      targetUser.id,
+      tenantId,
+      user.id
+    );
+
+    return true;
+  }
 }

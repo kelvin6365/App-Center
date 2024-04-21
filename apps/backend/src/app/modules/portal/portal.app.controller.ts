@@ -61,6 +61,7 @@ import { ImageAllowedType } from '../file/enum/image.allowed.type.enum';
 import { FileService } from '../file/file.service';
 import { SearchJiraIssueDTO } from '../jira/dto/search.jira.issue.dto';
 import { RoleType } from '../role/enum/role.type.enum';
+import { CurrentTenant } from '../../common/decorator/tenant.decorator';
 
 @ApiTags('Portal')
 @ApiBearerAuth()
@@ -99,7 +100,7 @@ export class PortalAppController {
     @JSONQuery('query') query: SearchQueryDTO,
     @Query('page', new DefaultValuePipe(1), ParseIntPipe) page = 1,
     @Query('limit', new DefaultValuePipe(10), ParseIntPipe) limit = 10,
-    @Headers('x-tenant-id') tenantId: string,
+    @CurrentTenant() tenantId: string,
     @CurrentUser() currentUser: CurrentUserDTO
   ): Promise<AppResponse<PageDTO<AppDTO>>> {
     return new AppResponse<PageDTO<AppDTO>>(
@@ -292,7 +293,8 @@ export class PortalAppController {
     @Query('page', new DefaultValuePipe(1), ParseIntPipe) page = 1,
     @Query('limit', new DefaultValuePipe(10), ParseIntPipe) limit = 10,
     @Param('id', new ParseUUIDPipe()) id: string,
-    @CurrentUser() currentUser: CurrentUserDTO
+    @CurrentUser() currentUser: CurrentUserDTO,
+    @CurrentTenant() _: string
   ): Promise<AppResponse<PageDTO<AppVersionDTO>>> {
     return new AppResponse<PageDTO<AppVersionDTO>>(
       await this.appService.getAllAppVersions(
@@ -355,7 +357,8 @@ export class PortalAppController {
     )
     file: Express.Multer.File,
     @Body() appVersion: CreateAppVersionDTO,
-    @CurrentUser() user: CurrentUserDTO
+    @CurrentUser() user: CurrentUserDTO,
+    @CurrentTenant() _: string
   ): Promise<AppResponse<boolean>> {
     return new AppResponse<boolean>(
       await this.appService.createAppVersion(id, appVersion, file, user, true)
@@ -367,7 +370,8 @@ export class PortalAppController {
   @ApiParam({ name: 'id', required: true })
   async getAllAppVersionTags(
     @Param('id', new ParseUUIDPipe()) id: string,
-    @CurrentUser() user: CurrentUserDTO
+    @CurrentUser() user: CurrentUserDTO,
+    @CurrentTenant() _: string
   ): Promise<AppResponse<AppVersionTagDTO[]>> {
     return new AppResponse<AppVersionTagDTO[]>(
       await this.appService.getAllAppVersionTags(id, user)
@@ -379,7 +383,8 @@ export class PortalAppController {
   @ApiParam({ name: 'id', required: true })
   @ApiResponseSchema(HttpStatus.OK, 'OK')
   async getApiKey(
-    @Param('id', new ParseUUIDPipe()) id: string
+    @Param('id', new ParseUUIDPipe()) id: string,
+    @CurrentTenant() _: string
   ): Promise<AppResponse<string>> {
     return new AppResponse<string>(await this.appService.getApiKey(id));
   }
@@ -457,7 +462,8 @@ export class PortalAppController {
   async deleteAppVersion(
     @Param('id', new ParseUUIDPipe()) id: string,
     @Param('versionId', new ParseUUIDPipe()) versionId: string,
-    @CurrentUser() user: CurrentUserDTO
+    @CurrentUser() user: CurrentUserDTO,
+    @CurrentTenant() _: string
   ) {
     return new AppResponse(
       await this.appService.deleteAppVersion(id, versionId, user)
@@ -472,7 +478,8 @@ export class PortalAppController {
   async searchJiraIssues(
     @Param('id', new ParseUUIDPipe()) id: string,
     @Query('query') query: string,
-    @CurrentUser() user: CurrentUserDTO
+    @CurrentUser() user: CurrentUserDTO,
+    @CurrentTenant() _: string
   ): Promise<AppResponse<PageDTO<SearchJiraIssueDTO>>> {
     return new AppResponse<PageDTO<SearchJiraIssueDTO>>(
       new PageDTO<SearchJiraIssueDTO>(
@@ -493,7 +500,8 @@ export class PortalAppController {
     @Param('id', new ParseUUIDPipe()) id: string,
     @Param('versionId', new ParseUUIDPipe()) versionId: string,
     @Param('issueId', new ParseUUIDPipe()) issueId: string,
-    @CurrentUser() user: CurrentUserDTO
+    @CurrentUser() user: CurrentUserDTO,
+    @CurrentTenant() _: string
   ): Promise<AppResponse<boolean>> {
     return new AppResponse(
       await this.appService.removeJiraIssue(id, versionId, issueId, user)
