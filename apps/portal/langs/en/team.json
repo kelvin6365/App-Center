@@ -33,6 +33,10 @@
     "Remove from team": "Remove from team",
     "Are you sure you want to remove this user": "Are you sure you want to remove this user ?",
     "Confirm to Remove": "Confirm to Remove",
-    "Remove Successfully": "Remove Successfully"
+    "Remove Successfully": "Remove Successfully",
+    "Invite User": "Invite User",
+    "Invite user to join your team": "Invite user to join your team",
+    "Invite": "Invite",
+    "Invite Successfully": "Invite Successfully"
   }
 }

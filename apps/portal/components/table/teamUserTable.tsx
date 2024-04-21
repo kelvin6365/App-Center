@@ -53,6 +53,7 @@ import useTeamSelectionStore from '../../stores/useTeamSelectionStore';
 import { PortalUserProfile } from '../../types/PortalUserProfile';
 import { RoleType } from '../../types/RoleType';
 import DeleteUserFromTeamDialog from '../dialog/deleteDeleteUserFromTeamDialog';
+import InviteUserDialog from '../dialog/inviteUserDialog';
 
 export type TableRef = {
   reload: () => void;
@@ -109,6 +110,13 @@ const TeamMemberTable = React.forwardRef<TableRef>((_, ref) => {
   }>({
     open: false,
     data: null,
+  });
+  //Invite Dialog
+  const [openInviteDialog, setOpenInviteDialog] = useState<{
+    open: boolean;
+    data: PortalUserProfile | null;
+  }>({
+    open: false,
   });
 
   const columns = React.useMemo(
@@ -422,32 +430,43 @@ const TeamMemberTable = React.forwardRef<TableRef>((_, ref) => {
           }}
           className="max-w-sm"
         />
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="outline" className="ml-auto">
-              {t('Columns')} <ChevronDownIcon className="w-4 h-4 ml-2" />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
-            {table
-              .getAllColumns()
-              .filter((column) => column.getCanHide())
-              .map((column) => {
-                return (
-                  <DropdownMenuCheckboxItem
-                    key={column.id}
-                    className="capitalize"
-                    checked={column.getIsVisible()}
-                    onCheckedChange={(value) =>
-                      column.toggleVisibility(!!value)
-                    }
-                  >
-                    {t(column.id.replace(/_/g, ' '))}
-                  </DropdownMenuCheckboxItem>
-                );
-              })}
-          </DropdownMenuContent>
-        </DropdownMenu>
+        <div className="ml-auto space-x-2">
+          <Button
+            onClick={() => {
+              setOpenInviteDialog({
+                open: true,
+              });
+            }}
+          >
+            {t('Invite User')} <ChevronDownIcon className="w-4 h-4 ml-2" />
+          </Button>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="outline">
+                {t('Columns')} <ChevronDownIcon className="w-4 h-4 ml-2" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              {table
+                .getAllColumns()
+                .filter((column) => column.getCanHide())
+                .map((column) => {
+                  return (
+                    <DropdownMenuCheckboxItem
+                      key={column.id}
+                      className="capitalize"
+                      checked={column.getIsVisible()}
+                      onCheckedChange={(value) =>
+                        column.toggleVisibility(!!value)
+                      }
+                    >
+                      {t(column.id.replace(/_/g, ' '))}
+                    </DropdownMenuCheckboxItem>
+                  );
+                })}
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </div>
       </div>
       <div className="grid border rounded-md">
         <Table>
@@ -542,6 +561,17 @@ const TeamMemberTable = React.forwardRef<TableRef>((_, ref) => {
           refetchTeamMembers();
         }}
         title={t('Remove from team')}
+      />
+      <InviteUserDialog
+        title={t('Invite User')}
+        description={t('Invite user to join your team')}
+        open={openInviteDialog.open}
+        onClose={() => {
+          setOpenInviteDialog({
+            open: false,
+          });
+          refetchTeamMembers();
+        }}
       />
     </div>
   );

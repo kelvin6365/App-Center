@@ -68,6 +68,7 @@ const API = {
         `v1/portal/user/${userId}/permission`,
       ONBOARDING: '/v1/portal/user/onboarding',
       REMOVE_USER_FROM_TENANT: (userId: string) => `/v1/portal/user/${userId}`,
+      INVITE_USER_TO_TENANT: '/v1/portal/user/invite',
     },
     SETTING: {
       GET_ALL_SETTINGS: '/v1/portal/setting',
@@ -556,10 +557,31 @@ const API = {
         }
       );
     },
-    removeUserFromTenant: ({ userId }: { userId: string }) => {
+    removeUserFromTenant: ({
+      userId,
+    }: {
+      userId: string;
+    }): Promise<
+      AxiosResponse<{
+        data: boolean;
+        status: ResponseStatus;
+      }>
+    > => {
       return API.apiInstance.delete(
         API.API_PATH.USER.REMOVE_USER_FROM_TENANT(userId)
       );
+    },
+    inviteUserToTenant: ({
+      email,
+      role,
+    }: {
+      email: string;
+      role: RoleIdType;
+    }) => {
+      return API.apiInstance.post(API.API_PATH.USER.INVITE_USER_TO_TENANT, {
+        email,
+        role,
+      });
     },
   },
   setting: {

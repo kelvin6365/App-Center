@@ -33,6 +33,10 @@
     "Remove from team": "從團隊中刪除",
     "Are you sure you want to remove this user": "您確定要刪除該使用者嗎？",
     "Confirm to Remove": "確認刪除",
-    "Remove Successfully": "刪除成功"
+    "Remove Successfully": "刪除成功",
+    "Invite user to join your team": "邀請用戶加入您的團隊",
+    "Invite User": "邀請用戶",
+    "Invite": "邀請",
+    "Invite Successfully": "邀請成功"
   }
 }

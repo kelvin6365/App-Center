@@ -43,6 +43,7 @@ import { AddUserRequestDTO } from '../user/dto/add.user.request.dto';
 import { AppService } from '../app/app.service';
 import { OnBoardingDTO } from '@/modules/user/dto/onboarding.dto';
 import { CurrentTenant } from '../../common/decorator/tenant.decorator';
+import { InviteUserToTenantDTO } from '../user/dto/invite.user.to.tenant.dto';
 
 @ApiTags('Portal')
 @ApiBearerAuth()
@@ -238,6 +239,20 @@ export class PortalUserController {
   ) {
     return new AppResponse<boolean>(
       await this.userService.onBoarding(dto, user)
+    );
+  }
+
+  //invite user to tenant
+  @Post('/invite')
+  @Roles(RoleType.ADMIN)
+  @ApiResponseSchema(HttpStatus.OK, 'OK')
+  async inviteUser(
+    @Body() dto: InviteUserToTenantDTO,
+    @CurrentUser() user: CurrentUserDTO,
+    @CurrentTenant() tenantId: string
+  ) {
+    return new AppResponse<boolean>(
+      await this.userService.inviteUserToTenant(dto, user, tenantId)
     );
   }
 }

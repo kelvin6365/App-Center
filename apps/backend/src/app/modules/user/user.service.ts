@@ -29,6 +29,7 @@ import { TenantUtil } from '@/modules/tenant/tenant.util';
 import { TenantService } from '../tenant/tenant.service';
 import { RoleType } from '../role/enum/role.type.enum';
 import { UserRoleRepository } from '../../database/repositories/user.role.repository';
+import { InviteUserToTenantDTO } from './dto/invite.user.to.tenant.dto';
 
 @Injectable()
 export class UserService {
@@ -49,7 +50,7 @@ export class UserService {
     const newProfile = new UserProfile();
     newUser.username = signUpDTO.username;
     newUser.password = await signUpDTO.password;
-    newProfile.email = signUpDTO.email;
+    newProfile.email = signUpDTO.email ?? signUpDTO.username;
     newUser.status = UserStatus.Pending;
     newProfile.name = signUpDTO.name;
     newUser.profile = newProfile;
@@ -379,6 +380,7 @@ export class UserService {
     const userTenant = new UserTenant();
     userTenant.userId = user.id;
     userTenant.tenantId = tenant.id;
+    userTenant.createdBy = currentUser.id;
     await this.userTenantRepository.createUserTenant(userTenant);
 
     //create user role
@@ -386,6 +388,7 @@ export class UserService {
     userRole.roleId = RoleId[RoleType.ADMIN];
     userRole.tenantId = tenant.id;
     userRole.userId = user.id;
+    userRole.createdBy = currentUser.id;
 
     await this.userRoleRepository.createUserRole(userRole);
 
@@ -438,6 +441,53 @@ export class UserService {
       user.id
     );
 
+    return true;
+  }
+
+  async inviteUserToTenant(
+    inviteUserToTenantDTO: InviteUserToTenantDTO,
+    user: CurrentUserDTO,
+    tenantId: string
+  ) {
+    //check if user exists
+    const targetUser =
+      await this.usersRepository.findUserByUserNameWithDeletedFalse(
+        inviteUserToTenantDTO.email
+      );
+
+    //if user did not exist, send invite email with create account link
+    //if user exist, send invite email
+    if (targetUser) {
+      //check if user already have role with tenantId
+      const checkExits =
+        await this.userRoleRepository.findUserRoleByUserIdAndTenantId(
+          targetUser.id,
+          tenantId
+        );
+      if (checkExits) {
+        throw new AppException(ResponseCode.STATUS_8013_USER_ALREADY_EXIST);
+      }
+
+      //create user role
+      const userRole = new UserRole();
+      userRole.roleId = RoleId[inviteUserToTenantDTO.role];
+      userRole.tenantId = tenantId;
+      userRole.userId = targetUser.id;
+      userRole.createdBy = user.id;
+
+      await this.userRoleRepository.createUserRole(userRole);
+
+      //create user tenant
+      const userTenant = new UserTenant();
+      userTenant.userId = targetUser.id;
+      userTenant.tenantId = tenantId;
+      userTenant.createdBy = user.id;
+      await this.userTenantRepository.createUserTenant(userTenant);
+
+      //TODO: send invite email
+    } else {
+      //TODO: send invite email with create account link
+    }
     return true;
   }
 }
