@@ -12,15 +12,20 @@ export class RolesGuard implements CanActivate {
       return true;
     }
     const request = context.switchToHttp().getRequest();
-
-    if (!request.user) {
+    console.log(roles, request.user);
+    if (!request.headers['x-tenant-id']) {
       return false;
     }
     const userData: CurrentUserDTO = request.user;
     const userRoles: UserRole[] = userData.roles ?? [];
 
     return roles.some(
-      (r) => (userRoles.map((ur) => ur.role.type) as string[]).indexOf(r) != -1
+      (r) =>
+        (
+          userRoles
+            .filter((ur) => ur.tenantId === request.headers['x-tenant-id'])
+            .map((ur) => ur.role.type) as string[]
+        ).indexOf(r) != -1
     );
   }
 }

@@ -1,6 +1,5 @@
 import { Body, Controller, Delete, Get, Param, Patch } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
-import { UpdateTenantDto } from './dto/update.tenant.dto';
 import { TenantService } from './tenant.service';
 
 @ApiTags('Tenant')
@@ -19,8 +18,8 @@ export class TenantController {
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateTenantDto: UpdateTenantDto) {
-    return this.tenantService.update(+id, updateTenantDto);
+  update(@Param('id') id: string) {
+    // return this.tenantService.updateTenant(+id, updateTenantDto);
   }
 
   @Delete(':id')

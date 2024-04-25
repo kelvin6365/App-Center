@@ -44,6 +44,7 @@ import { AppService } from '../app/app.service';
 import { OnBoardingDTO } from '@/modules/user/dto/onboarding.dto';
 import { CurrentTenant } from '../../common/decorator/tenant.decorator';
 import { InviteUserToTenantDTO } from '../user/dto/invite.user.to.tenant.dto';
+import RoleGuard from '../auth/role.guard';
 
 @ApiTags('Portal')
 @ApiBearerAuth()
@@ -71,7 +72,7 @@ export class PortalUserController {
 
   //Get All Users
   @Get('/tenant/:tenantId/search')
-  @Roles(RoleType.ADMIN)
+  @UseGuards(RoleGuard(RoleType.ADMIN))
   @ApiOperation({ summary: 'Get all Admins with filter / sort / paging' })
   @ApiQuery({
     name: 'query',
@@ -115,7 +116,7 @@ export class PortalUserController {
 
   //Get Single User
   @Get(':id')
-  @Roles(RoleType.ADMIN)
+  @UseGuards(RoleGuard(RoleType.ADMIN))
   @ApiResponseSchema(HttpStatus.OK, 'OK')
   async getSingleUser(
     @Param('id') id: string
@@ -138,7 +139,7 @@ export class PortalUserController {
 
   //Create User
   @Post()
-  @Roles(RoleType.ADMIN)
+  @UseGuards(RoleGuard(RoleType.ADMIN))
   @ApiResponseSchema(HttpStatus.CREATED, 'CREATED')
   async createUser(
     @Body() createUserDTO: CreateUserDTO
@@ -162,7 +163,7 @@ export class PortalUserController {
 
   //Update User by id
   @Put(':id')
-  @Roles(RoleType.ADMIN)
+  @UseGuards(RoleGuard(RoleType.ADMIN))
   @ApiResponseSchema(HttpStatus.OK, 'OK')
   async updateUserById(
     @Param('id') id: string,
@@ -176,7 +177,7 @@ export class PortalUserController {
 
   //Delete user from team by id
   @Delete(':id')
-  @Roles(RoleType.ADMIN)
+  @UseGuards(RoleGuard(RoleType.ADMIN))
   @ApiResponseSchema(HttpStatus.OK, 'OK')
   async deleteUserById(
     @Param('id') id: string,
@@ -190,7 +191,7 @@ export class PortalUserController {
 
   //Update User status
   @Put(':id/status')
-  @Roles(RoleType.ADMIN)
+  @UseGuards(RoleGuard(RoleType.ADMIN))
   @ApiResponseSchema(HttpStatus.OK, 'OK')
   async updateUserStatus(
     @Param('id') id: string,
@@ -206,7 +207,7 @@ export class PortalUserController {
 
   //Add user to View app
   @Post('/:id/permission')
-  @Roles(RoleType.ADMIN)
+  @UseGuards(RoleGuard(RoleType.ADMIN))
   @ApiParam({ name: 'id', required: true })
   @ApiResponseSchema(HttpStatus.OK, 'OK')
   async addUser(
@@ -222,7 +223,7 @@ export class PortalUserController {
 
   //Find users with permissions for the specified app
   @Get('app/:appId/permissions')
-  @Roles(RoleType.ADMIN)
+  @UseGuards(RoleGuard(RoleType.ADMIN))
   @ApiResponseSchema(HttpStatus.OK, 'OK')
   async findUserByEmailWithPassword(@Param('id') id: string) {
     return new AppResponse<PortalUserResponseDTO[]>(
@@ -244,7 +245,7 @@ export class PortalUserController {
 
   //invite user to tenant
   @Post('/invite')
-  @Roles(RoleType.ADMIN)
+  @UseGuards(RoleGuard(RoleType.ADMIN))
   @ApiResponseSchema(HttpStatus.OK, 'OK')
   async inviteUser(
     @Body() dto: InviteUserToTenantDTO,

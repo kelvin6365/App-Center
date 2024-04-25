@@ -37,6 +37,14 @@
     "Invite User": "Invite User",
     "Invite user to join your team": "Invite user to join your team",
     "Invite": "Invite",
-    "Invite Successfully": "Invite Successfully"
-  }
+    "Invite Successfully": "Invite Successfully",
+    "Email is required": "Email is required"
+  },
+  "Settings": {
+    "Settings": "Settings",
+    "Team": "Team",
+    "Your team settings": "Your team settings",
+    "Updated successfully": "Updated successfully"
+  },
+  "Updated successfully": "Updated successfully"
 }

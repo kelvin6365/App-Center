@@ -2,6 +2,8 @@ import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { nanoid } from 'nanoid';
 import { OptionsSlugify, slugify } from 'transliteration';
+import { AppException } from '../../common/response/app.exception';
+import { ResponseCode } from '../../common/response/response.code';
 import { TenantRepository } from '../../database/repositories/tenant.repository';
 import { UserRoleRepository } from '../../database/repositories/user.role.repository';
 import { UserTenantRepository } from '../../database/repositories/user.tenent.repository';
@@ -11,9 +13,9 @@ import { RoleType } from '../role/enum/role.type.enum';
 import { UserRole } from '../user/entities/user.role.entity';
 import { UserTenant } from '../user/entities/user.tenant.entity';
 import { CreateTenantDTO } from './dto/create.tenant.dto';
-import { UpdateTenantDto } from './dto/update.tenant.dto';
-import { Tenant } from './entities/tenant.entity';
 import { TenantDTO } from './dto/tenant.dto';
+import { UpdateTenantDTO } from './dto/update.tenant.dto';
+import { Tenant } from './entities/tenant.entity';
 @Injectable()
 export class TenantService {
   constructor(
@@ -57,8 +59,28 @@ export class TenantService {
     return `This action returns a #${id} tenant`;
   }
 
-  update(id: number, updateTenantDto: UpdateTenantDto) {
-    return `This action updates a #${id} tenant`;
+  async updateTenant(
+    tenantId: string,
+    updateTenantDto: UpdateTenantDTO,
+    user: CurrentUserDTO
+  ) {
+    const tenant = await this.tenantRepository.findTenantById(tenantId);
+    if (!tenant) {
+      throw new AppException(ResponseCode.STATUS_1011_NOT_FOUND);
+    }
+    //check if tenant belongs to users tenants
+    const userTenantIds = user.tenants.map((ut) => ut.tenant.id);
+    if (!userTenantIds.includes(tenant.id)) {
+      throw new AppException(ResponseCode.STATUS_8003_PERMISSION_DENIED);
+    }
+    if (updateTenantDto.name) {
+      tenant.name = updateTenantDto.name;
+    }
+    // if (updateTenantDto.domainName) {
+    //   tenant.domainName = updateTenantDto.domainName;
+    // }
+    await this.tenantRepository.save(tenant);
+    return true;
   }
 
   remove(id: number) {

@@ -6,10 +6,9 @@ import Sidebar from '@/components/navbar/sidebar';
 import { UserStatus } from '@/types/UserStatus';
 import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
-import Loading from '../../../components/loading';
 import { useEffect } from 'react';
+import Loading from '../../../components/loading';
 import useUserProfileQuery from '../../../queries/useUserProfileQuery';
-
 const Layout = ({ children }: { children: React.ReactNode }) => {
   const router = useRouter();
   const { data: session, status } = useSession();

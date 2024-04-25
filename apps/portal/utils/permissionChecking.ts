@@ -68,3 +68,36 @@ export const filterMenuByRoles = (
 
   return filteredMenu;
 };
+
+export const canAccessPath = (
+  path: string,
+  menu: NavItemWithOptionalChildren[],
+  user: PortalUserProfile,
+  tenantId: string
+): boolean => {
+  const userRoles = user.roles
+    .filter((r) => r.tenantId === tenantId)
+    .map((role) => role.type);
+
+  for (const item of menu) {
+    if (item.href === path) {
+      return (
+        item.roles.length === 0 ||
+        item.roles.some((role) => userRoles.includes(role))
+      );
+    }
+
+    if (item.items) {
+      for (const subItem of item.items) {
+        if (item.href! + subItem.href === path) {
+          return (
+            subItem.roles.length === 0 ||
+            subItem.roles.some((role) => userRoles.includes(role))
+          );
+        }
+      }
+    }
+  }
+
+  return false;
+};

@@ -37,6 +37,14 @@
     "Invite user to join your team": "邀請用戶加入您的團隊",
     "Invite User": "邀請用戶",
     "Invite": "邀請",
-    "Invite Successfully": "邀請成功"
-  }
+    "Invite Successfully": "邀請成功",
+    "Email is required": "電子郵件為必填項"
+  },
+  "Settings": {
+    "Settings": "設定",
+    "Team": "團隊",
+    "Your team settings": "您的團隊設置",
+    "Updated successfully": "更新成功"
+  },
+  "Updated successfully": "更新成功"
 }

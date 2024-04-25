@@ -1,13 +1,13 @@
 import { Logger, MiddlewareConsumer, Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
-import { APP_FILTER } from '@nestjs/core';
+import { APP_FILTER, APP_GUARD } from '@nestjs/core';
 import appConfig from './common/config/app.config';
 import { AppExceptionFilter } from './common/exceptionFilters/all.exception.filter';
 import { validate } from './common/util/env.validation';
 import { LoggerMiddleware } from './common/util/logger.middleware';
 import DatabaseModule from './database/database.module';
 import { AppModule } from './modules/app/app.module';
-// import { RolesGuard } from './modules/auth/admin-auth.guard';
+import { RolesGuard } from './modules/auth/admin-auth.guard';
 import { AuthModule } from './modules/auth/auth.module';
 // import { JwtAuthGuard } from './modules/auth/jwt-auth.guard';
 import { CredentialModule } from './modules/credential/credential.module';

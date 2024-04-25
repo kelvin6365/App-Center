@@ -90,7 +90,7 @@ const API = {
     TENANT: {
       GET_TENANT: (id: string) => `/v1/portal/tenant/${id}`,
       CREATE_TENANT: '/v1/portal/tenant',
-      UPDATE_TENANT: (id: string) => `/v1/portal/tenant/${id}`,
+      UPDATE_TENANT: `/v1/portal/tenant`,
       DELETE_TENANT: (id: string) => `/v1/portal/tenant/${id}`,
     },
   },
@@ -659,6 +659,9 @@ const API = {
       }>
     > => {
       return API.apiInstance.post(API.API_PATH.TENANT.CREATE_TENANT, data);
+    },
+    updateTenant: ({ name }: { name?: string }) => {
+      return API.apiInstance.put(API.API_PATH.TENANT.UPDATE_TENANT, { name });
     },
   },
 };

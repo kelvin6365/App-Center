@@ -21,4 +21,13 @@ export class TenantRepository extends Repository<Tenant> {
     });
     return tenant?.domainName;
   }
+
+  //find by id
+  async findTenantById(id: string): Promise<Tenant> {
+    return await this.findOne({
+      where: {
+        id,
+      },
+    });
+  }
 }
