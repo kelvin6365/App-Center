@@ -19,6 +19,7 @@ import { UpdateTenantDTO } from '../tenant/dto/update.tenant.dto';
 import { CurrentTenant } from '../../common/decorator/tenant.decorator';
 import { Roles } from '../../common/decorator/roles.decorator';
 import { RoleType } from '../role/enum/role.type.enum';
+import RoleGuard from '../auth/role.guard';
 
 @ApiTags('Portal')
 @ApiBearerAuth()
@@ -40,7 +41,7 @@ export class PortalTenantController {
 
   //Update a tenant
   @Put('')
-  @Roles(RoleType.ADMIN)
+  @UseGuards(RoleGuard(RoleType.ADMIN))
   @ApiResponseSchema(HttpStatus.OK, 'OK')
   async update(
     @Body() updateTenantDTO: UpdateTenantDTO,

@@ -491,7 +491,7 @@ const API = {
         name,
       });
     },
-    updateProfileNyId: ({
+    updateProfileById: ({
       id,
       name,
       role,

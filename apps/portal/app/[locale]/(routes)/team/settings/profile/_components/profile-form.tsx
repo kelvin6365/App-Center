@@ -3,19 +3,17 @@ import {
   Button,
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
   FormLabel,
   FormMessage,
   Input,
 } from '@app-center/shadcn/ui';
-import { cn } from '@app-center/shadcn/util';
 import { zodResolver } from '@hookform/resolvers/zod';
 import axios from 'axios';
 import { useTranslations } from 'next-intl';
 import { useEffect } from 'react';
-import { useFieldArray, useForm } from 'react-hook-form';
+import { useForm } from 'react-hook-form';
 import toast from 'react-hot-toast';
 import { z } from 'zod';
 import useAvailableTenantsQuery from '../../../../../../../queries/useAvailableTenantsQuery';
@@ -50,10 +48,10 @@ export default function ProfileForm() {
   // This can come from your database or API.
   const defaultValues: Partial<ProfileFormValues> = {
     teamName: '',
-    urls: [
-      { value: 'https://shadcn.com' },
-      { value: 'http://twitter.com/shadcn' },
-    ],
+    // urls: [
+    //   { value: 'https://shadcn.com' },
+    //   { value: 'http://twitter.com/shadcn' },
+    // ],
   };
 
   const form = useForm<ProfileFormValues>({
@@ -64,10 +62,10 @@ export default function ProfileForm() {
     formState: { isSubmitting },
   } = form;
 
-  const { fields, append } = useFieldArray({
-    name: 'urls',
-    control: form.control,
-  });
+  //   const { fields, append } = useFieldArray({
+  //     name: 'urls',
+  //     control: form.control,
+  //   });
 
   const onSubmit = async (data: ProfileFormValues) => {
     console.log(data);
@@ -124,7 +122,7 @@ export default function ProfileForm() {
           )}
         />
 
-        <div>
+        {/* <div>
           {fields.map((field, index) => (
             <FormField
               control={form.control}
@@ -156,9 +154,10 @@ export default function ProfileForm() {
           >
             Add URL
           </Button>
-        </div>
+        </div> */}
         <Button type="submit" disabled={isSubmitting}>
-          Update profile
+          {}
+          {t('Save')}
         </Button>
       </form>
     </Form>

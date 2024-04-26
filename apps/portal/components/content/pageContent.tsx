@@ -1,3 +1,4 @@
+'use client';
 import { PropsWithChildren } from 'react';
 import { ScrollArea } from '@app-center/shadcn/ui';
 import tw from 'tailwind-styled-components';

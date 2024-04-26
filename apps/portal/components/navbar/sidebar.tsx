@@ -1,3 +1,4 @@
+'use client';
 // import { DashboardNav } from "@/components/dashboard-nav";
 // import { navItems } from "@/constants/data";
 import { DashboardNav } from '@/components/navbar/dashboard-nav';

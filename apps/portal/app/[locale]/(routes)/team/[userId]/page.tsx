@@ -74,7 +74,7 @@ const ViewUser = ({ params }: { params: { userId: string } }) => {
 
   const onSubmit = async (data: EditUserFormInputs) => {
     try {
-      const result = await API.user.updateProfileNyId({
+      const result = await API.user.updateProfileById({
         id: user!.id,
         // name: data.name,
         role: data.role as RoleIdType,

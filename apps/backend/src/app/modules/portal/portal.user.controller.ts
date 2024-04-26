@@ -1,10 +1,10 @@
+import { OnBoardingDTO } from '@/modules/user/dto/onboarding.dto';
 import {
   Body,
   Controller,
   DefaultValuePipe,
   Delete,
   Get,
-  Headers,
   HttpStatus,
   Param,
   ParseIntPipe,
@@ -22,29 +22,27 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 import { JSONQuery } from '../../common/decorator/json.query';
-import { Roles } from '../../common/decorator/roles.decorator';
 import { ApiResponseSchema } from '../../common/decorator/swagger.decorator';
 import { ApiPagingResponseSchema } from '../../common/decorator/swagger.paging.decorator';
+import { CurrentTenant } from '../../common/decorator/tenant.decorator';
 import { CurrentUser } from '../../common/decorator/user.decorator';
 import { MetaDTO } from '../../common/dto/meta.dto';
 import { PageDTO } from '../../common/dto/page.dto';
 import { SearchQueryDTO } from '../../common/dto/search.dto';
 import { AppResponse } from '../../common/response/app.response';
+import { AppService } from '../app/app.service';
 import { CurrentUserDTO } from '../auth/dto/current.user.dto';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
+import RoleGuard from '../auth/role.guard';
 import { RoleType } from '../role/enum/role.type.enum';
 import { TenantDTO } from '../tenant/dto/tenant.dto';
+import { AddUserRequestDTO } from '../user/dto/add.user.request.dto';
 import { CreateUserDTO } from '../user/dto/create.user.dto';
+import { InviteUserToTenantDTO } from '../user/dto/invite.user.to.tenant.dto';
 import { PortalUserResponseDTO } from '../user/dto/portal.user.response.dto';
 import { UpdateUserDTO } from '../user/dto/update.user.dto';
 import { UpdateUserStatusRequestDTO } from '../user/dto/update.user.status.request.dto';
 import { UserService } from '../user/user.service';
-import { AddUserRequestDTO } from '../user/dto/add.user.request.dto';
-import { AppService } from '../app/app.service';
-import { OnBoardingDTO } from '@/modules/user/dto/onboarding.dto';
-import { CurrentTenant } from '../../common/decorator/tenant.decorator';
-import { InviteUserToTenantDTO } from '../user/dto/invite.user.to.tenant.dto';
-import RoleGuard from '../auth/role.guard';
 
 @ApiTags('Portal')
 @ApiBearerAuth()
