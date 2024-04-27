@@ -68,10 +68,7 @@ const JiraDialog = ({ title, onClose, open, app, description }: Props) => {
       return;
     }
     try {
-      const res = await API.credential.getAllCredentials(
-        selectedTeam?.id,
-        'jiraDomainBasicAuth'
-      );
+      const res = await API.credential.getAllCredentials('jiraDomainBasicAuth');
       const { data } = res.data;
       setJiraCredentials(data);
     } catch (error) {
