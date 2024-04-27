@@ -7,14 +7,13 @@ on:
       - 'main'
       - 'dev'
 
+env:
+  FRONTEND_IMAGE: registry.digitalocean.com/two-rocks-studio/app-center/portal
+  BACKEND_IMAGE: registry.digitalocean.com/two-rocks-studio/app-center/backend
+
 jobs:
-  # JOB to run change detection
   changes:
     runs-on: ubuntu-latest
-    # Required permissions
-    permissions:
-      pull-requests: read
-    # Set job outputs to values from filter step
     outputs:
       backend: ${{ steps.filter.outputs.backend }}
       frontend: ${{ steps.filter.outputs.frontend }}
@@ -55,158 +54,64 @@ jobs:
           key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
           restore-keys: |
             ${{ runner.os }}-pnpm-store-
-
-      # PNPM install
       - run: pnpm install
         if: ${{ needs.changes.outputs.frontend == 'true' || needs.changes.outputs.backend == 'true' }}
-      # Build App
       - name: Build Frontend
         if: needs.changes.outputs.frontend == 'true'
         run: pnpm nx build portal --verbose
       - name: Build Backend
         if: needs.changes.outputs.backend == 'true'
         run: pnpm nx build backend --verbose
-
-      # Upload artifact
-      - name: Upload artifact for deployment job
-        uses: actions/upload-artifact@v2
+      - name: Cache Frontend Build
+        if: needs.changes.outputs.frontend == 'true'
+        uses: actions/cache@v4
         with:
-          name: artifact
-          path: |
-            ./apps/backend/Dockerfile
-            ./apps/portal/Dockerfile
-            ./dist
+          path: ./dist/apps/portal
+          key: ${{ runner.os }}-frontend-build-${{ github.sha }}
+      - name: Cache Backend Build
+        if: needs.changes.outputs.backend == 'true'
+        uses: actions/cache@v4
+        with:
+          path: ./dist/apps/backend
+          key: ${{ runner.os }}-backend-build-${{ github.sha }}
 
   deploy:
     needs: [changes, build]
     runs-on: ubuntu-latest
     steps:
-      - name: Download artifact from build job
-        uses: actions/download-artifact@v2
+      - name: Checkout code
+        uses: actions/checkout@v3
+      - name: Download Frontend Build
+        if: needs.changes.outputs.frontend == 'true'
+        uses: actions/cache@v4
         with:
-          name: artifact
-
-      - name: Generate GITHUB_SHA
-        id: github-sha
-        shell: bash
-        run: |
-          SHORT_SHA=$(echo $GITHUB_SHA | head -c7)
-          echo "::set-output name=sha::$SHORT_SHA"
+          path: ./dist/apps/portal
+          key: ${{ runner.os }}-frontend-build-${{ github.sha }}
+      - name: Download Backend Build
+        if: needs.changes.outputs.backend == 'true'
+        uses: actions/cache@v4
+        with:
+          path: ./dist/apps/backend
+          key: ${{ runner.os }}-backend-build-${{ github.sha }}
+      - name: Generate SHA
+        id: sha
+        run: echo "::set-output name=sha::$(git rev-parse --short $GITHUB_SHA)"
       - name: Install doctl
         uses: digitalocean/action-doctl@v2
         with:
           token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
-
-      - name: Build Frontend container image
+      - name: Build Frontend image
         if: needs.changes.outputs.frontend == 'true'
-        run: docker build -f ./apps/portal/Dockerfile . -t registry.digitalocean.com/two-rocks-studio/app-center/portal:${{steps.github-sha.outputs.sha}}
-      - name: Build Backend container image
+        run: docker build -f ./apps/portal/Dockerfile ./dist/apps/portal -t ${{ env.FRONTEND_IMAGE }}:${{ steps.sha.outputs.sha }}
+      - name: Build Backend image
         if: needs.changes.outputs.backend == 'true'
-        run: docker build -f ./apps/backend/Dockerfile . -t registry.digitalocean.com/two-rocks-studio/app-center/backend:${{steps.github-sha.outputs.sha}}
-
-      - name: Log in to DigitalOcean Container Registry with short-lived credentials
+        run: docker build -f ./apps/backend/Dockerfile ./dist/apps/backend -t ${{ env.BACKEND_IMAGE }}:${{ steps.sha.outputs.sha }}
+      - name: Log in to DigitalOcean Container Registry
         if: ${{ needs.changes.outputs.frontend == 'true' || needs.changes.outputs.backend == 'true' }}
         run: doctl registry login --expiry-seconds 1200
-
-      - name: Push frontend image to DigitalOcean Container Registry
+      - name: Push Frontend image
         if: needs.changes.outputs.frontend == 'true'
-        run: docker push registry.digitalocean.com/two-rocks-studio/app-center/portal:${{steps.github-sha.outputs.sha}}
-      - name: Push backend image to DigitalOcean Container Registry
+        run: docker push ${{ env.FRONTEND_IMAGE }}:${{ steps.sha.outputs.sha }}
+      - name: Push Backend image
         if: needs.changes.outputs.backend == 'true'
-        run: docker push registry.digitalocean.com/two-rocks-studio/app-center/backend:${{steps.github-sha.outputs.sha}}
-
-      # - name: DigitalOcean App Platform deployment
-      #   if: needs.changes.outputs.frontend == 'true'
-      #   uses: digitalocean/app_action@v1.1.5
-      #   with:
-      #     app_name: app-center
-      #     token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
-      #     images: '[
-      #       {
-      #       "name": "app-center-frontend",
-      #       "image":{
-      #       "registry_type": "DOCR",
-      #       "repository": "app-center/frontend",
-      #       "tag": "${{steps.github-sha.outputs.sha}}"
-      #       }
-      #       }
-      #       ]'
-
-      # - name: DigitalOcean App Platform deployment
-      #   if: needs.changes.outputs.backend == 'true'
-      #   uses: digitalocean/app_action@v1.1.5
-      #   with:
-      #     app_name: app-center
-      #     token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
-      #     images: '[
-      #       {
-      #       "name": "app-center-backend",
-      #       "image":{
-      #       "registry_type": "DOCR",
-      #       "repository": "app-center/backend",
-      #       "tag": "${{steps.github-sha.outputs.sha}}"
-      #       }
-      #       }
-      #       ]'
-
-  # deploy_frontend_docker_hub:
-  #   if: ${{ needs.changes.outputs.frontend == 'true' }}
-  #   needs: [changes, build]
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #     - name: Download artifact from build job
-  #       uses: actions/download-artifact@v2
-  #       with:
-  #         name: artifact
-
-  #     - name: Generate GITHUB_SHA
-  #       id: github-sha
-  #       shell: bash
-  #       run: |
-  #         SHORT_SHA=$(echo $GITHUB_SHA | head -c7)
-  #         echo "::set-output name=sha::$SHORT_SHA"
-
-  #     - name: Log in to Docker Hub
-  #       uses: docker/login-action@f4ef78c080cd8ba55a85445d5b36e214a81df20a
-  #       with:
-  #         username: ${{ secrets.DOCKER_USERNAME }}
-  #         password: ${{ secrets.DOCKER_PASSWORD }}
-
-  #     - name: Build and push Docker image
-  #       uses: docker/build-push-action@v5
-  #       with:
-  #         context: .
-  #         file: ./apps/frontend/Dockerfile
-  #         push: true
-  #         tags: kelvin6365/app-center:frontend-${{steps.github-sha.outputs.sha}}
-
-  # deploy_backend_docker_hub:
-  #   if: ${{ needs.changes.outputs.backend == 'true' }}
-  #   needs: [changes, build]
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #     - name: Download artifact from build job
-  #       uses: actions/download-artifact@v2
-  #       with:
-  #         name: artifact
-
-  #     - name: Generate GITHUB_SHA
-  #       id: github-sha
-  #       shell: bash
-  #       run: |
-  #         SHORT_SHA=$(echo $GITHUB_SHA | head -c7)
-  #         echo "::set-output name=sha::$SHORT_SHA"
-
-  #     - name: Log in to Docker Hub
-  #       uses: docker/login-action@f4ef78c080cd8ba55a85445d5b36e214a81df20a
-  #       with:
-  #         username: ${{ secrets.DOCKER_USERNAME }}
-  #         password: ${{ secrets.DOCKER_PASSWORD }}
-
-  #     - name: Build and push Docker image
-  #       uses: docker/build-push-action@v5
-  #       with:
-  #         context: .
-  #         file: ./apps/backend/Dockerfile
-  #         push: true
-  #         tags: kelvin6365/app-center:backend-${{steps.github-sha.outputs.sha}}
+        run: docker push ${{ env.BACKEND_IMAGE }}:${{ steps.sha.outputs.sha }}
