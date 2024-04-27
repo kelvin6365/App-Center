@@ -64,10 +64,10 @@ jobs:
       # Build App
       - name: Build Frontend
         if: needs.changes.outputs.frontend == 'true'
-        run: pnpm nx build portal
+        run: pnpm nx build portal --verbose
       - name: Build Backend
         if: needs.changes.outputs.backend == 'true'
-        run: pnpm nx build backend
+        run: pnpm nx build backend --verbose
 
       # Upload artifact
       - name: Upload artifact for deployment job
