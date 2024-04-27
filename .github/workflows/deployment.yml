@@ -102,10 +102,10 @@ jobs:
           token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
       - name: Build Frontend image
         if: needs.changes.outputs.frontend == 'true'
-        run: docker build -f ./apps/portal/Dockerfile ./dist/apps/portal -t ${{ env.FRONTEND_IMAGE }}:${{ steps.sha.outputs.sha }}
+        run: docker build -f ./apps/portal/Dockerfile . -t ${{ env.FRONTEND_IMAGE }}:${{ steps.sha.outputs.sha }}
       - name: Build Backend image
         if: needs.changes.outputs.backend == 'true'
-        run: docker build -f ./apps/backend/Dockerfile ./dist/apps/backend -t ${{ env.BACKEND_IMAGE }}:${{ steps.sha.outputs.sha }}
+        run: docker build -f ./apps/backend/Dockerfile . -t ${{ env.BACKEND_IMAGE }}:${{ steps.sha.outputs.sha }}
       - name: Log in to DigitalOcean Container Registry
         if: ${{ needs.changes.outputs.frontend == 'true' || needs.changes.outputs.backend == 'true' }}
         run: doctl registry login --expiry-seconds 1200
