@@ -114,7 +114,6 @@ const TeamMemberTable = React.forwardRef<TableRef>((_, ref) => {
   //Invite Dialog
   const [openInviteDialog, setOpenInviteDialog] = useState<{
     open: boolean;
-    data: PortalUserProfile | null;
   }>({
     open: false,
   });
