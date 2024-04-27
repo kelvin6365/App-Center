@@ -208,7 +208,7 @@ const JiraDialog = ({ title, onClose, open, app, description }: Props) => {
                   </span>
                 </span>
                 <Link
-                  href="/setting?tab=credentials"
+                  href="/team/settings/credentials"
                   className="text-sm font-bold text-blue-500"
                 >
                   {t('Go to Credentials')}

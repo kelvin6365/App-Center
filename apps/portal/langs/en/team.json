@@ -46,5 +46,33 @@
     "Your team settings": "Your team settings",
     "Updated successfully": "Updated successfully",
     "Save": "Save"
+  },
+  "Credentials": {
+    "Search Credential Type": "Search Credential Type",
+    "Done": "Done",
+    "Credentials": "Credentials",
+    "This is how others will see your credentials on the site": "This is how others will see your credentials on the site.",
+    "Add": "Add",
+    "Add new credential": "Add new credential",
+    "Name": "Name",
+    "Credential Name": "Credential Name",
+    "Created successfully": "Created successfully",
+    "Columns": "Columns",
+    "No results": "No results",
+    "rows selected": "rows selected",
+    "of": "of",
+    "Previous": "Previous",
+    "Next": "Next",
+    "Copy ID": "Copy ID",
+    "Open menu": "Open menu",
+    "Actions": "Actions",
+    "Copied to clipboard": "Copied to clipboard",
+    "Updated At": "Updated At",
+    "Created At": "Created At",
+    "Filter Name": "Filter Name",
+    "Delete": "Delete",
+    "Confirm to Delete": "Confirm to Delete",
+    "Are your sure to delete this credential": "Are your sure to delete this credential?",
+    "Delete credential": "Delete credential"
   }
 }

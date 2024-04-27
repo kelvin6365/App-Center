@@ -46,5 +46,33 @@
     "Your team settings": "您的團隊設置",
     "Updated successfully": "更新成功",
     "Save": "節省"
+  },
+  "Credentials": {
+    "Done": "完畢",
+    "Search Credential Type": "搜尋憑證類型",
+    "Credentials": "證書",
+    "This is how others will see your credentials on the site": "這是其他人在網站上看到您的憑證的方式。",
+    "Add": "添加",
+    "Add new credential": "新增憑證",
+    "Credential Name": "憑證名稱",
+    "Created successfully": "創建成功",
+    "rows selected": "選定的行",
+    "No results": "沒有結果",
+    "of": "的",
+    "Previous": "以前的",
+    "Next": "下一個",
+    "Copy ID": "複製身分證件",
+    "Open menu": "開啟選單",
+    "Actions": "行動",
+    "Copied to clipboard": "已複製到剪貼簿",
+    "Name": "姓名",
+    "Updated At": "更新於",
+    "Created At": "創建於",
+    "Columns": "列",
+    "Filter Name": "過濾器名稱",
+    "Delete": "刪除",
+    "Confirm to Delete": "確認刪除",
+    "Are your sure to delete this credential": "您確定要刪除此憑證嗎？",
+    "Delete credential": "刪除憑證"
   }
 }

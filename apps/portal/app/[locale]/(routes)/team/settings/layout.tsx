@@ -14,6 +14,10 @@ const sidebarNavItems = [
     title: 'Profile',
     href: '/team/settings/profile',
   },
+  {
+    title: 'Credentials',
+    href: '/team/settings/credentials',
+  },
 ];
 const SettingsLayout = ({ children }: SettingsLayoutProps) => {
   const t = useTranslations('Settings');

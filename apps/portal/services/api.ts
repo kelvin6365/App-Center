@@ -11,6 +11,7 @@ import axios, { AxiosResponse } from 'axios';
 import { getSession, signOut } from 'next-auth/react';
 import useTeamSelectionStore from '../stores/useTeamSelectionStore';
 import { RoleIdType } from '../types/RoleIdType';
+import { CredentialComponent } from '../types/CredentialComponent';
 const API = {
   apiInstance: axios.create({
     baseURL: process.env.NEXT_PUBLIC_API_HOST,
@@ -77,8 +78,7 @@ const API = {
       UPDATE_SETTING: '/v1/portal/setting',
     },
     CREDENTIAL: {
-      GET_ALL_CREDENTIALS: (tenantId: string) =>
-        '/v1/portal/credential/tenant/' + tenantId,
+      GET_ALL_CREDENTIALS: '/v1/portal/credential/tenant',
       GET_CREDENTIAL: (id: string) => `/v1/portal/credential/${id}`,
       CREATE_CREDENTIAL: '/v1/portal/credential',
       UPDATE_CREDENTIAL: (id: string) => `/v1/portal/credential/${id}`,
@@ -603,15 +603,12 @@ const API = {
     },
   },
   credential: {
-    getAllCredentials: (tenantId: string, name?: string) => {
-      return API.apiInstance.get(
-        API.API_PATH.CREDENTIAL.GET_ALL_CREDENTIALS(tenantId),
-        {
-          params: {
-            name,
-          },
-        }
-      );
+    getAllCredentials: (name?: string) => {
+      return API.apiInstance.get(API.API_PATH.CREDENTIAL.GET_ALL_CREDENTIALS, {
+        params: {
+          name,
+        },
+      });
     },
     getCredential: (id: string) => {
       return API.apiInstance.get(API.API_PATH.CREDENTIAL.GET_CREDENTIAL(id));
@@ -638,7 +635,12 @@ const API = {
         API.API_PATH.CREDENTIAL.DELETE_CREDENTIAL(id)
       );
     },
-    getAllCredentialComponents: () => {
+    getAllCredentialComponents: (): Promise<
+      AxiosResponse<{
+        data: CredentialComponent[];
+        status: ResponseStatus;
+      }>
+    > => {
       return API.apiInstance.get(
         API.API_PATH.CREDENTIAL.GET_ALL_CREDENTIAL_COMPONENTS
       );

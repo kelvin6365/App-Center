@@ -26,6 +26,9 @@ import { CreateCredentialRequestDTO } from '../credential/dto/create.credential.
 import { CredentialComponentResponseDTO } from '../credential/dto/credential.component.response.dto';
 import { CredentialResponseDTO } from '../credential/dto/credential.response.dto';
 import { UpdateCredentialRequestDTO } from '../credential/dto/update.credential.request.dto';
+import RoleGuard from '../auth/role.guard';
+import { RoleType } from '../role/enum/role.type.enum';
+import { CurrentTenant } from '../../common/decorator/tenant.decorator';
 
 @ApiTags('Portal')
 @ApiBearerAuth()
@@ -47,6 +50,7 @@ export class PortalCredentialController {
   //Get Credential Component
   @Get('component/:credentialComponentName')
   @ApiOperation({ summary: 'Get Credential Component' })
+  @UseGuards(RoleGuard(RoleType.ADMIN))
   @ApiResponseSchema(HttpStatus.OK, 'OK', CredentialComponentResponseDTO)
   async getCredentialComponent(
     @Param('credentialComponentName') credentialComponentName: string
@@ -59,12 +63,13 @@ export class PortalCredentialController {
   }
 
   //Get All Credentials
-  @Get('/tenant/:tenantId')
+  @Get('/tenant')
+  @UseGuards(RoleGuard(RoleType.ADMIN))
   @ApiOperation({ summary: 'Get All Credentials' })
   @ApiQuery({ required: false, name: 'name' })
   @ApiResponseSchema(HttpStatus.OK, 'OK')
   async getAllCredentials(
-    @Param('tenantId') tenantId: string,
+    @CurrentTenant() tenantId: string,
     @Query('name') name: string,
     @CurrentUser() user: CurrentUserDTO
   ) {
@@ -76,6 +81,7 @@ export class PortalCredentialController {
   //Get Credential
   @Get(':id')
   @ApiOperation({ summary: 'Get Credential' })
+  @UseGuards(RoleGuard(RoleType.ADMIN))
   @ApiResponseSchema(HttpStatus.OK, 'OK', CredentialResponseDTO)
   async getCredential(
     @Param('id') credentialId: string,
@@ -89,6 +95,7 @@ export class PortalCredentialController {
   //Create Credential
   @Post()
   @ApiOperation({ summary: 'Create Credential' })
+  @UseGuards(RoleGuard(RoleType.ADMIN))
   @ApiResponseSchema(HttpStatus.OK, 'OK', CredentialResponseDTO)
   async createCredential(
     @Body() createCredentialDTO: CreateCredentialRequestDTO,
@@ -102,6 +109,7 @@ export class PortalCredentialController {
   //Update Credential
   @Put(':id')
   @ApiOperation({ summary: 'Update Credential' })
+  @UseGuards(RoleGuard(RoleType.ADMIN))
   @ApiResponseSchema(HttpStatus.OK, 'OK', CredentialResponseDTO)
   async updateCredential(
     @Param('id') credentialId: string,
@@ -120,6 +128,7 @@ export class PortalCredentialController {
   //Delete Credential
   @Delete(':id')
   @ApiOperation({ summary: 'Delete Credential' })
+  @UseGuards(RoleGuard(RoleType.ADMIN))
   @ApiResponseSchema(HttpStatus.OK, 'OK')
   async deleteCredential(
     @Param('id') credentialId: string,

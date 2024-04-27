@@ -70,8 +70,7 @@ const API = {
       UPDATE_SETTING: '/v1/portal/setting',
     },
     CREDENTIAL: {
-      GET_ALL_CREDENTIALS: (tenantId: string) =>
-        '/v1/portal/credential/tenant/' + tenantId,
+      GET_ALL_CREDENTIALS: '/v1/portal/credential/tenant',
       GET_CREDENTIAL: (id: string) => `/v1/portal/credential/${id}`,
       CREATE_CREDENTIAL: '/v1/portal/credential',
       UPDATE_CREDENTIAL: (id: string) => `/v1/portal/credential/${id}`,
@@ -420,14 +419,14 @@ const API = {
   },
   credential: {
     getAllCredentials: (tenantId: string, name?: string) => {
-      return API.apiInstance.get(
-        API.API_PATH.CREDENTIAL.GET_ALL_CREDENTIALS(tenantId),
-        {
-          params: {
-            name,
-          },
-        }
-      );
+      return API.apiInstance.get(API.API_PATH.CREDENTIAL.GET_ALL_CREDENTIALS, {
+        params: {
+          name,
+        },
+        headers: {
+          'x-tenant-id': tenantId,
+        },
+      });
     },
     getCredential: (id: string) => {
       return API.apiInstance.get(API.API_PATH.CREDENTIAL.GET_CREDENTIAL(id));
@@ -440,7 +439,12 @@ const API = {
     }) => {
       return API.apiInstance.post(
         API.API_PATH.CREDENTIAL.CREATE_CREDENTIAL,
-        data
+        data,
+        {
+          headers: {
+            'x-tenant-id': data.tenantId,
+          },
+        }
       );
     },
     updateCredential: (data: any) => {
