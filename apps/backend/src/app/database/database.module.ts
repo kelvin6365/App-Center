@@ -95,7 +95,6 @@ class DatabaseModule {
   async onModuleInit() {
     await this.createAdmin();
     await this.createTenant();
-    await this.createTenantUser();
   }
 
   async createTenant() {
@@ -137,6 +136,7 @@ class DatabaseModule {
       .execute();
     Logger.log(`Tenant ${newTenant.name} created!`);
     Logger.debug(result.raw);
+    await this.createTenantUser();
   }
 
   async createTenantUser() {
