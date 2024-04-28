@@ -6,6 +6,8 @@ export default () => ({
     appPort: process.env.PORT,
     swaggerPath: process.env.SWAGGER_PATH,
     env: process.env.ENV,
+    globalPrefix: process.env.GLOBAL_PREFIX,
+    corsOrigin: process.env.CORS_ORIGIN,
   },
   db: {
     ...new DBConfig().config,

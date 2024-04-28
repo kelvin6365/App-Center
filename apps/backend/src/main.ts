@@ -6,17 +6,17 @@ import { ServerModule } from './app/server.module';
 
 async function bootstrap() {
   const app = await NestFactory.create(ServerModule);
-  const globalPrefix = 'api';
-  app.setGlobalPrefix(globalPrefix);
+
+  const configService: ConfigService = app.get(ConfigService); //Get Config Service
+  const globalPrefix = configService.get<string>('app.globalPrefix');
   app.enableCors({
-    origin: ['http://localhost:4200', 'http://localhost:3000'],
+    origin: configService.get<string>('app.corsOrigin')?.split(',') ?? [],
     credentials: true,
   });
   app.enableVersioning({
     type: VersioningType.URI,
   });
-  const configService: ConfigService = app.get(ConfigService); //Get Config Service
-
+  app.setGlobalPrefix(globalPrefix);
   app.useGlobalPipes(
     new ValidationPipe({
       transform: true,

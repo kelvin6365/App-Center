@@ -3,6 +3,7 @@ import {
   IsBoolean,
   IsEnum,
   IsNumber,
+  IsOptional,
   IsString,
   Length,
   validateSync,
@@ -25,6 +26,13 @@ class EnvironmentVariables {
 
   @IsString()
   TZ: string;
+
+  @IsString()
+  @IsOptional()
+  CORS_ORIGIN: string;
+  @IsString()
+  @IsOptional()
+  GLOBAL_PREFIX: string;
 
   //[Database]
   @IsString()

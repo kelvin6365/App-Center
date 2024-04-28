@@ -25,6 +25,7 @@
     "@nestjs/passport": "^10.0.1",
     "@nestjs/platform-express": "^10.0.2",
     "@nestjs/swagger": "^7.1.6",
+    "@nestjs/terminus": "^10.2.3",
     "@nestjs/typeorm": "^10.0.0",
     "@nx-extend/shadcn-ui": "^1.0.0",
     "@radix-ui/react-accordion": "^1.1.2",
