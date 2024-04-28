@@ -56,9 +56,15 @@ jobs:
             ${{ runner.os }}-pnpm-store-
       - run: pnpm install
         if: ${{ needs.changes.outputs.frontend == 'true' || needs.changes.outputs.backend == 'true' }}
-      - name: Build Frontend
-        if: needs.changes.outputs.frontend == 'true'
-        run: pnpm nx build portal --verbose
+      - name: Build Frontend (Production)
+        if: needs.changes.outputs.frontend == 'true' && github.ref == 'refs/heads/main'
+        run: pnpm env-cmd -f apps/portal/.env.production nx build portal --configuration=production
+      - name: Build Frontend (UAT)
+        if: needs.changes.outputs.frontend == 'true' && github.ref == 'refs/heads/uat'
+        run: pnpm env-cmd -f apps/portal/.env.uat nx build portal --configuration=uat
+      - name: Build Frontend (Development)
+        if: needs.changes.outputs.frontend == 'true' && github.ref == 'refs/heads/dev'
+        run: pnpm env-cmd -f apps/portal/.env.development nx build portal --configuration=development
       - name: Build Backend
         if: needs.changes.outputs.backend == 'true'
         run: pnpm nx build backend --verbose

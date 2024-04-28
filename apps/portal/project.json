@@ -13,9 +13,11 @@
       },
       "configurations": {
         "development": {
-          "outputPath": "apps/portal"
+          "outputPath": "dist/apps/portal"
         },
-        "production": {}
+        "production": {
+          "outputPath": "dist/apps/portal"
+        }
       }
     },
     "serve": {
