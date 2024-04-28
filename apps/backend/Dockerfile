@@ -1,4 +1,4 @@
-FROM node:lts-alpine
+FROM node:18.17.0-alpine3.17
 RUN npm i -g pnpm
 WORKDIR /app
 COPY ./dist/apps/backend .
