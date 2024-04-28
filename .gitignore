@@ -43,6 +43,7 @@ Thumbs.db
 #Backend
 /apps/backend/.env
 /apps/frontend/.env.production
+/apps/portal/.env.local
 
 # Next.js
 .next

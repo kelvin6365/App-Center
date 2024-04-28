@@ -9,6 +9,7 @@ async function bootstrap() {
 
   const configService: ConfigService = app.get(ConfigService); //Get Config Service
   const globalPrefix = configService.get<string>('app.globalPrefix') ?? '';
+  Logger.log(`Cors Origin: ${configService.get<string>('app.corsOrigin')}`);
   app.enableCors({
     origin: configService.get<string>('app.corsOrigin')?.split(',') ?? [],
     credentials: true,

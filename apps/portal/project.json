@@ -7,11 +7,14 @@
     "build": {
       "executor": "@nx/next:build",
       "outputs": ["{options.outputPath}"],
-      "defaultConfiguration": "production",
+      "defaultConfiguration": "local",
       "options": {
         "outputPath": "dist/apps/portal"
       },
       "configurations": {
+        "local": {
+          "outputPath": "dist/apps/portal"
+        },
         "development": {
           "outputPath": "dist/apps/portal"
         },
@@ -22,12 +25,16 @@
     },
     "serve": {
       "executor": "@nx/next:server",
-      "defaultConfiguration": "development",
+      "defaultConfiguration": "local",
       "options": {
-        "buildTarget": "portal:build",
+        "buildTarget": "portal:build:local",
         "dev": true
       },
       "configurations": {
+        "local": {
+          "buildTarget": "portal:build:local",
+          "dev": true
+        },
         "development": {
           "buildTarget": "portal:build:development",
           "dev": true
