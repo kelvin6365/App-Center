@@ -101,6 +101,6 @@ export class JiraUtil {
     summary: string;
     summaryText: string;
   }[] {
-    return sections.find((session) => session.id === 'cs').issues;
+    return sections.find((session) => session.id === 'cs')?.issues;
   }
 }

@@ -20,7 +20,16 @@ const nextConfig = {
     },
   },
   images: {
+    dangerouslyAllowSVG: true,
     domains: ['localhost'],
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: '**.atlassian.net',
+        port: '',
+        pathname: '/rest/api/2/universal_avatar/view/type/issuetype/avatar/**',
+      },
+    ],
   },
 
   compiler: {

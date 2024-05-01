@@ -171,7 +171,7 @@ const UploadVersionDialog = ({
               e.preventDefault();
             }
           }}
-          className="!max-w-[70%] !w-full max-h-[85%] overflow-scroll"
+          className="!w-full max-h-[85%] overflow-scroll"
         >
           <DialogHeader>
             <DialogTitle>{title}</DialogTitle>

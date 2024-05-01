@@ -483,9 +483,9 @@ export class PortalAppController {
   ): Promise<AppResponse<PageDTO<SearchJiraIssueDTO>>> {
     return new AppResponse<PageDTO<SearchJiraIssueDTO>>(
       new PageDTO<SearchJiraIssueDTO>(
-        (await this.appService.searchJiraIssues(id, query, user)).map(
+        (await this.appService.searchJiraIssues(id, query, user))?.map(
           (issue) => new SearchJiraIssueDTO(issue)
-        ),
+        ) ?? [],
         new MetaDTO()
       )
     );

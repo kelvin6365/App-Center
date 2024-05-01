@@ -61,6 +61,7 @@ import toast from 'react-hot-toast';
 import useUserProfileQuery from '@/queries/useUserProfileQuery';
 import { checkAllowAppActionPermission } from '@/utils/permissionChecking';
 import PermissionEnum from '@/types/Permission';
+import { SiJirasoftware } from 'react-icons/si';
 
 type Props = {
   appId: string;
@@ -228,6 +229,46 @@ const AppVersionTable = React.forwardRef<TableRef, Props>(
                     </TooltipTrigger>
                     <TooltipContent>{t('Download file')}</TooltipContent>
                   </Tooltip>
+
+                  {jiraIssues.length > 0 && (
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <div
+                          className="p-2 font-medium rounded-full cursor-pointer hover:bg-white dark:hover:bg-gray-600"
+                          onClick={() => {
+                            setOpenJiraIssues({
+                              open: true,
+                              data: row.original,
+                            });
+                          }}
+                        >
+                          <SiJirasoftware className="w-5 h-5 text-blue-500" />
+                        </div>
+                      </TooltipTrigger>
+                      <TooltipContent>{t('Jira Issues')}</TooltipContent>
+                    </Tooltip>
+                    // <Badge
+                    //   content={jiraIssues.length}
+                    //   withBorder
+                    //   color="blue"
+                    // >
+                    //   <Tooltip content="Jira Issues">
+                    //     <Typography
+                    //       variant="small"
+                    //       color="blue-gray"
+                    //       className="p-2 font-medium rounded-full hover:bg-white"
+                    //       onClick={() => {
+                    //         setOpenJiraIssues({
+                    //           open: true,
+                    //           data,
+                    //         });
+                    //       }}
+                    //     >
+                    //       <SiJirasoftware className="w-5 h-5 text-blue-500" />
+                    //     </Typography>
+                    //   </Tooltip>
+                    // </Badge>
+                  )}
                 </div>
               </TooltipProvider>
             );
@@ -314,7 +355,7 @@ const AppVersionTable = React.forwardRef<TableRef, Props>(
               </Button>
             );
           },
-          cell: ({ row }) => <div>{row.original.file.name}</div>,
+          cell: ({ row }) => <div>{row.original.file?.name ?? '-'}</div>,
         },
         {
           accessorKey: 'tags',

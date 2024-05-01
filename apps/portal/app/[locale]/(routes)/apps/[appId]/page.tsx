@@ -44,6 +44,7 @@ import { MdGroupAdd } from 'react-icons/md';
 import { SiConfluence, SiJirasoftware, SiPostman } from 'react-icons/si';
 import { TiTick } from 'react-icons/ti';
 import * as z from 'zod';
+import JiraIssuesDialog from '../../../../../components/dialog/jiraIssuesDialog';
 
 const paramsSchema = z.object({
   appId: z.string().uuid(),
@@ -358,16 +359,23 @@ const AppPage = ({ params }: { params: { appId: string } }) => {
                   </Button>
 
                   {/* Upload New Version */}
-                  <Button
-                    variant="outline"
-                    size="icon"
-                    className="w-[40px] h-[40px] text-gray-500 bg-white"
-                    onClick={() => {
-                      setOpenUploadVersion(true);
-                    }}
-                  >
-                    <FaCloudUploadAlt className="w-5 h-5" />
-                  </Button>
+                  {!isLoadingUserProfile &&
+                    !isErrorUserProfile &&
+                    userProfile &&
+                    checkAllowAppActionPermission(userProfile, [
+                      PermissionEnum.CREATE_APP_VERSION,
+                    ]) && (
+                      <Button
+                        variant="outline"
+                        size="icon"
+                        className="w-[40px] h-[40px] text-gray-500 bg-white"
+                        onClick={() => {
+                          setOpenUploadVersion(true);
+                        }}
+                      >
+                        <FaCloudUploadAlt className="w-5 h-5" />
+                      </Button>
+                    )}
 
                   {/* Edit App */}
                   {!isLoadingUserProfile &&
@@ -505,6 +513,23 @@ const AppPage = ({ params }: { params: { appId: string } }) => {
         }}
         open={openUserAppPermissions}
         app={app}
+      />
+      <JiraIssuesDialog
+        open={openJiraIssues.open}
+        title={'Jira Issues'}
+        onClose={() => {
+          setOpenJiraIssues({
+            open: false,
+            data: null,
+          });
+        }}
+        app={app}
+        data={openJiraIssues.data}
+        onReload={async () => {
+          if (openJiraIssues.data?.id) {
+            await tableRef.current?.reloadJira(openJiraIssues.data.id);
+          }
+        }}
       />
     </div>
   );
