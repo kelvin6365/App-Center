@@ -8,6 +8,7 @@ import { filterMenuByRoles } from '@/utils/permissionChecking';
 import { Sheet, SheetContent, SheetTrigger } from '@app-center/shadcn/ui';
 import { useState } from 'react';
 import useTeamSelectionStore from '../../stores/useTeamSelectionStore';
+import TeamSwitcher from './team-switcher';
 
 // import { Playlist } from "../data/playlists";
 
@@ -31,6 +32,7 @@ export function MobileSidebar({ className }: SidebarProps) {
         <SheetContent side="left" className="!px-0">
           <div className="py-4 space-y-4">
             <div className="px-3 py-2">
+              <TeamSwitcher className="w-full mb-4" />
               <h2 className="px-4 mb-2 text-lg font-semibold tracking-tight">
                 Overview
               </h2>

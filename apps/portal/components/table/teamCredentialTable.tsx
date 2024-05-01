@@ -83,7 +83,9 @@ const TeamCredentialTable = React.forwardRef<TableRef>((_, ref) => {
   const { selectedTeam } = useTeamSelectionStore();
   //Fetch credential components
   const { availableCredentialComponents, isLoading } =
-    useAvailableCredentialComponentsQuery();
+    useAvailableCredentialComponentsQuery({
+      selectedTeam,
+    });
 
   //[Credentials Components]
   const [openSearch, setOpenSearch] = useState(false);
@@ -114,6 +116,7 @@ const TeamCredentialTable = React.forwardRef<TableRef>((_, ref) => {
     isRefetching: isRefetchingTeamCredentials,
     refetch: refetchTeamCredentials,
   } = useSearchTeamCredentialsQuery({
+    selectedTeam,
     page: currentPage,
     limit: itemsPerPage,
     searchQuery: debouncedSearchQuery,

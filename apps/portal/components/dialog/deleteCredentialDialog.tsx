@@ -17,6 +17,7 @@ import { SubmitHandler, useForm } from 'react-hook-form';
 import toast from 'react-hot-toast';
 import useAvailableCredentialComponentsQuery from '../../queries/useAvailableCredentialComponentsQuery';
 import { Credential } from '../../types/Credential';
+import useTeamSelectionStore from '../../stores/useTeamSelectionStore';
 
 type Props = {
   title: string;
@@ -36,9 +37,11 @@ const DeleteCredentialDialog = ({
   description,
 }: Props) => {
   const t = useTranslations('Credentials');
+  //Current selected team
+  const { selectedTeam } = useTeamSelectionStore();
   //Fetch credential components
   const { availableCredentialComponents, isLoading } =
-    useAvailableCredentialComponentsQuery();
+    useAvailableCredentialComponentsQuery({ selectedTeam });
   const form = useForm<DeleteCredentialFormInputs>({
     // resolver: yupResolver<Inputs>(schema),
     defaultValues: {

@@ -16,6 +16,7 @@ import {
 } from '@app-center/shadcn/ui';
 import { useTranslations } from 'next-intl';
 import useAvailableCredentialComponentsQuery from '../../queries/useAvailableCredentialComponentsQuery';
+import useTeamSelectionStore from '../../stores/useTeamSelectionStore';
 
 type Props = {
   title: string;
@@ -60,9 +61,11 @@ const SearchCredentialTypeDialog = ({
   //Search credential name with case sensitive
   const searchCredentialName = watch('search');
 
+  //Current selected team
+  const { selectedTeam } = useTeamSelectionStore();
   //Fetch credential components
   const { availableCredentialComponents, isLoading } =
-    useAvailableCredentialComponentsQuery();
+    useAvailableCredentialComponentsQuery({ selectedTeam });
 
   return (
     <Dialog

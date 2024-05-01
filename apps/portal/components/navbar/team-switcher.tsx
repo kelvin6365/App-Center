@@ -52,6 +52,7 @@ import toast from 'react-hot-toast';
 import { z } from 'zod';
 import { createTeamFormSchema } from '../../schema/tenant';
 import API from '../../services/api';
+import useUserProfileQuery from '../../queries/useUserProfileQuery';
 
 type PopoverTriggerProps = React.ComponentPropsWithoutRef<
   typeof PopoverTrigger
@@ -62,6 +63,7 @@ type TeamSwitcherProps = PopoverTriggerProps;
 export default function TeamSwitcher({ className }: TeamSwitcherProps) {
   const t = useTranslations('Common');
   const { selectedTeam, setSelectedTeam } = useTeamSelectionStore();
+  const { refetch: userProfileRefetch } = useUserProfileQuery();
   const [isTenantSelectOpen, setIsTenantSelectOpen] = React.useState(false);
   const [showNewTenantDialog, setShowNewTenantDialog] = React.useState(false);
   const { availableTenants, isLoading, isError, error, refetch } =
@@ -97,6 +99,7 @@ export default function TeamSwitcher({ className }: TeamSwitcherProps) {
       if (id) {
         toast.success(t('Created Tenant Successfully'));
         refetch();
+        userProfileRefetch();
         setSelectedTeam({
           id,
           name,
