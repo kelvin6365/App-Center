@@ -142,14 +142,22 @@ const API = {
         },
       });
     },
-    appVersions: (appId: string) => {
-      return API.apiInstance.get(API.API_PATH.APP.SEARCH_APP_VERSIONS(appId));
+    appVersions: (appId: string, tenantId: string) => {
+      return API.apiInstance.get(API.API_PATH.APP.SEARCH_APP_VERSIONS(appId), {
+        headers: {
+          'x-tenant-id': tenantId,
+        },
+      });
     },
     getApp: (appId: string) => {
       return API.apiInstance.get(API.API_PATH.APP.GET_APP(appId));
     },
-    getAppVersionTags: (appId: string) => {
-      return API.apiInstance.get(API.API_PATH.APP.GET_APP_VERSION_TAGS(appId));
+    getAppVersionTags: (appId: string, tenantId: string) => {
+      return API.apiInstance.get(API.API_PATH.APP.GET_APP_VERSION_TAGS(appId), {
+        headers: {
+          'x-tenant-id': tenantId,
+        },
+      });
     },
     updateApp: (
       appId: string,

@@ -1,0 +1,15 @@
+{
+  "Install Page": {
+    "App Center": "App Center",
+    "QR Code": "QR Code",
+    "App install are secure and encrypted": "App install are secure and encrypted",
+    "Install Now": "Install Now",
+    "Password": "Password",
+    "Password is required": "Password is required",
+    "Name": "Name",
+    "Description": "Description",
+    "Created at": "Created at",
+    "Invalid App ID or Version ID": "Invalid App ID or Version ID",
+    "App can not be found": "App can not be found"
+  }
+}

@@ -92,7 +92,10 @@ const EditAppUserPermissionDialog = ({
         return;
       }
       const validUser = items.find(
-        (u) => !u.roles.map((r) => r.type).includes(RoleType.ADMIN)
+        (u) =>
+          !u.roles
+            .map((r) => r.type && r.tenantId === selectedTeam.id)
+            .includes(RoleType.ADMIN)
       );
       if (validUser) {
         tableRef?.current?.addUser(validUser);

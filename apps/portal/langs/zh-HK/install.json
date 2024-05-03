@@ -1,0 +1,15 @@
+{
+  "Install Page": {
+    "App Center": "應用中心",
+    "QR Code": "QR 圖碼",
+    "App install are secure and encrypted": "應用程式安裝安全且加密",
+    "Install Now": "現在安裝",
+    "Password": "密碼",
+    "Password is required": "密碼是必需的",
+    "Name": "姓名",
+    "Description": "描述",
+    "Created at": "創建於",
+    "Invalid App ID or Version ID": "應用程式 ID 或版本 ID 無效",
+    "App can not be found": "找不到應用程式"
+  }
+}

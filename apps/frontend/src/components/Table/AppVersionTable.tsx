@@ -19,6 +19,7 @@ import API from '../../app/util/api';
 import { AppVersion, AppVersionTag } from '../../app/util/type/AppVersion';
 import Tag from '../Chip/Tag';
 import DeleteAppVersionDialog from '../Dialog/DeleteAppVersionDialog';
+import { useAppStore } from '../../app/util/store/store';
 
 type Props = {
   appId: string;
@@ -40,6 +41,8 @@ const AppVersionTable = forwardRef<TableRef, Props>(
     { appId, setOpenQRCode, setOpenShareInstallURL, setOpenJiraIssues }: Props,
     ref
   ) => {
+    const [selectedTenant] = useAppStore((state) => [state.selectedTenant]);
+
     const [appVersions, setAppVersions] = useState<AppVersion[]>([]);
     const [appVersionTags, setAppVersionTags] = useState<AppVersionTag[]>([]);
     //selected Tags
@@ -79,7 +82,7 @@ const AppVersionTable = forwardRef<TableRef, Props>(
         return [];
       }
       try {
-        const res = await API.app.appVersions(appId);
+        const res = await API.app.appVersions(appId, selectedTenant?.id ?? '');
         const { data }: { data: { items: AppVersion[] } } = res.data;
         setAppVersions(data.items);
         return data.items;
@@ -98,7 +101,10 @@ const AppVersionTable = forwardRef<TableRef, Props>(
         return;
       }
       try {
-        const res = await API.app.getAppVersionTags(appId);
+        const res = await API.app.getAppVersionTags(
+          appId,
+          selectedTenant?.id ?? ''
+        );
         const { data }: { data: AppVersionTag[] } = res.data;
         setAppVersionTags(data);
         setSelectedTags(data);

@@ -234,7 +234,7 @@ const AppVersionTable = React.forwardRef<TableRef, Props>(
                     <Tooltip>
                       <TooltipTrigger asChild>
                         <div
-                          className="p-2 font-medium rounded-full cursor-pointer hover:bg-white dark:hover:bg-gray-600"
+                          className="relative p-2 font-medium rounded-full cursor-pointer hover:bg-white dark:hover:bg-gray-600"
                           onClick={() => {
                             setOpenJiraIssues({
                               open: true,
@@ -242,7 +242,10 @@ const AppVersionTable = React.forwardRef<TableRef, Props>(
                             });
                           }}
                         >
-                          <SiJirasoftware className="w-5 h-5 text-blue-500" />
+                          <SiJirasoftware className="min-h-[24px] min-w-[24px] text-blue-500" />
+                          <div className="absolute w-6 h-6 p-1 rounded-full top-[-10px] right-[-10px] bg-primary border-white border-[2px] text-center text-xs place-items-center text-white leading-none font-medium">
+                            {jiraIssues.length}
+                          </div>
                         </div>
                       </TooltipTrigger>
                       <TooltipContent>{t('Jira Issues')}</TooltipContent>
