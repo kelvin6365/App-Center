@@ -94,7 +94,8 @@ const EditAppUserPermissionDialog = ({
       const validUser = items.find(
         (u) =>
           !u.roles
-            .map((r) => r.type && r.tenantId === selectedTeam.id)
+            .filter((r) => r.tenantId === selectedTeam.id)
+            .map((r) => r.type)
             .includes(RoleType.ADMIN)
       );
       if (validUser) {
