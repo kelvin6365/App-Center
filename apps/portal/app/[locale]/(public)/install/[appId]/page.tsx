@@ -1,8 +1,4 @@
 'use client';
-import React, { useEffect, useState } from 'react';
-import PageTitle from '../../../../../components/content/pageTitle';
-import Image from 'next/image';
-import { useTranslations } from 'next-intl';
 import {
   Badge,
   Button,
@@ -13,23 +9,24 @@ import {
   FormMessage,
   Input,
 } from '@app-center/shadcn/ui';
-import { App } from '../../../../../types/App';
-import { AppVersion } from '../../../../../types/AppVersion';
-import API from '../../../../../services/api';
-import axios from 'axios';
-import toast from 'react-hot-toast';
-import { notFound, useSearchParams } from 'next/navigation';
-import isUuid from '../../../../../utils';
-import { useRouter } from 'next/navigation';
-import { Controller, SubmitHandler, useForm } from 'react-hook-form';
 import { LockClosedIcon } from '@radix-ui/react-icons';
+import axios from 'axios';
+import moment from 'moment';
+import { useTranslations } from 'next-intl';
+import Image from 'next/image';
+import { useSearchParams } from 'next/navigation';
+import { useEffect, useState } from 'react';
+import { Controller, SubmitHandler, useForm } from 'react-hook-form';
+import toast from 'react-hot-toast';
 import { BiSolidDownload } from 'react-icons/bi';
 import { ImQrcode } from 'react-icons/im';
-import moment from 'moment';
-import QRCodeDialog from '../../../../../components/dialog/qrCodeDialog';
-import { ModeToggle } from '../../../../../components/navbar/mode-toggle';
 import { z } from 'zod';
 import Custom404 from '../../../../../components/404';
+import QRCodeDialog from '../../../../../components/dialog/qrCodeDialog';
+import { ModeToggle } from '../../../../../components/navbar/mode-toggle';
+import API from '../../../../../services/api';
+import { App } from '../../../../../types/App';
+import { AppVersion } from '../../../../../types/AppVersion';
 const paramsSchema = z.object({
   appId: z.string().uuid(),
   versionId: z.string().uuid(),
@@ -39,7 +36,6 @@ type InstallAppFormInputs = {
 };
 const Page = ({ params }: { params: { appId: string } }) => {
   const t = useTranslations('Install Page');
-  const router = useRouter();
   const searchParams = useSearchParams();
   const versionId = searchParams.get('versionId');
   const isAppIdValid = paramsSchema.safeParse({
@@ -61,7 +57,6 @@ const Page = ({ params }: { params: { appId: string } }) => {
     },
   });
   const {
-    register,
     handleSubmit,
     formState: { errors, isSubmitting },
     getValues,
@@ -181,9 +176,9 @@ const Page = ({ params }: { params: { appId: string } }) => {
           <CardHeader className="grid px-4 py-8 m-0 text-center rounded-b-none bg-primary place-items-center">
             <div className="w-24 h-24 mb-4 text-white border rounded-lg border-white/10 bg-white/10 overflow-clip">
               <Image
-                src={app?.iconFileURL}
+                src={app?.iconFileURL ?? ''}
                 className="overflow-clip"
-                alt={app?.name}
+                alt={app?.name ?? 'App Icon'}
                 width={94}
                 height={94}
               />
@@ -251,7 +246,7 @@ const Page = ({ params }: { params: { appId: string } }) => {
                       name="password"
                       control={control}
                       rules={{ required: t('Password is required') }}
-                      render={({ field, fieldState: { error } }) => {
+                      render={({ field }) => {
                         return (
                           <>
                             <Input

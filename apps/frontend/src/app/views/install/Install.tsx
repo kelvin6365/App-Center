@@ -137,7 +137,7 @@ const Install = () => {
           >
             <div className="w-24 h-24 mb-4 text-white border rounded-lg border-white/10 bg-white/10 overflow-clip">
               <img
-                src={app?.iconFileURL}
+                src={app?.iconFileURL ?? ''}
                 className="overflow-clip"
                 alt={app?.name}
               />

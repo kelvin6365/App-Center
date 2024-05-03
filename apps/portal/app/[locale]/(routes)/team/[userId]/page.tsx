@@ -1,13 +1,7 @@
 'use client';
-import React, { useEffect } from 'react';
-import { z } from 'zod';
-import CustomBreadcrumb from '@/components/breadcrumb/breadcrumb';
-import { useTranslations } from 'next-intl';
 import Custom404 from '@/components/404';
-import { useRouter } from 'next/navigation';
-import app from 'next/app';
+import CustomBreadcrumb from '@/components/breadcrumb/breadcrumb';
 import PageTitle from '@/components/content/pageTitle';
-import useMemberQuery from '../../../../../queries/useMemberQuery';
 import {
   Button,
   Form,
@@ -16,7 +10,6 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-  Input,
   Select,
   SelectContent,
   SelectItem,
@@ -24,12 +17,17 @@ import {
   SelectValue,
   Separator,
 } from '@app-center/shadcn/ui';
-import { useForm } from 'react-hook-form';
-import API from '../../../../../services/api';
 import axios from 'axios';
+import { useTranslations } from 'next-intl';
+import { useRouter } from 'next/navigation';
+import { useEffect } from 'react';
+import { useForm } from 'react-hook-form';
 import toast from 'react-hot-toast';
-import { RoleIdType } from '../../../../../types/RoleIdType';
+import { z } from 'zod';
+import useMemberQuery from '../../../../../queries/useMemberQuery';
+import API from '../../../../../services/api';
 import useTeamSelectionStore from '../../../../../stores/useTeamSelectionStore';
+import { RoleIdType } from '../../../../../types/RoleIdType';
 
 const paramsSchema = z.object({
   userId: z.string().uuid(),
@@ -51,7 +49,7 @@ const ViewUser = ({ params }: { params: { userId: string } }) => {
   const { selectedTeam } = useTeamSelectionStore();
 
   //Fetch User data
-  const { user, isLoading, isError, error, refetch } = useMemberQuery({
+  const { user, isLoading, refetch } = useMemberQuery({
     userId: params.userId,
     ready: isUserIdValid,
   });
@@ -65,7 +63,6 @@ const ViewUser = ({ params }: { params: { userId: string } }) => {
     },
   });
   const {
-    register,
     handleSubmit,
     formState: { errors, isSubmitting },
     control,
@@ -74,7 +71,7 @@ const ViewUser = ({ params }: { params: { userId: string } }) => {
 
   const onSubmit = async (data: EditUserFormInputs) => {
     try {
-      const result = await API.user.updateProfileById({
+      await API.user.updateProfileById({
         id: user!.id,
         // name: data.name,
         role: data.role as RoleIdType,

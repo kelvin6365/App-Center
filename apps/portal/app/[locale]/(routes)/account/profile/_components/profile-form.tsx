@@ -40,14 +40,13 @@ export default function ProfileForm() {
     isError: isErrorUserProfile,
     refetch: refetchUserProfile,
   } = useUserProfileQuery();
-  // This can come from your database or API.
-  const defaultValues: Partial<ProfileFormValues> = {
-    name: userProfile?.profile.name ?? '',
-  };
 
   const form = useForm<ProfileFormValues>({
     resolver: zodResolver(profileFormSchema),
     mode: 'onChange',
+    defaultValues: {
+      name: '',
+    },
   });
   const {
     formState: { isSubmitting },
@@ -67,13 +66,18 @@ export default function ProfileForm() {
   };
 
   useEffect(() => {
+    // This can come from your database or API.
+    const defaultValues: Partial<ProfileFormValues> = {
+      name: userProfile?.profile.name ?? '',
+    };
+
     if (userProfile) {
       form.reset({
         ...defaultValues,
         name: userProfile?.profile.name ?? '',
       });
     }
-  }, [userProfile]);
+  }, [userProfile, form]);
 
   if (!userProfile || isErrorUserProfile || isLoadingUserProfile) {
     return null;
@@ -89,7 +93,7 @@ export default function ProfileForm() {
             <FormItem>
               <FormLabel>{t('Name')}</FormLabel>
               <FormControl>
-                <Input {...field} disabled={isSubmitting} />
+                <Input {...field} value={field.value} disabled={isSubmitting} />
               </FormControl>
               <FormMessage />
             </FormItem>

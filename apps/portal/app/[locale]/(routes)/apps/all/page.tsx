@@ -24,13 +24,11 @@ const AllAppsPage = () => {
     }
   }, [page]);
 
-  const { apps, meta, isLoading, isError, error, refetch } = useSearchAppsQuery(
-    {
-      selectedTeam,
-      page: currentPage,
-      limit: itemsPerPage,
-    }
-  );
+  const { apps, meta } = useSearchAppsQuery({
+    selectedTeam,
+    page: currentPage,
+    limit: itemsPerPage,
+  });
 
   const handlePageChange = (page: number) => {
     setCurrentPage(page);

@@ -56,7 +56,7 @@ const AppPage = ({ params }: { params: { appId: string } }) => {
   const router = useRouter();
 
   //Fetch App data
-  const { app, isLoading, isError, error, refetch } = useAppQuery({
+  const { app, isLoading, isError, refetch } = useAppQuery({
     appId: params.appId,
     ready: isAppIdValid,
   });
@@ -64,7 +64,7 @@ const AppPage = ({ params }: { params: { appId: string } }) => {
     userProfile,
     isLoading: isLoadingUserProfile,
     isError: isErrorUserProfile,
-    refetch: refetchUserProfile,
+    // refetch: refetchUserProfile,
   } = useUserProfileQuery();
   const [copied, setCopied] = useState(false);
   const [keyLoading, setKeyLoading] = useState(false);

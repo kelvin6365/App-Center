@@ -89,7 +89,7 @@ export const canAccessPath = (
 
     if (item.items) {
       for (const subItem of item.items) {
-        if (item.href! + subItem.href === path) {
+        if ((item?.href ?? '') + subItem.href === path) {
           return (
             subItem.roles.length === 0 ||
             subItem.roles.some((role) => userRoles.includes(role))

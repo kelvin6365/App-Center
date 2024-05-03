@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { RoleType } from './RoleType';
 
 export interface PortalUserProfile {

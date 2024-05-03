@@ -1,5 +1,4 @@
 import Content from '@/components/content/content';
-import PageContent from '@/components/content/pageContent';
 import { getServerSession } from 'next-auth/next';
 import { authOptions } from '../../api/auth/[...nextauth]/options';
 interface LayoutProps {

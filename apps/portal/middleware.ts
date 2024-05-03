@@ -52,6 +52,7 @@ export default async function middleware(req: NextRequest) {
     }
     return intlMiddleware(req);
   } else {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     return (authMiddleware as any)(req);
   }
 }

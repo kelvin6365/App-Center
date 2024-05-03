@@ -179,6 +179,7 @@ const UserAppPermissionsTable = forwardRef(
           header: () => <span>{t('Delete Version')}</span>,
         },
       ];
+      // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [userPermissions]);
 
     const table = useReactTable<PortalUserProfile>({
@@ -194,6 +195,7 @@ const UserAppPermissionsTable = forwardRef(
       },
     });
 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const setUserAppPermissions = (old: any, current: any) => {
       setUserPermissions({
         ...userPermissions,
@@ -213,7 +215,7 @@ const UserAppPermissionsTable = forwardRef(
           setIsLoading(true);
         }
         //search api
-        const res = await API.user.getUserAppPermissionsList(app!.id);
+        const res = await API.user.getUserAppPermissionsList(app?.id);
         const { data }: { data: PortalUserProfile[] } = res.data;
         setData(data);
         const up: {
