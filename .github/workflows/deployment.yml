@@ -162,7 +162,7 @@ jobs:
 
       - name: Commit and push changes to Helm chart repository
         run: |
-          cd ../../
+          cd dg-argocd
           git config --global user.email "github-actions@2rocksstudio.hk"
           git config --global user.name "GitHub Actions"
           git add .
