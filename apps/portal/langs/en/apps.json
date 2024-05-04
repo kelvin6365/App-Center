@@ -108,6 +108,10 @@
     "Open menu": "Open menu",
     "rows selected": "row(s) selected",
     "of": "of",
-    "Copied to clipboard": "Copied to clipboard"
+    "Copied to clipboard": "Copied to clipboard",
+    "Create App": "Create App",
+    "Create a new app": "Create a new app",
+    "Created Successfully": "Created Successfully",
+    "Filter Name or Description": "Filter Name or Description"
   }
 }

@@ -6,9 +6,13 @@ import PageTitle from '@/components/content/pageTitle';
 import { CustomPagination } from '@/components/pagination/pagination';
 import useSearchAppsQuery from '@/queries/useSearchAppsQuery';
 import useTeamSelectionStore from '@/stores/useTeamSelectionStore';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useTranslations } from 'next-intl';
+import { Button, Input } from '@app-center/shadcn/ui';
+import CreateAppDialog from '../../../../../components/dialog/createAppDialog';
+import { IoMdAdd } from 'react-icons/io';
+import { useDebounce } from 'use-debounce';
 const AllAppsPage = () => {
   const searchParams = useSearchParams();
   const router = useRouter();
@@ -17,6 +21,13 @@ const AllAppsPage = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage] = useState(10);
   const page = searchParams.get('page');
+
+  const [openCreateApp, setOpenCreateApp] = useState(false);
+
+  //Table Search / Filters
+  const [searchQuery, setSearchQuery] = useState('');
+  const [debouncedSearchQuery] = useDebounce(searchQuery, 500);
+
   useEffect(() => {
     const parsedPage = parseInt(page as string);
     if (!isNaN(parsedPage) && parsedPage > 0) {
@@ -24,16 +35,27 @@ const AllAppsPage = () => {
     }
   }, [page]);
 
-  const { apps, meta } = useSearchAppsQuery({
+  const { apps, meta, refetch, isLoading } = useSearchAppsQuery({
     selectedTeam,
     page: currentPage,
     limit: itemsPerPage,
+    searchQuery: debouncedSearchQuery,
   });
 
-  const handlePageChange = (page: number) => {
-    setCurrentPage(page);
-    router.push(`/apps/all?page=${page}`);
-  };
+  const handlePageChange = useCallback(
+    (page: number) => {
+      setCurrentPage(page);
+      router.push(`/apps/all?page=${page}`);
+    },
+    [router]
+  );
+
+  useEffect(() => {
+    if (debouncedSearchQuery) {
+      //Update page to 1
+      handlePageChange(1);
+    }
+  }, [debouncedSearchQuery, handlePageChange]);
 
   return (
     <div>
@@ -49,24 +71,57 @@ const AllAppsPage = () => {
           },
         ]}
       />
-      <PageTitle
-        title={t('All Apps')}
-        description={t('All apps can be found here')}
-      />
-
+      <div className="flex justify-between">
+        <PageTitle
+          title={t('All Apps')}
+          description={t('All apps can be found here')}
+        />
+        <Button
+          className="my-auto"
+          onClick={() => {
+            setOpenCreateApp(true);
+          }}
+        >
+          {/* Create App */}
+          <span>{t('Create App')}</span>
+          <IoMdAdd className="w-4 h-4 ml-2" />
+        </Button>
+      </div>
+      <div>
+        <div className="flex items-center py-4">
+          <Input
+            placeholder={t('Filter Name or Description')}
+            value={searchQuery}
+            onChange={(event) => {
+              setSearchQuery(event.target.value);
+            }}
+            className="max-w-sm"
+          />
+        </div>
+      </div>
       <div className="grid grid-cols-2 gap-8 py-2 md:grid-cols-4 lg:grid-cols-5">
-        {apps.map(({ name, description, iconFileURL, id }, i) => {
-          return (
-            <Link key={id} href={`/apps/${id}`}>
-              <AppCard
+        {!isLoading &&
+          apps.map(({ name, description, iconFileURL, id }, i) => {
+            return (
+              <Link key={id} href={`/apps/${id}`}>
+                <AppCard
+                  key={i}
+                  name={name}
+                  description={description}
+                  icon={iconFileURL}
+                />
+              </Link>
+            );
+          })}
+        {isLoading &&
+          Array.from({ length: itemsPerPage }).map((_, i) => {
+            return (
+              <div
                 key={i}
-                name={name}
-                description={description}
-                icon={iconFileURL}
-              />
-            </Link>
-          );
-        })}
+                className="aspect-[172.09/228.09] w-full h-full transition bg-gray-200 border shadow rounded-xl animate-pulse"
+              ></div>
+            );
+          })}
       </div>
       <div className="py-2 ml-auto">
         <CustomPagination
@@ -80,6 +135,17 @@ const AllAppsPage = () => {
           onPageChange={handlePageChange}
         />
       </div>
+      <CreateAppDialog
+        title={t('Create App')}
+        description={t('Create a new app')}
+        onClose={(reload) => {
+          if (reload) {
+            refetch();
+          }
+          setOpenCreateApp(false);
+        }}
+        open={openCreateApp}
+      />
     </div>
   );
 };

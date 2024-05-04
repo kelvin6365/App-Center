@@ -54,6 +54,7 @@ import { PortalUserProfile } from '../../types/PortalUserProfile';
 import { RoleType } from '../../types/RoleType';
 import DeleteUserFromTeamDialog from '../dialog/deleteDeleteUserFromTeamDialog';
 import InviteUserDialog from '../dialog/inviteUserDialog';
+import { IoMdAdd } from 'react-icons/io';
 
 export type TableRef = {
   reload: () => void;
@@ -437,7 +438,7 @@ const TeamMemberTable = React.forwardRef<TableRef>((_, ref) => {
               });
             }}
           >
-            {t('Invite User')} <ChevronDownIcon className="w-4 h-4 ml-2" />
+            {t('Invite User')} <IoMdAdd className="w-4 h-4 ml-2" />
           </Button>
           <DropdownMenu>
             <DropdownMenuTrigger asChild>

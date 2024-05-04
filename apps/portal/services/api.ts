@@ -142,13 +142,11 @@ const API = {
       extra: {
         [key: string]: any;
       };
-      tenantId: string;
     }) => {
-      const { name, description, icon, tenantId } = data;
+      const { name, description, icon } = data;
       const form = new FormData();
       form.append('name', name);
       form.append('description', description);
-      form.append('tenantId', tenantId);
       form.append('icon', icon);
       form.append('extra', JSON.stringify(data.extra));
       return API.apiInstance.post(API.API_PATH.APP.CREATE, form, {

@@ -31,9 +31,8 @@ type Props = {
   description: string;
   onClose: (reload: boolean) => void;
   open: boolean;
-  app: App | null;
 };
-type EditAppFormInputs = {
+type CreateAppFormInputs = {
   name: string;
   description: string;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -45,13 +44,20 @@ type EditAppFormInputs = {
   confluenceURL: string;
 };
 
-const EditAppDialog = ({ title, onClose, open, app, description }: Props) => {
+const CreateAppDialog = ({ title, onClose, open, description }: Props) => {
   const t = useTranslations('Apps');
 
-  const form = useForm<EditAppFormInputs>({
+  const form = useForm<CreateAppFormInputs>({
     // resolver: yupResolver<Inputs>(schema),
     defaultValues: {
       icon: undefined,
+      playStoreURL: '',
+      appStoreURL: '',
+      repoURL: '',
+      jiraURL: '',
+      confluenceURL: '',
+      name: '',
+      description: '',
     },
   });
   const {
@@ -62,37 +68,10 @@ const EditAppDialog = ({ title, onClose, open, app, description }: Props) => {
     reset,
   } = form;
 
-  const onSubmit: SubmitHandler<EditAppFormInputs> = async (values) => {
-    //deep compare before call api
-    if (
-      JSON.stringify({
-        name: app?.name,
-        description: app?.description,
-        playStoreURL: app?.extra?.playStoreURL ?? '',
-        appStoreURL: app?.extra?.appStoreURL ?? '',
-        repoURL: app?.extra?.repoURL ?? '',
-        jiraURL: app?.extra?.jiraURL ?? '',
-        confluenceURL: app?.extra?.confluenceURL ?? '',
-        icon: undefined,
-      }) ===
-      JSON.stringify({
-        name: values.name,
-        description: values.description,
-        playStoreURL: values.playStoreURL,
-        appStoreURL: values.appStoreURL,
-        repoURL: values.repoURL,
-        jiraURL: values.jiraURL,
-        confluenceURL: values.confluenceURL,
-        icon: values.icon[0] ?? undefined,
-      })
-    ) {
-      toast.success(
-        t('You have not changed anything in the form please submit again')
-      );
-      return;
-    }
+  const onSubmit: SubmitHandler<CreateAppFormInputs> = async (values) => {
+    console.log(values);
     try {
-      const res = await API.app.updateApp(app!.id, {
+      const res = await API.app.createApp({
         name: values.name,
         description: values.description,
         icon: values.icon[0] ?? null,
@@ -108,7 +87,8 @@ const EditAppDialog = ({ title, onClose, open, app, description }: Props) => {
       const { status } = res.data;
       if (status.code === 1000) {
         onClose(true);
-        toast.success(t('Update Successfully'));
+        reset();
+        toast.success(t('Created Successfully'));
       }
     } catch (error) {
       console.error(error);
@@ -119,19 +99,10 @@ const EditAppDialog = ({ title, onClose, open, app, description }: Props) => {
   };
 
   useEffect(() => {
-    if (app) {
-      reset({
-        name: app.name,
-        description: app.description,
-        playStoreURL: app.extra?.playStoreURL,
-        appStoreURL: app.extra?.appStoreURL,
-        repoURL: app.extra?.repoURL,
-        jiraURL: app.extra?.jiraURL,
-        confluenceURL: app.extra?.confluenceURL,
-        icon: undefined,
-      });
-    }
-  }, [app, reset]);
+    return () => {
+      reset();
+    };
+  }, [reset]);
 
   return (
     <>
@@ -329,15 +300,6 @@ const EditAppDialog = ({ title, onClose, open, app, description }: Props) => {
                   }}
                 />
               </div>
-              {app?.iconFileURL && (
-                <div className="pointer-events-none relative mx-auto my-2 flex w-[180px]">
-                  <img
-                    src={app?.iconFileURL}
-                    alt="preview"
-                    className="mx-auto"
-                  />
-                </div>
-              )}
               <FileUpload
                 {...register('icon', {})}
                 loading={isSubmitting}
@@ -346,25 +308,6 @@ const EditAppDialog = ({ title, onClose, open, app, description }: Props) => {
             </form>
           </Form>
           <DialogFooter>
-            <Button
-              variant={'secondary'}
-              onClick={() => {
-                if (!isSubmitting) {
-                  form.reset({
-                    name: app?.name,
-                    description: app?.description,
-                    playStoreURL: app?.extra?.playStoreURL ?? '',
-                    appStoreURL: app?.extra?.appStoreURL ?? '',
-                    repoURL: app?.extra?.repoURL ?? '',
-                    jiraURL: app?.extra?.jiraURL ?? '',
-                    confluenceURL: app?.extra?.confluenceURL ?? '',
-                    icon: undefined,
-                  });
-                }
-              }}
-            >
-              <span>{t('Reset')}</span>
-            </Button>
             <Button
               onClick={() => {
                 if (!isSubmitting) {
@@ -381,4 +324,4 @@ const EditAppDialog = ({ title, onClose, open, app, description }: Props) => {
   );
 };
 
-export default EditAppDialog;
+export default CreateAppDialog;

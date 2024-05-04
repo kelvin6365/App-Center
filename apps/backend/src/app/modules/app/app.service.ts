@@ -51,13 +51,12 @@ export class AppService {
   //create a new app
   async createApp(
     app: CreateAppDTO,
+    tenantId: string,
     file: Express.Multer.File,
     user: CurrentUserDTO
   ): Promise<string> {
     //Check tenant id
-    const isAllowed = user.tenants
-      .map((ut) => ut.tenant.id)
-      .includes(app.tenantId);
+    const isAllowed = user.tenants.map((ut) => ut.tenant.id).includes(tenantId);
     if (!isAllowed) {
       throw new AppException(ResponseCode.STATUS_8003_PERMISSION_DENIED);
     }
@@ -70,7 +69,7 @@ export class AppService {
     newApp.apiKey = nanoid();
     newApp.extra = app.extra ?? {};
     newApp.createdBy = user.id;
-    newApp.tenantId = app.tenantId;
+    newApp.tenantId = tenantId;
     const createdApp = await this.appRepository.createApp(newApp);
     if (createdApp) {
       //Create app icon

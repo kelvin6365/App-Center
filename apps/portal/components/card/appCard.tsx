@@ -15,7 +15,7 @@ type Props = {
 
 const appCard = ({ name, description, icon }: Props) => {
   return (
-    <Card className="transition cursor-pointer group hover:scale-110">
+    <Card className="transition cursor-pointer group hover:scale-110 aspect-[172.09/228.09]">
       <CardContent className="p-4 pb-1">
         <div className="">
           <LazyLoadImage
@@ -31,7 +31,7 @@ const appCard = ({ name, description, icon }: Props) => {
         </div>
       </CardContent>
       <CardHeader className="p-4 pt-1 text-center">
-        <CardTitle>{name}</CardTitle>
+        <CardTitle className="text-2xl md:text-xl">{name}</CardTitle>
         <CardDescription>{description}</CardDescription>
       </CardHeader>
     </Card>

@@ -48,6 +48,7 @@ import { CreateAppVersionDTO } from './dto/create.app.version.dto';
 import { InstallAppDTO } from './dto/install.app.dto';
 import { InstallAppRequestDTO } from './dto/install.app.request.dto';
 import { UpdateAppDTO } from './dto/update.app.dto';
+import { CurrentTenant } from '../../common/decorator/tenant.decorator';
 
 @ApiTags('App')
 @Controller({ path: 'app', version: ['1'] })
@@ -150,10 +151,11 @@ export class AppController {
     )
     file: Express.Multer.File,
     @Body() app: CreateAppDTO,
-    @CurrentUser() user: CurrentUserDTO
+    @CurrentUser() user: CurrentUserDTO,
+    @CurrentTenant() tenantId: string
   ): Promise<AppResponse<string>> {
     return new AppResponse<string>(
-      await this.appService.createApp(app, file, user)
+      await this.appService.createApp(app, tenantId, file, user)
     );
   }
 

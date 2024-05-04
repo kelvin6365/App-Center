@@ -108,6 +108,10 @@
     "Open menu": "開啟選單",
     "rows selected": "已選擇行",
     "of": "的",
-    "Copied to clipboard": "已複製到剪貼簿"
+    "Copied to clipboard": "已複製到剪貼簿",
+    "Create App": "創建應用程式",
+    "Create a new app": "創建一個新應用程式",
+    "Created Successfully": "創建成功",
+    "Filter Name or Description": "過濾器名稱或描述"
   }
 }

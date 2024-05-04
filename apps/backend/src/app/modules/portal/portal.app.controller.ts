@@ -169,10 +169,11 @@ export class PortalAppController {
     )
     file: Express.Multer.File,
     @Body() app: CreateAppDTO,
-    @CurrentUser() user: CurrentUserDTO
+    @CurrentUser() user: CurrentUserDTO,
+    @CurrentTenant() tenantId: string
   ): Promise<AppResponse<string>> {
     return new AppResponse<string>(
-      await this.appService.createApp(app, file, user)
+      await this.appService.createApp(app, tenantId, file, user)
     );
   }
 

@@ -5,13 +5,15 @@ const useSearchAppsQuery = ({
   selectedTeam,
   page,
   limit,
+  searchQuery,
 }: {
   selectedTeam: { id: string; name: string } | null;
   page: number;
   limit: number;
+  searchQuery?: string;
 }) => {
   const { data, isLoading, isError, error, refetch } = useQuery({
-    queryKey: [selectedTeam, `allApps`, page, limit],
+    queryKey: [selectedTeam, `allApps`, page, limit, searchQuery],
     queryFn: async () => {
       if (!selectedTeam) {
         return;
@@ -20,7 +22,7 @@ const useSearchAppsQuery = ({
         page,
         limit,
         query: JSON.stringify({
-          query: '',
+          query: searchQuery ?? '',
           // filters: [
           //   {
           //     key: 'tenantId',
