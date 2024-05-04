@@ -153,12 +153,12 @@ jobs:
       - name: Update Backend Helm chart image.tag value
         run: |
           cd dg-argocd/app-center/backend-helm
-          yq eval '.image.tag = "${{ needs.deploy.outputs.sha }}"' -i values.${{ steps.set-branch.outputs.branch }}.yaml
+          yq eval '.image.tag = "${{ steps.sha.outputs.sha }}"' -i values.${{ steps.set-branch.outputs.branch }}.yaml
 
       - name: Update Frontend Helm chart image.tag value
         run: |
           cd dg-argocd/app-center/portal-helm
-          yq eval '.image.tag = "${{ needs.deploy.outputs.sha }}"' -i values.${{ steps.set-branch.outputs.branch }}.yaml
+          yq eval '.image.tag = "${{ steps.sha.outputs.sha }}"' -i values.${{ steps.set-branch.outputs.branch }}.yaml
 
       - name: Commit and push changes to Helm chart repository
         run: |
