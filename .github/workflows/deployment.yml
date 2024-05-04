@@ -128,7 +128,7 @@ jobs:
     steps:
       - name: Checkout Helm chart repository from GitLab
         run: |
-          git clone https://github-actions:${{ secrets.GITLAB_ACCESS_TOKEN }}@gitlab.2rocksstudio.hk/devops/dg-argocd.git
+          git clone https://kelvin.kwong:${{ secrets.GITLAB_ACCESS_TOKEN }}@gitlab.2rocksstudio.hk/devops/dg-argocd.git
 
       - name: Install yq
         run: |
