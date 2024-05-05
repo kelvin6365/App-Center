@@ -60,12 +60,37 @@ export class AppService {
     if (!isAllowed) {
       throw new AppException(ResponseCode.STATUS_8003_PERMISSION_DENIED);
     }
+
+    //Check Create App limit
+    const subscription = user.subscriptions.pop();
+    const totalCreatedApp = await this.appRepository.count({
+      where: {
+        tenantId: tenantId,
+        deletedAt: null,
+      },
+    });
+    if (subscription) {
+      const createAppLimit = subscription.plan.appCreationLimit;
+      if (totalCreatedApp >= createAppLimit) {
+        this.logger.error('Create app limit Reached : ' + createAppLimit);
+        throw new AppException(ResponseCode.STATUS_3001_APP_LIMIT_REACHED);
+      }
+    } else {
+      const createAppLimit = this.configService.get<number>(
+        'static.freeLimit.appLimit'
+      );
+
+      if (totalCreatedApp >= createAppLimit) {
+        this.logger.error('Create app limit Reached : ' + createAppLimit);
+        throw new AppException(ResponseCode.STATUS_3001_APP_LIMIT_REACHED);
+      }
+    }
+
     this.logger.log('Creating a new app');
     //Create a new app by dto
     const newApp: App = new App();
     newApp.name = app.name;
     newApp.description = app.description;
-    newApp.deletedAt = null;
     newApp.apiKey = nanoid();
     newApp.extra = app.extra ?? {};
     newApp.createdBy = user.id;
@@ -84,8 +109,7 @@ export class AppService {
         );
       }
       createdApp.iconFileId = appIconFile.id;
-      //TODO: User
-      createdApp.updatedBy = null;
+      createdApp.updatedBy = user.id;
       await this.appRepository.updateApp(createdApp);
     }
     return createdApp.id;

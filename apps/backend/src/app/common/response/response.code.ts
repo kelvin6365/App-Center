@@ -80,11 +80,16 @@ export class ResponseCode {
     'Role not exist.'
   );
 
-  //App Version
+  //App
   static readonly STATUS_3000_APP_API_KEY_NOT_MATCH = new ResponseStatus(
     3000,
     'App Api Key Not Match',
     'App Api Key not match.'
+  );
+  static readonly STATUS_3001_APP_LIMIT_REACHED = new ResponseStatus(
+    3001,
+    'App Limit Reached',
+    'App limit reached.'
   );
 
   //Tenant

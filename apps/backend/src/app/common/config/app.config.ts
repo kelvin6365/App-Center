@@ -44,6 +44,7 @@ export default () => ({
   static: {
     freeLimit: {
       teamLimit: Number(process.env.FREE_TEAM_LIMIT) || 1,
+      appLimit: Number(process.env.FREE_APP_LIMIT) || 1,
     },
     defaultTenant: {
       enabled: Boolean(process.env.DEFAULT_TENANT_ENABLED) || false,
