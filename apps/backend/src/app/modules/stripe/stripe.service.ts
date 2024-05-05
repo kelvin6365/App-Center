@@ -82,11 +82,12 @@ export class StripeService {
       );
 
     //check user already has subscription
-    const subscription = await this.subscriptionRepository.findUserSubscription(
-      user.id,
-      dto.planId,
-      'active'
-    );
+    const subscription =
+      await this.subscriptionRepository.findUserSubscriptionByUserIdAndPlanId(
+        user.id,
+        dto.planId,
+        'active'
+      );
     if (subscription) {
       throw new AppException(ResponseCode.STATUS_9000_ALREADY_SUBSCRIBED);
     }
@@ -247,6 +248,22 @@ export class StripeService {
         webhook.isHandled = true;
         await this.stripeWebhookRepository.updateStripeWebhook(webhook);
         break;
+      case 'customer.subscription.paused':
+        // const customerSubscriptionPaused = event.data.object;
+        // Then define and call a function to handle the event customer.subscription.paused
+        break;
+      case 'customer.subscription.pending_update_applied':
+        // const customerSubscriptionPendingUpdateApplied = event.data.object;
+        // Then define and call a function to handle the event customer.subscription.pending_update_applied
+        break;
+      case 'customer.subscription.pending_update_expired':
+        // const customerSubscriptionPendingUpdateExpired = event.data.object;
+        // Then define and call a function to handle the event customer.subscription.pending_update_expired
+        break;
+      case 'customer.subscription.resumed':
+        // const customerSubscriptionResumed = event.data.object;
+        // Then define and call a function to handle the event customer.subscription.resumed
+        break;
       case 'product.updated':
         this.logger.log(
           `Product created is ${event.data.object.created}. livemode is ${event.data.object.livemode}.`
@@ -267,6 +284,22 @@ export class StripeService {
         );
         // Then define and call a method to handle the product created.
         await this.handleProductCreated(event.data.object);
+        break;
+      case 'promotion_code.created':
+        // const promotionCodeCreated = event.data.object;
+        // Then define and call a function to handle the event promotion_code.created
+        break;
+      case 'promotion_code.updated':
+        // const promotionCodeUpdated = event.data.object;
+        // Then define and call a function to handle the event promotion_code.updated
+        break;
+      case 'refund.created':
+        // const refundCreated = event.data.object;
+        // Then define and call a function to handle the event refund.created
+        break;
+      case 'refund.updated':
+        // const refundUpdated = event.data.object;
+        // Then define and call a function to handle the event refund.updated
         break;
       default:
         // Unexpected event type
@@ -292,7 +325,7 @@ export class StripeService {
 
     //check user already has subscription
     const userSubscription =
-      await this.subscriptionRepository.findUserSubscription(
+      await this.subscriptionRepository.findUserSubscriptionByUserIdAndPlanId(
         user.id,
         subscription.metadata.planId,
         'active'

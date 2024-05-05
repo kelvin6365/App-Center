@@ -87,16 +87,11 @@ export class ResponseCode {
     'App Api Key not match.'
   );
 
-  //Category
-  static readonly STATUS_4000_CATEGORY_NOT_EXIST = new ResponseStatus(
+  //Tenant
+  static readonly STATUS_4000_TENANT_LIMIT_REACHED = new ResponseStatus(
     4000,
-    'Category Not Found',
-    'Category not exist.'
-  );
-  static readonly STATUS_4001_CATEGORY_EXIST = new ResponseStatus(
-    4001,
-    'Category Found',
-    'Category exist.'
+    'Tenant Limit Reached',
+    'Tenant limit reached.'
   );
 
   //Advertisement
@@ -182,5 +177,12 @@ export class ResponseCode {
     9000,
     'Plan Already Subscribed',
     'Plan Already Subscribed.'
+  );
+
+  //Plan limit
+  static readonly STATUS_9001_PLAN_LIMIT_REACHED = new ResponseStatus(
+    9001,
+    'Plan Limit Reached',
+    'Plan Limit Reached.'
   );
 }

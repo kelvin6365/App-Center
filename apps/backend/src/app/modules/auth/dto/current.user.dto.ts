@@ -4,6 +4,8 @@ import { UserRole } from '../../user/entities/user.role.entity';
 import { UserStatus } from '../../user/enum/user.status.enum';
 import { UserPermission } from '../../user/entities/user.permission.entity';
 import { UserTenant } from '../../user/entities/user.tenant.entity';
+import { Subscription } from '../../plan/entities/subscription.entity';
+import moment from 'moment';
 
 export class CurrentUserDTO {
   @ApiProperty()
@@ -42,6 +44,9 @@ export class CurrentUserDTO {
   @ApiProperty()
   tenants: UserTenant[];
 
+  @ApiProperty()
+  subscriptions: Subscription[];
+
   fromEntity(entity: User) {
     const dto = new CurrentUserDTO();
     dto.id = entity.id;
@@ -54,8 +59,14 @@ export class CurrentUserDTO {
     dto.roles = entity.roles;
     dto.name = entity.profile.name;
     dto.permissions = entity.permissions;
-    dto.tenants = entity.tenants;
+    //filter deleted tenants
+    dto.tenants = entity.tenants.filter((t) => !t.tenant.deletedAt);
     dto.stripeCustomerId = entity.stripeCustomerId;
+    //filter active and not expired subscription
+    dto.subscriptions = entity.subscriptions.filter(
+      (s) =>
+        s.status === 'active' && s.currentPeriodEnd > moment().utc().toDate()
+    );
     return dto;
   }
 }

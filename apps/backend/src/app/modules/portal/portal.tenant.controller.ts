@@ -7,19 +7,18 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
-import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { ApiResponseSchema } from '../../common/decorator/swagger.decorator';
-import { AppResponse } from '../../common/response/app.response';
-import { TenantService } from '../tenant/tenant.service';
-import { CreateTenantDTO } from '../tenant/dto/create.tenant.dto';
+import { CurrentTenant } from '../../common/decorator/tenant.decorator';
 import { CurrentUser } from '../../common/decorator/user.decorator';
+import { AppResponse } from '../../common/response/app.response';
 import { CurrentUserDTO } from '../auth/dto/current.user.dto';
+import { JwtAuthGuard } from '../auth/jwt-auth.guard';
+import RoleGuard from '../auth/role.guard';
+import { RoleType } from '../role/enum/role.type.enum';
+import { CreateTenantDTO } from '../tenant/dto/create.tenant.dto';
 import { TenantDTO } from '../tenant/dto/tenant.dto';
 import { UpdateTenantDTO } from '../tenant/dto/update.tenant.dto';
-import { CurrentTenant } from '../../common/decorator/tenant.decorator';
-import { Roles } from '../../common/decorator/roles.decorator';
-import { RoleType } from '../role/enum/role.type.enum';
-import RoleGuard from '../auth/role.guard';
+import { TenantService } from '../tenant/tenant.service';
 
 @ApiTags('Portal')
 @ApiBearerAuth()

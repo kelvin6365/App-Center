@@ -110,4 +110,8 @@ export class AppRepository extends Repository<App> {
   async findByApiKey(apiKey: string, withDeleted = false): Promise<App> {
     return await this.findOne({ where: { apiKey }, withDeleted });
   }
+
+  async findByTenantId(tenantId: string, withDeleted = false): Promise<App[]> {
+    return await this.find({ where: { tenantId }, withDeleted });
+  }
 }

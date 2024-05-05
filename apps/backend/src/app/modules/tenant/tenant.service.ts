@@ -28,6 +28,21 @@ export class TenantService {
     createTenantDto: CreateTenantDTO,
     user: CurrentUserDTO
   ) {
+    //check limit
+    const subscription = user.subscriptions.pop();
+    if (subscription) {
+      if (user.tenants.length >= subscription.plan.maxTenants) {
+        throw new AppException(ResponseCode.STATUS_4000_TENANT_LIMIT_REACHED);
+      }
+    } else {
+      if (
+        user.tenants.length >=
+        this.configService.get<number>('static.freeLimit.teamLimit')
+      ) {
+        throw new AppException(ResponseCode.STATUS_4000_TENANT_LIMIT_REACHED);
+      }
+    }
+
     const tenant = new Tenant();
     tenant.name = createTenantDto.name;
     tenant.domainName = await this.generateSlug(createTenantDto.name);

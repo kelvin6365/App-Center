@@ -52,7 +52,13 @@ export class UserRepository extends Repository<User> {
       ],
       where: { username },
       withDeleted,
-      relations: ['tenants', 'roles', 'permissions', 'profile'],
+      relations: [
+        'tenants',
+        'roles',
+        'permissions',
+        'profile',
+        'subscriptions.plan',
+      ],
     });
   }
 

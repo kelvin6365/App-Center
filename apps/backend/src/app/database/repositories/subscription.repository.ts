@@ -25,7 +25,7 @@ export class SubscriptionRepository extends Repository<Subscription> {
     });
   }
 
-  findUserSubscription(
+  findUserSubscriptionByUserIdAndPlanId(
     userId: string,
     planId: string,
     status = 'active'
@@ -37,6 +37,19 @@ export class SubscriptionRepository extends Repository<Subscription> {
         status: status,
       },
       relations: ['user', 'plan'],
+    });
+  }
+
+  findUserSubscriptionByUserId(
+    userId: string,
+    status = 'active'
+  ): Promise<Subscription> {
+    return this.findOne({
+      where: {
+        userId: userId,
+        status,
+      },
+      relations: ['plan'],
     });
   }
 }
