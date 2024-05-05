@@ -290,7 +290,7 @@ const UserAppPermissionsTable = forwardRef(
             </div>
           </div>
         )}
-        <div className="min-w-full overflow-auto">
+        <div className="min-w-full overflow-auto w-80 sm:w-fit">
           {!isLoading && (
             <table className="w-full text-left rounded-md table-auto min-w-max overflow-clip">
               <thead>

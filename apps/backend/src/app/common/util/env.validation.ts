@@ -76,6 +76,13 @@ class EnvironmentVariables {
   @Length(64)
   KEY: string;
 
+  @IsString()
+  STRIPE_PUBLIC_KEY: string;
+  @IsString()
+  STRIPE_SECRET_KEY: string;
+  @IsString()
+  STRIPE_ENDPOINT_SECRET: string;
+
   //   //[Default Admin]
   //   @IsBoolean()
   //   DEFAULT_ADMIN_ENABLED: boolean;

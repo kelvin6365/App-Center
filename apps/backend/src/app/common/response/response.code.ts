@@ -176,4 +176,11 @@ export class ResponseCode {
     'Admin less than one',
     'Admin less than one.'
   );
+
+  //Payment
+  static readonly STATUS_9000_ALREADY_SUBSCRIBED = new ResponseStatus(
+    9000,
+    'Plan Already Subscribed',
+    'Plan Already Subscribed.'
+  );
 }

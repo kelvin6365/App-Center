@@ -71,7 +71,7 @@ const AllAppsPage = () => {
           },
         ]}
       />
-      <div className="flex justify-between">
+      <div className="flex justify-between gap-1">
         <PageTitle
           title={t('All Apps')}
           description={t('All apps can be found here')}
@@ -99,7 +99,7 @@ const AllAppsPage = () => {
           />
         </div>
       </div>
-      <div className="grid grid-cols-2 gap-8 py-2 md:grid-cols-4 lg:grid-cols-5">
+      <div className="grid grid-cols-2 gap-8 py-2 sm:grid-cols-4 md:grid-cols-4 lg:grid-cols-5">
         {!isLoading &&
           apps.map(({ name, description, iconFileURL, id }, i) => {
             return (

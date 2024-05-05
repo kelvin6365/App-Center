@@ -546,7 +546,7 @@ const AppVersionTable = React.forwardRef<TableRef, Props>(
             </Badge>
           )}
         </div>
-        <div className="flex items-center py-4">
+        <div className="flex items-center gap-1 py-4">
           <Input
             placeholder={t('Filter Name or description')}
             value={searchQuery}

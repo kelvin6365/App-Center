@@ -8,6 +8,7 @@ export default () => ({
     env: process.env.ENV,
     globalPrefix: process.env.GLOBAL_PREFIX,
     corsOrigin: process.env.CORS_ORIGIN,
+    portalURL: process.env.PORTAL_URL,
   },
   db: {
     ...new DBConfig().config,
@@ -35,6 +36,10 @@ export default () => ({
       publicAPI: process.env.PUBLIC_API,
     },
     slugify: {},
+    stripe: {
+      secretKey: process.env.STRIPE_SECRET_KEY,
+      endpointSecret: process.env.STRIPE_ENDPOINT_SECRET,
+    },
   },
   static: {
     defaultTenant: {

@@ -179,7 +179,7 @@ const EditAppUserPermissionDialog = ({
         }}
       >
         <DialogContent
-          className={cn('max-w-fit w-full max-h-[85%] overflow-scroll')}
+          className={cn('w-full max-h-[85%] overflow-scroll')}
           onEscapeKeyDown={(e) => {
             if (searchIsSubmitting || savingPermissions) {
               e.preventDefault();

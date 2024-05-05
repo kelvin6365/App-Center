@@ -150,7 +150,7 @@ const EditAppDialog = ({ title, onClose, open, app, description }: Props) => {
         }}
       >
         <DialogContent
-          className={cn('!max-w-[60%] !w-full max-h-[85%] overflow-scroll')}
+          className={cn('sm:max-w-[60%] !w-full max-h-[85%] overflow-scroll')}
           onEscapeKeyDown={(e) => {
             if (isSubmitting) {
               e.preventDefault();

@@ -421,7 +421,7 @@ const TeamMemberTable = React.forwardRef<TableRef>((_, ref) => {
 
   return (
     <div className="w-full">
-      <div className="flex items-center py-4">
+      <div className="flex items-center justify-between py-4">
         <Input
           placeholder={t('Filter Name or Email')}
           value={searchQuery}
@@ -430,7 +430,7 @@ const TeamMemberTable = React.forwardRef<TableRef>((_, ref) => {
           }}
           className="max-w-sm"
         />
-        <div className="ml-auto space-x-2">
+        <div className="flex flex-wrap items-center justify-end gap-1">
           <Button
             onClick={() => {
               setOpenInviteDialog({

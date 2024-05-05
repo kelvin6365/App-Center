@@ -1,5 +1,7 @@
-import { Column, Entity } from 'typeorm';
+import { Column, Entity, JoinColumn, ManyToOne } from 'typeorm';
 import { BaseEntity } from '../../../database/entities/base.entity';
+import { User } from '../../user/entities/user.entity';
+import { Plan } from './plan.entity';
 @Entity('subscriptions')
 export class Subscription extends BaseEntity {
   @Column()
@@ -8,14 +10,16 @@ export class Subscription extends BaseEntity {
   stripeCustomerId: string;
   @Column()
   stripePlanId: string;
+
   @Column()
   amount: number;
-  @Column()
-  currency: string;
+
   @Column()
   status: string;
 
-  @Column()
+  @Column({
+    nullable: true,
+  })
   trialEnd: Date;
 
   @Column()
@@ -24,12 +28,20 @@ export class Subscription extends BaseEntity {
   currentPeriodStart: Date;
 
   @Column({
-    name: 'userId',
+    name: 'user_id',
   })
   userId: string;
 
   @Column({
-    name: 'planId',
+    name: 'plan_id',
   })
   planId: string;
+
+  @ManyToOne(() => User, (user) => user.subscriptions)
+  @JoinColumn({ name: 'user_id' })
+  user: User;
+
+  @ManyToOne(() => Plan, (plan) => plan.subscriptions)
+  @JoinColumn({ name: 'plan_id' })
+  plan: Plan;
 }

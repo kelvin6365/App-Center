@@ -31,7 +31,7 @@ const appCard = ({ name, description, icon }: Props) => {
         </div>
       </CardContent>
       <CardHeader className="p-4 pt-1 text-center">
-        <CardTitle className="text-2xl md:text-xl">{name}</CardTitle>
+        <CardTitle className="text-2xl sm:text-xl">{name}</CardTitle>
         <CardDescription>{description}</CardDescription>
       </CardHeader>
     </Card>

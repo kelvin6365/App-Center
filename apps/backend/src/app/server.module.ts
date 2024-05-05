@@ -9,16 +9,17 @@ import DatabaseModule from './database/database.module';
 import { AppModule } from './modules/app/app.module';
 import { AuthModule } from './modules/auth/auth.module';
 // import { JwtAuthGuard } from './modules/auth/jwt-auth.guard';
+import { TerminusModule } from '@nestjs/terminus';
 import { CredentialModule } from './modules/credential/credential.module';
 import { FileModule } from './modules/file/file.module';
+import HealthController from './modules/health/health.controller';
 import { PlanModule } from './modules/plan/plan.module';
 import { PortalModule } from './modules/portal/portal.module';
 import { RoleModule } from './modules/role/role.module';
 import { SettingModule } from './modules/setting/setting.module';
+import { StripeModule } from './modules/stripe/stripe.module';
 import { TenantModule } from './modules/tenant/tenant.module';
 import { UserModule } from './modules/user/user.module';
-import { TerminusModule } from '@nestjs/terminus';
-import HealthController from './modules/health/health.controller';
 @Module({
   imports: [
     TerminusModule,
@@ -38,6 +39,7 @@ import HealthController from './modules/health/health.controller';
     TenantModule,
     PortalModule,
     PlanModule,
+    StripeModule,
   ],
   controllers: [HealthController],
   providers: [

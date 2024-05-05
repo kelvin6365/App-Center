@@ -24,6 +24,9 @@ export class CurrentUserDTO {
   @ApiProperty()
   email: string;
 
+  @ApiProperty()
+  stripeCustomerId: string;
+
   @ApiProperty({ type: UserStatus })
   status: UserStatus;
 
@@ -52,6 +55,7 @@ export class CurrentUserDTO {
     dto.name = entity.profile.name;
     dto.permissions = entity.permissions;
     dto.tenants = entity.tenants;
+    dto.stripeCustomerId = entity.stripeCustomerId;
     return dto;
   }
 }

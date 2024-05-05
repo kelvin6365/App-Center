@@ -7,11 +7,18 @@ import { UserRole } from './user.role.entity';
 import { UserProfile } from './user.profile.entity';
 import { UserPermission } from './user.permission.entity';
 import { UserTenant } from './user.tenant.entity';
+import { Subscription } from '../../plan/entities/subscription.entity';
 
 @Entity('user')
 export class User extends BaseEntity {
   @Column({ unique: true })
   username: string;
+
+  @Column({
+    name: 'stripe_customer_id',
+    nullable: true,
+  })
+  stripeCustomerId: string;
 
   @Column({
     select: false,
@@ -55,4 +62,10 @@ export class User extends BaseEntity {
   })
   @JoinColumn({ name: 'id' })
   tenants: UserTenant[];
+
+  @OneToMany(() => Subscription, (subscription) => subscription.user, {
+    cascade: true,
+  })
+  @JoinColumn({ name: 'id' })
+  subscriptions: Subscription[];
 }

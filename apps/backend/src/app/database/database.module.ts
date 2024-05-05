@@ -8,14 +8,20 @@ import { AdminStatus } from '../modules/admin/enum/admin.status.enum';
 import { App } from '../modules/app/entities/app.entity';
 import { AppTag } from '../modules/app/entities/app.tag.entity';
 import { AppVersion } from '../modules/app/entities/app.version.entity';
+import { AppVersionJiraIssue } from '../modules/app/entities/app.version.jira.issue.entity';
 import { AppVersionTag } from '../modules/app/entities/app.version.tag.entity';
 import { CredentialComponent } from '../modules/credential/entities/credential.component.entity';
 import { Credential } from '../modules/credential/entities/credential.entity';
 import { File } from '../modules/file/entities/file.entity';
 import { Permission } from '../modules/permission/entities/permission.entity';
+import { Plan } from '../modules/plan/entities/plan.entity';
+import { PricingTiers } from '../modules/plan/entities/pricing.tier.entity';
+import { Subscription } from '../modules/plan/entities/subscription.entity';
 import { Role } from '../modules/role/entities/role.entity';
 import { RoleId } from '../modules/role/enum/role.id.enum';
 import { Setting } from '../modules/setting/entities/setting.entity';
+import { CheckoutSession } from '../modules/stripe/entities/checkout.session.entity';
+import { StripeWebhook } from '../modules/stripe/entities/stripe.webhook.entity';
 import { Tenant } from '../modules/tenant/entities/tenant.entity';
 import { TenantStatus } from '../modules/tenant/enum/tenant.status.enum';
 import { User } from '../modules/user/entities/user.entity';
@@ -33,7 +39,6 @@ import { CreateCredentialComponent1694362620123 } from './migrations/16943626201
 import { CreateSetting1695107265137 } from './migrations/1695107265137-Create-Setting';
 import { InsertSystemConfig1695658100920 } from './migrations/1695658100920-Insert-SystemConfig';
 import { InsertCredential1696162093605 } from './migrations/1696162093605-Insert-credential';
-import { AppVersionJiraIssue } from '../modules/app/entities/app.version.jira.issue.entity';
 
 @Module({
   imports: [
@@ -66,6 +71,11 @@ import { AppVersionJiraIssue } from '../modules/app/entities/app.version.jira.is
             UserTenant,
             Setting,
             AppVersionJiraIssue,
+            Plan,
+            PricingTiers,
+            StripeWebhook,
+            CheckoutSession,
+            Subscription,
           ],
           synchronize: configService.get('db.synchronize'),
           migrations: [

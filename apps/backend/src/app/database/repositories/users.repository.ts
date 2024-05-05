@@ -47,6 +47,7 @@ export class UserRepository extends Repository<User> {
         'tenants',
         'roles',
         'permissions',
+        'stripeCustomerId',
         'profile',
       ],
       where: { username },
@@ -214,6 +215,21 @@ export class UserRepository extends Repository<User> {
         },
       },
       relations: ['permissions', 'profile'],
+      withDeleted: false,
+    });
+  }
+
+  //update user stripe customer id
+  async updateUserStripeCustomerId(
+    id: string,
+    stripeCustomerId: string
+  ): Promise<UpdateResult> {
+    return await this.update(id, { stripeCustomerId });
+  }
+
+  async findUserByStripeCustomerId(stripeCustomerId: string): Promise<User> {
+    return await this.findOne({
+      where: { stripeCustomerId },
       withDeleted: false,
     });
   }

@@ -5,7 +5,9 @@ import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { ServerModule } from './app/server.module';
 
 async function bootstrap() {
-  const app = await NestFactory.create(ServerModule);
+  const app = await NestFactory.create(ServerModule, {
+    rawBody: true,
+  });
 
   const configService: ConfigService = app.get(ConfigService); //Get Config Service
   const globalPrefix = configService.get<string>('app.globalPrefix') ?? '';

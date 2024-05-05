@@ -81,7 +81,7 @@ const GitLabCICodeDialog = ({
       }}
       // className="!max-w-[70%] !w-full max-h-[85%] overflow-scroll"
     >
-      <DialogContent className="max-w-[70%] w-full max-h-[85%]">
+      <DialogContent className="sm:max-w-[70%] w-full max-h-[85%] overflow-scroll">
         <DialogHeader>
           <DialogTitle>{title}</DialogTitle>
           <DialogDescription>{modelDescription}</DialogDescription>

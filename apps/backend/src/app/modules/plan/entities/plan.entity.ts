@@ -1,21 +1,51 @@
-import { Column, Entity, JoinColumn, ManyToOne, OneToMany } from 'typeorm';
+import { Column, Entity, JoinColumn, OneToMany } from 'typeorm';
 import { BaseEntity } from '../../../database/entities/base.entity';
-import { TenantTier } from '@/modules/plan/entities/tenant.tier.entity';
-// id
-// name
-// tenant_tier_id
+import { PricingTiers } from './pricing.tier.entity';
+import { Subscription } from './subscription.entity';
+
 @Entity('plans')
 export class Plan extends BaseEntity {
-  @Column()
-  name: string;
+  @Column({ type: 'jsonb' })
+  name: { [key: string]: string };
 
-  @Column()
-  stripePlanId: string;
+  @Column({ type: 'jsonb' })
+  description: { [key: string]: string };
 
-  @Column()
-  amountPerCycle: number;
+  @Column({
+    name: 'max_tenants',
+  })
+  maxTenants: number;
 
-  @ManyToOne(() => TenantTier)
-  @JoinColumn({ name: 'tenant_tier_id' })
-  tenantTier: TenantTier;
+  @Column({
+    name: 'product_id',
+  })
+  productId: string;
+
+  @Column({
+    name: 'app_creation_limit',
+  })
+  appCreationLimit: number;
+
+  @Column({
+    name: 'storage_limit',
+  })
+  storageLimit: number;
+
+  @Column({
+    name: 'is_active',
+  })
+  isActive: boolean;
+
+  //pricing tires
+  @OneToMany(() => PricingTiers, (pricingTiers) => pricingTiers.plan, {
+    cascade: true,
+  })
+  @JoinColumn({ name: 'id' })
+  pricingTiers: PricingTiers[];
+
+  @OneToMany(() => Subscription, (subscription) => subscription.plan, {
+    cascade: true,
+  })
+  @JoinColumn({ name: 'id' })
+  subscriptions: Subscription[];
 }
