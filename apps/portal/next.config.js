@@ -21,13 +21,19 @@ const nextConfig = {
   },
   images: {
     dangerouslyAllowSVG: true,
-    domains: ['localhost'],
+    domains: ['localhost', '2rocksstudio.hk'],
     remotePatterns: [
       {
         protocol: 'https',
         hostname: '**.atlassian.net',
         port: '',
         pathname: '/rest/api/2/universal_avatar/view/type/issuetype/avatar/**',
+      },
+      {
+        protocol: 'https',
+        hostname: '**.2rocksstudio.hk',
+        port: '',
+        pathname: '/**',
       },
     ],
   },
