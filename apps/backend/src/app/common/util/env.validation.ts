@@ -11,6 +11,7 @@ import {
 
 enum Environment {
   Local = 'local',
+  Development = 'dev',
   Production = 'prod',
 }
 
