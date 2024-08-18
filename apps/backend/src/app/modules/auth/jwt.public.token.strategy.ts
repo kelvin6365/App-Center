@@ -35,8 +35,7 @@ export class JwtPublicTokenStrategy extends PassportStrategy(
 
   async validate(payload: any): Promise<CurrentUserDTO> {
     const user = await this.userService.findUserByEmailWithPassword(
-      payload.username,
-      [AuthProvider.LOCAL, AuthProvider.GITHUB, AuthProvider.GITLAB]
+      payload.username
     );
     if (user) {
       return new CurrentUserDTO().fromEntity(user);

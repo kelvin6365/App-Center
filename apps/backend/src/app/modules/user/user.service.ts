@@ -33,6 +33,7 @@ import { InviteUserToTenantDTO } from './dto/invite.user.to.tenant.dto';
 import { SubscriptionRepository } from '../../database/repositories/subscription.repository';
 import { GithubSignupDto } from '../auth/dto/github.signup.dto';
 import { AuthProvider } from '../../common/enum/auth.provider.enum';
+import { UserProvider } from './entities/user.provider.entity';
 
 @Injectable()
 export class UserService {
@@ -52,6 +53,9 @@ export class UserService {
     //! New User need to walk through onboarding to create a tenant.
     const newUser = new User();
     const newProfile = new UserProfile();
+    const newProvider = new UserProvider();
+    newProvider.provider = AuthProvider.LOCAL;
+    newUser.providers = [newProvider];
     newUser.username = signUpDTO.username;
     newUser.password = await signUpDTO.password;
     newProfile.email = signUpDTO.email ?? signUpDTO.username;
@@ -67,9 +71,11 @@ export class UserService {
     //! New User need to walk through onboarding to create a tenant.
     const newUser = new User();
     const newProfile = new UserProfile();
+    const newProvider = new UserProvider();
     newUser.username = signUpDTO.username;
-    newUser.provider = AuthProvider.GITHUB;
-    newUser.providerId = signUpDTO.providerId;
+    newProvider.provider = AuthProvider.GITHUB;
+    newProvider.providerId = signUpDTO.providerId;
+    newUser.providers = [newProvider];
     newProfile.email = signUpDTO.email ?? signUpDTO.username;
     newUser.status = UserStatus.Pending;
     newProfile.name = signUpDTO.name;
@@ -79,14 +85,10 @@ export class UserService {
     return result;
   }
 
-  async findUserByEmailAndProvider(
-    email: string,
-    provider: AuthProvider
-  ): Promise<User> {
+  async findUserByEmail(email: string): Promise<User> {
     const result = await this.usersRepository.findOne({
       where: {
         username: email,
-        provider,
       },
       relations: ['profile'],
     });
@@ -197,14 +199,10 @@ export class UserService {
     return new PortalUserResponseDTO(user);
   }
 
-  async findUserByEmailWithPassword(
-    username: string,
-    providers: AuthProvider[]
-  ) {
+  async findUserByEmailWithPassword(username: string) {
     return await this.usersRepository.findUserByEmailWithPassword(
       username,
-      false,
-      providers
+      false
     );
   }
 

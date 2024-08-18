@@ -1,21 +1,14 @@
 import { Exclude } from 'class-transformer';
-import {
-  Entity,
-  Column,
-  OneToOne,
-  OneToMany,
-  JoinColumn,
-  Index,
-} from 'typeorm';
+import { Column, Entity, JoinColumn, OneToMany, OneToOne } from 'typeorm';
 import { BaseEntity } from '../../../database/entities/base.entity';
+import { Subscription } from '../../plan/entities/subscription.entity';
 import { UserStatus } from '../enum/user.status.enum';
+import { UserPermission } from './user.permission.entity';
+import { UserProfile } from './user.profile.entity';
+import { UserProvider } from './user.provider.entity';
 import { UserRefreshToken } from './user.refresh.token.entity';
 import { UserRole } from './user.role.entity';
-import { UserProfile } from './user.profile.entity';
-import { UserPermission } from './user.permission.entity';
 import { UserTenant } from './user.tenant.entity';
-import { Subscription } from '../../plan/entities/subscription.entity';
-import { AuthProvider } from '../../../common/enum/auth.provider.enum';
 
 @Entity('user')
 export class User extends BaseEntity {
@@ -80,13 +73,8 @@ export class User extends BaseEntity {
   @JoinColumn({ name: 'id' })
   subscriptions: Subscription[];
 
-  @Column({
-    default: 'email',
-    name: 'provider',
-    type: 'varchar',
+  @OneToMany(() => UserProvider, (userProvider) => userProvider.user, {
+    cascade: true,
   })
-  provider: AuthProvider; // 'github', 'gitlab', etc.
-
-  @Column({ nullable: true, name: 'provider_id' })
-  providerId: string;
+  providers: UserProvider[];
 }

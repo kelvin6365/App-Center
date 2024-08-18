@@ -18,12 +18,15 @@ import {
 } from '@app-center/shadcn/ui';
 import { getProviders, signIn } from 'next-auth/react';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 const LoginForm = () => {
   const router = useRouter();
   const query = useSearchParams();
   const t = useTranslations('Auth');
   const [isLoading, setIsLoading] = useState(false);
+  const [renderProviders, setRenderProviders] = useState<JSX.Element[] | null>(
+    null
+  );
   const form = useForm<z.infer<typeof loginFormSchema>>({
     resolver: zodResolver(loginFormSchema),
     defaultValues: {
@@ -120,8 +123,12 @@ const LoginForm = () => {
         </Button>
       );
     }
-    return render.length > 1 ? render : null;
+    setRenderProviders(render.length > 1 ? render : null);
   };
+
+  useEffect(() => {
+    renderProvidersLoginButtons();
+  }, []);
 
   return (
     <>
@@ -171,7 +178,7 @@ const LoginForm = () => {
         </form>
       </Form>
 
-      {renderProvidersLoginButtons()}
+      {renderProviders}
     </>
   );
 };

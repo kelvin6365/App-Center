@@ -35,8 +35,7 @@ export class JwtRefreshTokenStrategy extends PassportStrategy(
       throw new UnauthorizedException();
     }
     const user = await this.userService.findUserByEmailWithPassword(
-      payload.username,
-      [AuthProvider.LOCAL, AuthProvider.GITHUB, AuthProvider.GITLAB]
+      payload.username
     );
     //TODO: Cache
     const userToken =

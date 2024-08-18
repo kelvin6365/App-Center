@@ -33,8 +33,7 @@ export class UserRepository extends Repository<User> {
   //find user by email for match password
   async findUserByEmailWithPassword(
     username: string,
-    withDeleted = false,
-    providers = [AuthProvider.LOCAL, AuthProvider.GITHUB, AuthProvider.GITLAB]
+    withDeleted = false
   ): Promise<User> {
     return await this.findOne({
       select: [
@@ -51,16 +50,15 @@ export class UserRepository extends Repository<User> {
         'permissions',
         'stripeCustomerId',
         'profile',
-        'provider',
-        'providerId',
       ],
-      where: { username, provider: In(providers) },
+      where: { username },
       withDeleted,
       relations: [
         'tenants',
         'roles',
         'permissions',
         'profile',
+        'providers',
         'subscriptions.plan',
       ],
     });
@@ -105,6 +103,7 @@ export class UserRepository extends Repository<User> {
         'roles',
         'permissions',
         'tenants',
+        'providers',
         'subscriptions.plan',
       ],
       withDeleted: false,
@@ -119,6 +118,7 @@ export class UserRepository extends Repository<User> {
         'roles',
         'permissions',
         'tenants',
+        'providers',
         'subscriptions.plan',
       ],
       withDeleted: false,
@@ -146,6 +146,7 @@ export class UserRepository extends Repository<User> {
         'roles',
         'permissions',
         'tenants',
+        'providers',
         'tenants.tenant',
       ],
     };
@@ -217,7 +218,7 @@ export class UserRepository extends Repository<User> {
     }
     return await this.findOne({
       where: { id: id },
-      relations: ['profile', 'roles', 'permissions', 'tenants'],
+      relations: ['profile', 'roles', 'permissions', 'tenants', 'providers'],
       withDeleted: false,
     });
   }
@@ -236,7 +237,7 @@ export class UserRepository extends Repository<User> {
           deletedAt: IsNull(),
         },
       },
-      relations: ['permissions', 'profile'],
+      relations: ['permissions', 'profile', 'providers'],
       withDeleted: false,
     });
   }

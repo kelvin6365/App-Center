@@ -30,8 +30,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
 
   async validate(request: Request, payload: any): Promise<any> {
     const user = await this.userService.findUserByEmailWithPassword(
-      payload.username,
-      [AuthProvider.LOCAL, AuthProvider.GITHUB, AuthProvider.GITLAB]
+      payload.username
     );
     if (!user) {
       request.res.clearCookie('Authentication');

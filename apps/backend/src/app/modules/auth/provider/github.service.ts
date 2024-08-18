@@ -2,7 +2,6 @@
 import { Inject, Injectable, Logger, LoggerService } from '@nestjs/common';
 // import { ConfigService } from '@nestjs/config';
 import axios from 'axios';
-import { AuthProvider } from '../../../common/enum/auth.provider.enum';
 import { AppException } from '../../../common/response/app.exception';
 import { ResponseCode } from '../../../common/response/response.code';
 import { UserService } from '../../user/user.service';
@@ -24,8 +23,7 @@ export class GithubAuthService {
     try {
       const githubUser = await this.getGithubUser(code);
       let user = await this.userService.findUserByEmailWithPassword(
-        githubUser.email,
-        [AuthProvider.GITHUB, AuthProvider.GITLAB, AuthProvider.LOCAL]
+        githubUser.email
       );
       if (!user) {
         await this.userService.signUpGithub(

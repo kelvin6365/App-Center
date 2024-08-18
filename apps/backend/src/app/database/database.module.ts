@@ -39,6 +39,8 @@ import { CreateCredentialComponent1694362620123 } from './migrations/16943626201
 import { CreateSetting1695107265137 } from './migrations/1695107265137-Create-Setting';
 import { InsertSystemConfig1695658100920 } from './migrations/1695658100920-Insert-SystemConfig';
 import { InsertCredential1696162093605 } from './migrations/1696162093605-Insert-credential';
+import { UserProvider } from '../modules/user/entities/user.provider.entity';
+import { AuthProvider } from '../common/enum/auth.provider.enum';
 
 @Module({
   imports: [
@@ -76,6 +78,7 @@ import { InsertCredential1696162093605 } from './migrations/1696162093605-Insert
             StripeWebhook,
             CheckoutSession,
             Subscription,
+            UserProvider,
           ],
           synchronize: configService.get('db.synchronize'),
           migrations: [
@@ -221,6 +224,17 @@ class DatabaseModule {
       .insert()
       .into(UserRole)
       .values([userRole])
+      .execute();
+
+    //Assign Provider to user
+    const userProvider = new UserProvider();
+    userProvider.provider = AuthProvider.LOCAL;
+    userProvider.userId = result2.raw[0].id;
+    await this.dataSource
+      .createQueryBuilder()
+      .insert()
+      .into(UserProvider)
+      .values([userProvider])
       .execute();
 
     //permissions [As admin user will able to view all app]
