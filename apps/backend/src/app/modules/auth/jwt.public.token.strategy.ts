@@ -5,6 +5,7 @@ import { PassportStrategy } from '@nestjs/passport';
 import { ExtractJwt, Strategy } from 'passport-jwt';
 import { UserService } from '../user/user.service';
 import { CurrentUserDTO } from './dto/current.user.dto';
+import { AuthProvider } from '../../common/enum/auth.provider.enum';
 @Injectable()
 export class JwtPublicTokenStrategy extends PassportStrategy(
   Strategy,
@@ -34,7 +35,8 @@ export class JwtPublicTokenStrategy extends PassportStrategy(
 
   async validate(payload: any): Promise<CurrentUserDTO> {
     const user = await this.userService.findUserByEmailWithPassword(
-      payload.username
+      payload.username,
+      [AuthProvider.LOCAL, AuthProvider.GITHUB, AuthProvider.GITLAB]
     );
     if (user) {
       return new CurrentUserDTO().fromEntity(user);

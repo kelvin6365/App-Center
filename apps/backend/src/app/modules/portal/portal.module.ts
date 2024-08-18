@@ -20,6 +20,8 @@ import { PortalSettingController } from './portal.setting.controller';
 import { PortalTenantController } from './portal.tenant.controller';
 import { PortalUserController } from './portal.user.controller';
 import { PortalTestController } from './test.controller';
+import { PortalPlanController } from './portal.plan.controller';
+import { PlanModule } from '../plan/plan.module';
 @Module({
   imports: [
     AuthModule,
@@ -31,6 +33,7 @@ import { PortalTestController } from './test.controller';
     JiraModule,
     PassportModule,
     TenantModule,
+    PlanModule,
     JwtModule.registerAsync({
       imports: [ConfigModule],
       useFactory: async (configService: ConfigService) => {
@@ -53,6 +56,7 @@ import { PortalTestController } from './test.controller';
     PortalCredentialController,
     PortalTestController,
     PortalTenantController,
+    PortalPlanController,
   ],
   providers: [
     Logger,

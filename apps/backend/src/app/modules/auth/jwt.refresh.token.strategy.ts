@@ -9,6 +9,7 @@ import { ExtractJwt, Strategy } from 'passport-jwt';
 import { UserService } from '../user/user.service';
 import { CurrentUserDTO } from './dto/current.user.dto';
 import { LoginTokenType } from './enum/login.token.type.enum';
+import { AuthProvider } from '../../common/enum/auth.provider.enum';
 @Injectable()
 export class JwtRefreshTokenStrategy extends PassportStrategy(
   Strategy,
@@ -34,7 +35,8 @@ export class JwtRefreshTokenStrategy extends PassportStrategy(
       throw new UnauthorizedException();
     }
     const user = await this.userService.findUserByEmailWithPassword(
-      payload.username
+      payload.username,
+      [AuthProvider.LOCAL, AuthProvider.GITHUB, AuthProvider.GITLAB]
     );
     //TODO: Cache
     const userToken =

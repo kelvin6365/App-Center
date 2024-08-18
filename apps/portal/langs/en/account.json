@@ -6,6 +6,13 @@
     "Last Name": "Last Name",
     "Save": "Save",
     "Name": "Name",
-    "Updated successfully": "Updated successfully"
+    "Updated successfully": "Updated successfully",
+    "Billing": "Billing",
+    "Free Plan": "Free Plan",
+    "You are currently on the free plan": "You are currently on the free plan",
+    "Available Plans": "Available Plans",
+    "Plans and Billing": "Plans and Billing",
+    "Update": "Update",
+    "Submit": "Submit"
   }
 }

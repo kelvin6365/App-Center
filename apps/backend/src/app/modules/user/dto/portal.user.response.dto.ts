@@ -1,4 +1,5 @@
 import { PermissionDTO } from '../../permission/dto/permission.dto';
+import { SubscriptionDto } from '../../plan/dto/subscription.dto';
 import { RoleDTO } from '../../role/dto/role.dto';
 import { TenantDTO } from '../../tenant/dto/tenant.dto';
 import { User } from '../entities/user.entity';
@@ -12,6 +13,7 @@ export class PortalUserResponseDTO {
   profile: any;
   permissions: PermissionDTO[];
   tenants: TenantDTO[];
+  subscriptions: SubscriptionDto[];
   createdAt: Date;
   updatedAt: Date;
   deletedAt: Date;
@@ -26,6 +28,9 @@ export class PortalUserResponseDTO {
     );
     this.tenants = partial.tenants?.map(
       (userTenant) => new TenantDTO(userTenant.tenant)
+    );
+    this.subscriptions = partial.subscriptions?.map(
+      (subscription) => new SubscriptionDto(subscription)
     );
     this.createdAt = partial.createdAt;
     this.updatedAt = partial.updatedAt;

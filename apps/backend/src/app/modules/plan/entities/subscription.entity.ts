@@ -4,11 +4,17 @@ import { User } from '../../user/entities/user.entity';
 import { Plan } from './plan.entity';
 @Entity('subscriptions')
 export class Subscription extends BaseEntity {
-  @Column()
+  @Column({
+    name: 'stripe_subscription_id',
+  })
   stripeSubscriptionId: string;
-  @Column()
+  @Column({
+    name: 'stripe_customer_id',
+  })
   stripeCustomerId: string;
-  @Column()
+  @Column({
+    name: 'stripe_plan_id',
+  })
   stripePlanId: string;
 
   @Column()
@@ -19,12 +25,17 @@ export class Subscription extends BaseEntity {
 
   @Column({
     nullable: true,
+    name: 'trial_end',
   })
   trialEnd: Date;
 
-  @Column()
+  @Column({
+    name: 'current_period_end',
+  })
   currentPeriodEnd: Date;
-  @Column()
+  @Column({
+    name: 'current_period_start',
+  })
   currentPeriodStart: Date;
 
   @Column({

@@ -25,3 +25,4 @@ export * from './lib/ui/textarea';
 export * from './lib/ui/tabs';
 export * from './lib/ui/checkbox';
 export * from './lib/ui/collapsible';
+export * from './lib/ui/radio-group';

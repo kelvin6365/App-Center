@@ -21,6 +21,10 @@ export default () => ({
       refreshTokenExpiresIn:
         process.env.JWT_USER_REFRESH_TOKEN_EXPIRES_IN || 60,
     },
+    github: {
+      clientId: process.env.GITHUB_CLIENT_ID,
+      clientSecret: process.env.GITHUB_CLIENT_SECRET,
+    },
   },
   services: {
     redis: {

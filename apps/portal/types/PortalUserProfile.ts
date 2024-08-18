@@ -12,12 +12,21 @@ export interface PortalUserProfile {
   createdAt: string;
   updatedAt: string;
   deletedAt?: any;
+  subscriptions: Subscription[];
 }
 
 interface Permission {
   id: AppsPermission;
   type: string;
   refId?: any;
+}
+
+interface Subscription {
+  status: string;
+  trialEnd: Date;
+  currentPeriodEnd: Date;
+  currentPeriodStart: Date;
+  planId: string;
 }
 
 interface Profile {

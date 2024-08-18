@@ -150,6 +150,11 @@ export class ResponseCode {
     'User Password Not Match',
     'User password not match.'
   );
+  static readonly STATUS_8006_AUTH_PROVIDER_NOT_SUPPORT = new ResponseStatus(
+    8006,
+    'Auth Provider Not Support',
+    'Auth Provider Not Support.'
+  );
   static readonly STATUS_8013_USER_ALREADY_EXIST = new ResponseStatus(
     8013,
     'User Already Exists',

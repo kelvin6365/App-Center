@@ -30,4 +30,12 @@ export class PlanRepository extends Repository<Plan> {
   createPlan(plan: Plan): Promise<Plan> {
     return this.save(plan);
   }
+
+  //get All Active Plans
+  async getAllActivePlans(): Promise<Plan[]> {
+    return await this.find({
+      where: { isActive: true },
+      relations: ['pricingTiers'],
+    });
+  }
 }

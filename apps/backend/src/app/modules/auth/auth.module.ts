@@ -9,6 +9,8 @@ import { JwtRefreshTokenStrategy } from './jwt.refresh.token.strategy';
 import { JwtStrategy } from './jwt.strategy';
 import { LocalStrategy } from './local.strategy';
 import { UserModule } from '../user/user.module';
+import { AuthGithubController } from './auth.github.controller';
+import { GithubAuthService } from './provider/github.service';
 
 @Module({
   imports: [
@@ -27,15 +29,16 @@ import { UserModule } from '../user/user.module';
       inject: [ConfigService],
     }),
   ],
-  controllers: [AuthController],
+  controllers: [AuthController, AuthGithubController],
   providers: [
     Logger,
     AuthService,
+    GithubAuthService,
     LocalStrategy,
     JwtStrategy,
     JwtPublicTokenStrategy,
     JwtRefreshTokenStrategy,
   ],
-  exports: [AuthService],
+  exports: [AuthService, GithubAuthService],
 })
 export class AuthModule {}

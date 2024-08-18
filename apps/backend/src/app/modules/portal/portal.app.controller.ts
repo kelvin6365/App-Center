@@ -4,7 +4,6 @@ import {
   DefaultValuePipe,
   Delete,
   Get,
-  Headers,
   HttpStatus,
   Param,
   ParseFilePipe,
@@ -37,6 +36,7 @@ import { Public } from '../../common/decorator/public';
 import { Roles } from '../../common/decorator/roles.decorator';
 import { ApiResponseSchema } from '../../common/decorator/swagger.decorator';
 import { ApiPagingResponseSchema } from '../../common/decorator/swagger.paging.decorator';
+import { CurrentTenant } from '../../common/decorator/tenant.decorator';
 import { CurrentUser } from '../../common/decorator/user.decorator';
 import { MetaDTO } from '../../common/dto/meta.dto';
 import { PageDTO } from '../../common/dto/page.dto';
@@ -61,9 +61,8 @@ import { ImageAllowedType } from '../file/enum/image.allowed.type.enum';
 import { FileService } from '../file/file.service';
 import { SearchJiraIssueDTO } from '../jira/dto/search.jira.issue.dto';
 import { RoleType } from '../role/enum/role.type.enum';
-import { CurrentTenant } from '../../common/decorator/tenant.decorator';
 
-@ApiTags('Portal')
+@ApiTags('Portal / App')
 @ApiBearerAuth()
 @UseGuards(JwtAuthGuard)
 @Controller({ path: '/portal/app', version: ['1'] })

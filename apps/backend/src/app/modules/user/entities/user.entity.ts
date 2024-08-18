@@ -1,5 +1,12 @@
 import { Exclude } from 'class-transformer';
-import { Entity, Column, OneToOne, OneToMany, JoinColumn } from 'typeorm';
+import {
+  Entity,
+  Column,
+  OneToOne,
+  OneToMany,
+  JoinColumn,
+  Index,
+} from 'typeorm';
 import { BaseEntity } from '../../../database/entities/base.entity';
 import { UserStatus } from '../enum/user.status.enum';
 import { UserRefreshToken } from './user.refresh.token.entity';
@@ -8,10 +15,13 @@ import { UserProfile } from './user.profile.entity';
 import { UserPermission } from './user.permission.entity';
 import { UserTenant } from './user.tenant.entity';
 import { Subscription } from '../../plan/entities/subscription.entity';
+import { AuthProvider } from '../../../common/enum/auth.provider.enum';
 
 @Entity('user')
 export class User extends BaseEntity {
-  @Column({ unique: true })
+  @Column({
+    unique: true,
+  })
   username: string;
 
   @Column({
@@ -22,6 +32,7 @@ export class User extends BaseEntity {
 
   @Column({
     select: false,
+    nullable: true,
   })
   @Exclude()
   password: string;
@@ -68,4 +79,14 @@ export class User extends BaseEntity {
   })
   @JoinColumn({ name: 'id' })
   subscriptions: Subscription[];
+
+  @Column({
+    default: 'email',
+    name: 'provider',
+    type: 'varchar',
+  })
+  provider: AuthProvider; // 'github', 'gitlab', etc.
+
+  @Column({ nullable: true, name: 'provider_id' })
+  providerId: string;
 }

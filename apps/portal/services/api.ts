@@ -12,6 +12,7 @@ import { getSession, signOut } from 'next-auth/react';
 import useTeamSelectionStore from '../stores/useTeamSelectionStore';
 import { RoleIdType } from '../types/RoleIdType';
 import { CredentialComponent } from '../types/CredentialComponent';
+import { Plan } from '../types/Plan';
 const API = {
   apiInstance: axios.create({
     baseURL: process.env.NEXT_PUBLIC_API_HOST,
@@ -29,6 +30,7 @@ const API = {
       LOGIN: '/v1/auth/sign-in',
       REGISTER: '/v1/auth/sign-up',
       REFRESH_TOKEN: '/v1/auth/refresh',
+      GITHUB_SIGN_IN: '/v1/auth/github/sign-in',
     },
     APP: {
       CREATE: '/v1/portal/app',
@@ -93,6 +95,9 @@ const API = {
       UPDATE_TENANT: `/v1/portal/tenant`,
       DELETE_TENANT: (id: string) => `/v1/portal/tenant/${id}`,
     },
+    PLAN: {
+      GET_ALL_PLANS: '/v1/portal/plan',
+    },
   },
 
   auth: {
@@ -130,6 +135,11 @@ const API = {
         headers: {
           'x-refresh-token': refreshToken,
         },
+      });
+    },
+    githubSignIn: async (code: string) => {
+      return API.apiInstance.post(API.API_PATH.AUTH.GITHUB_SIGN_IN, {
+        code,
       });
     },
   },
@@ -662,6 +672,19 @@ const API = {
     },
     updateTenant: ({ name }: { name?: string }) => {
       return API.apiInstance.put(API.API_PATH.TENANT.UPDATE_TENANT, { name });
+    },
+  },
+  plan: {
+    getAllPlans: (): Promise<
+      AxiosResponse<{
+        data: {
+          items: Plan[];
+          meta: Meta;
+        };
+        status: ResponseStatus;
+      }>
+    > => {
+      return API.apiInstance.get(API.API_PATH.PLAN.GET_ALL_PLANS);
     },
   },
 };

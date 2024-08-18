@@ -20,7 +20,7 @@ import { TenantDTO } from '../tenant/dto/tenant.dto';
 import { UpdateTenantDTO } from '../tenant/dto/update.tenant.dto';
 import { TenantService } from '../tenant/tenant.service';
 
-@ApiTags('Portal')
+@ApiTags('Portal / Tenant')
 @ApiBearerAuth()
 @UseGuards(JwtAuthGuard)
 @Controller({ path: '/portal/tenant', version: ['1'] })

@@ -44,7 +44,7 @@ import { UpdateUserDTO } from '../user/dto/update.user.dto';
 import { UpdateUserStatusRequestDTO } from '../user/dto/update.user.status.request.dto';
 import { UserService } from '../user/user.service';
 
-@ApiTags('Portal')
+@ApiTags('Portal / User')
 @ApiBearerAuth()
 @UseGuards(JwtAuthGuard)
 @Controller({ path: '/portal/user', version: ['1'] })

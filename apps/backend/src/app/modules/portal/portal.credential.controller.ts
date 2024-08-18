@@ -30,7 +30,7 @@ import RoleGuard from '../auth/role.guard';
 import { RoleType } from '../role/enum/role.type.enum';
 import { CurrentTenant } from '../../common/decorator/tenant.decorator';
 
-@ApiTags('Portal')
+@ApiTags('Portal / Credential')
 @ApiBearerAuth()
 @UseGuards(JwtAuthGuard)
 @Controller({ path: '/portal/credential', version: ['1'] })

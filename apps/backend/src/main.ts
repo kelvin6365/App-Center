@@ -37,7 +37,12 @@ async function bootstrap() {
   SwaggerModule.setup(
     configService.get<string>('app.swaggerPath') ?? 'api/swagger',
     app,
-    document
+    document,
+    {
+      jsonDocumentUrl:
+        (configService.get<string>('app.swaggerPath') ?? 'api/swagger') +
+        '/json',
+    }
   );
 
   const port = process.env.PORT || 3000;

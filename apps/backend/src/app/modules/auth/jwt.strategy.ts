@@ -5,6 +5,7 @@ import { Request } from 'express';
 import { ExtractJwt, Strategy } from 'passport-jwt';
 import { UserService } from '../user/user.service';
 import { CurrentUserDTO } from './dto/current.user.dto';
+import { AuthProvider } from '../../common/enum/auth.provider.enum';
 
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {
@@ -29,7 +30,8 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
 
   async validate(request: Request, payload: any): Promise<any> {
     const user = await this.userService.findUserByEmailWithPassword(
-      payload.username
+      payload.username,
+      [AuthProvider.LOCAL, AuthProvider.GITHUB, AuthProvider.GITLAB]
     );
     if (!user) {
       request.res.clearCookie('Authentication');

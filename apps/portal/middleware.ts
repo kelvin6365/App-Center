@@ -8,7 +8,7 @@ import { getToken } from 'next-auth/jwt';
 const intlMiddleware = createMiddleware({
   // A list of all locales that are supported
   locales: locales,
-  localePrefix: 'always',
+  localePrefix: 'never',
   // Used when no locale matches
   defaultLocale: Locale.EN,
 });

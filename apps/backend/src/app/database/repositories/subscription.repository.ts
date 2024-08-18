@@ -52,4 +52,17 @@ export class SubscriptionRepository extends Repository<Subscription> {
       relations: ['plan'],
     });
   }
+
+  findUserSubscriptionsByUserId(
+    userId: string,
+    status = 'active'
+  ): Promise<Subscription[]> {
+    return this.find({
+      where: {
+        userId: userId,
+        status,
+      },
+      relations: ['plan'],
+    });
+  }
 }

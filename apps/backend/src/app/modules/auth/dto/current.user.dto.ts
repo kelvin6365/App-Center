@@ -63,10 +63,11 @@ export class CurrentUserDTO {
     dto.tenants = entity.tenants.filter((t) => !t.tenant.deletedAt);
     dto.stripeCustomerId = entity.stripeCustomerId;
     //filter active and not expired subscription
-    dto.subscriptions = entity.subscriptions.filter(
-      (s) =>
-        s.status === 'active' && s.currentPeriodEnd > moment().utc().toDate()
-    );
+    dto.subscriptions =
+      entity.subscriptions?.filter(
+        (s) =>
+          s.status === 'active' && s.currentPeriodEnd > moment().utc().toDate()
+      ) ?? [];
     return dto;
   }
 }

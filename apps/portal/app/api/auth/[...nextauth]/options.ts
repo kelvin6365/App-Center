@@ -1,9 +1,12 @@
 import API from '@/services/api';
-import { NextAuthOptions } from 'next-auth';
-import CredentialsProvider from 'next-auth/providers/credentials';
-import dayjs from 'dayjs';
-import { JWT } from 'next-auth/jwt';
 import { UserStatus } from '@/types/UserStatus';
+import { isAxiosError } from 'axios';
+import dayjs from 'dayjs';
+import { NextAuthOptions } from 'next-auth';
+import { JWT } from 'next-auth/jwt';
+import CredentialsProvider from 'next-auth/providers/credentials';
+import GitHubProvider from 'next-auth/providers/github';
+
 export const authOptions: NextAuthOptions = {
   providers: [
     CredentialsProvider({
@@ -47,22 +50,76 @@ export const authOptions: NextAuthOptions = {
           };
         } catch (e) {
           console.error('Authorize fail, ', e);
-          throw new Error('Login Fail');
+          if (isAxiosError(e)) {
+            console.log(e.response?.data?.status?.code);
+            throw new Error(e.response?.data?.status?.code);
+          }
+          throw e;
         }
       },
     }),
+    ...(process.env.GITHUB_CLIENT_ID && process.env.GITHUB_CLIENT_SECRET
+      ? [
+          GitHubProvider({
+            clientId: process.env.GITHUB_CLIENT_ID ?? '',
+            clientSecret: process.env.GITHUB_CLIENT_SECRET ?? '',
+          }),
+        ]
+      : []),
   ],
   session: {
     strategy: 'jwt', //(1)
   },
   callbacks: {
+    async signIn({ account }) {
+      if (account?.provider === 'github') {
+        try {
+          // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+          await API.auth.githubSignIn(account.access_token!);
+          return true;
+        } catch (error) {
+          console.error('Error in signIn callback for GitHub', error);
+          return false;
+        }
+      }
+      return true;
+    },
     async jwt({ token, account, user }) {
       const updateToken = structuredClone(token);
-      if (account && account.type === 'credentials') {
-        return {
-          ...updateToken,
-          ...user,
-        };
+      if (
+        account &&
+        (account.type === 'credentials' || account.provider === 'github')
+      ) {
+        if (account.type === 'credentials') {
+          return {
+            ...updateToken,
+            ...user,
+          };
+        }
+        if (account.provider === 'github') {
+          try {
+            // For GitHub login, we need to call our backend
+            const { data: loginResponse } =
+              // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+              (await API.auth.githubSignIn(account.access_token!)).data;
+            const { data: userProfile } = (
+              await API.user.profile(loginResponse.accessToken)
+            ).data;
+
+            return {
+              ...token,
+              id: userProfile.id,
+              accessToken: loginResponse.accessToken,
+              refreshToken: loginResponse.refreshToken,
+              username: userProfile.username,
+              accessTokenExpires: loginResponse.accessTokenExpires,
+              status: userProfile.status as UserStatus,
+            };
+          } catch (error) {
+            console.error('Error in jwt callback for GitHub', error);
+            throw new Error('GitHubAuthError');
+          }
+        }
       }
       // Return previous token if the access token has not expired yet
       if (dayjs().isBefore(dayjs(updateToken.accessTokenExpires))) {
@@ -107,9 +164,7 @@ async function refreshAccessToken(token: JWT) {
       refreshToken: loginResponse.refreshToken, // Fall back to old refresh token
     };
   } catch (error) {
-    return {
-      ...token,
-      error: 'RefreshAccessTokenError',
-    };
+    console.error('Error refreshing access token', error);
+    throw new Error('RefreshAccessTokenError');
   }
 }

@@ -10,6 +10,7 @@ import { UserTenantRepository } from '@/database/repositories/user.tenent.reposi
 import { TenantUtil } from '@/modules/tenant/tenant.util';
 import { TenantService } from '../tenant/tenant.service';
 import { UserRoleRepository } from '../../database/repositories/user.role.repository';
+import { SubscriptionRepository } from '../../database/repositories/subscription.repository';
 
 @Module({
   controllers: [UserController],
@@ -22,6 +23,7 @@ import { UserRoleRepository } from '../../database/repositories/user.role.reposi
     TenantRepository,
     UserTenantRepository,
     UserRoleRepository,
+    SubscriptionRepository,
     TenantService,
     UserUtil,
     TenantUtil,

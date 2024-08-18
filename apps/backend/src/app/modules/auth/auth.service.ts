@@ -12,6 +12,7 @@ import { LoginTokenType } from './enum/login.token.type.enum';
 import moment from 'moment';
 import { JwtService } from '@nestjs/jwt';
 import { UserStatus } from '../user/enum/user.status.enum';
+import { AuthProvider } from '../../common/enum/auth.provider.enum';
 
 @Injectable()
 export class AuthService {
@@ -87,7 +88,14 @@ export class AuthService {
     username: string,
     hashedPassword: string
   ): Promise<CurrentUserDTO> {
-    const user = await this.userService.findUserByEmailWithPassword(username);
+    const user = await this.userService.findUserByEmailWithPassword(username, [
+      AuthProvider.LOCAL,
+    ]);
+    if (user.provider !== AuthProvider.LOCAL) {
+      throw new AppException(
+        ResponseCode.STATUS_8006_AUTH_PROVIDER_NOT_SUPPORT
+      );
+    }
     if (!user) {
       throw new AppException(
         ResponseCode.STATUS_8001_USER_USERNAME_OR_PASSWORD_NOT_MATCH

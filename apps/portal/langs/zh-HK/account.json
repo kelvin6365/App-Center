@@ -6,6 +6,13 @@
     "Last Name": "姓",
     "Save": "節省",
     "Name": "姓名",
-    "Updated successfully": "更新成功"
+    "Updated successfully": "更新成功",
+    "Billing": "計費",
+    "Free Plan": "免費規劃",
+    "You are currently on the free plan": "您目前使用的是免費計劃",
+    "Plans and Billing": "計劃和計費",
+    "Available Plans": "可用計劃",
+    "Update": "更新",
+    "Submit": "提交"
   }
 }

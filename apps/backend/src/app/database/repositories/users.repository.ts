@@ -19,6 +19,7 @@ import { UserStatus } from '../../modules/user/enum/user.status.enum';
 import { AppException } from '../../common/response/app.exception';
 import { ResponseCode } from '../../common/response/response.code';
 import AppsPermission from '../../modules/permission/enum/apps.permission.enum';
+import { AuthProvider } from '../../common/enum/auth.provider.enum';
 
 @Injectable()
 export class UserRepository extends Repository<User> {
@@ -32,7 +33,8 @@ export class UserRepository extends Repository<User> {
   //find user by email for match password
   async findUserByEmailWithPassword(
     username: string,
-    withDeleted = false
+    withDeleted = false,
+    providers = [AuthProvider.LOCAL, AuthProvider.GITHUB, AuthProvider.GITLAB]
   ): Promise<User> {
     return await this.findOne({
       select: [
@@ -49,8 +51,10 @@ export class UserRepository extends Repository<User> {
         'permissions',
         'stripeCustomerId',
         'profile',
+        'provider',
+        'providerId',
       ],
-      where: { username },
+      where: { username, provider: In(providers) },
       withDeleted,
       relations: [
         'tenants',
@@ -96,7 +100,13 @@ export class UserRepository extends Repository<User> {
   findUserByUserNameWithDeletedFalse(username: string): Promise<User> {
     return this.findOne({
       where: { username },
-      relations: ['profile', 'roles', 'permissions', 'tenants'],
+      relations: [
+        'profile',
+        'roles',
+        'permissions',
+        'tenants',
+        'subscriptions.plan',
+      ],
       withDeleted: false,
     });
   }
@@ -104,7 +114,13 @@ export class UserRepository extends Repository<User> {
   findUserByUserIdWithDeletedFalse(userId: string): Promise<User> {
     return this.findOne({
       where: { id: userId },
-      relations: ['profile', 'roles', 'permissions', 'tenants'],
+      relations: [
+        'profile',
+        'roles',
+        'permissions',
+        'tenants',
+        'subscriptions.plan',
+      ],
       withDeleted: false,
     });
   }

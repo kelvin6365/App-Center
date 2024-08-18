@@ -1,13 +1,13 @@
-import { NextIntlClientProvider, useMessages, useLocale } from 'next-intl';
-import './globals.css';
-import { ToastProvider } from '@/components/providers/toast-provider';
 import SessionProvider from '@/components/providers/session-provider';
+import { ToastProvider } from '@/components/providers/toast-provider';
+import { NextIntlClientProvider, useLocale, useMessages } from 'next-intl';
+import './globals.css';
 
-import { notFound } from 'next/navigation';
-import { ThemeProvider } from '@/components/providers/theme-provider';
-import { ReactQueryProvider } from '@/components/providers/react-query-provider';
-import { Suspense } from 'react';
 import Loading from '@/components/loading';
+import { ReactQueryProvider } from '@/components/providers/react-query-provider';
+import { ThemeProvider } from '@/components/providers/theme-provider';
+import { notFound } from 'next/navigation';
+import { Suspense } from 'react';
 
 export const metadata = {
   title: 'App Center',

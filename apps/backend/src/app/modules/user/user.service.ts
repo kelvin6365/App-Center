@@ -30,6 +30,9 @@ import { TenantService } from '../tenant/tenant.service';
 import { RoleType } from '../role/enum/role.type.enum';
 import { UserRoleRepository } from '../../database/repositories/user.role.repository';
 import { InviteUserToTenantDTO } from './dto/invite.user.to.tenant.dto';
+import { SubscriptionRepository } from '../../database/repositories/subscription.repository';
+import { GithubSignupDto } from '../auth/dto/github.signup.dto';
+import { AuthProvider } from '../../common/enum/auth.provider.enum';
 
 @Injectable()
 export class UserService {
@@ -42,7 +45,8 @@ export class UserService {
     private readonly userTenantRepository: UserTenantRepository,
     private readonly userRoleRepository: UserRoleRepository,
     private readonly tenantUtil: TenantUtil,
-    private readonly tenantService: TenantService
+    private readonly tenantService: TenantService,
+    private readonly subscriptionRepository: SubscriptionRepository
   ) {}
   async signUp(signUpDTO: SignUpDTO): Promise<User> {
     //! New User need to walk through onboarding to create a tenant.
@@ -55,28 +59,37 @@ export class UserService {
     newProfile.name = signUpDTO.name;
     newUser.profile = newProfile;
     newUser.refreshToken = new UserRefreshToken();
-
-    // const userRole = new UserRole();
-    // userRole.roleId = RoleId.ADMIN;
-    // newUser.roles = [userRole];
-    // !permissions [Signup will not handle permissions]
-    // const viewAllAppPermission = new UserPermission();
-    // viewAllAppPermission.permissionId = PermissionEnum.VIEW_ALL_APP;
-    // const editAllAppPermission = new UserPermission();
-    // editAllAppPermission.permissionId = PermissionEnum.EDIT_ALL_APP;
-    // const deleteAllAppVersionPermission = new UserPermission();
-    // deleteAllAppVersionPermission.permissionId =
-    //   PermissionEnum.DELETE_ALL_APP_VERSION;
-    // const createAllAppVersionPermission = new UserPermission();
-    // createAllAppVersionPermission.permissionId =
-    //   PermissionEnum.CREATE_ALL_APP_VERSION;
-    // newUser.permissions = [
-    //   viewAllAppPermission,
-    //   editAllAppPermission,
-    //   deleteAllAppVersionPermission,
-    //   createAllAppVersionPermission,
-    // ];
     const result = await this.usersRepository.createUser(newUser);
+    return result;
+  }
+
+  async signUpGithub(signUpDTO: GithubSignupDto): Promise<User> {
+    //! New User need to walk through onboarding to create a tenant.
+    const newUser = new User();
+    const newProfile = new UserProfile();
+    newUser.username = signUpDTO.username;
+    newUser.provider = AuthProvider.GITHUB;
+    newUser.providerId = signUpDTO.providerId;
+    newProfile.email = signUpDTO.email ?? signUpDTO.username;
+    newUser.status = UserStatus.Pending;
+    newProfile.name = signUpDTO.name;
+    newUser.profile = newProfile;
+    newUser.refreshToken = new UserRefreshToken();
+    const result = await this.usersRepository.createUser(newUser);
+    return result;
+  }
+
+  async findUserByEmailAndProvider(
+    email: string,
+    provider: AuthProvider
+  ): Promise<User> {
+    const result = await this.usersRepository.findOne({
+      where: {
+        username: email,
+        provider,
+      },
+      relations: ['profile'],
+    });
     return result;
   }
 
@@ -174,11 +187,25 @@ export class UserService {
     if (!user) {
       throw new AppException(ResponseCode.STATUS_8004_USER_NOT_EXIST);
     }
+    //get subscriptions
+    const subscriptions =
+      await this.subscriptionRepository.findUserSubscriptionsByUserId(
+        user.id,
+        'active'
+      );
+    user.subscriptions = subscriptions;
     return new PortalUserResponseDTO(user);
   }
 
-  async findUserByEmailWithPassword(username: string) {
-    return await this.usersRepository.findUserByEmailWithPassword(username);
+  async findUserByEmailWithPassword(
+    username: string,
+    providers: AuthProvider[]
+  ) {
+    return await this.usersRepository.findUserByEmailWithPassword(
+      username,
+      false,
+      providers
+    );
   }
 
   //Search User

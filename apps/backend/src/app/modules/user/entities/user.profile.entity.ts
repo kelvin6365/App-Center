@@ -8,7 +8,7 @@ export class UserProfile extends BaseEntity {
   @Column({ nullable: true })
   name: string;
 
-  @Column({ nullable: true, unique: true })
+  @Column({ nullable: true })
   email: string;
   emailToLowerCase() {
     this.email = this.email.toLowerCase();

@@ -22,7 +22,7 @@ import { SettingListDTO } from '../setting/dto/setting.list.dto';
 import { UpdateSettingDTO } from '../setting/dto/update.setting.dto';
 import { SettingService } from '../setting/setting.service';
 
-@ApiTags('Portal')
+@ApiTags('Portal / Setting')
 @ApiBearerAuth()
 @UseGuards(JwtAuthGuard)
 @Controller({ path: '/portal/setting', version: ['1'] })
