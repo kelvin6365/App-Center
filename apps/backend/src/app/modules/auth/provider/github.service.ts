@@ -37,19 +37,22 @@ export class GithubAuthService {
           })
         );
       }
-      if (user.provider !== AuthProvider.GITHUB) {
+
+      user = await this.userService.getUserByUsernameWithDeletedFalse(
+        githubUser.email
+      );
+
+      if (user?.provider !== AuthProvider.GITHUB) {
         throw new AppException(
           ResponseCode.STATUS_8000_UNAUTHORIZED,
           'User already exists with a different provider'
         );
       }
-      user = await this.userService.getUserByUsernameWithDeletedFalse(
-        githubUser.email
-      );
       return await this.authService.signIn(
         new CurrentUserDTO().fromEntity(user)
       );
     } catch (error) {
+      console.error(error);
       this.logger.error(error);
       throw new AppException(ResponseCode.STATUS_8000_UNAUTHORIZED);
     }
