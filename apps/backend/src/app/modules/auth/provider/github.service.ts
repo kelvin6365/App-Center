@@ -41,13 +41,6 @@ export class GithubAuthService {
       user = await this.userService.getUserByUsernameWithDeletedFalse(
         githubUser.email
       );
-
-      if (user?.provider !== AuthProvider.GITHUB) {
-        throw new AppException(
-          ResponseCode.STATUS_8000_UNAUTHORIZED,
-          'User already exists with a different provider'
-        );
-      }
       return await this.authService.signIn(
         new CurrentUserDTO().fromEntity(user)
       );
