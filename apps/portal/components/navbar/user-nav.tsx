@@ -57,11 +57,11 @@ export function UserNav() {
                 <DropdownMenuShortcut>⌘B</DropdownMenuShortcut>
               </Link>
             </DropdownMenuItem>
-            <DropdownMenuItem>
+            {/* <DropdownMenuItem>
               Settings
               <DropdownMenuShortcut>⌘S</DropdownMenuShortcut>
             </DropdownMenuItem>
-            <DropdownMenuItem>New Team</DropdownMenuItem>
+            <DropdownMenuItem>New Team</DropdownMenuItem> */}
           </DropdownMenuGroup>
           <DropdownMenuSeparator />
           <DropdownMenuItem onClick={() => signOut()}>

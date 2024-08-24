@@ -31,7 +31,10 @@ export class TenantService {
     //check limit
     const subscription = user.subscriptions.pop();
     if (subscription) {
-      if (user.tenants.length >= subscription.plan.maxTenants) {
+      if (
+        user.tenants.filter((ut) => ut.tenant.createdBy === user.id).length >=
+        subscription.plan.maxTenants
+      ) {
         throw new AppException(ResponseCode.STATUS_4000_TENANT_LIMIT_REACHED);
       }
     } else {

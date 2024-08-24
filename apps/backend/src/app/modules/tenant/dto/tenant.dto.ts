@@ -6,9 +6,12 @@ export class TenantDTO {
   id: string;
   @ApiProperty()
   name: string;
+  @ApiProperty()
+  createdBy: string;
 
   constructor(partial: Partial<Tenant>) {
     this.id = partial.id;
     this.name = partial.name;
+    this.createdBy = partial.createdBy;
   }
 }
