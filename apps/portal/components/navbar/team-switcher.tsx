@@ -256,7 +256,7 @@ export default function TeamSwitcher({ className }: TeamSwitcherProps) {
                     )}
                   />
                 </div>
-                <div className="space-y-2">
+                {/* <div className="space-y-2">
                   <Label htmlFor="plan">Subscription plan</Label>
                   <Select>
                     <SelectTrigger>
@@ -277,7 +277,7 @@ export default function TeamSwitcher({ className }: TeamSwitcherProps) {
                       </SelectItem>
                     </SelectContent>
                   </Select>
-                </div>
+                </div> */}
               </div>
             </div>
             <DialogFooter>

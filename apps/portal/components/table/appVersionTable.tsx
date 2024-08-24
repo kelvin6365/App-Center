@@ -62,9 +62,10 @@ import useUserProfileQuery from '@/queries/useUserProfileQuery';
 import { checkAllowAppActionPermission } from '@/utils/permissionChecking';
 import PermissionEnum from '@/types/Permission';
 import { SiJirasoftware } from 'react-icons/si';
+import { App } from '../../types/App';
 
 type Props = {
-  appId: string;
+  app: App;
   setOpenQRCode: (data: { data: string; open: boolean }) => void;
   setOpenShareInstallURL: (data: {
     data: AppVersion | null;
@@ -78,7 +79,7 @@ export type TableRef = {
 };
 const AppVersionTable = React.forwardRef<TableRef, Props>(
   (
-    { appId, setOpenQRCode, setOpenShareInstallURL, setOpenJiraIssues }: Props,
+    { app, setOpenQRCode, setOpenShareInstallURL, setOpenJiraIssues }: Props,
     ref
   ) => {
     const t = useTranslations('Apps');
@@ -119,7 +120,7 @@ const AppVersionTable = React.forwardRef<TableRef, Props>(
       isError: isErrorTags,
       refetch: refetchTags,
     } = useAppVersionTagsQuery({
-      appId,
+      appId: app.id,
     });
     const {
       appVersions,
@@ -128,7 +129,7 @@ const AppVersionTable = React.forwardRef<TableRef, Props>(
       refetch: refetchVersions,
       isRefetching: isRefetchingVersions,
     } = useSearchAppVersionsQuery({
-      appId,
+      appId: app.id,
       page: currentPage,
       limit: itemsPerPage,
       tags: selectedTags.map((t) => t.id),
@@ -436,9 +437,12 @@ const AppVersionTable = React.forwardRef<TableRef, Props>(
                   <DropdownMenuSeparator />
                   {!isLoadingUserProfile &&
                     userProfile &&
-                    checkAllowAppActionPermission(userProfile, [
-                      PermissionEnum.DELETE_APP_VERSION,
-                    ]) && (
+                    checkAllowAppActionPermission(
+                      userProfile,
+                      [PermissionEnum.DELETE_APP_VERSION],
+                      app.tenantId,
+                      app.id
+                    ) && (
                       <DropdownMenuItem
                         onClick={() => {
                           setOpenDeleteDialog({

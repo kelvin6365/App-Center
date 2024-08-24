@@ -362,9 +362,12 @@ const AppPage = ({ params }: { params: { appId: string } }) => {
                   {!isLoadingUserProfile &&
                     !isErrorUserProfile &&
                     userProfile &&
-                    checkAllowAppActionPermission(userProfile, [
-                      PermissionEnum.CREATE_APP_VERSION,
-                    ]) && (
+                    checkAllowAppActionPermission(
+                      userProfile,
+                      [PermissionEnum.CREATE_APP_VERSION],
+                      app?.tenantId,
+                      app?.id
+                    ) && (
                       <Button
                         variant="outline"
                         size="icon"
@@ -381,9 +384,12 @@ const AppPage = ({ params }: { params: { appId: string } }) => {
                   {!isLoadingUserProfile &&
                     !isErrorUserProfile &&
                     userProfile &&
-                    checkAllowAppActionPermission(userProfile, [
-                      PermissionEnum.EDIT_APP,
-                    ]) && (
+                    checkAllowAppActionPermission(
+                      userProfile,
+                      [PermissionEnum.EDIT_APP],
+                      app?.tenantId,
+                      app?.id
+                    ) && (
                       <Button
                         variant="outline"
                         size="icon"
@@ -399,7 +405,8 @@ const AppPage = ({ params }: { params: { appId: string } }) => {
                   {!isLoadingUserProfile &&
                     !isErrorUserProfile &&
                     checkAllowModifyAppUserPermission(
-                      userProfile?.roles ?? []
+                      userProfile?.roles ?? [],
+                      app?.tenantId
                     ) && (
                       <Button
                         variant="outline"
@@ -421,7 +428,7 @@ const AppPage = ({ params }: { params: { appId: string } }) => {
           {app && (
             <AppVersionTable
               ref={tableRef}
-              appId={app.id}
+              app={app}
               setOpenQRCode={setOpenQRCode}
               setOpenShareInstallURL={setOpenShareInstallURL}
               setOpenJiraIssues={setOpenJiraIssues}

@@ -37,9 +37,12 @@ export default async function middleware(req: NextRequest) {
     '/register',
     '/forgot-password',
     '/reset-password',
+    '/install/*',
   ];
   const publicPathnameRegex = RegExp(
-    `^(/(${locales.join('|')}))?(${publicPages.join('|')})?/?$`,
+    `^(/(${locales.join('|')}))?(${publicPages
+      .map((page) => page.replace('*', '.*'))
+      .join('|')})/?$`,
     'i'
   );
   const isPublicPage = publicPathnameRegex.test(req.nextUrl.pathname);
@@ -47,7 +50,7 @@ export default async function middleware(req: NextRequest) {
   if (isPublicPage) {
     const token = await getToken({ req });
     const isAuthenticated = !!token;
-    if (isAuthenticated) {
+    if (isAuthenticated && !req.nextUrl.pathname.startsWith('/install/')) {
       return NextResponse.redirect(new URL('/console', req.url));
     }
     return intlMiddleware(req);

@@ -3,28 +3,39 @@ import PermissionEnum from '@/types/Permission';
 import { PortalUserProfile, Role } from '@/types/PortalUserProfile';
 import { RoleType } from '@/types/RoleType';
 
-export const checkAllowModifyAppUserPermission = (roles: Role[]) => {
+export const checkAllowModifyAppUserPermission = (
+  roles: Role[],
+  tenantId?: string
+) => {
   //Allowed Roles
   // Admin
-  return roles.some((role) => {
-    return role.type === RoleType.ADMIN;
-  });
+  return roles
+    .filter((r) => r.tenantId === tenantId)
+    .some((role) => {
+      return role.type === RoleType.ADMIN;
+    });
 };
 
 export const checkAllowAppActionPermission = (
   user: PortalUserProfile,
-  permissionsRequired: PermissionEnum[]
+  permissionsRequired: PermissionEnum[],
+  tenantId?: string,
+  appId?: string
 ) => {
   //Check user have permissions
   return permissionsRequired.some((permission) => {
-    return user?.roles.some((role) => {
-      if (role.type === RoleType.ADMIN) {
-        return true;
-      }
-      return user.permissions.some((_permission) => {
-        return _permission.id === permission;
+    return user?.roles
+      .filter((r) => r.tenantId === tenantId)
+      .some((role) => {
+        if (role.type === RoleType.ADMIN) {
+          return true;
+        }
+        return user.permissions
+          .filter((p) => p.refId === appId)
+          .some((_permission) => {
+            return _permission.id === permission;
+          });
       });
-    });
   });
 };
 export const filterMenuByRoles = (
