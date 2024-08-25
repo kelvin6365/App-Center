@@ -51,7 +51,7 @@ const PostmanDialog = ({
     if (!app) {
       return '';
     }
-    return `curl --location '${window.location.origin}/api/v1/app/${
+    return `curl --location '${process.env.NEXT_PUBLIC_API_HOST}/v1/app/${
       app!.id
     }/version'  \\
 --form 'name="${name}"'  \\

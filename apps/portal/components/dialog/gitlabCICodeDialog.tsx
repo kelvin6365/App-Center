@@ -57,7 +57,7 @@ const GitLabCICodeDialog = ({
         image: curlimages/curl:latest
         script: 
           - |
-            curl -f --location '${window.location.origin}/api/v1/app/${
+            curl -f --location '${process.env.NEXT_PUBLIC_API_HOST}/v1/app/${
       app?.id
     }/version'  \\
             --form 'name="${name}"'  \\
