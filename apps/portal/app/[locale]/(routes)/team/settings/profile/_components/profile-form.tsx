@@ -69,6 +69,10 @@ export default function ProfileForm() {
 
   const onSubmit = async (data: ProfileFormValues) => {
     console.log(data);
+    if (!selectedTeam) {
+      toast.error(t('Please select a team'));
+      return;
+    }
     try {
       await API.tenant.updateTenant({
         name: data.teamName,
@@ -77,11 +81,11 @@ export default function ProfileForm() {
       refetch().then((result) => {
         const tenants = result.data ?? [];
         const latestTenantInfo = tenants.find(
-          (tenant) => tenant.id === selectedTeam!.id
+          (tenant) => tenant.id === selectedTeam.id
         );
         setSelectedTeam({
-          id: latestTenantInfo!.id,
-          name: latestTenantInfo!.name,
+          id: latestTenantInfo.id,
+          name: latestTenantInfo.name,
         });
       });
     } catch (error) {
@@ -99,6 +103,7 @@ export default function ProfileForm() {
         teamName: selectedTeam.name,
       });
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedTeam]);
 
   if (!selectedTeam) {
@@ -113,7 +118,7 @@ export default function ProfileForm() {
           name="teamName"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Team Name</FormLabel>
+              <FormLabel>{t('Team Name')}</FormLabel>
               <FormControl>
                 <Input {...field} disabled={isSubmitting} />
               </FormControl>
@@ -156,7 +161,6 @@ export default function ProfileForm() {
           </Button>
         </div> */}
         <Button type="submit" disabled={isSubmitting}>
-          {}
           {t('Save')}
         </Button>
       </form>

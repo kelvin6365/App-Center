@@ -21,7 +21,7 @@ import {
   checkAllowAppActionPermission,
   checkAllowModifyAppUserPermission,
 } from '@/utils/permissionChecking';
-import { Button, Skeleton } from '@app-center/shadcn/ui';
+import { Button, Separator, Skeleton } from '@app-center/shadcn/ui';
 import {
   Tooltip,
   TooltipContent,
@@ -242,12 +242,13 @@ const AppPage = ({ params }: { params: { appId: string } }) => {
             <Skeleton className="h-[42px] my-4" />
           )}
           {!isLoading && (
-            <div className="my-2 border border-gray-200 rounded bg-gray-50 dark:border-gray-600 dark:bg-gray-700">
-              <p className="px-4 pt-4 font-normal text-blue-gray-400">
+            <div className="flex flex-col my-2 border border-gray-200 rounded bg-gray-50 dark:border-gray-600 dark:bg-gray-700">
+              <p className="px-4 pt-4 pb-2 font-normal text-blue-gray-400">
                 {t('Quick Access')}
               </p>
+              <Separator className="w-auto mx-4" />
               <TooltipProvider>
-                <div className="grid grid-cols-3 gap-2 p-4">
+                <div className="grid grid-cols-3 gap-2 px-4 py-2">
                   {/* Apple Store */}
                   <Button
                     variant="outline"
@@ -279,7 +280,9 @@ const AppPage = ({ params }: { params: { appId: string } }) => {
                   >
                     <BiLogoPlayStore className="w-5 h-5" />
                   </Button>
-
+                </div>
+                <Separator className="w-auto mx-4" />
+                <div className="grid grid-cols-3 gap-2 px-4 py-2">
                   {/* Project Git */}
                   <Button
                     variant="outline"
@@ -357,7 +360,9 @@ const AppPage = ({ params }: { params: { appId: string } }) => {
                   >
                     <SiConfluence className="w-5 h-5" />
                   </Button>
-
+                </div>
+                <Separator className="w-auto mx-4" />
+                <div className="grid grid-cols-3 gap-2 px-4 py-2">
                   {/* Upload New Version */}
                   {!isLoadingUserProfile &&
                     !isErrorUserProfile &&

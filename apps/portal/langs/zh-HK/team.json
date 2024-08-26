@@ -45,7 +45,11 @@
     "Team": "團隊",
     "Your team settings": "您的團隊設置",
     "Updated successfully": "更新成功",
-    "Save": "節省"
+    "Save": "節省",
+    "Please select a team": "請選擇團隊",
+    "Team Name": "團隊名稱",
+    "Profile": "輪廓",
+    "Credentials": "證書"
   },
   "Credentials": {
     "Done": "完畢",
@@ -74,5 +78,9 @@
     "Confirm to Delete": "確認刪除",
     "Are your sure to delete this credential": "您確定要刪除此憑證嗎？",
     "Delete credential": "刪除憑證"
+  },
+  "Profile": {
+    "Profile": "輪廓",
+    "This is how others will see you on the site": "這就是其他人在網站上看到您的方式。"
   }
 }

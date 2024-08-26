@@ -1,11 +1,11 @@
 import {
-  PaginationItem,
-  PaginationLink,
   Pagination,
   PaginationContent,
-  PaginationPrevious,
-  PaginationNext,
   PaginationEllipsis,
+  PaginationItem,
+  PaginationLink,
+  PaginationNext,
+  PaginationPrevious,
 } from '@app-center/shadcn/ui';
 
 export function CustomPagination({

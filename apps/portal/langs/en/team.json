@@ -45,7 +45,11 @@
     "Team": "Team",
     "Your team settings": "Your team settings",
     "Updated successfully": "Updated successfully",
-    "Save": "Save"
+    "Save": "Save",
+    "Please select a team": "Please select a team",
+    "Team Name": "Team Name",
+    "Profile": "Profile",
+    "Credentials": "Credentials"
   },
   "Credentials": {
     "Search Credential Type": "Search Credential Type",
@@ -74,5 +78,9 @@
     "Confirm to Delete": "Confirm to Delete",
     "Are your sure to delete this credential": "Are your sure to delete this credential?",
     "Delete credential": "Delete credential"
+  },
+  "Profile": {
+    "Profile": "Profile",
+    "This is how others will see you on the site": "This is how others will see you on the site."
   }
 }

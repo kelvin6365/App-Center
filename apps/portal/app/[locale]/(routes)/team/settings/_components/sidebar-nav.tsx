@@ -2,6 +2,7 @@
 
 import { buttonVariants } from '@app-center/shadcn/ui';
 import { cn } from '@app-center/shadcn/util';
+import { useTranslations } from 'next-intl';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 
@@ -14,6 +15,7 @@ interface SidebarNavProps extends React.HTMLAttributes<HTMLElement> {
 
 export function SidebarNav({ className, items, ...props }: SidebarNavProps) {
   const pathname = usePathname();
+  const t = useTranslations('Settings');
 
   return (
     <nav
@@ -35,7 +37,7 @@ export function SidebarNav({ className, items, ...props }: SidebarNavProps) {
             'justify-start'
           )}
         >
-          {item.title}
+          {t(item.title)}
         </Link>
       ))}
     </nav>
