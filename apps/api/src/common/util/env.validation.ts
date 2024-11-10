@@ -57,22 +57,22 @@ class EnvironmentVariables {
   })
   TYPEORM_MIGRATIONS_RUN: boolean;
 
-  // Redis
-  @IsString()
-  REDIS_HOST: string;
-  @IsNumber()
-  @Min(0)
-  @Max(65535)
-  @Transform(({ value }: { value: string }) => {
-    return +value;
-  })
-  REDIS_PORT: number;
-  @IsString()
-  REDIS_USERNAME: string;
-  @IsString()
-  REDIS_PASSWORD: string;
-  @IsString()
-  REDIS_TLS_ENABLE: string;
+  // // Redis
+  // @IsString()
+  // REDIS_HOST: string;
+  // @IsNumber()
+  // @Min(0)
+  // @Max(65535)
+  // @Transform(({ value }: { value: string }) => {
+  //   return +value;
+  // })
+  // REDIS_PORT: number;
+  // @IsString()
+  // REDIS_USERNAME: string;
+  // @IsString()
+  // REDIS_PASSWORD: string;
+  // @IsString()
+  // REDIS_TLS_ENABLE: string;
 
   //[Services]
 
