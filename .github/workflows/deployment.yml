@@ -29,7 +29,7 @@ jobs:
               - 'apps/api/**'
 
   build-image:
-    if: ${{ needs.changes.outputs.backend == 'true' || needs.changes.outputs.frontend == 'true' }}
+    needs: changes
     runs-on: ubuntu-latest
     outputs:
       sha: ${{ steps.sha.outputs.sha }}
@@ -44,19 +44,19 @@ jobs:
         with:
           token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
       - name: Build Frontend image
-        if: needs.changes.outputs.frontend == 'true'
+        if: ${{ github.event_name == 'workflow_dispatch' || needs.changes.outputs.frontend == 'true' }}
         run: docker build -f ./apps/web/Dockerfile . -t ${{ env.FRONTEND_IMAGE }}:${{ steps.sha.outputs.sha }}
       - name: Build Backend image
-        if: needs.changes.outputs.backend == 'true'
+        if: ${{ github.event_name == 'workflow_dispatch' || needs.changes.outputs.backend == 'true' }}
         run: docker build -f ./apps/api/Dockerfile . -t ${{ env.BACKEND_IMAGE }}:${{ steps.sha.outputs.sha }}
       - name: Log in to DigitalOcean Container Registry
-        if: ${{ needs.changes.outputs.frontend == 'true' || needs.changes.outputs.backend == 'true' }}
+        if: ${{ github.event_name == 'workflow_dispatch' || needs.changes.outputs.frontend == 'true' || needs.changes.outputs.backend == 'true' }}
         run: doctl registry login --expiry-seconds 1200
       - name: Push Frontend image
-        if: needs.changes.outputs.frontend == 'true'
+        if: ${{ github.event_name == 'workflow_dispatch' || needs.changes.outputs.frontend == 'true' }}
         run: docker push ${{ env.FRONTEND_IMAGE }}:${{ steps.sha.outputs.sha }}
       - name: Push Backend image
-        if: needs.changes.outputs.backend == 'true'
+        if: ${{ github.event_name == 'workflow_dispatch' || needs.changes.outputs.backend == 'true' }}
         run: docker push ${{ env.BACKEND_IMAGE }}:${{ steps.sha.outputs.sha }}
 
   update-helm-chart:
