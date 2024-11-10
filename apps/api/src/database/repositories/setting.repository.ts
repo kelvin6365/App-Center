@@ -9,7 +9,7 @@ import { SettingType } from '../../modules/setting/enum/setting.type.enum';
 export class SettingRepository extends Repository<Setting> {
   constructor(
     dataSource: DataSource,
-    @Inject(Logger) private readonly logger: LoggerService
+    @Inject(Logger) private readonly logger: LoggerService,
   ) {
     super(Setting, dataSource.createEntityManager());
   }
@@ -33,7 +33,7 @@ export class SettingRepository extends Repository<Setting> {
       switch (error.code) {
         case '23505':
           throw new AppException(
-            ResponseCode.STATUS_1012_FAIL_TO_CREATE('Key already exist.')
+            ResponseCode.STATUS_1012_FAIL_TO_CREATE('Key already exist.'),
           );
         default:
           throw error;

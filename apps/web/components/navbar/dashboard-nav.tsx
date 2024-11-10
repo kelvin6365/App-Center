@@ -89,7 +89,7 @@ export function DashboardNav({
                               <span>{t(subItem.title)}</span>
                             </span>
                           </Link>
-                        )
+                        ),
                     )}
                   </AccordionContent>
                 </AccordionItem>
@@ -107,13 +107,13 @@ export function DashboardNav({
                 className={buttonVariants({
                   variant: path.includes(item.href ?? "") ? "default" : "ghost",
                   className: cn(
-                    item.disabled && "cursor-not-allowed opacity-80"
+                    item.disabled && "cursor-not-allowed opacity-80",
                   ),
                 })}
               >
                 <span
                   className={cn(
-                    "group w-full flex items-center rounded-md text-sm font-medium"
+                    "group w-full flex items-center rounded-md text-sm font-medium",
                   )}
                 >
                   <Icon className="w-4 h-4 mr-2" />

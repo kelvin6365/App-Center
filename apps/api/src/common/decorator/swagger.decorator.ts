@@ -11,7 +11,7 @@ export function ApiResponseSchema(
   const httpStatusDecorator = [];
 
   httpStatusDecorator.push(
-    ApiResponse({ status: HttpStatus.BAD_REQUEST, description: 'Bad Request' })
+    ApiResponse({ status: HttpStatus.BAD_REQUEST, description: 'Bad Request' }),
   );
 
   return responseDTO
@@ -33,7 +33,7 @@ export function ApiResponseSchema(
           },
         }),
         ApiExtraModels(AppResponse, responseDTO, ...extraModels),
-        ...httpStatusDecorator
+        ...httpStatusDecorator,
       )
     : applyDecorators(
         ApiResponse({
@@ -48,6 +48,6 @@ export function ApiResponseSchema(
           },
         }),
         ApiExtraModels(AppResponse),
-        ...httpStatusDecorator
+        ...httpStatusDecorator,
       );
 }

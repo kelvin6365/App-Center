@@ -66,7 +66,7 @@ export class CurrentUserDTO {
     dto.subscriptions =
       entity.subscriptions?.filter(
         (s) =>
-          s.status === 'active' && s.currentPeriodEnd > moment().utc().toDate()
+          s.status === 'active' && s.currentPeriodEnd > moment().utc().toDate(),
       ) ?? [];
     return dto;
   }

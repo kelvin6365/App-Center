@@ -50,7 +50,7 @@ const DeleteCredentialDialog = ({
     },
   });
   const target = availableCredentialComponents.find(
-    (c) => c.name === credential?.credentialName
+    (c) => c.name === credential?.credentialName,
   );
   const {
     register,
@@ -68,7 +68,7 @@ const DeleteCredentialDialog = ({
   }, [open, reset, credential]);
 
   const onSubmit: SubmitHandler<DeleteCredentialFormInputs> = async (
-    values
+    values,
   ) => {
     try {
       const res = await API.credential.deleteCredential(values.id);

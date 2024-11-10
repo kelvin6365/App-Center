@@ -29,7 +29,7 @@ export class PlanDto {
     this.appCreationLimit = plan.appCreationLimit;
     this.storageLimit = plan.storageLimit;
     this.pricingTiers = plan.pricingTiers?.map(
-      (pricingTier) => new PricingTierDto(pricingTier)
+      (pricingTier) => new PricingTierDto(pricingTier),
     );
   }
 }

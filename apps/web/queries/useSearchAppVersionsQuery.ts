@@ -1,11 +1,11 @@
-import { useQuery } from '@tanstack/react-query';
-import API from '@/services/api';
+import { useQuery } from "@tanstack/react-query";
+import API from "@/services/api";
 
 const useSearchAppVersionsQuery = ({
   appId,
   page,
   limit,
-  searchQuery = '',
+  searchQuery = "",
   tags = [],
   sorting = [],
 }: {
@@ -16,11 +16,11 @@ const useSearchAppVersionsQuery = ({
   tags?: string[];
   sorting?: {
     key: string;
-    value: 'ASC' | 'DESC';
+    value: "ASC" | "DESC";
   }[];
 }) => {
   const { data, isLoading, isError, error, refetch, isRefetching } = useQuery({
-    queryKey: [appId, 'appVersions', page, limit, tags, searchQuery, sorting],
+    queryKey: [appId, "appVersions", page, limit, tags, searchQuery, sorting],
     queryFn: async () => {
       const { data } = await API.app.searchAppVersions(appId, {
         page,
@@ -31,7 +31,7 @@ const useSearchAppVersionsQuery = ({
             ...(tags.length > 0
               ? [
                   {
-                    key: 'tags.id',
+                    key: "tags.id",
                     values: tags,
                   },
                 ]

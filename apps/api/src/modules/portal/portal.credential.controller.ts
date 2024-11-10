@@ -43,7 +43,7 @@ export class PortalCredentialController {
   @ApiResponseSchema(HttpStatus.OK, 'OK', CredentialComponentResponseDTO)
   async getAllCredentialComponents() {
     return new AppResponse(
-      await this.credentialService.getAllCredentialComponents()
+      await this.credentialService.getAllCredentialComponents(),
     );
   }
 
@@ -53,12 +53,12 @@ export class PortalCredentialController {
   @UseGuards(RoleGuard(RoleType.ADMIN))
   @ApiResponseSchema(HttpStatus.OK, 'OK', CredentialComponentResponseDTO)
   async getCredentialComponent(
-    @Param('credentialComponentName') credentialComponentName: string
+    @Param('credentialComponentName') credentialComponentName: string,
   ): Promise<AppResponse<CredentialComponentResponseDTO>> {
     return new AppResponse<CredentialComponentResponseDTO>(
       await this.credentialService.getCredentialComponent(
-        credentialComponentName
-      )
+        credentialComponentName,
+      ),
     );
   }
 
@@ -71,10 +71,10 @@ export class PortalCredentialController {
   async getAllCredentials(
     @CurrentTenant() tenantId: string,
     @Query('name') name: string,
-    @CurrentUser() user: CurrentUserDTO
+    @CurrentUser() user: CurrentUserDTO,
   ) {
     return new AppResponse(
-      await this.credentialService.getAllCredentials(tenantId, name, user)
+      await this.credentialService.getAllCredentials(tenantId, name, user),
     );
   }
 
@@ -85,10 +85,10 @@ export class PortalCredentialController {
   @ApiResponseSchema(HttpStatus.OK, 'OK', CredentialResponseDTO)
   async getCredential(
     @Param('id') credentialId: string,
-    @CurrentUser() user: CurrentUserDTO
+    @CurrentUser() user: CurrentUserDTO,
   ): Promise<AppResponse<CredentialResponseDTO>> {
     return new AppResponse<CredentialResponseDTO>(
-      await this.credentialService.getCredential(credentialId, user)
+      await this.credentialService.getCredential(credentialId, user),
     );
   }
 
@@ -99,10 +99,10 @@ export class PortalCredentialController {
   @ApiResponseSchema(HttpStatus.OK, 'OK', CredentialResponseDTO)
   async createCredential(
     @Body() createCredentialDTO: CreateCredentialRequestDTO,
-    @CurrentUser() user: CurrentUserDTO
+    @CurrentUser() user: CurrentUserDTO,
   ): Promise<AppResponse<boolean>> {
     return new AppResponse<boolean>(
-      await this.credentialService.createCredential(createCredentialDTO, user)
+      await this.credentialService.createCredential(createCredentialDTO, user),
     );
   }
 
@@ -114,14 +114,14 @@ export class PortalCredentialController {
   async updateCredential(
     @Param('id') credentialId: string,
     @Body() updateCredentialDTO: UpdateCredentialRequestDTO,
-    @CurrentUser() user: CurrentUserDTO
+    @CurrentUser() user: CurrentUserDTO,
   ): Promise<AppResponse<boolean>> {
     return new AppResponse<boolean>(
       await this.credentialService.updateCredential(
         credentialId,
         updateCredentialDTO,
-        user
-      )
+        user,
+      ),
     );
   }
 
@@ -132,10 +132,10 @@ export class PortalCredentialController {
   @ApiResponseSchema(HttpStatus.OK, 'OK')
   async deleteCredential(
     @Param('id') credentialId: string,
-    @CurrentUser() user: CurrentUserDTO
+    @CurrentUser() user: CurrentUserDTO,
   ): Promise<AppResponse<boolean>> {
     return new AppResponse<boolean>(
-      await this.credentialService.deleteCredential(credentialId, user)
+      await this.credentialService.deleteCredential(credentialId, user),
     );
   }
 }

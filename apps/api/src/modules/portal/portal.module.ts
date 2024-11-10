@@ -41,7 +41,7 @@ import { PlanModule } from '../plan/plan.module';
           secret: configService.get<string>('jwt.secret'),
           signOptions: {
             expiresIn: `${configService.get<number>(
-              'jwt.user.accessTokenExpiresIn'
+              'jwt.user.accessTokenExpiresIn',
             )}${configService.get<number>('jwt.user.timeFormats')}`,
           },
         };

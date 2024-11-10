@@ -5,7 +5,7 @@ import { JiraUtil } from './jira.util';
 export class JiraService {
   constructor(
     @Inject(Logger) private readonly logger: LoggerService,
-    private readonly jiraUtil: JiraUtil
+    private readonly jiraUtil: JiraUtil,
   ) {
     this.logger = new Logger(JiraService.name);
   }
@@ -17,7 +17,7 @@ export class JiraService {
       jiraUsername: string;
       jiraAPIToken: string;
       jiraHost: string;
-    }
+    },
   ): Promise<
     {
       id: string;
@@ -36,7 +36,7 @@ export class JiraService {
         username: encryptedData.jiraUsername,
         password: encryptedData.jiraAPIToken,
       },
-      encryptedData.jiraHost
+      encryptedData.jiraHost,
     );
     return this.jiraUtil.getCurrentSearchFromResponse(res.data);
   }
@@ -48,7 +48,7 @@ export class JiraService {
       jiraUsername: string;
       jiraAPIToken: string;
       jiraHost: string;
-    }
+    },
   ) {
     const res = await this.jiraUtil.getJiraIssue(
       issueIdOrKey,
@@ -56,7 +56,7 @@ export class JiraService {
         username: encryptedData.jiraUsername,
         password: encryptedData.jiraAPIToken,
       },
-      encryptedData.jiraHost
+      encryptedData.jiraHost,
     );
     return res.data;
   }

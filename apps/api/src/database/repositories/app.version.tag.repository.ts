@@ -12,7 +12,7 @@ export class AppVersionTagRepository extends Repository<AppVersionTag> {
   //get all tags by app id and group by tag name
   async getAllTagsByAppId(
     appId: string,
-    withDeleted = false
+    withDeleted = false,
   ): Promise<AppVersionTag[]> {
     const query = this.createQueryBuilder('appVersionTag')
       .select()
@@ -27,7 +27,7 @@ export class AppVersionTagRepository extends Repository<AppVersionTag> {
       const newTag = {};
       Object.keys(tag).map(
         (key) =>
-          (newTag[camelCase(key.replace('appVersionTag', ''))] = tag[key])
+          (newTag[camelCase(key.replace('appVersionTag', ''))] = tag[key]),
       );
       return plainToInstance(AppVersionTag, newTag);
     });
@@ -36,7 +36,7 @@ export class AppVersionTagRepository extends Repository<AppVersionTag> {
   //get all tags by app version id
   getAllTagsByAppVersionId(
     appVersionId: string,
-    withDeleted = false
+    withDeleted = false,
   ): Promise<AppVersionTag[]> {
     return this.find({ where: { appVersionId: appVersionId }, withDeleted });
   }

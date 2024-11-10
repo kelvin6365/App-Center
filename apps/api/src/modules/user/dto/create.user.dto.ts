@@ -45,7 +45,7 @@ export class CreateUserDTO {
   @IsEnum(PermissionEnum, { each: true })
   @IsArray()
   @Transform(({ value: values }) =>
-    values.map((value: string) => PermissionEnum[value])
+    values.map((value: string) => PermissionEnum[value]),
   )
   permissions: PermissionEnum[];
 

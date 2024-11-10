@@ -14,7 +14,7 @@ export class AppVersionJiraIssueRepository extends Repository<AppVersionJiraIssu
   async deleteJiraIssueByIssueIdAndAppVersionId(
     id: string,
     appVersionId: string,
-    updatedBy: string
+    updatedBy: string,
   ): Promise<UpdateResult> {
     const target = await this.findOne({
       where: { id, appVersionId },

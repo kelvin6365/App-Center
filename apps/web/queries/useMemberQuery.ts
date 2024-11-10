@@ -1,5 +1,5 @@
-import { useQuery } from '@tanstack/react-query';
-import API from '@/services/api';
+import { useQuery } from "@tanstack/react-query";
+import API from "@/services/api";
 
 const useMemberQuery = ({
   userId,
@@ -9,7 +9,7 @@ const useMemberQuery = ({
   ready: boolean;
 }) => {
   const { data, isLoading, isError, error, refetch } = useQuery({
-    queryKey: [userId, 'member'],
+    queryKey: [userId, "member"],
     queryFn: async () => {
       const { data } = await API.user.getUser(userId);
       return data.data;

@@ -11,7 +11,7 @@ export class PlanController {
   //Get All Plan
   async getAllPlans() {
     return new AppResponse<PageDTO<PlanDto>>(
-      await this.planService.getAllPlans()
+      await this.planService.getAllPlans(),
     );
   }
 }

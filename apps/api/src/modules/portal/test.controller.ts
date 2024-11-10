@@ -1,4 +1,4 @@
-import { Controller, Get } from '@nestjs/common';
+import { Controller } from '@nestjs/common';
 import { JiraService } from '../jira/jira.service';
 
 @Controller({ path: '/portal/test', version: ['1'] })

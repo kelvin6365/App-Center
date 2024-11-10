@@ -10,7 +10,7 @@ export class CredentialComponentRepository extends Repository<CredentialComponen
   //Get By credentialName
   async getCredentialComponentByCredentialName(
     credentialName: string,
-    withDeleted = false
+    withDeleted = false,
   ): Promise<CredentialComponent> {
     return await this.findOne({
       where: {
@@ -22,7 +22,7 @@ export class CredentialComponentRepository extends Repository<CredentialComponen
 
   //Get All credential components
   async getAllCredentialComponents(
-    withDeleted = false
+    withDeleted = false,
   ): Promise<CredentialComponent[]> {
     return await this.find({
       withDeleted,

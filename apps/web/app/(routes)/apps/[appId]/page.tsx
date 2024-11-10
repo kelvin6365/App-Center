@@ -373,7 +373,7 @@ const AppPage = ({ params }: { params: { appId: string } }) => {
                       userProfile,
                       [PermissionEnum.CREATE_APP_VERSION],
                       app?.tenantId,
-                      app?.id
+                      app?.id,
                     ) && (
                       <Button
                         variant="outline"
@@ -395,7 +395,7 @@ const AppPage = ({ params }: { params: { appId: string } }) => {
                       userProfile,
                       [PermissionEnum.EDIT_APP],
                       app?.tenantId,
-                      app?.id
+                      app?.id,
                     ) && (
                       <Button
                         variant="outline"
@@ -413,7 +413,7 @@ const AppPage = ({ params }: { params: { appId: string } }) => {
                     !isErrorUserProfile &&
                     checkAllowModifyAppUserPermission(
                       userProfile?.roles ?? [],
-                      app?.tenantId
+                      app?.tenantId,
                     ) && (
                       <Button
                         variant="outline"

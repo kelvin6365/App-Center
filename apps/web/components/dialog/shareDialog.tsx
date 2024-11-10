@@ -51,7 +51,7 @@ const ShareDialog = ({ title, onClose, open, data, description }: Props) => {
               if (!copied) {
                 setCopied(true);
                 navigator.clipboard.writeText(
-                  `${window.location.origin}/install/${data?.appId}?versionId=${data?.id}`
+                  `${window.location.origin}/install/${data?.appId}?versionId=${data?.id}`,
                 );
                 setTimeout(() => {
                   setCopied(false);

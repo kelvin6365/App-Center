@@ -21,7 +21,7 @@ const authMiddleware = withAuth(
     pages: {
       signIn: "/login",
     },
-  }
+  },
 );
 
 export default async function middleware(req: NextRequest) {
@@ -34,7 +34,7 @@ export default async function middleware(req: NextRequest) {
   ];
   const publicPathnameRegex = RegExp(
     `^(${publicPages.map((page) => page.replace("*", ".*")).join("|")})/?$`,
-    "i"
+    "i",
   );
   const isPublicPage = publicPathnameRegex.test(req.nextUrl.pathname);
 

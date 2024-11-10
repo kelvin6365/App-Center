@@ -13,7 +13,7 @@ export class StripeWebhookRepository extends Repository<StripeWebhook> {
   }
 
   async updateStripeWebhook(
-    stripeWebhook: StripeWebhook
+    stripeWebhook: StripeWebhook,
   ): Promise<StripeWebhook> {
     return this.save(stripeWebhook);
   }

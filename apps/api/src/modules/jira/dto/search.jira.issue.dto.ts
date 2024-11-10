@@ -22,7 +22,7 @@ export class SearchJiraIssueDTO {
       img: string;
       summary: string;
       summaryText: string;
-    }>
+    }>,
   ) {
     this.id = partial.id;
     this.key = partial.key;

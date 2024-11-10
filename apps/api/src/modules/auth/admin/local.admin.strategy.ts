@@ -8,7 +8,7 @@ import { CurrentAdminDTO } from './dto/current.admin.dto';
 @Injectable()
 export class LocalAdminStrategy extends PassportStrategy(
   Strategy,
-  'local-admin'
+  'local-admin',
 ) {
   constructor(private readonly adminService: AdminService) {
     super({
@@ -19,13 +19,13 @@ export class LocalAdminStrategy extends PassportStrategy(
   async validate(
     req: Request,
     username: string,
-    password: string
+    password: string,
   ): Promise<CurrentAdminDTO> {
     try {
       const user: CurrentAdminDTO = await this.adminService.validateUser(
         req,
         username,
-        password
+        password,
       );
       return user;
     } catch (error) {

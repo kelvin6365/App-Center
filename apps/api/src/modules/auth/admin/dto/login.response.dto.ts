@@ -11,7 +11,7 @@ export class LoginResponseDTO {
   constructor(
     accessToken: string,
     // refreshToken: string,
-    accessTokenExpires: Date
+    accessTokenExpires: Date,
   ) {
     this.accessToken = accessToken;
     // this.refreshToken = refreshToken;

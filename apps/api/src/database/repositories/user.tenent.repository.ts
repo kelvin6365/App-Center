@@ -15,7 +15,7 @@ export class UserTenantRepository extends Repository<UserTenant> {
   async removeUserTenantByUserIdAndTenantId(
     userId: string,
     tenantId: string,
-    updatedBy: string
+    updatedBy: string,
   ) {
     const userTenant: UserTenant = await this.findOne({
       where: {

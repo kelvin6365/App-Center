@@ -36,7 +36,7 @@ const StepOne = () => {
                     className={cn(
                       "grid items-center grid-rows-2 gap-5 py-12 text-center cursor-pointer hover:border-black dark:hover:border-white",
                       field.value === "freelancer" &&
-                        "bg-accent text-accent-foreground border-primary"
+                        "bg-accent text-accent-foreground border-primary",
                     )}
                   >
                     <Icons.user className="mx-auto" />
@@ -51,7 +51,7 @@ const StepOne = () => {
                     className={cn(
                       "grid items-center grid-rows-2 gap-5 py-12 text-center cursor-pointer hover:border-black dark:hover:border-white",
                       field.value === "company" &&
-                        "bg-accent text-accent-foreground border-primary hover:border-primary dark:hover:border-primary"
+                        "bg-accent text-accent-foreground border-primary hover:border-primary dark:hover:border-primary",
                     )}
                   >
                     <Icons.users className="mx-auto" />

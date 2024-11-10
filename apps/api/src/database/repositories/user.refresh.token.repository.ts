@@ -9,7 +9,7 @@ export class UserRefreshTokenRepository extends Repository<UserRefreshToken> {
   }
 
   async createUserRefreshToken(
-    userRefreshTokenEntity: UserRefreshToken
+    userRefreshTokenEntity: UserRefreshToken,
   ): Promise<UserRefreshToken> {
     return this.save(this.create(userRefreshTokenEntity));
   }

@@ -89,7 +89,7 @@ const EditAppDialog = ({ title, onClose, open, app, description }: Props) => {
       })
     ) {
       toast.success(
-        t("You have not changed anything in the form please submit again")
+        t("You have not changed anything in the form please submit again"),
       );
       return;
     }

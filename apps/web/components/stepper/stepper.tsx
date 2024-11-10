@@ -253,7 +253,7 @@ const Stepper = React.forwardRef<HTMLDivElement, StepperProps>(
     const stepCount = items.length;
 
     const isMobile = useMediaQuery(
-      `(max-width: ${mobileBreakpoint || "768px"})`
+      `(max-width: ${mobileBreakpoint || "768px"})`,
     );
 
     const clickable = !!onClickStep;
@@ -292,7 +292,7 @@ const Stepper = React.forwardRef<HTMLDivElement, StepperProps>(
             orientation === "vertical" ? "flex-col" : "flex-row",
             variant === "line" && orientation === "horizontal" && "gap-4",
             className,
-            styles?.["main-container"]
+            styles?.["main-container"],
           )}
           style={
             {
@@ -312,7 +312,7 @@ const Stepper = React.forwardRef<HTMLDivElement, StepperProps>(
         {footer}
       </StepperProvider>
     );
-  }
+  },
 );
 
 Stepper.defaultProps = {
@@ -369,7 +369,7 @@ const HorizontalContent = ({ children }: { children: React.ReactNode }) => {
         }
         return React.Children.map(
           node.props.children,
-          (childNode) => childNode
+          (childNode) => childNode,
         );
       })}
     </>
@@ -465,7 +465,7 @@ const Step = React.forwardRef<HTMLLIElement, StepProps>(
     };
 
     return renderStep();
-  }
+  },
 );
 
 // <---------- VERTICAL STEP ---------->
@@ -490,12 +490,12 @@ const verticalStepVariants = cva(
           "[&:not(:last-child)]:after:absolute",
           "[&:not(:last-child)]:after:top-[calc(var(--step-icon-size)+var(--step-gap))]",
           "[&:not(:last-child)]:after:bottom-[var(--step-gap)]",
-          "[&:not(:last-child)]:after:transition-all [&:not(:last-child)]:after:duration-200"
+          "[&:not(:last-child)]:after:transition-all [&:not(:last-child)]:after:duration-200",
         ),
         line: "flex-1 border-t-0 mb-4",
       },
     },
-  }
+  },
 );
 
 // eslint-disable-next-line react/display-name
@@ -587,7 +587,7 @@ const VerticalStep = React.forwardRef<HTMLDivElement, VerticalStepProps>(
             variant: variant?.includes("circle") ? "circle" : "line",
           }),
           isLastStepCurrentStep && "gap-[var(--step-gap)]",
-          styles?.["vertical-step"]
+          styles?.["vertical-step"],
         )}
         data-optional={steps[index || 0]?.optional}
         data-completed={isCompletedStep}
@@ -607,7 +607,7 @@ const VerticalStep = React.forwardRef<HTMLDivElement, VerticalStepProps>(
             "flex items-center",
             variant === "line" &&
               "border-s-[3px] data-[active=true]:border-primary py-2 ps-3",
-            styles?.["vertical-step-container"]
+            styles?.["vertical-step-container"],
           )}
         >
           <StepButtonContainer
@@ -638,14 +638,14 @@ const VerticalStep = React.forwardRef<HTMLDivElement, VerticalStepProps>(
             !isLastStep && "min-h-4",
             variant !== "line" && "ps-[--step-icon-size]",
             variant === "line" && orientation === "vertical" && "min-h-0",
-            styles?.["vertical-step-content"]
+            styles?.["vertical-step-content"],
           )}
         >
           {renderChildren()}
         </div>
       </div>
     );
-  }
+  },
 );
 
 // <---------- HORIZONTAL STEP ---------->
@@ -707,7 +707,7 @@ const HorizontalStep = React.forwardRef<HTMLDivElement, StepSharedProps>(
             "[&:not(:last-child)]:after:flex-1 [&:not(:last-child)]:after:ms-[var(--step-gap)] [&:not(:last-child)]:after:me-[var(--step-gap)]",
           variant === "line" &&
             "flex-col flex-1 border-t-[3px] data-[active=true]:border-primary",
-          styles?.["horizontal-step"]
+          styles?.["horizontal-step"],
         )}
         data-optional={steps[index || 0]?.optional}
         data-completed={isCompletedStep}
@@ -723,7 +723,7 @@ const HorizontalStep = React.forwardRef<HTMLDivElement, StepSharedProps>(
             "flex items-center",
             variant === "circle-alt" && "flex-col justify-center gap-1",
             variant === "line" && "w-full",
-            styles?.["horizontal-step-container"]
+            styles?.["horizontal-step-container"],
           )}
         >
           <StepButtonContainer
@@ -751,7 +751,7 @@ const HorizontalStep = React.forwardRef<HTMLDivElement, StepSharedProps>(
         </div>
       </div>
     );
-  }
+  },
 );
 
 // <---------- STEP BUTTON CONTAINER ---------->
@@ -795,7 +795,7 @@ const StepButtonContainer = ({
         "data-[active=true]:bg-primary data-[active=true]:border-primary data-[active=true]:text-primary-foreground",
         "data-[current=true]:border-primary data-[current=true]:bg-secondary",
         "data-[invalid=true]:bg-destructive data-[invalid=true]:border-destructive data-[invalid=true]:text-destructive-foreground",
-        styles?.["step-button-container"]
+        styles?.["step-button-container"],
       )}
       aria-current={isCurrentStep ? "step" : undefined}
       data-current={isCurrentStep}
@@ -856,17 +856,17 @@ const StepIcon = React.forwardRef<HTMLDivElement, StepIconProps>(
 
     const Icon = React.useMemo(
       () => (CustomIcon ? CustomIcon : null),
-      [CustomIcon]
+      [CustomIcon],
     );
 
     const ErrorIcon = React.useMemo(
       () => (CustomErrorIcon ? CustomErrorIcon : null),
-      [CustomErrorIcon]
+      [CustomErrorIcon],
     );
 
     const Check = React.useMemo(
       () => (CustomCheckIcon ? CustomCheckIcon : CheckIcon),
-      [CustomCheckIcon]
+      [CustomCheckIcon],
     );
 
     return React.useMemo(() => {
@@ -934,7 +934,7 @@ const StepIcon = React.forwardRef<HTMLDivElement, StepIconProps>(
       ref,
       size,
     ]);
-  }
+  },
 );
 
 // <---------- STEP LABEL ---------->
@@ -991,7 +991,7 @@ const StepLabel = ({
         variant === "circle-alt" && "text-center",
         variant === "circle-alt" && orientation === "horizontal" && "ms-0",
         variant === "circle-alt" && orientation === "vertical" && "text-start",
-        styles?.["step-label-container"]
+        styles?.["step-label-container"],
       )}
       style={{
         opacity,
@@ -1002,7 +1002,7 @@ const StepLabel = ({
           className={cn(
             "stepper__step-label",
             labelVariants({ size }),
-            styles?.["step-label"]
+            styles?.["step-label"],
           )}
         >
           {label}
@@ -1014,7 +1014,7 @@ const StepLabel = ({
             "stepper__step-description",
             "text-muted-foreground",
             descriptionVariants({ size }),
-            styles?.["step-description"]
+            styles?.["step-description"],
           )}
         >
           {description}

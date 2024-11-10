@@ -42,7 +42,7 @@ const RegisterForm = () => {
       } = await API.auth.register(
         values.username,
         values.password,
-        values.username
+        values.username,
       );
       if (data) {
         const { error } =

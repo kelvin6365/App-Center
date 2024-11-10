@@ -1,5 +1,5 @@
 /* eslint-disable react/no-direct-mutation-state */
-import { CopyBlock, dracula } from 'react-code-blocks';
+import { CopyBlock, dracula } from "react-code-blocks";
 
 type Props = {
   text: string;

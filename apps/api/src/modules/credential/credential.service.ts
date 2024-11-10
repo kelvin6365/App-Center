@@ -20,7 +20,7 @@ export class CredentialService {
   constructor(
     @Inject(Logger) private readonly logger: Logger,
     private credentialRepository: CredentialRepository,
-    private credentialComponentRepository: CredentialComponentRepository
+    private credentialComponentRepository: CredentialComponentRepository,
   ) {
     this.logger = new Logger(CredentialService.name);
   }
@@ -29,7 +29,7 @@ export class CredentialService {
   async getAllCredentials(
     tenantId: string,
     name: string,
-    user: CurrentUserDTO
+    user: CurrentUserDTO,
   ): Promise<CredentialResponseDTO[]> {
     const isAllowed = user.tenants.map((ut) => ut.tenant.id).includes(tenantId);
     if (!isAllowed) {
@@ -39,11 +39,11 @@ export class CredentialService {
       await this.credentialRepository.getAllCredentialWithoutEncryptedData(
         {},
         [tenantId],
-        name
+        name,
       );
     return credentials.map(
       (credential) =>
-        new CredentialResponseDTO(omit(credential, ['encryptedData']))
+        new CredentialResponseDTO(omit(credential, ['encryptedData'])),
     );
   }
 
@@ -51,12 +51,12 @@ export class CredentialService {
   async getCredential(
     credentialId: string,
     user: CurrentUserDTO,
-    showCredentials = false
+    showCredentials = false,
   ): Promise<CredentialResponseDTO> {
     const credential = await this.credentialRepository.getCredential(
       credentialId,
       {},
-      user.tenants.map((ut) => ut.tenant.id)
+      user.tenants.map((ut) => ut.tenant.id),
     );
     if (!credential) {
       throw new AppException(ResponseCode.STATUS_1011_NOT_FOUND);
@@ -64,17 +64,17 @@ export class CredentialService {
     //get credential component
     const credentialComponent =
       await this.credentialComponentRepository.getCredentialComponentByCredentialName(
-        credential.credentialName
+        credential.credentialName,
       );
     if (showCredentials) {
       credential.encryptedData = await decryptCredentialData(
-        credential.encryptedData
+        credential.encryptedData,
       );
     } else {
       credential.encryptedData = await decryptCredentialData(
         credential.encryptedData,
         credential.credentialName,
-        { [credential.credentialName]: credentialComponent }
+        { [credential.credentialName]: credentialComponent },
       );
     }
 
@@ -84,7 +84,7 @@ export class CredentialService {
   //Create credential
   async createCredential(
     credential: CreateCredentialRequestDTO,
-    user: CurrentUserDTO
+    user: CurrentUserDTO,
   ): Promise<boolean> {
     //check if credential belongs to users tenants
     const userTenantIds = user.tenants.map((ut) => ut.tenant.id);
@@ -99,7 +99,7 @@ export class CredentialService {
     newCredential.tenantId = credential.tenantId;
     //Encrypt
     newCredential.encryptedData = await encryptCredentialData(
-      credential.encryptedData
+      credential.encryptedData,
     );
     await this.credentialRepository.createCredential(newCredential);
     return true;
@@ -109,12 +109,11 @@ export class CredentialService {
   async updateCredential(
     credentialId: string,
     credential: UpdateCredentialRequestDTO,
-    user?: CurrentUserDTO
+    user?: CurrentUserDTO,
   ) {
     //Find credential
-    const credentialToUpdate = await this.credentialRepository.getCredential(
-      credentialId
-    );
+    const credentialToUpdate =
+      await this.credentialRepository.getCredential(credentialId);
     if (!credentialToUpdate) {
       throw new AppException(ResponseCode.STATUS_1011_NOT_FOUND);
     }
@@ -132,7 +131,7 @@ export class CredentialService {
     }
     //Encrypt
     credentialToUpdate.encryptedData = await encryptCredentialData(
-      credential.encryptedData
+      credential.encryptedData,
     );
     await this.credentialRepository.updateCredential(credentialToUpdate);
     return true;
@@ -141,9 +140,8 @@ export class CredentialService {
   //Delete credential
   async deleteCredential(credentialId: string, user?: CurrentUserDTO) {
     try {
-      const credential = await this.credentialRepository.getCredential(
-        credentialId
-      );
+      const credential =
+        await this.credentialRepository.getCredential(credentialId);
       if (!credential) {
         throw new AppException(ResponseCode.STATUS_1011_NOT_FOUND);
       }
@@ -169,18 +167,18 @@ export class CredentialService {
       await this.credentialComponentRepository.getAllCredentialComponents();
     return credentialComponents.map(
       (credentialComponent) =>
-        new CredentialComponentResponseDTO(credentialComponent)
+        new CredentialComponentResponseDTO(credentialComponent),
     );
   }
 
   //get credential component
   async getCredentialComponent(
-    credentialComponentName: string
+    credentialComponentName: string,
   ): Promise<CredentialComponentResponseDTO> {
     return new CredentialComponentResponseDTO(
       await this.credentialComponentRepository.getCredentialComponentByCredentialName(
-        credentialComponentName
-      )
+        credentialComponentName,
+      ),
     );
   }
 }

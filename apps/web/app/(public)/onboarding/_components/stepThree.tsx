@@ -22,7 +22,7 @@ const StepThree = () => {
       <h4 className="text-center">{t("Create Your Team")}</h4>
       <h1 className="text-2xl text-center">
         {t(
-          "Give your team a name to collaborate and work together effectively"
+          "Give your team a name to collaborate and work together effectively",
         )}
       </h1>
 

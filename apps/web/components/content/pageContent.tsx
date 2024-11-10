@@ -25,7 +25,7 @@ const PageContent = ({ children }: PropsWithChildren) => {
   const { selectedTeam } = useTeamSelectionStore();
 
   const userRole = userProfile?.roles.find(
-    (r) => r.tenantId === selectedTeam?.id
+    (r) => r.tenantId === selectedTeam?.id,
   );
 
   useEffect(() => {

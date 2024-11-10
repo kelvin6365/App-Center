@@ -20,7 +20,7 @@ export class PortalPlanController {
   @ApiPagingResponseSchema(HttpStatus.OK, 'OK', PlanDto)
   async getAllPlans() {
     return new AppResponse<PageDTO<PlanDto>>(
-      await this.planService.getAllPlans()
+      await this.planService.getAllPlans(),
     );
   }
 }

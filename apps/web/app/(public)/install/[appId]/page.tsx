@@ -96,7 +96,7 @@ const Page = ({ params }: { params: { appId: string } }) => {
       const res = await API.app.publicInstallPageAppVersion(
         params.appId,
         versionId,
-        password
+        password,
       );
       const { data } = res.data;
       setVersion(data.version);

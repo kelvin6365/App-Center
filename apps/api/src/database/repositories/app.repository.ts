@@ -23,7 +23,7 @@ export class AppRepository extends Repository<App> {
     filters: { key: string; values: string | boolean | any[] | number[] }[],
     sorts: { key: string; value: 'ASC' | 'DESC' }[] = [
       { key: 'createdAt', value: 'DESC' },
-    ]
+    ],
   ): Promise<Pagination<App, IPaginationMeta>> {
     let findOptions: FindManyOptions<App> = {};
     findOptions = {
@@ -71,7 +71,7 @@ export class AppRepository extends Repository<App> {
             ? In(
                 tenantIds.filter(function (e) {
                   return values.indexOf(e) > -1;
-                })
+                }),
               )
             : In(['00000000-0000-0000-0000-000000000000']),
         };

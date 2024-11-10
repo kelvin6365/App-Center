@@ -97,7 +97,7 @@ const EditAppUserPermissionDialog = ({
           !u.roles
             .filter((r) => r.tenantId === selectedTeam.id)
             .map((r) => r.type)
-            .includes(RoleType.ADMIN)
+            .includes(RoleType.ADMIN),
       );
       if (validUser) {
         tableRef?.current?.addUser(validUser);
@@ -144,7 +144,7 @@ const EditAppUserPermissionDialog = ({
             userId: requestKeys[uk],
             appId: app!.id,
             permissions: permissionKeys.filter(
-              (p) => userPermissions[userId][p] === true
+              (p) => userPermissions[userId][p] === true,
             ),
           });
         }

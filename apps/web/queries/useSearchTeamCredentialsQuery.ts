@@ -1,12 +1,12 @@
-import { useQuery } from '@tanstack/react-query';
-import API from '@/services/api';
-import { Tenant } from '../types/PortalUserProfile';
+import { useQuery } from "@tanstack/react-query";
+import API from "@/services/api";
+import { Tenant } from "../types/PortalUserProfile";
 
 const useSearchTeamCredentialsQuery = ({
   selectedTeam,
   page,
   limit,
-  searchQuery = '',
+  searchQuery = "",
   tags = [],
   sorting = [],
 }: {
@@ -17,13 +17,13 @@ const useSearchTeamCredentialsQuery = ({
   tags?: string[];
   sorting?: {
     key: string;
-    value: 'ASC' | 'DESC';
+    value: "ASC" | "DESC";
   }[];
 }) => {
   const { data, isLoading, isError, error, refetch, isRefetching } = useQuery({
     queryKey: [
       selectedTeam,
-      'teamCredentials',
+      "teamCredentials",
       page,
       limit,
       tags,

@@ -13,7 +13,7 @@ export function ApiPagingResponseSchema(
   httpStatus: number,
   description: string,
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  dataDto: any
+  dataDto: any,
 ) {
   const httpStatusDecorator = [
     ApiResponse({ status: HttpStatus.BAD_REQUEST, description: 'Bad Request' }),
@@ -43,6 +43,6 @@ export function ApiPagingResponseSchema(
         ],
       },
     }),
-    ...httpStatusDecorator
+    ...httpStatusDecorator,
   );
 }

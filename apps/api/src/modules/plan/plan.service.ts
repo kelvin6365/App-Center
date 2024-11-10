@@ -13,7 +13,7 @@ export class PlanService {
     const plans = await this.planRepository.getAllActivePlans();
     return new PageDTO(
       plans.map((plan) => new PlanDto(plan)),
-      new MetaDTO()
+      new MetaDTO(),
     );
   }
 }

@@ -49,7 +49,7 @@ const AllAppsPage = () => {
       setCurrentPage(page);
       router.push(`/apps/all?page=${page}`);
     },
-    [router]
+    [router],
   );
 
   useEffect(() => {

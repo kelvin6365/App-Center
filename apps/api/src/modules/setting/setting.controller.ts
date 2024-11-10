@@ -32,10 +32,10 @@ export class SettingController {
   @ApiBearerAuth()
   @ApiResponseSchema(HttpStatus.OK, 'OK', SettingListDTO)
   async findAll(
-    @CurrentUser() user: CurrentUserDTO
+    @CurrentUser() user: CurrentUserDTO,
   ): Promise<AppResponse<SettingListDTO>> {
     return new AppResponse<SettingListDTO>(
-      await this.settingService.findAll(user)
+      await this.settingService.findAll(user),
     );
   }
 
@@ -43,10 +43,10 @@ export class SettingController {
   @Post('')
   @ApiResponseSchema(HttpStatus.OK, 'OK')
   async create(
-    @Body() createSettingDTO: CreateSettingDTO
+    @Body() createSettingDTO: CreateSettingDTO,
   ): Promise<AppResponse<boolean>> {
     return new AppResponse<boolean>(
-      await this.settingService.createSetting(createSettingDTO)
+      await this.settingService.createSetting(createSettingDTO),
     );
   }
 
@@ -54,10 +54,10 @@ export class SettingController {
   @Put('')
   @ApiResponseSchema(HttpStatus.OK, 'OK')
   async update(
-    @Body() updateSettingDTO: UpdateSettingDTO
+    @Body() updateSettingDTO: UpdateSettingDTO,
   ): Promise<AppResponse<boolean>> {
     return new AppResponse<boolean>(
-      await this.settingService.updateSetting(updateSettingDTO)
+      await this.settingService.updateSetting(updateSettingDTO),
     );
   }
 
@@ -66,7 +66,7 @@ export class SettingController {
   @ApiResponseSchema(HttpStatus.OK, 'OK', SettingDTO)
   async findByKey(@Param('key') key: string): Promise<AppResponse<SettingDTO>> {
     return new AppResponse<SettingDTO>(
-      await this.settingService.getSettingByKey(key)
+      await this.settingService.getSettingByKey(key),
     );
   }
 }

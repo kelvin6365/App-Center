@@ -92,7 +92,7 @@ const JiraIssuesDialog = ({
                       "h-fit my-[0.2rem] p-[.3rem] flex rounded-full",
                       loading
                         ? "cursor-not-allowed"
-                        : "cursor-pointer hover:bg-blue-gray-200/40"
+                        : "cursor-pointer hover:bg-blue-gray-200/40",
                     )}
                   >
                     <MdDelete

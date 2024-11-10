@@ -32,7 +32,7 @@ export class AppVersionRepository extends Repository<AppVersion> {
     filters: { key: string; values: string | boolean | any[] | number[] }[],
     sorts: { key: string; value: 'ASC' | 'DESC' }[] = [
       { key: 'createdAt', value: 'DESC' },
-    ]
+    ],
   ): Promise<Pagination<AppVersion, IPaginationMeta>> {
     let findOptions: FindManyOptions<AppVersion> = {};
     findOptions = {
@@ -84,7 +84,7 @@ export class AppVersionRepository extends Repository<AppVersion> {
   getAppVersionByIdAndAppId(
     id: string,
     appId: string,
-    withDeleted = false
+    withDeleted = false,
   ): Promise<AppVersion> {
     return this.findOne({
       where: { id, appId },

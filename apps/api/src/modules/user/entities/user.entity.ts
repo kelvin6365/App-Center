@@ -52,7 +52,7 @@ export class User extends BaseEntity {
     (userPermission: UserPermission) => userPermission.user,
     {
       cascade: true,
-    }
+    },
   )
   permissions: UserPermission[];
 

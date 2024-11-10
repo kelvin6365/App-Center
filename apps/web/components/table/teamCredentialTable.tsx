@@ -74,7 +74,7 @@ const TeamCredentialTable = React.forwardRef<TableRef>((_, ref) => {
   const [itemsPerPage] = useState(10);
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
-    []
+    [],
   );
   const [columnVisibility, setColumnVisibility] =
     React.useState<VisibilityState>({});
@@ -183,7 +183,7 @@ const TeamCredentialTable = React.forwardRef<TableRef>((_, ref) => {
         },
         cell: ({ row }) => {
           const target = availableCredentialComponents.find(
-            (c) => c.name === row.original.credentialName
+            (c) => c.name === row.original.credentialName,
           );
           return (
             <div className="flex space-x-2">
@@ -313,7 +313,7 @@ const TeamCredentialTable = React.forwardRef<TableRef>((_, ref) => {
         },
       },
     ],
-    [availableCredentialComponents]
+    [availableCredentialComponents],
   );
 
   const data: Credential[] = React.useMemo(() => {
@@ -404,7 +404,7 @@ const TeamCredentialTable = React.forwardRef<TableRef>((_, ref) => {
                         ? null
                         : flexRender(
                             header.column.columnDef.header,
-                            header.getContext()
+                            header.getContext(),
                           )}
                     </TableHead>
                   );
@@ -423,7 +423,7 @@ const TeamCredentialTable = React.forwardRef<TableRef>((_, ref) => {
                     <TableCell key={cell.id}>
                       {flexRender(
                         cell.column.columnDef.cell,
-                        cell.getContext()
+                        cell.getContext(),
                       )}
                     </TableCell>
                   ))}
@@ -477,7 +477,7 @@ const TeamCredentialTable = React.forwardRef<TableRef>((_, ref) => {
       <SearchCredentialTypeDialog
         title={t("Add new credential")}
         description={t(
-          "This is how others will see your credentials on the site"
+          "This is how others will see your credentials on the site",
         )}
         open={openSearch}
         onClose={() => {

@@ -24,7 +24,7 @@ export class UserRoleRepository extends Repository<UserRole> {
   findUserRoleByTenantIdAndRoleIdNotIncludeUserId(
     userId: string,
     tenantId: string,
-    roleId: string
+    roleId: string,
   ) {
     return this.find({
       where: {
@@ -42,7 +42,7 @@ export class UserRoleRepository extends Repository<UserRole> {
   async removeUserRoleByUserIdAndTenantId(
     userId: string,
     tenantId: string,
-    updatedBy: string
+    updatedBy: string,
   ) {
     const userRole: UserRole = await this.findOne({
       where: {

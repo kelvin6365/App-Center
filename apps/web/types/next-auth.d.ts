@@ -1,6 +1,6 @@
-import { DefaultSession } from 'next-auth';
-import 'next-auth/jwt';
-import { UserStatus } from './UserStatus';
+import { DefaultSession } from "next-auth";
+import "next-auth/jwt";
+import { UserStatus } from "./UserStatus";
 export interface CommonUserProperties {
   accessToken: string;
   refreshToken: string;
@@ -12,13 +12,13 @@ export interface CommonUserProperties {
   error?: string;
 }
 
-declare module 'next-auth' {
+declare module "next-auth" {
   type User = CommonUserProperties;
   interface Session extends DefaultSession {
     user: User;
   }
 }
 
-declare module 'next-auth/jwt' {
+declare module "next-auth/jwt" {
   type JWT = CommonUserProperties;
 }

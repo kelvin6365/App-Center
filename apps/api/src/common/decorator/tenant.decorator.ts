@@ -18,5 +18,5 @@ export const CurrentTenant = createParamDecorator(
     }
 
     return tenantId;
-  }
+  },
 );

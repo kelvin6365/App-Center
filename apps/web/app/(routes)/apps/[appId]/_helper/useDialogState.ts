@@ -1,11 +1,11 @@
-import { AppVersion } from '@/types/AppVersion';
-import { useState } from 'react';
+import { AppVersion } from "@/types/AppVersion";
+import { useState } from "react";
 
 const useDialogState = () => {
   const [openPostman, setOpenPostman] = useState(false);
   const [openQRCode, setOpenQRCode] = useState({
     open: false,
-    data: '',
+    data: "",
   });
   const [openGitLab, setOpenGitLab] = useState(false);
   const [openEditApp, setOpenEditApp] = useState(false);

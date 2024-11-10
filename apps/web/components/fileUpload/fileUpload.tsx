@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { UseFormRegister } from 'react-hook-form';
+import React, { useState } from "react";
+import { UseFormRegister } from "react-hook-form";
 
 const FileUpload = React.forwardRef<
   HTMLInputElement,
@@ -10,7 +10,7 @@ const FileUpload = React.forwardRef<
     loading: boolean;
     accept?: string;
   }
->(({ onChange, onBlur, name, errors, loading, accept = 'image/*' }, ref) => {
+>(({ onChange, onBlur, name, errors, loading, accept = "image/*" }, ref) => {
   const [files, setFiles] = useState<FileList | null>(null);
   return (
     <>
@@ -21,8 +21,8 @@ const FileUpload = React.forwardRef<
         >
           {(files?.length ?? 0) > 0 ? (
             <div className="relative flex h-full pointer-events-none">
-              {['jpg', 'jpeg', 'png'].indexOf(
-                files?.[0].name.split('.').pop() ?? ''
+              {["jpg", "jpeg", "png"].indexOf(
+                files?.[0].name.split(".").pop() ?? "",
               ) !== -1 ? (
                 <img
                   // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
@@ -78,10 +78,10 @@ const FileUpload = React.forwardRef<
         </label>
       </div>
       {errors[name] != null && (
-        <p className={'text-red-500 text-sm p-1'}>{errors[name]?.message}</p>
+        <p className={"text-red-500 text-sm p-1"}>{errors[name]?.message}</p>
       )}
     </>
   );
 });
-FileUpload.displayName = 'FileUpload';
+FileUpload.displayName = "FileUpload";
 export default FileUpload;

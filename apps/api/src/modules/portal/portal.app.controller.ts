@@ -137,7 +137,7 @@ export class PortalAppController {
         files: 1,
         fileSize: 1024 * 1024,
       },
-      fileFilter: (req: any, file: any, cb: any) => {
+      fileFilter: (_req: any, file: any, cb: any) => {
         if (
           Object.keys(ImageAllowedType)
             .map((t) => t.toLocaleLowerCase())
@@ -185,7 +185,7 @@ export class PortalAppController {
         files: 1,
         fileSize: 1024 * 1024,
       },
-      fileFilter: (req: any, file: any, cb: any) => {
+      fileFilter: (_req: any, file: any, cb: any) => {
         if (
           Object.keys(ImageAllowedType)
             .map((t) => t.toLocaleLowerCase())
@@ -209,7 +209,7 @@ export class PortalAppController {
     }),
   )
   async patchApp(
-    @Param('id') id,
+    @Param('id') id: string,
     @UploadedFile()
     file: Express.Multer.File,
     @Body() patchApp: PatchAppDTO,
@@ -229,7 +229,7 @@ export class PortalAppController {
         files: 1,
         fileSize: 1024 * 1024,
       },
-      fileFilter: (req: any, file: any, cb: any) => {
+      fileFilter: (_req: any, file: any, cb: any) => {
         if (
           Object.keys(ImageAllowedType)
             .map((t) => t.toLocaleLowerCase())
@@ -253,7 +253,7 @@ export class PortalAppController {
     }),
   )
   async updateApp(
-    @Param('id') id,
+    @Param('id') id: string,
     @UploadedFile()
     file: Express.Multer.File,
     @Body() updateApp: UpdateAppDTO,
@@ -265,10 +265,10 @@ export class PortalAppController {
   }
 
   //Delete an existing app
-  @Delete(':id')
-  async deleteApp(@Param('id') id): Promise<any> {
-    // return this.appService.deleteApp(id);
-  }
+  // @Delete(':id')
+  // async deleteApp(@Param('id') _id: string): Promise<any> {
+  // return this.appService.deleteApp(id);
+  // }
 
   //Get a single app with all its versions. support filtering by tags
   @Get(':id/version/search')
@@ -294,6 +294,7 @@ export class PortalAppController {
     @Query('limit', new DefaultValuePipe(10), ParseIntPipe) limit = 10,
     @Param('id', new ParseUUIDPipe()) id: string,
     @CurrentUser() currentUser: CurrentUserDTO,
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     @CurrentTenant() _: string,
   ): Promise<AppResponse<PageDTO<AppVersionDTO>>> {
     return new AppResponse<PageDTO<AppVersionDTO>>(
@@ -321,7 +322,7 @@ export class PortalAppController {
       limits: {
         files: 1,
       },
-      fileFilter: (req: any, file: any, cb: any) => {
+      fileFilter: (_req: any, file: any, cb: any) => {
         if (
           Object.keys(AppAllowedType)
             .map((t) => t.toLocaleLowerCase())
@@ -358,6 +359,7 @@ export class PortalAppController {
     file: Express.Multer.File,
     @Body() appVersion: CreateAppVersionDTO,
     @CurrentUser() user: CurrentUserDTO,
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     @CurrentTenant() _: string,
   ): Promise<AppResponse<boolean>> {
     return new AppResponse<boolean>(
@@ -371,6 +373,7 @@ export class PortalAppController {
   async getAllAppVersionTags(
     @Param('id', new ParseUUIDPipe()) id: string,
     @CurrentUser() user: CurrentUserDTO,
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     @CurrentTenant() _: string,
   ): Promise<AppResponse<AppVersionTagDTO[]>> {
     return new AppResponse<AppVersionTagDTO[]>(
@@ -384,6 +387,7 @@ export class PortalAppController {
   @ApiResponseSchema(HttpStatus.OK, 'OK')
   async getApiKey(
     @Param('id', new ParseUUIDPipe()) id: string,
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     @CurrentTenant() _: string,
   ): Promise<AppResponse<string>> {
     return new AppResponse<string>(await this.appService.getApiKey(id));
@@ -463,6 +467,7 @@ export class PortalAppController {
     @Param('id', new ParseUUIDPipe()) id: string,
     @Param('versionId', new ParseUUIDPipe()) versionId: string,
     @CurrentUser() user: CurrentUserDTO,
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     @CurrentTenant() _: string,
   ) {
     return new AppResponse(
@@ -479,6 +484,7 @@ export class PortalAppController {
     @Param('id', new ParseUUIDPipe()) id: string,
     @Query('query') query: string,
     @CurrentUser() user: CurrentUserDTO,
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     @CurrentTenant() _: string,
   ): Promise<AppResponse<PageDTO<SearchJiraIssueDTO>>> {
     return new AppResponse<PageDTO<SearchJiraIssueDTO>>(
@@ -501,6 +507,7 @@ export class PortalAppController {
     @Param('versionId', new ParseUUIDPipe()) versionId: string,
     @Param('issueId', new ParseUUIDPipe()) issueId: string,
     @CurrentUser() user: CurrentUserDTO,
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     @CurrentTenant() _: string,
   ): Promise<AppResponse<boolean>> {
     return new AppResponse(

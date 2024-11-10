@@ -1,11 +1,11 @@
-import { useQuery } from '@tanstack/react-query';
-import API from '@/services/api';
+import { useQuery } from "@tanstack/react-query";
+import API from "@/services/api";
 
 const useSearchTeamUsersQuery = ({
   selectedTeam,
   page,
   limit,
-  searchQuery = '',
+  searchQuery = "",
   sorting = [],
 }: {
   selectedTeam: { id: string; name: string } | null;
@@ -14,7 +14,7 @@ const useSearchTeamUsersQuery = ({
   searchQuery?: string;
   sorting?: {
     key: string;
-    value: 'ASC' | 'DESC';
+    value: "ASC" | "DESC";
   }[];
 }) => {
   const { data, isLoading, isError, error, refetch, isRefetching } = useQuery({

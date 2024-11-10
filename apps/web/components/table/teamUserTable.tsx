@@ -68,7 +68,7 @@ const TeamMemberTable = React.forwardRef<TableRef>((_, ref) => {
   const [itemsPerPage] = useState(10);
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
-    []
+    [],
   );
   const [columnVisibility, setColumnVisibility] =
     React.useState<VisibilityState>({});
@@ -390,7 +390,7 @@ const TeamMemberTable = React.forwardRef<TableRef>((_, ref) => {
         },
       },
     ],
-    []
+    [],
   );
 
   const data: PortalUserProfile[] = React.useMemo(() => {
@@ -483,7 +483,7 @@ const TeamMemberTable = React.forwardRef<TableRef>((_, ref) => {
                         ? null
                         : flexRender(
                             header.column.columnDef.header,
-                            header.getContext()
+                            header.getContext(),
                           )}
                     </TableHead>
                   );
@@ -502,7 +502,7 @@ const TeamMemberTable = React.forwardRef<TableRef>((_, ref) => {
                     <TableCell key={cell.id}>
                       {flexRender(
                         cell.column.columnDef.cell,
-                        cell.getContext()
+                        cell.getContext(),
                       )}
                     </TableCell>
                   ))}

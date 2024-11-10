@@ -16,7 +16,7 @@ import { LocalAdminStrategy } from '../auth/admin/local.admin.strategy';
         secret: configService.get<string>('jwt.secret'),
         signOptions: {
           expiresIn: `${configService.get<number>(
-            'jwt.user.accessTokenExpiresIn'
+            'jwt.user.accessTokenExpiresIn',
           )}${configService.get<number>('jwt.user.timeFormats')}`,
         },
       }),

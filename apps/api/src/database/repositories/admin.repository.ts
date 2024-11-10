@@ -23,7 +23,7 @@ import { ResponseCode } from '../../common/response/response.code';
 export class AdminRepository extends Repository<Admin> {
   constructor(
     @Inject(Logger) private readonly logger: LoggerService,
-    dataSource: DataSource
+    dataSource: DataSource,
   ) {
     super(Admin, dataSource.createEntityManager());
   }
@@ -31,7 +31,7 @@ export class AdminRepository extends Repository<Admin> {
   //find admin by email for match password
   async findAdminByEmailWithPassword(
     email: string,
-    withDeleted = false
+    withDeleted = false,
   ): Promise<Admin> {
     return await this.findOne({
       select: [
@@ -94,7 +94,7 @@ export class AdminRepository extends Repository<Admin> {
     filters: { key: string; values: string | boolean | any[] | number[] }[],
     sorts: { key: string; value: 'ASC' | 'DESC' }[] = [
       { key: 'createdAt', value: 'DESC' },
-    ]
+    ],
   ): Promise<Pagination<Admin, IPaginationMeta>> {
     let findOptions: FindManyOptions<Admin> = {};
     findOptions = {
@@ -143,7 +143,7 @@ export class AdminRepository extends Repository<Admin> {
           await transactionalEntityManager.update(Admin, { id }, { updatedBy });
         }
         await transactionalEntityManager.softDelete(Admin, { id });
-      }
+      },
     );
   }
 
@@ -151,7 +151,7 @@ export class AdminRepository extends Repository<Admin> {
   async updateAdminStatus(
     id: string,
     status: AdminStatus,
-    updatedBy?: string
+    updatedBy?: string,
   ): Promise<UpdateResult> {
     if (updatedBy) {
       return await this.update(id, { status, updatedBy });

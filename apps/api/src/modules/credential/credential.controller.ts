@@ -1,29 +1,11 @@
-import {
-  Body,
-  Controller,
-  Delete,
-  Get,
-  HttpStatus,
-  Param,
-  Post,
-  Put,
-} from '@nestjs/common';
-import { CredentialService } from './credential.service';
-import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
-import { ApiResponseSchema } from '../../common/decorator/swagger.decorator';
-import { AppResponse } from '../../common/response/app.response';
-import { CredentialResponseDTO } from './dto/credential.response.dto';
-import { CreateCredentialRequestDTO } from './dto/create.credential.request.dto';
-import { UpdateCredentialRequestDTO } from './dto/update.credential.request.dto';
-import { CurrentUser } from '../../common/decorator/user.decorator';
-import { CurrentUserDTO } from '../auth/dto/current.user.dto';
-import { CredentialComponentResponseDTO } from './dto/credential.component.response.dto';
+import { Controller } from '@nestjs/common';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 
 @ApiTags('Credential')
 @ApiBearerAuth()
 @Controller({ path: 'credential', version: ['1'] })
 export class CredentialController {
-  constructor(private readonly credentialService: CredentialService) {}
+  constructor() {}
 
   // //Get All Credential components
   // @Get('component')

@@ -26,7 +26,7 @@ const LoginForm = () => {
   const t = useTranslations("Auth");
   const [isLoading, setIsLoading] = useState(false);
   const [renderProviders, setRenderProviders] = useState<JSX.Element[] | null>(
-    null
+    null,
   );
   const form = useForm<z.infer<typeof loginFormSchema>>({
     resolver: zodResolver(loginFormSchema),
@@ -109,7 +109,7 @@ const LoginForm = () => {
     const render = [SplitElement];
     const providers = await getProviders();
     const githubProvider = Object.keys(providers ?? {}).find(
-      (provider) => provider === "github"
+      (provider) => provider === "github",
     );
     if (githubProvider) {
       render.push(
@@ -121,7 +121,7 @@ const LoginForm = () => {
           }}
         >
           GitHub
-        </Button>
+        </Button>,
       );
     }
     setRenderProviders(render.length > 1 ? render : null);

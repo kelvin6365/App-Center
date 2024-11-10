@@ -48,7 +48,7 @@ export class AppVersion extends BaseEntity {
     {
       cascade: true,
       eager: true,
-    }
+    },
   )
   jiraIssues: AppVersionJiraIssue[];
 }

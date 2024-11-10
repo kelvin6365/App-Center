@@ -11,7 +11,7 @@ export class UserPermissionRepository extends Repository<UserPermission> {
 
   //Add user permissions
   async addPermissions(
-    permissions: UserPermission[]
+    permissions: UserPermission[],
   ): Promise<UserPermission[]> {
     return this.save(permissions);
   }
@@ -29,7 +29,7 @@ export class UserPermissionRepository extends Repository<UserPermission> {
     userId: string,
     appId: string,
     targetPermissionIds: AppsPermission[],
-    updatedBy?: string
+    updatedBy?: string,
   ) {
     if (updatedBy) {
       await this.update(
@@ -38,7 +38,7 @@ export class UserPermissionRepository extends Repository<UserPermission> {
           refId: appId,
           permissionId: In(targetPermissionIds),
         },
-        { updatedBy }
+        { updatedBy },
       );
     }
     return await this.softDelete({

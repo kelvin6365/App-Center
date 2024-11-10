@@ -1,12 +1,12 @@
-import { create } from 'zustand';
+import { create } from "zustand";
 
 interface UserPreferenceState {
-  theme: 'light' | 'dark';
-  setTheme: (theme: 'light' | 'dark') => void;
+  theme: "light" | "dark";
+  setTheme: (theme: "light" | "dark") => void;
 }
 
 const useUserPreferenceStore = create<UserPreferenceState>((set) => ({
-  theme: 'light',
+  theme: "light",
   setTheme: (theme) => set({ theme }),
 }));
 

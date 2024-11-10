@@ -1,5 +1,5 @@
-import { Icons } from '@/components/icons';
-import { RoleType } from '@/types/RoleType';
+import { Icons } from "@/components/icons";
+import { RoleType } from "@/types/RoleType";
 
 export interface NavItem {
   title: string;

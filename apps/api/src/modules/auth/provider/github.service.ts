@@ -16,14 +16,14 @@ export class GithubAuthService {
     @Inject(Logger) private readonly logger: LoggerService,
     // private configService: ConfigService,
     private userService: UserService,
-    private authService: AuthService
+    private authService: AuthService,
   ) {}
 
   async handleGithubAuth(code: string) {
     try {
       const githubUser = await this.getGithubUser(code);
       let user = await this.userService.findUserByEmailWithPassword(
-        githubUser.email
+        githubUser.email,
       );
       if (!user) {
         await this.userService.signUpGithub(
@@ -32,15 +32,15 @@ export class GithubAuthService {
             name: githubUser.name,
             username: githubUser.email,
             providerId: githubUser.id.toString(),
-          })
+          }),
         );
       }
 
       user = await this.userService.getUserByUsernameWithDeletedFalse(
-        githubUser.email
+        githubUser.email,
       );
       return await this.authService.signIn(
-        new CurrentUserDTO().fromEntity(user)
+        new CurrentUserDTO().fromEntity(user),
       );
     } catch (error) {
       console.error(error);

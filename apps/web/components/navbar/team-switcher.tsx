@@ -197,11 +197,11 @@ export default function TeamSwitcher({ className }: TeamSwitcherProps) {
                               "ml-auto h-4 w-4",
                               selectedTeam.id === id
                                 ? "opacity-100"
-                                : "opacity-0"
+                                : "opacity-0",
                             )}
                           />
                         </CommandItem>
-                      )
+                      ),
                     )}
                 </CommandGroup>
               ))}

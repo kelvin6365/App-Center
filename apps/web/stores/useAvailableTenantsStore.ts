@@ -1,5 +1,5 @@
-import useAvailableTenantsQuery from '@/queries/useAvailableTenantsQuery';
-import { create } from 'zustand';
+import useAvailableTenantsQuery from "@/queries/useAvailableTenantsQuery";
+import { create } from "zustand";
 
 interface AvailableTenantsState {
   availableTenants: {

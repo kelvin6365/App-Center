@@ -109,7 +109,7 @@ const API = {
     register: async (
       email: string,
       password: string,
-      name: string
+      name: string,
     ): Promise<
       AxiosResponse<{
         data: boolean;
@@ -123,7 +123,7 @@ const API = {
       });
     },
     refreshToken: async (
-      refreshToken: string
+      refreshToken: string,
     ): Promise<
       AxiosResponse<{
         data: any;
@@ -199,7 +199,7 @@ const API = {
         page?: number;
         limit?: number;
         query?: string;
-      }
+      },
     ): Promise<
       AxiosResponse<{
         data: {
@@ -218,7 +218,7 @@ const API = {
       });
     },
     getApp: (
-      appId: string
+      appId: string,
     ): Promise<
       AxiosResponse<{
         data: App;
@@ -228,7 +228,7 @@ const API = {
       return API.apiInstance.get(API.API_PATH.APP.GET_APP(appId));
     },
     getAppVersionTags: (
-      appId: string
+      appId: string,
     ): Promise<
       AxiosResponse<{
         data: AppVersionTag[];
@@ -246,7 +246,7 @@ const API = {
         extra: {
           [key: string]: any;
         };
-      }
+      },
     ): Promise<
       AxiosResponse<{
         data: any;
@@ -281,7 +281,7 @@ const API = {
         extra: {
           [key: string]: any;
         };
-      }
+      },
     ) => {
       const { name, description, icon } = data;
       const form = new FormData();
@@ -315,7 +315,7 @@ const API = {
         tags: string;
         installPassword: string;
         jiraIssues?: string;
-      }
+      },
     ) => {
       const {
         name,
@@ -343,12 +343,12 @@ const API = {
           headers: {
             "Content-type": "multipart/form-data",
           },
-        }
+        },
       );
     },
     deleteVersion: (
       appId: string,
-      versionId: string
+      versionId: string,
     ): Promise<
       AxiosResponse<{
         status: ResponseStatus;
@@ -356,27 +356,27 @@ const API = {
       }>
     > => {
       return API.apiInstance.delete(
-        API.API_PATH.APP.DELETE_VERSION(appId, versionId)
+        API.API_PATH.APP.DELETE_VERSION(appId, versionId),
       );
     },
     publicInstallPageAppDetails: (appId: string) => {
       return API.apiInstance.get(
-        API.API_PATH.APP.PUBLIC_INSTALL_PAGE_APP_DETAILS(appId)
+        API.API_PATH.APP.PUBLIC_INSTALL_PAGE_APP_DETAILS(appId),
       );
     },
     publicInstallPageAppVersion: (
       appId: string,
       versionId: string,
-      password: string
+      password: string,
     ) => {
       return API.apiInstance.post(
         API.API_PATH.APP.PUBLIC_INSTALL_PAGE_APP_VERSIONS(appId, versionId),
-        { password }
+        { password },
       );
     },
     searchJiraIssues: (
       appId: string,
-      query: string
+      query: string,
     ): Promise<
       AxiosResponse<{
         data: {
@@ -393,7 +393,7 @@ const API = {
     },
     removeJiraIssue: (appId: string, versionId: string, issueId: string) => {
       return API.apiInstance.delete(
-        API.API_PATH.APP.REMOVE_JIRA_ISSUE(appId, versionId, issueId)
+        API.API_PATH.APP.REMOVE_JIRA_ISSUE(appId, versionId, issueId),
       );
     },
   },
@@ -420,7 +420,7 @@ const API = {
         page?: number;
         limit?: number;
         query?: string;
-      }
+      },
     ): Promise<
       AxiosResponse<{
         data: {
@@ -439,7 +439,7 @@ const API = {
       });
     },
     getUser: (
-      userId: string
+      userId: string,
     ): Promise<
       AxiosResponse<{
         data: PortalUserProfile;
@@ -468,7 +468,7 @@ const API = {
       });
     },
     profile: (
-      accessToken?: string
+      accessToken?: string,
     ): Promise<
       AxiosResponse<{
         data: PortalUserProfile;
@@ -561,7 +561,7 @@ const API = {
         {
           appId,
           permissions,
-        }
+        },
       );
     },
     removeUserFromTenant: ({
@@ -575,7 +575,7 @@ const API = {
       }>
     > => {
       return API.apiInstance.delete(
-        API.API_PATH.USER.REMOVE_USER_FROM_TENANT(userId)
+        API.API_PATH.USER.REMOVE_USER_FROM_TENANT(userId),
       );
     },
     inviteUserToTenant: ({
@@ -628,18 +628,18 @@ const API = {
     }) => {
       return API.apiInstance.post(
         API.API_PATH.CREDENTIAL.CREATE_CREDENTIAL,
-        data
+        data,
       );
     },
     updateCredential: (data: any) => {
       return API.apiInstance.put(
         API.API_PATH.CREDENTIAL.UPDATE_CREDENTIAL(data.id),
-        data
+        data,
       );
     },
     deleteCredential: (id: string) => {
       return API.apiInstance.delete(
-        API.API_PATH.CREDENTIAL.DELETE_CREDENTIAL(id)
+        API.API_PATH.CREDENTIAL.DELETE_CREDENTIAL(id),
       );
     },
     getAllCredentialComponents: (): Promise<
@@ -649,12 +649,12 @@ const API = {
       }>
     > => {
       return API.apiInstance.get(
-        API.API_PATH.CREDENTIAL.GET_ALL_CREDENTIAL_COMPONENTS
+        API.API_PATH.CREDENTIAL.GET_ALL_CREDENTIAL_COMPONENTS,
       );
     },
     getCredentialComponent: (name: string) => {
       return API.apiInstance.get(
-        API.API_PATH.CREDENTIAL.GET_CREDENTIAL_COMPONENT(name)
+        API.API_PATH.CREDENTIAL.GET_CREDENTIAL_COMPONENT(name),
       );
     },
   },
@@ -715,7 +715,7 @@ API.apiInstance.interceptors.response.use(
       }
     }
     return Promise.reject(err);
-  }
+  },
 );
 
 export default API;

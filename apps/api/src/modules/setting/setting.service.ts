@@ -16,14 +16,14 @@ export class SettingService {
   //get all settings
   async findAll(
     user: CurrentUserDTO,
-    withDeleted = false
+    withDeleted = false,
   ): Promise<SettingListDTO> {
     const settings = await this.settingRepository.findAll(
       user.id !== undefined,
-      withDeleted
+      withDeleted,
     );
     return new SettingListDTO(
-      settings.map((setting) => new SettingDTO(setting))
+      settings.map((setting) => new SettingDTO(setting)),
     );
   }
 

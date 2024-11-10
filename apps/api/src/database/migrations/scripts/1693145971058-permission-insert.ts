@@ -11,7 +11,7 @@ export class PermissionInsert1693145971058 implements MigrationInterface {
     `);
   }
 
-  public async down(queryRunner: QueryRunner): Promise<void> {
+  public async down(): Promise<void> {
     return;
   }
 }

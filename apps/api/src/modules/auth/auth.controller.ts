@@ -40,7 +40,7 @@ export class AuthController {
   @ApiResponseSchema(HttpStatus.OK, 'OK', LoginResponseDTO)
   async login(
     @CurrentUser() user: CurrentUserDTO,
-    @Res({ passthrough: true }) response: Response
+    @Res({ passthrough: true }) response: Response,
   ) {
     response.clearCookie('Authentication');
     const result: LoginResponseDTO = await this.authService.signIn(user);

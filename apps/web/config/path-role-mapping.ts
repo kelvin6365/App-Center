@@ -32,7 +32,7 @@ export function getAllowedRolesForPath(path: string): RoleType[] {
   const config = pathRoleMapping.find(
     (item) =>
       path.startsWith(item.path) ||
-      new RegExp(`^${item.path.replace("*", ".*")}$`).test(path)
+      new RegExp(`^${item.path.replace("*", ".*")}$`).test(path),
   );
   return config ? config.allowedRoles : [];
 }

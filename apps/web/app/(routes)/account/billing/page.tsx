@@ -87,7 +87,7 @@ const BillingPage = () => {
                           key={plan.id}
                           className={cn(
                             "flex items-center p-4 space-x-3 space-y-0 border rounded-md shadow bg-secondary",
-                            field.value === plan.id ? "border-primary" : ""
+                            field.value === plan.id ? "border-primary" : "",
                           )}
                         >
                           <FormControl>

@@ -10,7 +10,7 @@ import { CurrentAdminDTO } from './dto/current.admin.dto';
 export class JwtAdminStrategy extends PassportStrategy(Strategy, 'jwt-admin') {
   constructor(
     readonly configService: ConfigService,
-    private readonly adminService: AdminService
+    private readonly adminService: AdminService,
   ) {
     super({
       jwtFromRequest:
@@ -35,7 +35,7 @@ export class JwtAdminStrategy extends PassportStrategy(Strategy, 'jwt-admin') {
       type: string;
       iat: number;
       exp: number;
-    }
+    },
   ): Promise<CurrentAdminDTO> {
     // {
     //   username: 'admin@admin.com',
@@ -52,7 +52,7 @@ export class JwtAdminStrategy extends PassportStrategy(Strategy, 'jwt-admin') {
 
     const user: CurrentAdminDTO = await this.adminService.validateUser(
       request,
-      payload.username
+      payload.username,
     );
     return user;
   }

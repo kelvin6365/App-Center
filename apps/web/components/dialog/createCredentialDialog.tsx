@@ -59,7 +59,7 @@ const CreateCredentialDialog = ({
   } = form;
 
   const onSubmit: SubmitHandler<CreateCredentialFormInputs> = async (
-    values
+    values,
   ) => {
     console.log(values);
     if (!selectedTeam || !type) {

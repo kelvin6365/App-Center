@@ -6,7 +6,7 @@ export class StripeUtil {
     payload: string | Buffer,
     signature: string,
     secret: string,
-    stripe: Stripe
+    stripe: Stripe,
   ): Stripe.Event {
     return stripe.webhooks.constructEvent(payload, signature, secret);
   }

@@ -34,7 +34,7 @@ const profileFormSchema = z.object({
     .array(
       z.object({
         value: z.string().url({ message: "Please enter a valid URL." }),
-      })
+      }),
     )
     .optional(),
 });
@@ -82,7 +82,7 @@ export default function ProfileForm() {
       refetch().then((result) => {
         const tenants = result.data ?? [];
         const latestTenantInfo = tenants.find(
-          (tenant) => tenant.id === selectedTeam.id
+          (tenant) => tenant.id === selectedTeam.id,
         );
         if (!latestTenantInfo) {
           return;

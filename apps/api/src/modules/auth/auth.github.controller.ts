@@ -12,7 +12,7 @@ export class AuthGithubController {
   @Post('sign-in')
   async githubSignIn(@Body() body: { code: string }) {
     return new AppResponse(
-      await this.githubAuthService.handleGithubAuth(body.code)
+      await this.githubAuthService.handleGithubAuth(body.code),
     );
   }
 }

@@ -1,5 +1,5 @@
-import { useQuery } from '@tanstack/react-query';
-import API from '@/services/api';
+import { useQuery } from "@tanstack/react-query";
+import API from "@/services/api";
 
 const useSearchAppsQuery = ({
   selectedTeam,
@@ -22,7 +22,7 @@ const useSearchAppsQuery = ({
         page,
         limit,
         query: JSON.stringify({
-          query: searchQuery ?? '',
+          query: searchQuery ?? "",
           // filters: [
           //   {
           //     key: 'tenantId',

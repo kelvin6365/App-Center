@@ -296,7 +296,7 @@ const UploadVersionDialog = ({
                               onChange={(e) => {
                                 setValue(
                                   "jiraIssues",
-                                  e.map((i) => i.value)
+                                  e.map((i) => i.value),
                                 );
                               }}
                             />

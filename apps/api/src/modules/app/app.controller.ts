@@ -28,6 +28,7 @@ import { Public } from '../../common/decorator/public';
 import { Roles } from '../../common/decorator/roles.decorator';
 import { ApiResponseSchema } from '../../common/decorator/swagger.decorator';
 import { ApiPagingResponseSchema } from '../../common/decorator/swagger.paging.decorator';
+import { CurrentTenant } from '../../common/decorator/tenant.decorator';
 import { CurrentUser } from '../../common/decorator/user.decorator';
 import { PageDTO } from '../../common/dto/page.dto';
 import { SearchQueryDTO } from '../../common/dto/search.dto';
@@ -48,14 +49,13 @@ import { CreateAppVersionDTO } from './dto/create.app.version.dto';
 import { InstallAppDTO } from './dto/install.app.dto';
 import { InstallAppRequestDTO } from './dto/install.app.request.dto';
 import { UpdateAppDTO } from './dto/update.app.dto';
-import { CurrentTenant } from '../../common/decorator/tenant.decorator';
 
 @ApiTags('App')
 @Controller({ path: 'app', version: ['1'] })
 export class AppController {
   constructor(
     private readonly appService: AppService,
-    private readonly fileService: FileService
+    private readonly fileService: FileService,
   ) {}
 
   //Get a list of apps with search query, tags and sorting
@@ -83,7 +83,7 @@ export class AppController {
     @Query('page', new DefaultValuePipe(1), ParseIntPipe) page = 1,
     @Query('limit', new DefaultValuePipe(10), ParseIntPipe) limit = 10,
     @CurrentUser() currentUser: CurrentUserDTO,
-    @Headers('x-tenant-id') tenantId: string
+    @Headers('x-tenant-id') tenantId: string,
   ): Promise<AppResponse<PageDTO<AppDTO>>> {
     return new AppResponse<PageDTO<AppDTO>>(
       await this.appService.findAll(
@@ -94,8 +94,8 @@ export class AppController {
         query?.filters ?? [],
         query?.sorts ?? [{ key: 'createdAt', value: 'DESC' }],
         currentUser,
-        tenantId
-      )
+        tenantId,
+      ),
     );
   }
 
@@ -104,10 +104,10 @@ export class AppController {
   @ApiParam({ name: 'id', required: true })
   async getApp(
     @Param('id', new ParseUUIDPipe()) id: string,
-    @CurrentUser() currentUser: CurrentUserDTO
+    @CurrentUser() currentUser: CurrentUserDTO,
   ): Promise<AppResponse<AppDTO>> {
     return new AppResponse<AppDTO>(
-      await this.appService.findById(id, false, false, false, currentUser)
+      await this.appService.findById(id, false, false, false, currentUser),
     );
   }
 
@@ -125,7 +125,7 @@ export class AppController {
           Object.keys(ImageAllowedType)
             .map((t) => t.toLocaleLowerCase())
             .indexOf(
-              (mime.extension(file.mimetype) as string).toLocaleLowerCase()
+              (mime.extension(file.mimetype) as string).toLocaleLowerCase(),
             ) !== -1
         ) {
           // Allow storage of file
@@ -135,27 +135,27 @@ export class AppController {
           cb(
             new AppException(
               ResponseCode.STATUS_7000_UNSUPPORTED_FILE_TYPE(file.mimetype),
-              HttpStatus.BAD_REQUEST
+              HttpStatus.BAD_REQUEST,
             ),
-            false
+            false,
           );
         }
       },
-    })
+    }),
   )
   async createApp(
     @UploadedFile(
       new ParseFilePipe({
         fileIsRequired: true,
-      })
+      }),
     )
     file: Express.Multer.File,
     @Body() app: CreateAppDTO,
     @CurrentUser() user: CurrentUserDTO,
-    @CurrentTenant() tenantId: string
+    @CurrentTenant() tenantId: string,
   ): Promise<AppResponse<string>> {
     return new AppResponse<string>(
-      await this.appService.createApp(app, tenantId, file, user)
+      await this.appService.createApp(app, tenantId, file, user),
     );
   }
 
@@ -173,7 +173,7 @@ export class AppController {
           Object.keys(ImageAllowedType)
             .map((t) => t.toLocaleLowerCase())
             .indexOf(
-              (mime.extension(file.mimetype) as string).toLocaleLowerCase()
+              (mime.extension(file.mimetype) as string).toLocaleLowerCase(),
             ) !== -1
         ) {
           // Allow storage of file
@@ -183,31 +183,31 @@ export class AppController {
           cb(
             new AppException(
               ResponseCode.STATUS_7000_UNSUPPORTED_FILE_TYPE(file.mimetype),
-              HttpStatus.BAD_REQUEST
+              HttpStatus.BAD_REQUEST,
             ),
-            false
+            false,
           );
         }
       },
-    })
+    }),
   )
   async updateApp(
-    @Param('id') id,
+    @Param('id') id: string,
     @UploadedFile()
     file: Express.Multer.File,
     @Body() updateApp: UpdateAppDTO,
-    @CurrentUser() user: CurrentUserDTO
+    @CurrentUser() user: CurrentUserDTO,
   ): Promise<AppResponse<boolean>> {
     return new AppResponse<boolean>(
-      await this.appService.updateApp(id, updateApp, file, user)
+      await this.appService.updateApp(id, updateApp, file, user),
     );
   }
 
   //Delete an existing app
-  @Delete(':id')
-  async deleteApp(@Param('id') id): Promise<any> {
-    // return this.appService.deleteApp(id);
-  }
+  // @Delete(':id')
+  // async deleteApp(@Param('id') id): Promise<any> {
+  // return this.appService.deleteApp(id);
+  // }
 
   //Get a single app with all its versions. support filtering by tags
   @Get(':id/version/search')
@@ -232,7 +232,7 @@ export class AppController {
     @Query('page', new DefaultValuePipe(1), ParseIntPipe) page = 1,
     @Query('limit', new DefaultValuePipe(10), ParseIntPipe) limit = 10,
     @Param('id', new ParseUUIDPipe()) id: string,
-    @CurrentUser() currentUser: CurrentUserDTO
+    @CurrentUser() currentUser: CurrentUserDTO,
   ): Promise<AppResponse<PageDTO<AppVersionDTO>>> {
     return new AppResponse<PageDTO<AppVersionDTO>>(
       await this.appService.getAllAppVersions(
@@ -245,8 +245,8 @@ export class AppController {
         },
         query?.filters ?? [],
         query?.sorts ?? [{ key: 'createdAt', value: 'DESC' }],
-        currentUser
-      )
+        currentUser,
+      ),
     );
   }
 
@@ -265,7 +265,7 @@ export class AppController {
           Object.keys(AppAllowedType)
             .map((t) => t.toLocaleLowerCase())
             .indexOf(
-              (mime.extension(file.mimetype) as string).toLocaleLowerCase()
+              (mime.extension(file.mimetype) as string).toLocaleLowerCase(),
             ) !== -1 ||
           Object.keys(AppAllowedType)
             .map((t) => t.toLocaleLowerCase())
@@ -279,27 +279,27 @@ export class AppController {
           cb(
             new AppException(
               ResponseCode.STATUS_7000_UNSUPPORTED_FILE_TYPE(file.mimetype),
-              HttpStatus.BAD_REQUEST
+              HttpStatus.BAD_REQUEST,
             ),
-            false
+            false,
           );
         }
       },
-    })
+    }),
   )
   async addVersion(
     @Param('id') id,
     @UploadedFile(
       new ParseFilePipe({
         fileIsRequired: true,
-      })
+      }),
     )
     file: Express.Multer.File,
-    @Body() appVersion: CreateAppVersionDTO
+    @Body() appVersion: CreateAppVersionDTO,
     // @CurrentUser() user: CurrentUserDTO
   ): Promise<AppResponse<boolean>> {
     return new AppResponse<boolean>(
-      await this.appService.createAppVersion(id, appVersion, file, null, false)
+      await this.appService.createAppVersion(id, appVersion, file, null, false),
     );
   }
 
@@ -308,10 +308,10 @@ export class AppController {
   @ApiParam({ name: 'id', required: true })
   async getAllAppVersionTags(
     @Param('id', new ParseUUIDPipe()) id: string,
-    @CurrentUser() user: CurrentUserDTO
+    @CurrentUser() user: CurrentUserDTO,
   ): Promise<AppResponse<AppVersionTagDTO[]>> {
     return new AppResponse<AppVersionTagDTO[]>(
-      await this.appService.getAllAppVersionTags(id, user)
+      await this.appService.getAllAppVersionTags(id, user),
     );
   }
 
@@ -320,7 +320,7 @@ export class AppController {
   @ApiParam({ name: 'id', required: true })
   @ApiResponseSchema(HttpStatus.OK, 'OK')
   async getApiKey(
-    @Param('id', new ParseUUIDPipe()) id: string
+    @Param('id', new ParseUUIDPipe()) id: string,
   ): Promise<AppResponse<string>> {
     return new AppResponse<string>(await this.appService.getApiKey(id));
   }
@@ -331,10 +331,10 @@ export class AppController {
   @ApiParam({ name: 'id', required: true })
   @ApiResponseSchema(HttpStatus.OK, 'OK')
   async getAppForPublicInstallPage(
-    @Param('id', new ParseUUIDPipe()) id: string
+    @Param('id', new ParseUUIDPipe()) id: string,
   ) {
     return new AppResponse(
-      await this.appService.findById(id, false, true, true)
+      await this.appService.findById(id, false, true, true),
     );
   }
 
@@ -347,10 +347,10 @@ export class AppController {
   async getInstallApp(
     @Param('id', new ParseUUIDPipe()) id: string,
     @Param('versionId', new ParseUUIDPipe()) versionId: string,
-    @Body() dto: InstallAppRequestDTO
+    @Body() dto: InstallAppRequestDTO,
   ): Promise<AppResponse<InstallAppDTO>> {
     return new AppResponse<InstallAppDTO>(
-      await this.appService.getInstallApp(id, versionId, dto.password)
+      await this.appService.getInstallApp(id, versionId, dto.password),
     );
   }
 
@@ -363,15 +363,15 @@ export class AppController {
     @Query('password') password: string,
     @Param('versionId') versionId: string,
     @Param('id', new ParseUUIDPipe()) id: string,
-    @Res() res: Response
+    @Res() res: Response,
   ) {
     await this.appService.findById(id, false, true, true);
     const appVersion = await this.appService.validateInstallPassword(
       versionId,
-      password
+      password,
     );
     const [file, s3Item] = await this.fileService.getFileByFileUUID(
-      appVersion.fileId
+      appVersion.fileId,
     );
     if (!file) {
       return res
@@ -398,10 +398,10 @@ export class AppController {
   async deleteAppVersion(
     @Param('id', new ParseUUIDPipe()) id: string,
     @Param('versionId', new ParseUUIDPipe()) versionId: string,
-    @CurrentUser() user: CurrentUserDTO
+    @CurrentUser() user: CurrentUserDTO,
   ) {
     return new AppResponse(
-      await this.appService.deleteAppVersion(id, versionId, user)
+      await this.appService.deleteAppVersion(id, versionId, user),
     );
   }
 }

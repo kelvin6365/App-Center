@@ -23,7 +23,7 @@ export class AdminService {
     @Inject(Logger) private readonly logger: LoggerService,
     private readonly adminRepository: AdminRepository,
     private readonly configService: ConfigService,
-    private readonly jwtService: JwtService
+    private readonly jwtService: JwtService,
   ) {
     this.logger = new Logger('AdminService');
   }
@@ -31,22 +31,21 @@ export class AdminService {
   async validateUser(
     req: Request,
     username: string,
-    hashedPassword?: string
+    hashedPassword?: string,
   ): Promise<CurrentAdminDTO> {
-    const admin = await this.adminRepository.findAdminByEmailWithPassword(
-      username
-    );
+    const admin =
+      await this.adminRepository.findAdminByEmailWithPassword(username);
     if (!admin) {
       req.res.clearCookie('Authentication');
       throw new AppException(
-        ResponseCode.STATUS_8001_USER_USERNAME_OR_PASSWORD_NOT_MATCH
+        ResponseCode.STATUS_8001_USER_USERNAME_OR_PASSWORD_NOT_MATCH,
       );
     }
     if (hashedPassword) {
       if (!(await isMatchPassword(hashedPassword, admin.password))) {
         req.res.clearCookie('Authentication');
         throw new AppException(
-          ResponseCode.STATUS_8001_USER_USERNAME_OR_PASSWORD_NOT_MATCH
+          ResponseCode.STATUS_8001_USER_USERNAME_OR_PASSWORD_NOT_MATCH,
         );
       }
     }
@@ -68,8 +67,8 @@ export class AdminService {
       .add(
         this.configService.get<number>('jwt.user.accessTokenExpiresIn'),
         this.configService.get<moment.unitOfTime.DurationConstructor>(
-          'jwt.user.timeFormats'
-        )
+          'jwt.user.timeFormats',
+        ),
       )
       .toDate();
     const accessToken = this.jwtService.sign(payloadAccess);
@@ -97,8 +96,9 @@ export class AdminService {
     sorts: { key: string; value: 'ASC' | 'DESC' }[] = [
       { key: 'createdAt', value: 'DESC' },
     ],
-    user: CurrentAdminDTO
+    user: CurrentAdminDTO,
   ): Promise<PageDTO<AdminResponseDTO>> {
+    this.logger.log('[Search Admin]', user.id);
     const result = await this.adminRepository.findAllAdmins(
       searchQuery,
       withDeleted,
@@ -107,7 +107,7 @@ export class AdminService {
         limit,
       },
       filters,
-      sorts
+      sorts,
     );
     return {
       ...result,
@@ -126,7 +126,7 @@ export class AdminService {
   async updateStatus(
     id: string,
     updateAdminDto: UpdateAdminDto,
-    user: CurrentAdminDTO
+    user: CurrentAdminDTO,
   ): Promise<boolean> {
     const admin = await this.adminRepository.findAdminById(id);
     if (!admin) {
@@ -135,12 +135,12 @@ export class AdminService {
     //Update Admin Status
     if (updateAdminDto.status) {
       this.logger.log(
-        `Update Admin Status ${admin.status} -> ${updateAdminDto.status}`
+        `Update Admin Status ${admin.status} -> ${updateAdminDto.status}`,
       );
       await this.adminRepository.updateAdminStatus(
         id,
         updateAdminDto.status,
-        user.id
+        user.id,
       );
     }
     return true;

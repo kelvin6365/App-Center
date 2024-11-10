@@ -175,7 +175,7 @@ const JiraDialog = ({ title, onClose, open, app, description }: Props) => {
               </svg>
               <p>
                 {t(
-                  "No Jira Board URL yet Please add Jira Board URL for this App"
+                  "No Jira Board URL yet Please add Jira Board URL for this App",
                 )}
               </p>
             </span>
@@ -205,7 +205,7 @@ const JiraDialog = ({ title, onClose, open, app, description }: Props) => {
                   </svg>
                   <span>
                     {t(
-                      "Please ensure that you have created the credential for your Jira Project"
+                      "Please ensure that you have created the credential for your Jira Project",
                     )}
                   </span>
                 </span>
@@ -261,7 +261,7 @@ const JiraDialog = ({ title, onClose, open, app, description }: Props) => {
                                 <SelectTrigger>
                                   <SelectValue
                                     placeholder={t(
-                                      "Please select a Jira Credential"
+                                      "Please select a Jira Credential",
                                     )}
                                   />
                                 </SelectTrigger>
@@ -280,7 +280,7 @@ const JiraDialog = ({ title, onClose, open, app, description }: Props) => {
                                         {jiraCredential.name}
                                       </SelectItem>
                                     );
-                                  }
+                                  },
                                 )}
                               </SelectContent>
                             </Select>

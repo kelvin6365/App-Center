@@ -9,7 +9,7 @@ export class Permission extends BaseEntity {
 
   @OneToMany(
     () => UserPermission,
-    (userPermission) => userPermission.permission
+    (userPermission) => userPermission.permission,
   )
   userPermissions: UserPermission[];
 }

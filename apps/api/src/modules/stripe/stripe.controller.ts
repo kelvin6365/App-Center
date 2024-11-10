@@ -28,7 +28,7 @@ export class StripeController {
   @Post('webhook')
   async handleWebhook(
     @Headers('stripe-signature') sig: string,
-    @Req() request: RawBodyRequest<Request>
+    @Req() request: RawBodyRequest<Request>,
   ) {
     return await this.stripeService.handleWebhook(request, sig);
   }
@@ -37,7 +37,7 @@ export class StripeController {
   @Post('checkout')
   async createCheckoutSession(
     @CurrentUser() user: CurrentUserDTO,
-    @Body() dto: CreateCheckoutSessionDTO
+    @Body() dto: CreateCheckoutSessionDTO,
   ) {
     return await this.stripeService.createCheckoutSession(dto, user);
   }

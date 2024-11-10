@@ -18,7 +18,7 @@ export class JiraUtil {
       username: string;
       password: string;
     },
-    host: string
+    host: string,
   ): Promise<
     AxiosResponse<{
       sections: {
@@ -46,14 +46,14 @@ export class JiraUtil {
       {
         headers: {
           Authorization: `Basic ${Buffer.from(
-            `${auth.username}:${auth.password}`
+            `${auth.username}:${auth.password}`,
           ).toString('base64')}`,
         },
         params: {
           query: query,
           currentJQL: this.toJQL(projectKey),
         },
-      }
+      },
     );
   }
 
@@ -63,17 +63,17 @@ export class JiraUtil {
       username: string;
       password: string;
     },
-    host: string
+    host: string,
   ): Promise<AxiosResponse<JiraGetIssueResponse>> {
     return await this.httpService.axiosRef.get(
       `https://${host}/rest/api/3/issue/${issueIdOrKey}`,
       {
         headers: {
           Authorization: `Basic ${Buffer.from(
-            `${auth.username}:${auth.password}`
+            `${auth.username}:${auth.password}`,
           ).toString('base64')}`,
         },
-      }
+      },
     );
   }
 

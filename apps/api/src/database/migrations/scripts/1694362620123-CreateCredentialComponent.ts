@@ -26,7 +26,7 @@ export class CreateCredentialComponent1694362620123
 
   public async down(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
-      `drop table if exists public.credential_components;`
+      `drop table if exists public.credential_components;`,
     );
   }
 }

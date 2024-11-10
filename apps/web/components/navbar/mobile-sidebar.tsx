@@ -47,7 +47,7 @@ export function MobileSidebar({ className }: SidebarProps) {
                       ? filterMenuByRoles(
                           MenuItems,
                           userProfile,
-                          selectedTeam.id
+                          selectedTeam.id,
                         )
                       : []
                   }

@@ -218,6 +218,7 @@ export class UserService {
     ],
     user: CurrentUserDTO,
   ): Promise<Promise<PageDTO<PortalUserResponseDTO>>> {
+    this.logger.log('[Search User]', user.id);
     const users = await this.usersRepository.searchUsers(
       [tenantId],
       searchQuery,

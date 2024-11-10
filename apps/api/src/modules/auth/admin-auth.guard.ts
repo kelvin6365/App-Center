@@ -25,7 +25,7 @@ export class RolesGuard implements CanActivate {
           userRoles
             .filter((ur) => ur.tenantId === request.headers['x-tenant-id'])
             .map((ur) => ur.role.type) as string[]
-        ).indexOf(r) != -1
+        ).indexOf(r) != -1,
     );
   }
 }

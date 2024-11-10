@@ -16,7 +16,7 @@ export class SubscriptionRepository extends Repository<Subscription> {
   }
 
   findOneByStripeSubscriptionId(
-    stripeSubscriptionId: string
+    stripeSubscriptionId: string,
   ): Promise<Subscription> {
     return this.findOne({
       where: {
@@ -28,7 +28,7 @@ export class SubscriptionRepository extends Repository<Subscription> {
   findUserSubscriptionByUserIdAndPlanId(
     userId: string,
     planId: string,
-    status = 'active'
+    status = 'active',
   ): Promise<Subscription> {
     return this.findOne({
       where: {
@@ -42,7 +42,7 @@ export class SubscriptionRepository extends Repository<Subscription> {
 
   findUserSubscriptionByUserId(
     userId: string,
-    status = 'active'
+    status = 'active',
   ): Promise<Subscription> {
     return this.findOne({
       where: {
@@ -55,7 +55,7 @@ export class SubscriptionRepository extends Repository<Subscription> {
 
   findUserSubscriptionsByUserId(
     userId: string,
-    status = 'active'
+    status = 'active',
   ): Promise<Subscription[]> {
     return this.find({
       where: {

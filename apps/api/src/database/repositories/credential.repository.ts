@@ -18,7 +18,7 @@ export class CredentialRepository extends Repository<Credential> {
     options: { withDeleted?: boolean } = {
       withDeleted: false,
     },
-    tenantIds?: string[]
+    tenantIds?: string[],
   ): Promise<Credential> {
     const credential = await this.findOne({
       where: {
@@ -39,14 +39,14 @@ export class CredentialRepository extends Repository<Credential> {
   //Delete Credential
   async deleteCredential(
     credentialId: string,
-    updatedBy?: string
+    updatedBy?: string,
   ): Promise<DeleteResult> {
     if (updatedBy) {
       await this.update(
         {
           id: credentialId,
         },
-        { updatedBy }
+        { updatedBy },
       );
     }
     return await this.softDelete({ id: credentialId });
@@ -58,7 +58,7 @@ export class CredentialRepository extends Repository<Credential> {
       withDeleted: false,
     },
     tenantIds: string[],
-    name?: string
+    name?: string,
   ) {
     const credentials = await this.find({
       where: {

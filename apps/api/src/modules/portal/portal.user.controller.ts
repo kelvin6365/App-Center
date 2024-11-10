@@ -51,20 +51,20 @@ import { UserService } from '../user/user.service';
 export class PortalUserController {
   constructor(
     private readonly userService: UserService,
-    private readonly appService: AppService
+    private readonly appService: AppService,
   ) {}
 
   //Get user tenants
   @Get('/tenants')
   @ApiPagingResponseSchema(HttpStatus.OK, 'OK', TenantDTO)
   async getUserTenants(
-    @CurrentUser() user: CurrentUserDTO
+    @CurrentUser() user: CurrentUserDTO,
   ): Promise<AppResponse<PageDTO<TenantDTO>>> {
     return new AppResponse<PageDTO<TenantDTO>>(
       new PageDTO<TenantDTO>(
         user.tenants.map((userTenant) => new TenantDTO(userTenant.tenant)),
-        new MetaDTO()
-      )
+        new MetaDTO(),
+      ),
     );
   }
 
@@ -96,7 +96,7 @@ export class PortalUserController {
     @Query('page', new DefaultValuePipe(1), ParseIntPipe) page = 1,
     @Query('limit', new DefaultValuePipe(10), ParseIntPipe) limit = 10,
     @CurrentTenant() tenantId: string,
-    @CurrentUser() user: CurrentUserDTO
+    @CurrentUser() user: CurrentUserDTO,
   ): Promise<AppResponse<PageDTO<PortalUserResponseDTO>>> {
     return new AppResponse<PageDTO<PortalUserResponseDTO>>(
       await this.userService.searchUser(
@@ -107,8 +107,8 @@ export class PortalUserController {
         limit,
         query?.filters ?? [],
         query?.sorts ?? [{ key: 'createdAt', value: 'DESC' }],
-        user
-      )
+        user,
+      ),
     );
   }
 
@@ -117,10 +117,10 @@ export class PortalUserController {
   @UseGuards(RoleGuard(RoleType.ADMIN))
   @ApiResponseSchema(HttpStatus.OK, 'OK')
   async getSingleUser(
-    @Param('id') id: string
+    @Param('id') id: string,
   ): Promise<AppResponse<PortalUserResponseDTO>> {
     return new AppResponse<PortalUserResponseDTO>(
-      await this.userService.getUserByIdWithDeletedFalse(id)
+      await this.userService.getUserByIdWithDeletedFalse(id),
     );
   }
 
@@ -128,10 +128,10 @@ export class PortalUserController {
   @Get('')
   @ApiResponseSchema(HttpStatus.OK, 'OK')
   async getCurrentUser(
-    @CurrentUser() user: CurrentUserDTO
+    @CurrentUser() user: CurrentUserDTO,
   ): Promise<AppResponse<PortalUserResponseDTO>> {
     return new AppResponse<PortalUserResponseDTO>(
-      await this.userService.getUserByIdWithDeletedFalse(user.id)
+      await this.userService.getUserByIdWithDeletedFalse(user.id),
     );
   }
 
@@ -140,10 +140,10 @@ export class PortalUserController {
   @UseGuards(RoleGuard(RoleType.ADMIN))
   @ApiResponseSchema(HttpStatus.CREATED, 'CREATED')
   async createUser(
-    @Body() createUserDTO: CreateUserDTO
+    @Body() createUserDTO: CreateUserDTO,
   ): Promise<AppResponse<boolean>> {
     return new AppResponse<boolean>(
-      await await this.userService.createUser(createUserDTO)
+      await await this.userService.createUser(createUserDTO),
     );
   }
 
@@ -152,10 +152,10 @@ export class PortalUserController {
   @ApiResponseSchema(HttpStatus.OK, 'OK')
   async updateCurrentUser(
     @Body() updateUserDTO: UpdateUserDTO,
-    @CurrentUser() user: CurrentUserDTO
+    @CurrentUser() user: CurrentUserDTO,
   ): Promise<AppResponse<PortalUserResponseDTO>> {
     return new AppResponse<PortalUserResponseDTO>(
-      await this.userService.updateUserProfile(updateUserDTO, user)
+      await this.userService.updateUserProfile(updateUserDTO, user),
     );
   }
 
@@ -166,10 +166,10 @@ export class PortalUserController {
   async updateUserById(
     @Param('id') id: string,
     @Body() updateUserDTO: UpdateUserDTO,
-    @CurrentTenant() tenantId: string
+    @CurrentTenant() tenantId: string,
   ): Promise<AppResponse<PortalUserResponseDTO>> {
     return new AppResponse<PortalUserResponseDTO>(
-      await this.userService.updateUserProfileById(updateUserDTO, id, tenantId)
+      await this.userService.updateUserProfileById(updateUserDTO, id, tenantId),
     );
   }
 
@@ -180,10 +180,10 @@ export class PortalUserController {
   async deleteUserById(
     @Param('id') id: string,
     @CurrentTenant() tenantId: string,
-    @CurrentUser() user: CurrentUserDTO
+    @CurrentUser() user: CurrentUserDTO,
   ): Promise<AppResponse<boolean>> {
     return new AppResponse<boolean>(
-      await this.userService.deleteUserFromTenant(id, tenantId, user)
+      await this.userService.deleteUserFromTenant(id, tenantId, user),
     );
   }
 
@@ -193,13 +193,13 @@ export class PortalUserController {
   @ApiResponseSchema(HttpStatus.OK, 'OK')
   async updateUserStatus(
     @Param('id') id: string,
-    @Body() updateUserStatusRequestDTO: UpdateUserStatusRequestDTO
+    @Body() updateUserStatusRequestDTO: UpdateUserStatusRequestDTO,
   ): Promise<AppResponse<boolean>> {
     return new AppResponse<boolean>(
       await this.userService.updateUserStatus(
         id,
-        updateUserStatusRequestDTO.status
-      )
+        updateUserStatusRequestDTO.status,
+      ),
     );
   }
 
@@ -211,11 +211,11 @@ export class PortalUserController {
   async addUser(
     @Param('id', new ParseUUIDPipe()) id: string,
     @Body() dto: AddUserRequestDTO,
-    @CurrentUser() user: CurrentUserDTO
+    @CurrentUser() user: CurrentUserDTO,
   ) {
     await this.appService.findById(dto.appId, false, true, false, user);
     return new AppResponse(
-      await this.userService.addPermissions(id, dto, user)
+      await this.userService.addPermissions(id, dto, user),
     );
   }
 
@@ -225,7 +225,7 @@ export class PortalUserController {
   @ApiResponseSchema(HttpStatus.OK, 'OK')
   async findUserByEmailWithPassword(@Param('id') id: string) {
     return new AppResponse<PortalUserResponseDTO[]>(
-      await this.userService.findUseAppPermissionsListByAppId(id)
+      await this.userService.findUseAppPermissionsListByAppId(id),
     );
   }
 
@@ -234,10 +234,10 @@ export class PortalUserController {
   @ApiResponseSchema(HttpStatus.OK, 'OK')
   async onBoarding(
     @Body() dto: OnBoardingDTO,
-    @CurrentUser() user: CurrentUserDTO
+    @CurrentUser() user: CurrentUserDTO,
   ) {
     return new AppResponse<boolean>(
-      await this.userService.onBoarding(dto, user)
+      await this.userService.onBoarding(dto, user),
     );
   }
 
@@ -248,10 +248,10 @@ export class PortalUserController {
   async inviteUser(
     @Body() dto: InviteUserToTenantDTO,
     @CurrentUser() user: CurrentUserDTO,
-    @CurrentTenant() tenantId: string
+    @CurrentTenant() tenantId: string,
   ) {
     return new AppResponse<boolean>(
-      await this.userService.inviteUserToTenant(dto, user, tenantId)
+      await this.userService.inviteUserToTenant(dto, user, tenantId),
     );
   }
 }

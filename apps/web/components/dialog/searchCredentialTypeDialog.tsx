@@ -55,7 +55,7 @@ const SearchCredentialTypeDialog = ({
   } = form;
 
   const onSubmit: SubmitHandler<SearchCredentialTypeFormInputs> = async (
-    values
+    values,
   ) => {
     console.log(values);
   };
@@ -115,7 +115,7 @@ const SearchCredentialTypeDialog = ({
             (c) =>
               c.label
                 .toLowerCase()
-                .indexOf(searchCredentialName?.toLowerCase()) !== -1
+                .indexOf(searchCredentialName?.toLowerCase()) !== -1,
           )
           .map((component, i) => (
             <div

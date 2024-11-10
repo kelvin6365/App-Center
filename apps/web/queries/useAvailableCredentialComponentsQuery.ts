@@ -1,6 +1,6 @@
-import { useQuery } from '@tanstack/react-query';
-import API from '@/services/api';
-import { Tenant } from '../types/PortalUserProfile';
+import { useQuery } from "@tanstack/react-query";
+import API from "@/services/api";
+import { Tenant } from "../types/PortalUserProfile";
 
 const useAvailableCredentialComponentsQuery = ({
   selectedTeam,
@@ -8,7 +8,7 @@ const useAvailableCredentialComponentsQuery = ({
   selectedTeam: Tenant | null;
 }) => {
   const { data, isLoading, isError, error, refetch } = useQuery({
-    queryKey: [selectedTeam, 'availableCredentialComponents'],
+    queryKey: [selectedTeam, "availableCredentialComponents"],
     queryFn: async () => {
       const { data } = await API.credential.getAllCredentialComponents();
       return data.data;

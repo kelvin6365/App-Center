@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Param, Patch } from '@nestjs/common';
+import { Controller, Delete, Get, Param } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { TenantService } from './tenant.service';
 
@@ -15,11 +15,6 @@ export class TenantController {
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.tenantService.findOne(+id);
-  }
-
-  @Patch(':id')
-  update(@Param('id') id: string) {
-    // return this.tenantService.updateTenant(+id, updateTenantDto);
   }
 
   @Delete(':id')

@@ -27,7 +27,7 @@ export class AppVersionJiraIssueDTO {
         summary: string;
         url: string;
       }
-    >
+    >,
   ) {
     this.id = data.id;
     this.issueIdOrKey = data.issueIdOrKey;

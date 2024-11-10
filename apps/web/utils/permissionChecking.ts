@@ -1,11 +1,11 @@
-import { NavItemWithOptionalChildren } from '@/types';
-import PermissionEnum from '@/types/Permission';
-import { PortalUserProfile, Role } from '@/types/PortalUserProfile';
-import { RoleType } from '@/types/RoleType';
+import { NavItemWithOptionalChildren } from "@/types";
+import PermissionEnum from "@/types/Permission";
+import { PortalUserProfile, Role } from "@/types/PortalUserProfile";
+import { RoleType } from "@/types/RoleType";
 
 export const checkAllowModifyAppUserPermission = (
   roles: Role[],
-  tenantId?: string
+  tenantId?: string,
 ) => {
   //Allowed Roles
   // Admin
@@ -20,7 +20,7 @@ export const checkAllowAppActionPermission = (
   user: PortalUserProfile,
   permissionsRequired: PermissionEnum[],
   tenantId?: string,
-  appId?: string
+  appId?: string,
 ) => {
   //Check user have permissions
   return permissionsRequired.some((permission) => {
@@ -41,7 +41,7 @@ export const checkAllowAppActionPermission = (
 export const filterMenuByRoles = (
   menu: NavItemWithOptionalChildren[],
   user: PortalUserProfile,
-  tenantId: string
+  tenantId: string,
 ): NavItemWithOptionalChildren[] => {
   const userRoles = user.roles
     .filter((r) => r.tenantId === tenantId)
@@ -59,7 +59,7 @@ export const filterMenuByRoles = (
       const filteredItems: NavItemWithOptionalChildren[] = item.items.filter(
         (subItem) =>
           subItem.roles.length === 0 ||
-          subItem.roles.some((role) => userRoles.includes(role))
+          subItem.roles.some((role) => userRoles.includes(role)),
       );
 
       if (filteredItems.length > 0) {
@@ -84,7 +84,7 @@ export const canAccessPath = (
   path: string,
   menu: NavItemWithOptionalChildren[],
   user: PortalUserProfile,
-  tenantId: string
+  tenantId: string,
 ): boolean => {
   const userRoles = user.roles
     .filter((r) => r.tenantId === tenantId)
@@ -100,7 +100,7 @@ export const canAccessPath = (
 
     if (item.items) {
       for (const subItem of item.items) {
-        if ((item?.href ?? '') + subItem.href === path) {
+        if ((item?.href ?? "") + subItem.href === path) {
           return (
             subItem.roles.length === 0 ||
             subItem.roles.some((role) => userRoles.includes(role))

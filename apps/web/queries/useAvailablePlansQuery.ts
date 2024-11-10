@@ -1,9 +1,9 @@
-import API from '@/services/api';
-import { useQuery } from '@tanstack/react-query';
+import API from "@/services/api";
+import { useQuery } from "@tanstack/react-query";
 
 const useAvailablePlansQuery = () => {
   const { data, isLoading, isError, error, refetch } = useQuery({
-    queryKey: ['availablePlans'],
+    queryKey: ["availablePlans"],
     queryFn: async () => {
       const { data } = await API.plan.getAllPlans();
       return data.data;

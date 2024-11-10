@@ -85,7 +85,7 @@ export type TableRef = {
 const AppVersionTable = React.forwardRef<TableRef, Props>(
   (
     { app, setOpenQRCode, setOpenShareInstallURL, setOpenJiraIssues }: Props,
-    ref
+    ref,
   ) => {
     const t = useTranslations("Apps");
 
@@ -446,7 +446,7 @@ const AppVersionTable = React.forwardRef<TableRef, Props>(
                       userProfile,
                       [PermissionEnum.DELETE_APP_VERSION],
                       app.tenantId,
-                      app.id
+                      app.id,
                     ) && (
                       <DropdownMenuItem
                         onClick={() => {
@@ -466,7 +466,7 @@ const AppVersionTable = React.forwardRef<TableRef, Props>(
           },
         },
       ],
-      [userProfile]
+      [userProfile],
     );
 
     const data = React.useMemo(() => {
@@ -501,7 +501,7 @@ const AppVersionTable = React.forwardRef<TableRef, Props>(
         refetchTags();
         const { data } = await refetchVersions();
         const targetVersion = data?.items.find(
-          (appVersion: AppVersion) => appVersion.id === id
+          (appVersion: AppVersion) => appVersion.id === id,
         );
         if (targetVersion) {
           setOpenJiraIssues({
@@ -522,7 +522,7 @@ const AppVersionTable = React.forwardRef<TableRef, Props>(
                 onClick={() => {
                   if (selectedTags.find((t) => t.name === tag.name)) {
                     setSelectedTags(
-                      selectedTags.filter((t) => t.name !== tag.name)
+                      selectedTags.filter((t) => t.name !== tag.name),
                     );
                   } else {
                     setSelectedTags([...selectedTags, tag]);
@@ -532,7 +532,7 @@ const AppVersionTable = React.forwardRef<TableRef, Props>(
                   "normal-case cursor-pointer my-2 mx-1",
                   !selectedTags.find((t) => t.name === tag.name)
                     ? "bg-secondary"
-                    : "bg-primary text-white"
+                    : "bg-primary text-white",
                 )}
                 variant={"outline"}
               >
@@ -603,7 +603,7 @@ const AppVersionTable = React.forwardRef<TableRef, Props>(
                           ? null
                           : flexRender(
                               header.column.columnDef.header,
-                              header.getContext()
+                              header.getContext(),
                             )}
                       </TableHead>
                     );
@@ -622,7 +622,7 @@ const AppVersionTable = React.forwardRef<TableRef, Props>(
                       <TableCell key={cell.id}>
                         {flexRender(
                           cell.column.columnDef.cell,
-                          cell.getContext()
+                          cell.getContext(),
                         )}
                       </TableCell>
                     ))}
@@ -688,7 +688,7 @@ const AppVersionTable = React.forwardRef<TableRef, Props>(
         />
       </div>
     );
-  }
+  },
 );
 AppVersionTable.displayName = "AppVersionTable";
 export default AppVersionTable;

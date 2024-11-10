@@ -24,13 +24,14 @@ export class PortalUserResponseDTO {
     this.roles = partial?.roles?.map((role) => new RoleDTO(role));
     this.profile = partial.profile;
     this.permissions = partial.permissions?.map(
-      (permission) => new PermissionDTO(permission.permission, permission.refId)
+      (permission) =>
+        new PermissionDTO(permission.permission, permission.refId),
     );
     this.tenants = partial.tenants?.map(
-      (userTenant) => new TenantDTO(userTenant.tenant)
+      (userTenant) => new TenantDTO(userTenant.tenant),
     );
     this.subscriptions = partial.subscriptions?.map(
-      (subscription) => new SubscriptionDto(subscription)
+      (subscription) => new SubscriptionDto(subscription),
     );
     this.createdAt = partial.createdAt;
     this.updatedAt = partial.updatedAt;

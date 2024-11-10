@@ -1,4 +1,4 @@
-import AppsPermission from './AppPermission';
+import AppsPermission from "./AppPermission";
 
 const PermissionEnum = {
   ...AppsPermission,

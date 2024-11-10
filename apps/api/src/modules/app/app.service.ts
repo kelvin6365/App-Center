@@ -43,7 +43,7 @@ export class AppService {
     private readonly jiraService: JiraService,
     private readonly credentialService: CredentialService,
     private readonly configService: ConfigService,
-    private readonly userUtil: UserUtil
+    private readonly userUtil: UserUtil,
   ) {
     this.logger = new Logger('AppService');
   }
@@ -53,7 +53,7 @@ export class AppService {
     app: CreateAppDTO,
     tenantId: string,
     file: Express.Multer.File,
-    user: CurrentUserDTO
+    user: CurrentUserDTO,
   ): Promise<string> {
     //Check tenant id
     const isAllowed = user.tenants.map((ut) => ut.tenant.id).includes(tenantId);
@@ -77,7 +77,7 @@ export class AppService {
       }
     } else {
       const createAppLimit = this.configService.get<number>(
-        'static.freeLimit.appLimit'
+        'static.freeLimit.appLimit',
       );
 
       if (totalCreatedApp >= createAppLimit) {
@@ -101,11 +101,11 @@ export class AppService {
       const appIconFile = await this.fileService.uploadAppIcon(
         createdApp.id,
         file,
-        createdApp.createdBy
+        createdApp.createdBy,
       );
       if (!appIconFile) {
         throw new AppException(
-          ResponseCode.STATUS_1012_FAIL_TO_CREATE('File Upload Failed')
+          ResponseCode.STATUS_1012_FAIL_TO_CREATE('File Upload Failed'),
         );
       }
       createdApp.iconFileId = appIconFile.id;
@@ -126,7 +126,7 @@ export class AppService {
       { key: 'createdAt', value: 'DESC' },
     ],
     user: CurrentUserDTO,
-    tenantId: string
+    tenantId: string,
   ): Promise<PageDTO<AppDTO>> {
     if (!tenantId) {
       //If Header TenantId is not provided, throw exception
@@ -152,7 +152,7 @@ export class AppService {
       //get all view permissions
       const viewPermissions = userPermissions.filter(
         (userPermission) =>
-          userPermission.permission.id === AppsPermission.VIEW_APP
+          userPermission.permission.id === AppsPermission.VIEW_APP,
       );
       filters = filters.filter((filter) => filter.key !== 'id');
       filters.push({
@@ -168,7 +168,7 @@ export class AppService {
           limit,
         },
         filters,
-        sorts
+        sorts,
       );
     } else {
       result = await this.appRepository.findAll(
@@ -180,7 +180,7 @@ export class AppService {
           limit,
         },
         filters,
-        sorts
+        sorts,
       );
     }
 
@@ -192,8 +192,8 @@ export class AppService {
             app,
             app.iconFileId
               ? this.configService.get('services.file.fileAPI') + app.iconFileId
-              : null
-          )
+              : null,
+          ),
       ),
     };
   }
@@ -204,7 +204,7 @@ export class AppService {
     withDeleted = false,
     errorIfNotFound = false,
     forPublicInstallPage = false,
-    user?: CurrentUserDTO
+    user?: CurrentUserDTO,
   ): Promise<AppDTO> {
     const app = await this.appRepository.findById(id, withDeleted);
     if (!app && errorIfNotFound) {
@@ -214,7 +214,7 @@ export class AppService {
       this.userUtil.checkUserAppPermissions(
         user,
         app.id,
-        AppsPermission.VIEW_APP
+        AppsPermission.VIEW_APP,
       );
     }
     return new AppDTO(
@@ -227,7 +227,7 @@ export class AppService {
         : app,
       app.iconFileId
         ? this.configService.get('services.file.fileAPI') + app.iconFileId
-        : null
+        : null,
     );
   }
 
@@ -237,13 +237,13 @@ export class AppService {
     appVersion: CreateAppVersionDTO,
     file: Express.Multer.File,
     user?: CurrentUserDTO,
-    isFromPortal?: boolean
+    isFromPortal?: boolean,
   ): Promise<boolean> {
     if (user && isFromPortal) {
       this.userUtil.checkUserAppPermissions(
         user,
         appId,
-        AppsPermission.CREATE_APP_VERSION
+        AppsPermission.CREATE_APP_VERSION,
       );
     }
     this.logger.log('Creating a new app version');
@@ -258,7 +258,7 @@ export class AppService {
       newAppVersion.name = appVersion.name;
       newAppVersion.description = appVersion.description;
       newAppVersion.installPassword = await hashPassword(
-        appVersion.installPassword
+        appVersion.installPassword,
       );
       // newAppVersion.createdBy = user.id;
       newAppVersion.createdBy = null;
@@ -288,7 +288,7 @@ export class AppService {
           createdAppVersion.id,
           file,
           // user.id
-          null
+          null,
         );
         createdAppVersion.fileId = appFile.id;
         // createdAppVersion.updatedBy = user.id;
@@ -309,7 +309,7 @@ export class AppService {
     sorts: { key: string; value: 'ASC' | 'DESC' }[] = [
       { key: 'createdAt', value: 'DESC' },
     ],
-    user: CurrentUserDTO
+    user: CurrentUserDTO,
   ): Promise<PageDTO<AppVersionDTO>> {
     const app = await this.appRepository.findById(appId, withDeleted);
     if (!app) {
@@ -318,7 +318,7 @@ export class AppService {
     this.userUtil.checkUserAppPermissions(
       user,
       app.id,
-      AppsPermission.VIEW_APP
+      AppsPermission.VIEW_APP,
     );
     const result = await this.appVersionRepository.getAllAppVersions(
       appId,
@@ -329,7 +329,7 @@ export class AppService {
         limit,
       },
       filters,
-      sorts
+      sorts,
     );
 
     for (let i = 0; i < result.items.length; i++) {
@@ -337,7 +337,7 @@ export class AppService {
       //find app version tags by app version id
       const appVersionTags =
         await this.appVersionTagRepository.getAllTagsByAppVersionId(
-          appVersion.id
+          appVersion.id,
         );
       appVersion.tags = appVersionTags;
     }
@@ -348,7 +348,7 @@ export class AppService {
       const allIssuesFromDifferentVersions = [];
       result.items.forEach((appVersion) => {
         appVersion.jiraIssues.forEach((issue) =>
-          allIssuesFromDifferentVersions.push(issue.issueIdOrKey)
+          allIssuesFromDifferentVersions.push(issue.issueIdOrKey),
         );
       });
 
@@ -357,7 +357,7 @@ export class AppService {
         const jiraCredentials = await this.credentialService.getCredential(
           app.extra.jiraCredential as string,
           user,
-          true
+          true,
         );
         if (allIssuesFromDifferentVersions.length > 0) {
           const issuesRes = await Promise.all(
@@ -369,9 +369,9 @@ export class AppService {
                   jiraUsername: string;
                   jiraAPIToken: string;
                   jiraHost: string;
-                }
-              )
-            )
+                },
+              ),
+            ),
           );
           //TODO: handle deleted jira issues
           issuesRes.forEach((issue) => {
@@ -404,7 +404,7 @@ export class AppService {
                 ? this.configService.get('services.file.fileAPI') +
                   appVersion.fileId +
                   '&download=true'
-                : null
+                : null,
             );
           }),
           meta: result.meta,
@@ -425,7 +425,7 @@ export class AppService {
                 ? this.configService.get('services.file.fileAPI') +
                   appVersion.fileId +
                   '&download=true'
-                : null
+                : null,
             );
           }),
           meta: result.meta,
@@ -442,8 +442,8 @@ export class AppService {
               ? this.configService.get('services.file.fileAPI') +
                 appVersion.fileId +
                 '&download=true'
-              : null
-          )
+              : null,
+          ),
       ),
       meta: result.meta,
     };
@@ -452,14 +452,13 @@ export class AppService {
   //get all app version tags by app id
   async getAllAppVersionTags(
     appId: string,
-    user: CurrentUserDTO
+    user: CurrentUserDTO,
   ): Promise<AppVersionTagDTO[]> {
     this.userUtil.checkUserAppPermissions(user, appId, AppsPermission.VIEW_APP);
-    const appVersionTags = await this.appVersionTagRepository.getAllTagsByAppId(
-      appId
-    );
+    const appVersionTags =
+      await this.appVersionTagRepository.getAllTagsByAppId(appId);
     return appVersionTags.map(
-      (appVersionTag) => new AppVersionTagDTO(appVersionTag)
+      (appVersionTag) => new AppVersionTagDTO(appVersionTag),
     );
   }
 
@@ -468,7 +467,7 @@ export class AppService {
     id: string,
     app: UpdateAppDTO,
     file: Express.Multer.File,
-    user: CurrentUserDTO
+    user: CurrentUserDTO,
   ): Promise<boolean> {
     this.userUtil.checkUserAppPermissions(user, id, AppsPermission.EDIT_APP);
     this.logger.log('Updating an app');
@@ -487,7 +486,7 @@ export class AppService {
         const appIconFile = await this.fileService.uploadAppIcon(
           updatedApp.id,
           file,
-          user.id
+          user.id,
         );
         updatedApp.iconFileId = appIconFile.id;
         //delete old icon file
@@ -505,7 +504,7 @@ export class AppService {
     id: string,
     app: PatchAppDTO,
     file: Express.Multer.File,
-    user: CurrentUserDTO
+    user: CurrentUserDTO,
   ): Promise<boolean> {
     this.userUtil.checkUserAppPermissions(user, id, AppsPermission.EDIT_APP);
     this.logger.log('Patching an app');
@@ -528,7 +527,7 @@ export class AppService {
         const appIconFile = await this.fileService.uploadAppIcon(
           updatedApp.id,
           file,
-          user.id
+          user.id,
         );
         updatedApp.iconFileId = appIconFile.id;
         //delete old icon file
@@ -555,7 +554,7 @@ export class AppService {
   async getInstallApp(
     appId: string,
     appVersionId: string,
-    password: string
+    password: string,
   ): Promise<InstallAppDTO> {
     const version = await this.appVersionRepository.getAppVersion(appVersionId);
     if (!version || version?.appId !== appId) {
@@ -577,7 +576,7 @@ export class AppService {
         },
         app.iconFileId
           ? this.configService.get('services.file.fileAPI') + app.iconFileId
-          : null
+          : null,
       ),
       new AppVersionDTO(
         {
@@ -591,14 +590,14 @@ export class AppService {
             '/version/' +
             version.id +
             '/install'
-          : null
-      )
+          : null,
+      ),
     );
   }
 
   async validateInstallPassword(
     appVersionId: string,
-    password: string
+    password: string,
   ): Promise<AppVersion> {
     const version = await this.appVersionRepository.getAppVersion(appVersionId);
     if (!version) {
@@ -618,12 +617,12 @@ export class AppService {
   async deleteAppVersion(
     appId: string,
     appVersionId: string,
-    user: CurrentUserDTO
+    user: CurrentUserDTO,
   ): Promise<boolean> {
     this.userUtil.checkUserAppPermissions(
       user,
       appId,
-      AppsPermission.DELETE_APP_VERSION
+      AppsPermission.DELETE_APP_VERSION,
     );
     const app = await this.appRepository.findById(appId);
     if (!app) {
@@ -637,7 +636,7 @@ export class AppService {
   async searchJiraIssues(
     appId: string,
     query: string,
-    user: CurrentUserDTO
+    user: CurrentUserDTO,
   ): Promise<SearchJiraIssueDTO[]> {
     //check app
     const app = await this.appRepository.findById(appId);
@@ -653,7 +652,7 @@ export class AppService {
     const jiraCredentials = await this.credentialService.getCredential(
       app.extra.jiraCredential as string,
       user,
-      true
+      true,
     );
     if (!jiraCredentials) {
       throw new AppException(ResponseCode.STATUS_1017_JIRA_CREDENTIAL_NOT_SET);
@@ -666,7 +665,7 @@ export class AppService {
         jiraUsername: string;
         jiraAPIToken: string;
         jiraHost: string;
-      }
+      },
     );
   }
 
@@ -675,12 +674,12 @@ export class AppService {
     appId: string,
     appVersionId: string,
     issueId: string,
-    user: CurrentUserDTO
+    user: CurrentUserDTO,
   ): Promise<boolean> {
     //check
     const version = await this.appVersionRepository.getAppVersionByIdAndAppId(
       appVersionId,
-      appId
+      appId,
     );
     if (!version) {
       throw new AppException(ResponseCode.STATUS_1011_NOT_FOUND);
@@ -689,7 +688,7 @@ export class AppService {
       await this.appVersionJiraIssueRepository.deleteJiraIssueByIssueIdAndAppVersionId(
         issueId,
         appVersionId,
-        user.id
+        user.id,
       );
     return deleted ? true : false;
   }

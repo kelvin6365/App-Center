@@ -56,12 +56,11 @@ export class AdminController {
   @ApiResponseSchema(HttpStatus.OK, 'OK', LoginResponseDTO)
   async login(
     @CurrentUser() user: CurrentAdminDTO,
-    @Res({ passthrough: true }) response: Response
+    @Res({ passthrough: true }) response: Response,
   ): Promise<AppResponse<LoginResponseDTO>> {
     response.clearCookie('Authentication');
-    const result: LoginResponseDTO = await this.adminService.signTokenForLogin(
-      user
-    );
+    const result: LoginResponseDTO =
+      await this.adminService.signTokenForLogin(user);
     response.cookie('Authentication', result.accessToken);
     return new AppResponse(result);
   }
@@ -71,10 +70,10 @@ export class AdminController {
   @ApiResponseSchema(HttpStatus.CREATED, 'CREATED')
   async create(
     @CurrentUser() user: CurrentAdminDTO,
-    @Body() createAdminDto: CreateAdminDto
+    @Body() createAdminDto: CreateAdminDto,
   ): Promise<AppResponse<boolean>> {
     return new AppResponse<boolean>(
-      await this.adminService.create(createAdminDto, user)
+      await this.adminService.create(createAdminDto, user),
     );
   }
 
@@ -103,7 +102,7 @@ export class AdminController {
     @JSONQuery('query') query: SearchQueryDTO,
     @Query('page', new DefaultValuePipe(1), ParseIntPipe) page = 1,
     @Query('limit', new DefaultValuePipe(10), ParseIntPipe) limit = 10,
-    @CurrentUser() user: CurrentAdminDTO
+    @CurrentUser() user: CurrentAdminDTO,
   ): Promise<AppResponse<PageDTO<AdminResponseDTO>>> {
     return new AppResponse<PageDTO<AdminResponseDTO>>(
       await this.adminService.findAll(
@@ -113,8 +112,8 @@ export class AdminController {
         limit,
         query?.filters ?? [],
         query?.sorts ?? [{ key: 'createdAt', value: 'DESC' }],
-        user
-      )
+        user,
+      ),
     );
   }
 
@@ -122,10 +121,10 @@ export class AdminController {
   @ApiOperation({ summary: 'Get admin by UUID' })
   @ApiResponseSchema(HttpStatus.OK, 'OK', AdminResponseDTO)
   async findOne(
-    @Param('id', ParseUUIDPipe) id: string
+    @Param('id', ParseUUIDPipe) id: string,
   ): Promise<AppResponse<AdminResponseDTO>> {
     return new AppResponse<AdminResponseDTO>(
-      await this.adminService.findOne(id)
+      await this.adminService.findOne(id),
     );
   }
 
@@ -135,10 +134,10 @@ export class AdminController {
   async update(
     @Param('id') id: string,
     @Body() updateAdminDto: UpdateAdminDto,
-    @CurrentUser() user: CurrentAdminDTO
+    @CurrentUser() user: CurrentAdminDTO,
   ): Promise<AppResponse<boolean>> {
     return new AppResponse<boolean>(
-      await this.adminService.updateStatus(id, updateAdminDto, user)
+      await this.adminService.updateStatus(id, updateAdminDto, user),
     );
   }
 
@@ -147,10 +146,10 @@ export class AdminController {
   @ApiResponseSchema(HttpStatus.OK, 'OK')
   async softDelete(
     @Param('id') id: string,
-    @CurrentUser() user: CurrentAdminDTO
+    @CurrentUser() user: CurrentAdminDTO,
   ): Promise<AppResponse<boolean>> {
     return new AppResponse<boolean>(
-      await this.adminService.softDelete(id, user)
+      await this.adminService.softDelete(id, user),
     );
   }
 }

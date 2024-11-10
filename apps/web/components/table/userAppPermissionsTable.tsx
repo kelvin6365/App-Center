@@ -227,24 +227,24 @@ const UserAppPermissionsTable = forwardRef(
         for (let ui = 0; ui < data.length; ui++) {
           up[data[ui].id as string] = {
             [AppsPermission.VIEW_APP]: data[ui].permissions.find(
-              (permission) => permission.id === AppsPermission.VIEW_APP
+              (permission) => permission.id === AppsPermission.VIEW_APP,
             )
               ? true
               : false,
             [AppsPermission.EDIT_APP]: data[ui].permissions.find(
-              (permission) => permission.id === AppsPermission.EDIT_APP
+              (permission) => permission.id === AppsPermission.EDIT_APP,
             )
               ? true
               : false,
             [AppsPermission.CREATE_APP_VERSION]: data[ui].permissions.find(
               (permission) =>
-                permission.id === AppsPermission.CREATE_APP_VERSION
+                permission.id === AppsPermission.CREATE_APP_VERSION,
             )
               ? true
               : false,
             [AppsPermission.DELETE_APP_VERSION]: data[ui].permissions.find(
               (permission) =>
-                permission.id === AppsPermission.DELETE_APP_VERSION
+                permission.id === AppsPermission.DELETE_APP_VERSION,
             )
               ? true
               : false,
@@ -305,7 +305,7 @@ const UserAppPermissionsTable = forwardRef(
                         {header.column.id === "select" ? (
                           flexRender(
                             header.column.columnDef.header,
-                            header.getContext()
+                            header.getContext(),
                           )
                         ) : (
                           <Label
@@ -316,7 +316,7 @@ const UserAppPermissionsTable = forwardRef(
                               ? null
                               : flexRender(
                                   header.column.columnDef.header,
-                                  header.getContext()
+                                  header.getContext(),
                                 )}
                           </Label>
                         )}
@@ -353,11 +353,11 @@ const UserAppPermissionsTable = forwardRef(
                           {cell.column.id === "select"
                             ? flexRender(
                                 cell.column.columnDef.cell,
-                                cell.getContext()
+                                cell.getContext(),
                               )
                             : flexRender(
                                 cell.column.columnDef.cell,
-                                cell.getContext()
+                                cell.getContext(),
                               )}
                         </td>
                       ))}
@@ -375,7 +375,7 @@ const UserAppPermissionsTable = forwardRef(
                             ? null
                             : flexRender(
                                 header.column.columnDef.footer,
-                                header.getContext()
+                                header.getContext(),
                               )}
                         </th>
                       ))}
@@ -390,7 +390,7 @@ const UserAppPermissionsTable = forwardRef(
         <div className="my-2 bg-gray-300 h-[1px] opacity-40" />
       </>
     );
-  }
+  },
 );
 
 UserAppPermissionsTable.displayName = "UserAppPermissionsTable";

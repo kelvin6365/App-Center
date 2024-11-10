@@ -31,10 +31,10 @@ export class PortalTenantController {
   @ApiResponseSchema(HttpStatus.OK, 'OK')
   async create(
     @Body() createTenantDTO: CreateTenantDTO,
-    @CurrentUser() user: CurrentUserDTO
+    @CurrentUser() user: CurrentUserDTO,
   ): Promise<AppResponse<TenantDTO>> {
     return new AppResponse<TenantDTO>(
-      await this.tenantService.createTenantAndJoinTenant(createTenantDTO, user)
+      await this.tenantService.createTenantAndJoinTenant(createTenantDTO, user),
     );
   }
 
@@ -45,10 +45,10 @@ export class PortalTenantController {
   async update(
     @Body() updateTenantDTO: UpdateTenantDTO,
     @CurrentUser() user: CurrentUserDTO,
-    @CurrentTenant() tenantId: string
+    @CurrentTenant() tenantId: string,
   ) {
     return new AppResponse<boolean>(
-      await this.tenantService.updateTenant(tenantId, updateTenantDTO, user)
+      await this.tenantService.updateTenant(tenantId, updateTenantDTO, user),
     );
   }
 

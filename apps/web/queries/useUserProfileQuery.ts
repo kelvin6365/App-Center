@@ -1,9 +1,9 @@
-import { useQuery } from '@tanstack/react-query';
-import API from '@/services/api';
+import { useQuery } from "@tanstack/react-query";
+import API from "@/services/api";
 
 const useUserProfileQuery = () => {
   const { data, isLoading, isError, error, refetch } = useQuery({
-    queryKey: ['userProfile'],
+    queryKey: ["userProfile"],
     queryFn: async () => {
       const { data } = await API.user.profile();
       return data.data;

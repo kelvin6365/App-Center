@@ -11,7 +11,7 @@ export class PlanRepository extends Repository<Plan> {
   getPlanById(
     planId: string,
     isActive = true,
-    withDeleted = false
+    withDeleted = false,
   ): Promise<Plan> {
     return this.findOne({
       where: { id: planId, isActive },

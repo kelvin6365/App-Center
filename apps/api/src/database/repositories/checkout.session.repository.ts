@@ -10,7 +10,7 @@ export class CheckoutSessionRepository extends Repository<CheckoutSession> {
   }
 
   createCheckoutSession(
-    checkoutSession: CheckoutSession
+    checkoutSession: CheckoutSession,
   ): Promise<CheckoutSession> {
     return this.save(checkoutSession);
   }
@@ -21,7 +21,7 @@ export class CheckoutSessionRepository extends Repository<CheckoutSession> {
 
   findCheckoutSessionBySessionId(
     sessionId: string,
-    status?: CheckoutSessionStatus
+    status?: CheckoutSessionStatus,
   ) {
     return this.findOne({
       where: {
@@ -35,7 +35,7 @@ export class CheckoutSessionRepository extends Repository<CheckoutSession> {
     userId: string,
     planId: string,
     billingCycle: string,
-    status?: CheckoutSessionStatus
+    status?: CheckoutSessionStatus,
   ) {
     return this.findOne({
       where: {
@@ -50,7 +50,7 @@ export class CheckoutSessionRepository extends Repository<CheckoutSession> {
   findCheckoutSessionByCustomerIdAndPlanId(
     customerId: string,
     planId: string,
-    status?: CheckoutSessionStatus
+    status?: CheckoutSessionStatus,
   ) {
     return this.findOne({
       where: {
