@@ -60,9 +60,9 @@ jobs:
         run: docker push ${{ env.BACKEND_IMAGE }}:${{ steps.sha.outputs.sha }}
 
   update-helm-chart:
-    needs: deploy
+    needs: build-image
     runs-on: ubuntu-latest
-    if: ${{ needs.changes.outputs.backend == 'true' || needs.changes.outputs.frontend == 'true' }}
+    if: ${{ needs.build-image.outputs.sha != '' }}
     steps:
       - name: Checkout Helm chart repository from GitLab
         run: |
