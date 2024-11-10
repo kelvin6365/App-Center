@@ -36,6 +36,30 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
+      - name: Set environment variables based on branch
+        if: ${{ github.event_name == 'workflow_dispatch' || needs.changes.outputs.frontend == 'true' }}
+        id: set-env
+        run: |
+          case "${{ github.ref }}" in
+            refs/heads/main)
+              echo "::set-output name=env_content::${{ secrets.WEB_PROD_ENV }}"
+              ;;
+            refs/heads/uat)
+              echo "::set-output name=env_content::${{ secrets.WEB_UAT_ENV }}"
+              ;;
+            refs/heads/dev)
+              echo "::set-output name=env_content::${{ secrets.WEB_DEV_ENV }}"
+              ;;
+            *)
+              echo "::set-output name=env_content::${{ secrets.WEB_DEV_ENV }}"
+              ;;
+          esac
+
+      - name: Create .env.production file
+        if: ${{ github.event_name == 'workflow_dispatch' || needs.changes.outputs.frontend == 'true' }}
+        run: |
+          echo "${{ steps.set-env.outputs.env_content }}" | base64 -d > apps/web/.env.production
+
       - name: Generate SHA
         id: sha
         run: echo "::set-output name=sha::$(git rev-parse --short $GITHUB_SHA)"
