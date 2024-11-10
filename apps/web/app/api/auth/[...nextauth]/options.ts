@@ -23,10 +23,10 @@ export const authOptions: NextAuthOptions = {
         password: {},
         accessToken: {},
         refreshToken: {},
-        accessTokenExpires: {},
+        expiresIn: {},
         status: {},
       },
-      async authorize(credentials, req) {
+      async authorize(credentials) {
         try {
           if (!credentials) return null;
 
@@ -45,7 +45,7 @@ export const authOptions: NextAuthOptions = {
             accessToken: loginResponse.accessToken,
             refreshToken: loginResponse.refreshToken,
             username: user.username,
-            accessTokenExpires: loginResponse.accessTokenExpires,
+            expiresIn: loginResponse.expiresIn,
             status: user.status as UserStatus,
           };
         } catch (e) {
@@ -112,7 +112,7 @@ export const authOptions: NextAuthOptions = {
               accessToken: loginResponse.accessToken,
               refreshToken: loginResponse.refreshToken,
               username: userProfile.username,
-              accessTokenExpires: loginResponse.accessTokenExpires,
+              expiresIn: loginResponse.expiresIn,
               status: userProfile.status as UserStatus,
             };
           } catch (error) {
@@ -122,7 +122,7 @@ export const authOptions: NextAuthOptions = {
         }
       }
       // Return previous token if the access token has not expired yet
-      if (dayjs().isBefore(dayjs(updateToken.accessTokenExpires))) {
+      if (dayjs().isBefore(dayjs(updateToken.expiresIn))) {
         console.log("[Token valid]");
         //[2] Get user info
         const { data: user } = (await API.user.profile(updateToken.accessToken))

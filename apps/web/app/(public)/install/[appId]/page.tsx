@@ -1,17 +1,8 @@
 "use client";
-import {
-  Badge,
-  Button,
-  Card,
-  CardContent,
-  CardHeader,
-  Form,
-  FormMessage,
-  Input,
-} from "@app-center/shadcn/ui";
+
 import { LockClosedIcon } from "@radix-ui/react-icons";
 import axios from "axios";
-import moment from "moment";
+import dayjs from "@repo/dayjs";
 import { useTranslations } from "next-intl";
 import Image from "next/image";
 import { useSearchParams } from "next/navigation";
@@ -27,6 +18,12 @@ import { ModeToggle } from "../../../../components/navbar/mode-toggle";
 import API from "../../../../services/api";
 import { App } from "../../../../types/App";
 import { AppVersion } from "../../../../types/AppVersion";
+import { Card, CardContent, CardHeader } from "@repo/ui/components/ui/card";
+import { Badge } from "@repo/ui/components/ui/badge";
+import { Button } from "@repo/ui/components/ui/button";
+import { Form, FormMessage } from "@repo/ui/components/ui/form";
+import { Input } from "@repo/ui/components/ui/input";
+
 const paramsSchema = z.object({
   appId: z.string().uuid(),
   versionId: z.string().uuid(),
@@ -96,7 +93,7 @@ const Page = ({ params }: { params: { appId: string } }) => {
       const res = await API.app.publicInstallPageAppVersion(
         params.appId,
         versionId,
-        password,
+        password
       );
       const { data } = res.data;
       setVersion(data.version);
@@ -198,7 +195,7 @@ const Page = ({ params }: { params: { appId: string } }) => {
                   </p>
                   <p>
                     {t("Created at")} :{" "}
-                    {moment(version.createdAt).format("YYYY-MM-DD HH:mm:ss a")}
+                    {dayjs(version.createdAt).format("YYYY-MM-DD HH:mm:ss a")}
                   </p>
                 </div>
                 <div className="flex flex-wrap space-x-2">

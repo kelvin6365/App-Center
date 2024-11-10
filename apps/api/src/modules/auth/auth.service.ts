@@ -74,12 +74,12 @@ export class AuthService {
           'jwt.user.timeFormats',
         ),
       )
-      .toDate();
+      .valueOf();
     const accessToken = this.jwtService.sign(payloadAccess);
     return {
       accessToken: accessToken,
       refreshToken: refreshToken,
-      accessTokenExpires: accessTokenExpires,
+      expiresIn: accessTokenExpires,
     };
   }
 

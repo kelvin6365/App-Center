@@ -1,5 +1,6 @@
 import { DefaultSession } from "next-auth";
 import "next-auth/jwt";
+import { UserStatus } from "./types/UserStatus";
 // import { UserStatus } from './UserStatus';
 export interface CommonUserProperties {
   accessToken: string;
@@ -8,7 +9,7 @@ export interface CommonUserProperties {
 
   id?: string; // If id is common across all, include it here.
   username: string;
-  // status: UserStatus;
+  status: UserStatus;
   error?: string;
 }
 
