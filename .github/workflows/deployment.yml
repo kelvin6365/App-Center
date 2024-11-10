@@ -90,12 +90,12 @@ jobs:
       - name: Update Backend Helm chart image.tag value
         run: |
           cd dg-argocd/app-center/backend-helm
-          yq eval '.image.tag = "${{ needs.deploy.outputs.sha }}"' -i values.${{ steps.set-branch.outputs.branch }}.yaml
+          yq eval '.image.tag = "${{ needs.build-image.outputs.sha }}"' -i values.${{ steps.set-branch.outputs.branch }}.yaml
 
       - name: Update Frontend Helm chart image.tag value
         run: |
           cd dg-argocd/app-center/portal-helm
-          yq eval '.image.tag = "${{ needs.deploy.outputs.sha }}"' -i values.${{ steps.set-branch.outputs.branch }}.yaml
+          yq eval '.image.tag = "${{ needs.build-image.outputs.sha }}"' -i values.${{ steps.set-branch.outputs.branch }}.yaml
 
       - name: Commit and push changes to Helm chart repository
         run: |
@@ -103,5 +103,5 @@ jobs:
           git config --global user.email "github-actions@2rocksstudio.hk"
           git config --global user.name "GitHub Actions"
           git add .
-          git commit -m "Update image.tag to ${{ needs.deploy.outputs.sha }} for ${{ steps.set-branch.outputs.branch }} branch"
+          git commit -m "Update image.tag to ${{ needs.build-image.outputs.sha }} for ${{ steps.set-branch.outputs.branch }} branch"
           git push origin main
