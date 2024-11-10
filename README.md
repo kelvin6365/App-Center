@@ -1,78 +1,167 @@
-# _App Center_
+# Full-Stack Monorepo Blueprint
 
-[![Discord](https://img.shields.io/discord/1157973112030253137?label=Discord&logo=discord)](https://discord.gg/9m2GUGmH8V)
-[![GitHub star chart](https://img.shields.io/github/stars/kelvin6365/App-Center?style=social)](https://star-history.com/#kelvin6365/App-Center)
-[![GitHub fork](https://img.shields.io/github/forks/kelvin6365/App-Center?style=social)](https://github.com/kelvin6365/App-Center/fork)
+A modern full-stack monorepo starter template built with Turborepo, featuring Next.js for frontend applications and NestJS for backend services.
 
-## _Manage Your Apps with Ease_
+## Tech Stack
 
-App Center is a SaaS platform that makes it easy for teams to centralize,
-distribute, and manage their apps in one place.
+- **Build System**: [Turborepo](https://turbo.build/repo)
+- **Package Manager**: [pnpm](https://pnpm.io/)
+- **Frontend**: [Next.js](https://nextjs.org/) with [Tailwind CSS](https://tailwindcss.com/)
+- **Backend**: [NestJS](https://nestjs.com/)
+- **UI Components**: Shared component library with [shadcn/ui](https://ui.shadcn.com/)
+- **Database**: PostgreSQL
+- **Caching**: Redis
+- **Storage**: MinIO (S3-compatible)
 
-## Introduction
+## Project Structure
 
-As a developer, I built this platform because managing the entire app lifecycle was always a headache.
-There were too many disjointed tools and too much complexity.
+```
+.
+├── apps/
+│   ├── api/          # NestJS backend application
+│   ├── docs/         # Documentation site (Next.js)
+│   └── web/          # Main web application (Next.js)
+├── packages/
+│   ├── ui/           # Shared UI component library
+│   ├── eslint-config/# Shared ESLint configurations
+│   └── typescript-config/ # Shared TypeScript configurations
+```
 
-Managing app versions and their lifecycles can be a daunting task. The need for multiple tools and the complexity of the process can be overwhelming.
+## Getting Started
 
-I designed App Center to simplify the process by bringing everything together in a unified dashboard. Now teams can:
+### Prerequisites
 
-- **Upload Different App Versions**: Easily upload and organize various versions of your app.
-- **Search App Versions**: Find all the versions that have been uploaded in the past. Easily manage releases across multiple environments by using tags
-- **Integrate with Jira**: Map each uploaded version to related Jira Stories/Tasks for better organization and traceability.
-- **Enable Testing**: IT QA/Tester teams can download different versions for testing purposes.
-- **Public Install Page**: Provide a public install page for non-users to access the app with a password code.
+- Node.js 18 or later
+- pnpm 8.15.6 or later
+- Docker and Docker Compose (for local services)
 
-With App Center, you can focus on efficient version management, making it easier for everyone, whether you're a company or a freelancer, to centralize and manage their app versions in one place.
+### Installation
 
-## Features
+```bash
+# Install dependencies
+pnpm install
 
-- **Version Upload**: Easily upload different app versions for organization and distribution.
-- **Version Search**: Quickly find all versions of an app using a search feature.
-- **Jira Integration**: Map app versions to related Jira Stories/Tasks for easy tracking.
-- **Public Install Page**: Offer a public install page with password protection for non-users.
+# Start local services (PostgreSQL, Redis, MinIO)
+docker compose up -d
+```
 
-## Integrates with Your Favorite Tools
+### Development
 
-- supported integrations like Jira, Slack, Google Analytics
-- notification - Slack, Discord and SendGrid
+```bash
+# Start all applications in development mode
+pnpm dev
 
-## Documentation
+# Start specific applications
+pnpm --filter web dev    # Start web app (http://localhost:3000)
+pnpm --filter docs dev   # Start docs app (http://localhost:3001)
+pnpm --filter api dev    # Start API server (http://localhost:8000)
 
-Full documentation can be found at docs.appcenter.com. This covers:
+# Add new UI components
+pnpm ui add button      # Add button component to shared UI library
+```
 
-## Getting started guides
+### Building
 
-Feature guides
-API references
-Tutorials and examples
-Try it Out
-Ready to simplify your app management? Get started with App Center:
+```bash
+# Build all applications
+pnpm build
 
-## Sign up for a free trial
+# Build specific application
+pnpm --filter web build
+pnpm --filter api build
+```
 
-Contact me with any questions!
-I'd love to hear your feedback on the product and any features you'd like to see added!
+### Linting and Type Checking
+
+```bash
+# Run ESLint across all projects
+pnpm lint
+
+# Run type checking
+pnpm type-check
+
+# Format code
+pnpm format
+```
+
+## Local Services
+
+The project includes several local services that can be started using Docker Compose:
+
+### PostgreSQL
+
+- **Port**: 5432
+- **Username**: pgsqladmin
+- **Password**: Pass!23456
+- **Database**: local_logicchat_db
+
+### Redis
+
+- **Port**: 6379
+- **Persistence**: Enabled
+- **Data Directory**: ./data/redis
+
+### MinIO (S3-compatible storage)
+
+- **API Port**: 9000
+- **Console Port**: 9001
+- **Access Key**: minoadmin
+- **Secret Key**: Pass!23456
+- **Default Bucket**: local-bucket
+- **Console URL**: http://localhost:9001
+
+## Application URLs
+
+- Web Application: http://localhost:3000
+- Documentation: http://localhost:3001
+- API Server: http://localhost:8000
+- API Documentation: http://localhost:8000/api/docs
+
+## Environment Setup
+
+1. Create environment files:
+
+```bash
+cp apps/api/.env.example apps/api/.env
+cp apps/web/.env.example apps/web/.env
+cp apps/docs/.env.example apps/docs/.env
+```
+
+2. Configure the environment variables according to your needs. The API service requires:
+
+```env
+# Server Configuration
+PORT=8000
+ENV=development
+GLOBAL_PREFIX=api
+
+# Database Configuration
+DB_HOST=localhost
+DB_PORT=5432
+DB_USERNAME=pgsqladmin
+DB_PASSWORD=Pass!23456
+DB_DATABASE=local_logicchat_db
+
+# Redis Configuration
+REDIS_HOST=localhost
+REDIS_PORT=6379
+
+# MinIO Configuration
+MINIO_ENDPOINT=localhost
+MINIO_PORT=9000
+MINIO_ACCESS_KEY=minoadmin
+MINIO_SECRET_KEY=Pass!23456
+MINIO_BUCKET=local-bucket
+```
 
 ## Contributing
 
-Contributions are welcome! Please open an issue first to discuss changes you'd like to make.
-
-## Road map
-
-- **Multiple Tenants**: Support multiple tenants for a user's account
-- Master Administration
-- **Enhanced Version Control**: Additional features for better version management.
-- **Integration with More Tools**: Expanding integrations with popular tools.
-- **Improved Public Install Page**: Enhancements to the public install page.
+1. Create a new branch: `git checkout -b feature/your-feature-name`
+2. Make your changes
+3. Run tests and linting: `pnpm lint && pnpm type-check`
+4. Commit your changes: `git commit -m 'Add some feature'`
+5. Push to the branch: `git push origin feature/your-feature-name`
 
 ## License
 
-App Center is licensed under MIT.
-
-**Free Software, Hell Yeah!**
-
-## Star History
-
-[![Star History Chart](https://api.star-history.com/svg?repos=kelvin6365/App-Center&type=Date)](https://star-history.com/#kelvin6365/App-Center)
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.

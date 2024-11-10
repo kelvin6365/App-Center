@@ -1,0 +1,721 @@
+import { AppVersion, AppVersionTag } from "@/types/AppVersion";
+import { Meta } from "@/types/Meta";
+import { PortalUserProfile, Tenant } from "@/types/PortalUserProfile";
+import { ResponseStatus } from "@/types/ResponseStatus";
+import { RoleType } from "@/types/RoleType";
+import { SearchJiraIssue } from "@/types/SearchJiraIssue";
+import { UserStatus } from "@/types/UserStatus";
+import axios, { AxiosResponse } from "axios";
+import { getSession, signOut } from "next-auth/react";
+import useTeamSelectionStore from "../stores/useTeamSelectionStore";
+import { RoleIdType } from "../types/RoleIdType";
+import { CredentialComponent } from "../types/CredentialComponent";
+import { Plan } from "../types/Plan";
+import { App } from "../types/App";
+const API = {
+  apiInstance: axios.create({
+    baseURL: process.env.NEXT_PUBLIC_API_HOST,
+    withCredentials: true,
+    headers: {
+      "Content-Type": "application/json",
+      ...(process.env.NODE_ENV === "development" && {
+        "Access-Control-Allow-Origin": "*",
+      }),
+    },
+  }),
+
+  API_PATH: {
+    AUTH: {
+      LOGIN: "/v1/auth/sign-in",
+      REGISTER: "/v1/auth/sign-up",
+      REFRESH_TOKEN: "/v1/auth/refresh",
+      GITHUB_SIGN_IN: "/v1/auth/github/sign-in",
+    },
+    APP: {
+      CREATE: "/v1/portal/app",
+      SEARCH: "/v1/portal/app/search",
+      GET_APP: (appId: string) => `/v1/portal/app/${appId}`,
+      SEARCH_APP_VERSIONS: (appId: string) =>
+        `/v1/portal/app/${appId}/version/search`,
+      GET_APP_VERSION_TAGS: (appId: string) =>
+        `/v1/portal/app/${appId}/version/tags`,
+      UPDATE_APP: (appId: string) => `/v1/portal/app/${appId}`,
+      GET_API_KET: (appId: string) => `/v1/portal/app/${appId}/api-key`,
+      UPLOAD_APP_VERSION: (appId: string) => `/v1/portal/app/${appId}/version`,
+      DELETE_VERSION: (appId: string, versionId: string) =>
+        `/v1/portal/app/${appId}/version/${versionId}`,
+      PUBLIC_INSTALL_PAGE_APP_DETAILS: (appId: string) =>
+        `/v1/portal/app/${appId}/install`,
+      PUBLIC_INSTALL_PAGE_APP_VERSIONS: (appId: string, versionId: string) =>
+        `/v1/portal/app/${appId}/version/${versionId}/install`,
+      SEARCH_JIRA_ISSUES: (appId: string) =>
+        `/v1/portal/app/${appId}/jira/search`,
+      REMOVE_JIRA_ISSUE: (appId: string, version: string, issueId: string) =>
+        `/v1/portal/app/${appId}/version/${version}/jira/issue/${issueId}/remove`,
+    },
+    USER: {
+      SEARCH_USERS: (tenantId: string) =>
+        `/v1/portal/user/tenant/${tenantId}/search`,
+      GET_USER: (userId: string) => `/v1/portal/user/${userId}`,
+      UPDATE_USER_STATUS: (userId: string) =>
+        `/v1/portal/user/${userId}/status`,
+      CREATE_USER: "/v1/portal/user",
+      PROFILE: "/v1/portal/user",
+      UPDATE_PROFILE: "/v1/portal/user",
+      UPDATE_PROFILE_BY_ID: (id: string) => `/v1/portal/user/${id}`,
+      TENANTS: "/v1/portal/user/tenants",
+      APP_PERMISSIONS_LIST: (appId: string) =>
+        `/v1/portal/user/app/${appId}/permissions`,
+      ADD_APP_PERMISSIONS: (userId: string) =>
+        `v1/portal/user/${userId}/permission`,
+      ONBOARDING: "/v1/portal/user/onboarding",
+      REMOVE_USER_FROM_TENANT: (userId: string) => `/v1/portal/user/${userId}`,
+      INVITE_USER_TO_TENANT: "/v1/portal/user/invite",
+    },
+    SETTING: {
+      GET_ALL_SETTINGS: "/v1/portal/setting",
+      GET_SETTING: (key: string) => `/v1/portal/setting/${key}`,
+      CREATE_SETTING: "/v1/portal/setting",
+      UPDATE_SETTING: "/v1/portal/setting",
+    },
+    CREDENTIAL: {
+      GET_ALL_CREDENTIALS: "/v1/portal/credential/tenant",
+      GET_CREDENTIAL: (id: string) => `/v1/portal/credential/${id}`,
+      CREATE_CREDENTIAL: "/v1/portal/credential",
+      UPDATE_CREDENTIAL: (id: string) => `/v1/portal/credential/${id}`,
+      DELETE_CREDENTIAL: (id: string) => `/v1/portal/credential/${id}`,
+      GET_ALL_CREDENTIAL_COMPONENTS: "/v1/portal/credential/component",
+      GET_CREDENTIAL_COMPONENT: (name: string) =>
+        `/v1/portal/credential/component/${name}`,
+    },
+    TENANT: {
+      GET_TENANT: (id: string) => `/v1/portal/tenant/${id}`,
+      CREATE_TENANT: "/v1/portal/tenant",
+      UPDATE_TENANT: `/v1/portal/tenant`,
+      DELETE_TENANT: (id: string) => `/v1/portal/tenant/${id}`,
+    },
+    PLAN: {
+      GET_ALL_PLANS: "/v1/portal/plan",
+    },
+  },
+
+  auth: {
+    login: async (email: string, password: string) => {
+      return API.apiInstance.post(API.API_PATH.AUTH.LOGIN, {
+        username: email,
+        password,
+      });
+    },
+    register: async (
+      email: string,
+      password: string,
+      name: string,
+    ): Promise<
+      AxiosResponse<{
+        data: boolean;
+        status: ResponseStatus;
+      }>
+    > => {
+      return API.apiInstance.post(API.API_PATH.AUTH.REGISTER, {
+        username: email,
+        password,
+        name,
+      });
+    },
+    refreshToken: async (
+      refreshToken: string,
+    ): Promise<
+      AxiosResponse<{
+        data: any;
+        status: ResponseStatus;
+      }>
+    > => {
+      return API.apiInstance.get(API.API_PATH.AUTH.REFRESH_TOKEN, {
+        headers: {
+          "x-refresh-token": refreshToken,
+        },
+      });
+    },
+    githubSignIn: async (code: string) => {
+      return API.apiInstance.post(API.API_PATH.AUTH.GITHUB_SIGN_IN, {
+        code,
+      });
+    },
+  },
+
+  app: {
+    createApp: (data: {
+      name: string;
+      description: string;
+      icon: File;
+      extra: {
+        [key: string]: any;
+      };
+    }) => {
+      const { name, description, icon } = data;
+      const form = new FormData();
+      form.append("name", name);
+      form.append("description", description);
+      form.append("icon", icon);
+      form.append("extra", JSON.stringify(data.extra));
+      return API.apiInstance.post(API.API_PATH.APP.CREATE, form, {
+        headers: {
+          "Content-type": "multipart/form-data",
+        },
+      });
+    },
+    searchApp: ({
+      page = 1,
+      limit = 10,
+      query,
+    }: {
+      page?: number;
+      limit?: number;
+      query?: string;
+    }): Promise<
+      AxiosResponse<{
+        data: {
+          items: App[];
+          meta: Meta;
+        };
+        status: ResponseStatus;
+      }>
+    > => {
+      return API.apiInstance.get(API.API_PATH.APP.SEARCH, {
+        params: {
+          page: page,
+          limit: limit,
+          query,
+        },
+      });
+    },
+    searchAppVersions: (
+      appId: string,
+      {
+        page = 1,
+        limit = 10,
+        query,
+      }: {
+        page?: number;
+        limit?: number;
+        query?: string;
+      },
+    ): Promise<
+      AxiosResponse<{
+        data: {
+          items: AppVersion[];
+          meta: Meta;
+        };
+        status: ResponseStatus;
+      }>
+    > => {
+      return API.apiInstance.get(API.API_PATH.APP.SEARCH_APP_VERSIONS(appId), {
+        params: {
+          page: page,
+          limit: limit,
+          query,
+        },
+      });
+    },
+    getApp: (
+      appId: string,
+    ): Promise<
+      AxiosResponse<{
+        data: App;
+        status: ResponseStatus;
+      }>
+    > => {
+      return API.apiInstance.get(API.API_PATH.APP.GET_APP(appId));
+    },
+    getAppVersionTags: (
+      appId: string,
+    ): Promise<
+      AxiosResponse<{
+        data: AppVersionTag[];
+        status: ResponseStatus;
+      }>
+    > => {
+      return API.apiInstance.get(API.API_PATH.APP.GET_APP_VERSION_TAGS(appId));
+    },
+    updateApp: (
+      appId: string,
+      data: {
+        name: string;
+        description: string;
+        icon?: File | null;
+        extra: {
+          [key: string]: any;
+        };
+      },
+    ): Promise<
+      AxiosResponse<{
+        data: any;
+        status: ResponseStatus;
+      }>
+    > => {
+      const { name, description, icon } = data;
+      const form = new FormData();
+      if (name) {
+        form.append("name", name);
+      }
+      if (description) {
+        form.append("description", description);
+      }
+      if (icon) {
+        form.append("icon", icon);
+      }
+      form.append("extra", JSON.stringify(data.extra));
+      console.log(form);
+      return API.apiInstance.put(API.API_PATH.APP.UPDATE_APP(appId), form, {
+        headers: {
+          "Content-type": "multipart/form-data",
+        },
+      });
+    },
+    patchApp: (
+      appId: string,
+      data: {
+        name?: string;
+        description?: string;
+        icon?: File | null;
+        extra: {
+          [key: string]: any;
+        };
+      },
+    ) => {
+      const { name, description, icon } = data;
+      const form = new FormData();
+      if (name) {
+        form.append("name", name);
+      }
+      if (description) {
+        form.append("description", description);
+      }
+      if (icon) {
+        form.append("icon", icon);
+      }
+      form.append("extra", JSON.stringify(data.extra));
+      console.log(form);
+      return API.apiInstance.patch(API.API_PATH.APP.UPDATE_APP(appId), form, {
+        headers: {
+          "Content-type": "multipart/form-data",
+        },
+      });
+    },
+    getAPIKey: (appId: string) => {
+      return API.apiInstance.get(API.API_PATH.APP.GET_API_KET(appId));
+    },
+    uploadAppVersion: (
+      appId: string,
+      data: {
+        name: string;
+        description: string;
+        file: File;
+        apiKey: string;
+        tags: string;
+        installPassword: string;
+        jiraIssues?: string;
+      },
+    ) => {
+      const {
+        name,
+        description,
+        file,
+        apiKey,
+        tags,
+        installPassword,
+        jiraIssues,
+      } = data;
+      const form = new FormData();
+      form.append("name", name);
+      form.append("description", description);
+      form.append("file", file);
+      form.append("apiKey", apiKey);
+      form.append("tags", tags);
+      form.append("installPassword", installPassword);
+      if (jiraIssues) {
+        form.append("jiraIssues", jiraIssues);
+      }
+      return API.apiInstance.post(
+        API.API_PATH.APP.UPLOAD_APP_VERSION(appId),
+        form,
+        {
+          headers: {
+            "Content-type": "multipart/form-data",
+          },
+        },
+      );
+    },
+    deleteVersion: (
+      appId: string,
+      versionId: string,
+    ): Promise<
+      AxiosResponse<{
+        status: ResponseStatus;
+        data: any;
+      }>
+    > => {
+      return API.apiInstance.delete(
+        API.API_PATH.APP.DELETE_VERSION(appId, versionId),
+      );
+    },
+    publicInstallPageAppDetails: (appId: string) => {
+      return API.apiInstance.get(
+        API.API_PATH.APP.PUBLIC_INSTALL_PAGE_APP_DETAILS(appId),
+      );
+    },
+    publicInstallPageAppVersion: (
+      appId: string,
+      versionId: string,
+      password: string,
+    ) => {
+      return API.apiInstance.post(
+        API.API_PATH.APP.PUBLIC_INSTALL_PAGE_APP_VERSIONS(appId, versionId),
+        { password },
+      );
+    },
+    searchJiraIssues: (
+      appId: string,
+      query: string,
+    ): Promise<
+      AxiosResponse<{
+        data: {
+          items: SearchJiraIssue[];
+        };
+        status: ResponseStatus;
+      }>
+    > => {
+      return API.apiInstance.get(API.API_PATH.APP.SEARCH_JIRA_ISSUES(appId), {
+        params: {
+          query,
+        },
+      });
+    },
+    removeJiraIssue: (appId: string, versionId: string, issueId: string) => {
+      return API.apiInstance.delete(
+        API.API_PATH.APP.REMOVE_JIRA_ISSUE(appId, versionId, issueId),
+      );
+    },
+  },
+  user: {
+    onBoarding: (data: {
+      name: string;
+      type: string;
+      tenantName: string;
+    }): Promise<
+      AxiosResponse<{
+        data: boolean;
+        status: ResponseStatus;
+      }>
+    > => {
+      return API.apiInstance.post(API.API_PATH.USER.ONBOARDING, data);
+    },
+    searchUsers: (
+      tenantId: string,
+      {
+        page = 1,
+        limit = 10,
+        query,
+      }: {
+        page?: number;
+        limit?: number;
+        query?: string;
+      },
+    ): Promise<
+      AxiosResponse<{
+        data: {
+          items: PortalUserProfile[];
+          meta: Meta;
+        };
+        status: ResponseStatus;
+      }>
+    > => {
+      return API.apiInstance.get(API.API_PATH.USER.SEARCH_USERS(tenantId), {
+        params: {
+          page: page,
+          limit: limit,
+          query,
+        },
+      });
+    },
+    getUser: (
+      userId: string,
+    ): Promise<
+      AxiosResponse<{
+        data: PortalUserProfile;
+        status: ResponseStatus;
+      }>
+    > => {
+      return API.apiInstance.get(API.API_PATH.USER.GET_USER(userId));
+    },
+    updateUserStatus: (userId: string, status: UserStatus) => {
+      return API.apiInstance.put(API.API_PATH.USER.UPDATE_USER_STATUS(userId), {
+        status,
+      });
+    },
+    createUser: (data: {
+      email: string;
+      password: string;
+      name: string;
+      username: string;
+      roleTypes: RoleType[];
+      permissions: string[];
+      tenantIds: string[];
+    }) => {
+      return API.apiInstance.post(API.API_PATH.USER.CREATE_USER, {
+        ...data,
+        status: UserStatus.Activated,
+      });
+    },
+    profile: (
+      accessToken?: string,
+    ): Promise<
+      AxiosResponse<{
+        data: PortalUserProfile;
+        status: ResponseStatus;
+      }>
+    > => {
+      if (accessToken) {
+        return API.apiInstance.get(API.API_PATH.USER.PROFILE, {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+        });
+      }
+      return API.apiInstance.get(API.API_PATH.USER.PROFILE);
+    },
+    updateProfile: ({
+      name,
+    }: {
+      name: string;
+    }): Promise<
+      AxiosResponse<{
+        data: PortalUserProfile;
+        status: ResponseStatus;
+      }>
+    > => {
+      return API.apiInstance.put(API.API_PATH.USER.UPDATE_PROFILE, {
+        name,
+      });
+    },
+    updateProfileById: ({
+      id,
+      name,
+      role,
+    }: {
+      id: string;
+      name?: string;
+      role: RoleIdType;
+    }): Promise<
+      AxiosResponse<{
+        data: PortalUserProfile;
+        status: ResponseStatus;
+      }>
+    > => {
+      return API.apiInstance.put(API.API_PATH.USER.UPDATE_PROFILE_BY_ID(id), {
+        name,
+        role,
+      });
+    },
+    changePassword: ({
+      password,
+      oldPassword,
+    }: {
+      password: string;
+      oldPassword: string;
+    }): Promise<
+      AxiosResponse<{
+        data: PortalUserProfile;
+        status: ResponseStatus;
+      }>
+    > => {
+      return API.apiInstance.put(API.API_PATH.USER.UPDATE_PROFILE, {
+        password,
+        oldPassword,
+      });
+    },
+    getAvailableTenants: (): Promise<
+      AxiosResponse<{
+        data: {
+          items: Tenant[];
+        };
+        status: ResponseStatus;
+      }>
+    > => {
+      return API.apiInstance.get(API.API_PATH.USER.TENANTS);
+    },
+    getUserAppPermissionsList: (appId: string) => {
+      return API.apiInstance.get(API.API_PATH.USER.APP_PERMISSIONS_LIST(appId));
+    },
+    addAppPermissions: ({
+      userId,
+      appId,
+      permissions,
+    }: {
+      userId: string;
+      appId: string;
+      permissions: string[];
+    }) => {
+      return API.apiInstance.post(
+        API.API_PATH.USER.ADD_APP_PERMISSIONS(userId),
+        {
+          appId,
+          permissions,
+        },
+      );
+    },
+    removeUserFromTenant: ({
+      userId,
+    }: {
+      userId: string;
+    }): Promise<
+      AxiosResponse<{
+        data: boolean;
+        status: ResponseStatus;
+      }>
+    > => {
+      return API.apiInstance.delete(
+        API.API_PATH.USER.REMOVE_USER_FROM_TENANT(userId),
+      );
+    },
+    inviteUserToTenant: ({
+      email,
+      role,
+    }: {
+      email: string;
+      role: RoleIdType;
+    }) => {
+      return API.apiInstance.post(API.API_PATH.USER.INVITE_USER_TO_TENANT, {
+        email,
+        role,
+      });
+    },
+  },
+  setting: {
+    getAllSettings: () => {
+      return API.apiInstance.get(API.API_PATH.SETTING.GET_ALL_SETTINGS);
+    },
+    getSetting: (key: string) => {
+      return API.apiInstance.get(API.API_PATH.SETTING.GET_SETTING(key));
+    },
+    createSetting: (data: { key: string; config: Record<string, unknown> }) => {
+      return API.apiInstance.post(API.API_PATH.SETTING.CREATE_SETTING, data);
+    },
+    updateSetting: (data: {
+      id: string;
+      key: string;
+      config: Record<string, unknown>;
+    }) => {
+      return API.apiInstance.put(API.API_PATH.SETTING.UPDATE_SETTING, data);
+    },
+  },
+  credential: {
+    getAllCredentials: (name?: string) => {
+      return API.apiInstance.get(API.API_PATH.CREDENTIAL.GET_ALL_CREDENTIALS, {
+        params: {
+          name,
+        },
+      });
+    },
+    getCredential: (id: string) => {
+      return API.apiInstance.get(API.API_PATH.CREDENTIAL.GET_CREDENTIAL(id));
+    },
+    createCredential: (data: {
+      name: string;
+      credentialName: string;
+      encryptedData: Record<string, unknown>;
+      tenantId: string;
+    }) => {
+      return API.apiInstance.post(
+        API.API_PATH.CREDENTIAL.CREATE_CREDENTIAL,
+        data,
+      );
+    },
+    updateCredential: (data: any) => {
+      return API.apiInstance.put(
+        API.API_PATH.CREDENTIAL.UPDATE_CREDENTIAL(data.id),
+        data,
+      );
+    },
+    deleteCredential: (id: string) => {
+      return API.apiInstance.delete(
+        API.API_PATH.CREDENTIAL.DELETE_CREDENTIAL(id),
+      );
+    },
+    getAllCredentialComponents: (): Promise<
+      AxiosResponse<{
+        data: CredentialComponent[];
+        status: ResponseStatus;
+      }>
+    > => {
+      return API.apiInstance.get(
+        API.API_PATH.CREDENTIAL.GET_ALL_CREDENTIAL_COMPONENTS,
+      );
+    },
+    getCredentialComponent: (name: string) => {
+      return API.apiInstance.get(
+        API.API_PATH.CREDENTIAL.GET_CREDENTIAL_COMPONENT(name),
+      );
+    },
+  },
+  tenant: {
+    createTenant: (data: {
+      name: string;
+    }): Promise<
+      AxiosResponse<{
+        data: Tenant;
+        status: ResponseStatus;
+      }>
+    > => {
+      return API.apiInstance.post(API.API_PATH.TENANT.CREATE_TENANT, data);
+    },
+    updateTenant: ({ name }: { name?: string }) => {
+      return API.apiInstance.put(API.API_PATH.TENANT.UPDATE_TENANT, { name });
+    },
+  },
+  plan: {
+    getAllPlans: (): Promise<
+      AxiosResponse<{
+        data: {
+          items: Plan[];
+          meta: Meta;
+        };
+        status: ResponseStatus;
+      }>
+    > => {
+      return API.apiInstance.get(API.API_PATH.PLAN.GET_ALL_PLANS);
+    },
+  },
+};
+
+API.apiInstance.defaults.withCredentials = true;
+
+API.apiInstance.interceptors.request.use(async (config) => {
+  const session = await getSession();
+  if (session) {
+    if (config && config.headers) {
+      config.headers["Authorization"] = `Bearer ${session.user.accessToken}`;
+      const tenantId = useTeamSelectionStore.getState().selectedTeam?.id;
+      config.headers["x-tenant-id"] = tenantId;
+    }
+  }
+  return config;
+});
+
+API.apiInstance.interceptors.response.use(
+  (res) => {
+    return Promise.resolve(res);
+  },
+  async (err) => {
+    if (err && err.response?.status === 401) {
+      const newSession = await getSession();
+      if (newSession?.user?.error) {
+        // Token refresh failed, log out the user
+        signOut();
+      }
+    }
+    return Promise.reject(err);
+  },
+);
+
+export default API;
