@@ -42,7 +42,7 @@ export default async function middleware(req: NextRequest) {
     const token = await getToken({ req });
     const isAuthenticated = !!token;
     if (isAuthenticated && !req.nextUrl.pathname.startsWith("/install/")) {
-      return NextResponse.redirect(new URL("/console", req.url));
+      return NextResponse.redirect(new URL("/", req.url));
     }
     return NextResponse.next();
   } else {

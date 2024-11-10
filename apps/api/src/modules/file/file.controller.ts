@@ -17,7 +17,7 @@ export class FileController {
   async findOne(
     @Query('id') id: string,
     @Query('download') download: string,
-    @Res() res: Response
+    @Res() res: Response,
   ) {
     const [file, s3Item] = await this.fileService.getFileByFileUUID(id);
     if (!file) {

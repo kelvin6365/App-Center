@@ -1,18 +1,19 @@
-import Loading from '@/components/loading';
-import API from '@/services/api';
-import useTeamSelectionStore from '@/stores/useTeamSelectionStore';
-import { App } from '@/types/App';
-import { AppsPermission, PortalUserProfile } from '@/types/PortalUserProfile';
-import { Checkbox, Label } from '@app-center/shadcn/ui';
+import Loading from "@/components/loading";
+import API from "@/services/api";
+import useTeamSelectionStore from "@/stores/useTeamSelectionStore";
+import { App } from "@/types/App";
+import { AppsPermission, PortalUserProfile } from "@/types/PortalUserProfile";
+import { Checkbox } from "@repo/ui/components/ui/checkbox";
+import { Label } from "@repo/ui/components/ui/label";
 import {
   ColumnDef,
   TableState,
   flexRender,
   getCoreRowModel,
   useReactTable,
-} from '@tanstack/react-table';
-import axios from 'axios';
-import { useTranslations } from 'next-intl';
+} from "@tanstack/react-table";
+import axios from "axios";
+import { useTranslations } from "next-intl";
 import {
   forwardRef,
   useCallback,
@@ -20,8 +21,8 @@ import {
   useImperativeHandle,
   useMemo,
   useState,
-} from 'react';
-import toast from 'react-hot-toast';
+} from "react";
+import toast from "react-hot-toast";
 
 export type UserAppPermissionsTableRef = {
   refresh: () => void;
@@ -43,7 +44,7 @@ type Props = {
 
 const UserAppPermissionsTable = forwardRef(
   ({ enableFooter, supperSearch, page, app }: Props, ref) => {
-    const t = useTranslations('Apps');
+    const t = useTranslations("Apps");
     const [data, setData] = useState<PortalUserProfile[]>([]);
 
     const { selectedTeam } = useTeamSelectionStore();
@@ -65,12 +66,12 @@ const UserAppPermissionsTable = forwardRef(
     const columns: ColumnDef<PortalUserProfile>[] = useMemo(() => {
       return [
         {
-          id: 'id',
+          id: "id",
           accessorFn: (row) => row.id,
           cell: (info) => info.getValue(),
         },
         {
-          id: 'user',
+          id: "user",
 
           cell: ({ row }) => (
             <div className="grid grid-cols-1">
@@ -78,20 +79,20 @@ const UserAppPermissionsTable = forwardRef(
               <i className="font-light">{row.original.username}</i>
             </div>
           ),
-          header: () => <span>{t('User')}</span>,
+          header: () => <span>{t("User")}</span>,
         },
         {
           size: 80,
           maxSize: 80,
           accessorFn: (row) => row.permissions,
-          id: 'permissions.view',
+          id: "permissions.view",
           cell: ({ row }) => {
             const permission =
               userPermissions?.[row.original.id]?.[AppsPermission.VIEW_APP] ??
               false;
             return (
               <Checkbox
-                className={'cursor-pointer'}
+                className={"cursor-pointer"}
                 color="blue"
                 defaultChecked={permission ? true : false}
                 onCheckedChange={(e) => {
@@ -102,20 +103,20 @@ const UserAppPermissionsTable = forwardRef(
               />
             );
           },
-          header: () => <span>{t('View')}</span>,
+          header: () => <span>{t("View")}</span>,
         },
         {
           size: 80,
           maxSize: 80,
           accessorFn: (row) => row.permissions,
-          id: 'permissions.edit',
+          id: "permissions.edit",
           cell: ({ row }) => {
             const permission =
               userPermissions?.[row.original.id]?.[AppsPermission.EDIT_APP] ??
               false;
             return (
               <Checkbox
-                className={'cursor-pointer'}
+                className={"cursor-pointer"}
                 color="blue"
                 defaultChecked={permission ? true : false}
                 onCheckedChange={(e) => {
@@ -126,13 +127,13 @@ const UserAppPermissionsTable = forwardRef(
               />
             );
           },
-          header: () => <span>{t('Edit')}</span>,
+          header: () => <span>{t("Edit")}</span>,
         },
         {
           size: 80,
           maxSize: 80,
           accessorFn: (row) => row.permissions,
-          id: 'permissions.editVersion',
+          id: "permissions.editVersion",
           cell: ({ row }) => {
             const permission =
               userPermissions?.[row.original.id]?.[
@@ -140,7 +141,7 @@ const UserAppPermissionsTable = forwardRef(
               ] ?? false;
             return (
               <Checkbox
-                className={'cursor-pointer'}
+                className={"cursor-pointer"}
                 color="blue"
                 defaultChecked={permission ? true : false}
                 onCheckedChange={(e) => {
@@ -151,13 +152,13 @@ const UserAppPermissionsTable = forwardRef(
               />
             );
           },
-          header: () => <span>{t('Upload Version')}</span>,
+          header: () => <span>{t("Upload Version")}</span>,
         },
         {
           size: 80,
           maxSize: 80,
           accessorFn: (row) => row.permissions,
-          id: 'permissions.deleteVersion',
+          id: "permissions.deleteVersion",
           cell: ({ row }) => {
             const permission =
               userPermissions?.[row.original.id]?.[
@@ -165,7 +166,7 @@ const UserAppPermissionsTable = forwardRef(
               ] ?? false;
             return (
               <Checkbox
-                className={'cursor-pointer'}
+                className={"cursor-pointer"}
                 color="blue"
                 defaultChecked={permission ? true : false}
                 onCheckedChange={(e) => {
@@ -176,7 +177,7 @@ const UserAppPermissionsTable = forwardRef(
               />
             );
           },
-          header: () => <span>{t('Delete Version')}</span>,
+          header: () => <span>{t("Delete Version")}</span>,
         },
       ];
       // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -186,7 +187,7 @@ const UserAppPermissionsTable = forwardRef(
       data: data,
       columns,
       getRowId: (row, _, parent) =>
-        parent ? [parent.id, row.id].join('.') : row.id,
+        parent ? [parent.id, row.id].join(".") : row.id,
       getCoreRowModel: getCoreRowModel(),
       state: {
         columnVisibility: {
@@ -301,7 +302,7 @@ const UserAppPermissionsTable = forwardRef(
                         key={index}
                         className="p-4 border-b border-blue-gray-100 bg-blue-gray-50/50"
                       >
-                        {header.column.id === 'select' ? (
+                        {header.column.id === "select" ? (
                           flexRender(
                             header.column.columnDef.header,
                             header.getContext()
@@ -328,8 +329,8 @@ const UserAppPermissionsTable = forwardRef(
                 {table.getRowModel().rows.map((row, index) => {
                   const isLast = index === data.length - 1;
                   const classes = isLast
-                    ? 'p-4'
-                    : 'p-4 border-b border-blue-gray-50';
+                    ? "p-4"
+                    : "p-4 border-b border-blue-gray-50";
 
                   return (
                     <tr
@@ -341,7 +342,7 @@ const UserAppPermissionsTable = forwardRef(
                           key={cell.id}
                           className={classes}
                           onClick={() => {
-                            if (cell.column.id === 'select') {
+                            if (cell.column.id === "select") {
                               return;
                             }
                           }}
@@ -349,7 +350,7 @@ const UserAppPermissionsTable = forwardRef(
                             width: cell.column.getSize(),
                           }}
                         >
-                          {cell.column.id === 'select'
+                          {cell.column.id === "select"
                             ? flexRender(
                                 cell.column.columnDef.cell,
                                 cell.getContext()
@@ -392,5 +393,5 @@ const UserAppPermissionsTable = forwardRef(
   }
 );
 
-UserAppPermissionsTable.displayName = 'UserAppPermissionsTable';
+UserAppPermissionsTable.displayName = "UserAppPermissionsTable";
 export default UserAppPermissionsTable;

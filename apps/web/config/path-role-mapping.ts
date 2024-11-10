@@ -16,6 +16,15 @@ const pathRoleMapping: PathConfig[] = [
     ],
   },
   { path: "/team", allowedRoles: [RoleType.ADMIN] },
+  {
+    path: "/account",
+    allowedRoles: [
+      RoleType.ADMIN,
+      RoleType.CLIENT,
+      RoleType.SALESPERSON,
+      RoleType.USER,
+    ],
+  },
   // Add more path configurations as needed
 ];
 
