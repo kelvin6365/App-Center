@@ -1,18 +1,7 @@
 {
-  "tailwindCSS.includeLanguages": {
-    "typescript": "javascript", // if you are using typescript
-    "typescriptreact": "javascript" // if you are using typescript with react
-  },
-  "editor.quickSuggestions": {
-    "strings": true // forces VS Code to trigger completions when editing "string" content
-  },
-  "tailwindCSS.experimental.classRegex": [
-    "tw`([^`]*)", // tw`...`
-    "tw\\.[^`]+`([^`]*)`", // tw.xxx<xxx>`...`
-    "tw\\(.*?\\).*?`([^`]*)" // tw(Component)<xxx>`...`
-  ],
-  "cSpell.words": ["clsx", "issuetype", "Jirasoftware"],
-  "i18n-ally.localesPaths": ["apps/portal/langs", "apps/website/i18n"],
-  "i18n-ally.sourceLanguage": "en",
-  "i18n-ally.keystyle": "nested"
+  "eslint.workingDirectories": [
+    {
+      "mode": "auto"
+    }
+  ]
 }

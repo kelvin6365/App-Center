@@ -1,0 +1,5 @@
+{
+  "extends": "../typescript-config/base.json",
+  "include": [".", "../types/business-days-plugin.d.ts"],
+  "exclude": ["node_modules", "dist"]
+}
