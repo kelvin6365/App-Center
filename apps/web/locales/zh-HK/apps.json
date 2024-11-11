@@ -74,7 +74,7 @@
     "Install QR Code": "安裝二維碼",
     "Invalid App ID": "應用程式 ID 無效",
     "Invalid App ID description": "噢!您輸入的應用程式 ID 似乎無效。請確認您輸入了正確的應用程式 ID,然後重試。如果問題持續存在,請聯繫我們的支援團隊尋求進一步協助。",
-    "Inviting...": "邀請中...",
+    "Inviting_dot": "邀請中...",
     "Jira Credential": "Jira 憑證",
     "Jira Integration": "Jira集成",
     "Jira Integration Settings": "Jira 整合設定",
