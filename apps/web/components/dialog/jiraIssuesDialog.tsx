@@ -1,5 +1,6 @@
 import Loading from "@/components/loading";
 import API from "@/services/api";
+import { Icons } from "@/components/icons";
 import {
   Dialog,
   DialogContent,
@@ -8,14 +9,13 @@ import {
   DialogTitle,
 } from "@repo/ui/components/ui/dialog";
 import axios from "axios";
-import clsx from "clsx";
 import { useTranslations } from "next-intl";
 import Image from "next/image";
 import { useState } from "react";
 import toast from "react-hot-toast";
-import { MdDelete } from "react-icons/md";
 import { App } from "../../types/App";
 import { AppVersion } from "../../types/AppVersion";
+import { Button } from "@repo/ui/components/ui/button";
 
 type Props = {
   title: string;
@@ -38,100 +38,79 @@ const JiraIssuesDialog = ({
 }: Props) => {
   const t = useTranslations("Apps");
   const [loading, setLoading] = useState(false);
+
   const onDelete = async (issueId: string) => {
-    if (!app || !data) {
-      return;
-    }
+    if (!app || !data) return;
+
     try {
       setLoading(true);
       const res = await API.app.removeJiraIssue(app.id, data.id, issueId);
-      const { data: rData } = res.data;
-      if (!rData) {
-        setLoading(false);
-
+      if (!res.data.data) {
         throw new Error("Delete failed");
       }
       await onReload();
       toast.success(t("Delete Successfully"));
-      setLoading(false);
     } catch (error) {
       console.error(error);
       if (axios.isAxiosError(error)) {
         toast.error(error.response?.data?.status?.displayMessage.toString());
       }
+    } finally {
+      setLoading(false);
     }
   };
+
   return (
     <>
       {loading && (
-        <div className="absolute top-0 bottom-0 left-0 right-0 z-[99999] bg-blue-gray-400/20">
+        <div className="fixed inset-0 z-[99999] bg-background/80 backdrop-blur-sm">
           <Loading fullScreen />
         </div>
       )}
-      <Dialog
-        open={open}
-        onOpenChange={() => {
-          if (!loading) {
-            onClose();
-          }
-        }}
-        // className="!max-w-[70%] !w-full max-h-[85%] overflow-scroll"
-      >
-        <DialogContent>
+      <Dialog open={open} onOpenChange={() => !loading && onClose()}>
+        <DialogContent className="max-w-2xl">
           <DialogHeader>
-            <DialogTitle>{title}</DialogTitle>
+            <DialogTitle className="text-xl font-semibold">{title}</DialogTitle>
             <DialogDescription>{description}</DialogDescription>
           </DialogHeader>
 
-          <div className="grid grid-cols-1 gap-1">
-            {data?.jiraIssues.map((issue) => {
-              return (
-                <div key={issue.id} className="flex justify-start">
-                  <div
-                    className={clsx(
-                      "h-fit my-[0.2rem] p-[.3rem] flex rounded-full",
-                      loading
-                        ? "cursor-not-allowed"
-                        : "cursor-pointer hover:bg-blue-gray-200/40",
-                    )}
-                  >
-                    <MdDelete
-                      className="w-6 h-6 my-auto text-red-500"
-                      onClick={() => {
-                        if (loading) {
-                          return;
-                        }
-                        onDelete(issue.id);
-                      }}
-                    />
-                  </div>
-                  <a
-                    href={issue.url}
-                    target="_blank"
-                    rel="noreferrer"
-                    className="flex justify-start px-2 py-1 my-auto text-blue-500 hover:text-blue-600"
-                  >
-                    <Image
-                      src={issue.iconUrl}
-                      className="h-fit my-[0.2rem] w-[25px h-[25px]"
-                      alt={issue.summary}
-                      width={25}
-                      height={25}
-                    />{" "}
-                    <div className="flex my-auto ml-2">
-                      <div className="col-span-1 text-base font-normal min-w-fit w-fit">
-                        {" "}
-                        {issue.issueIdOrKey}
-                      </div>
+          <div className="space-y-2">
+            {data?.jiraIssues.map((issue) => (
+              <div
+                key={issue.id}
+                className="flex items-center gap-2 p-2 rounded-lg hover:bg-muted group"
+              >
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="h-8 w-8 opacity-0 group-hover:opacity-100 transition-opacity"
+                  disabled={loading}
+                  onClick={() => onDelete(issue.id)}
+                >
+                  <Icons.trash className="h-4 w-4 text-destructive" />
+                </Button>
 
-                      <div className="ml-2 text-base font-normal ">
-                        {issue.summary}
-                      </div>
-                    </div>
-                  </a>
-                </div>
-              );
-            })}
+                <a
+                  href={issue.url}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="flex items-center gap-3 flex-1 hover:text-primary"
+                >
+                  <Image
+                    src={issue.iconUrl}
+                    alt={issue.summary}
+                    width={20}
+                    height={20}
+                    className="rounded"
+                  />
+                  <span className="font-medium min-w-[100px]">
+                    {issue.issueIdOrKey}
+                  </span>
+                  <span className="text-muted-foreground">{issue.summary}</span>
+                  <Icons.externalLink className="h-3 w-3 ml-auto opacity-0 group-hover:opacity-100" />
+                </a>
+              </div>
+            ))}
           </div>
         </DialogContent>
       </Dialog>

@@ -1,4 +1,5 @@
 import FileUpload from "@/components/fileUpload/fileUpload";
+import { Icons } from "@/components/icons";
 import Loading from "@/components/loading";
 import API from "@/services/api";
 import { App } from "@/types/App";
@@ -13,11 +14,11 @@ import {
 } from "@repo/ui/components/ui/dialog";
 import {
   Form,
+  FormDescription,
   FormField,
   FormItem,
   FormLabel,
   FormMessage,
-  FormDescription,
 } from "@repo/ui/components/ui/form";
 import { Input } from "@repo/ui/components/ui/input";
 import { Textarea } from "@repo/ui/components/ui/textarea";
@@ -35,10 +36,10 @@ type Props = {
   open: boolean;
   app: App | null;
 };
-type EditAppFormInputs = {
+
+type UploadVersionFormInputs = {
   name: string;
   description: string;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   file: any;
   tags: string;
   installPassword: string;
@@ -54,12 +55,12 @@ const UploadVersionDialog = ({
 }: Props) => {
   const t = useTranslations("Apps");
 
-  const form = useForm<EditAppFormInputs>({
-    // resolver: yupResolver<Inputs>(schema),
+  const form = useForm<UploadVersionFormInputs>({
     defaultValues: {
       file: null,
     },
   });
+
   const {
     register,
     handleSubmit,
@@ -69,14 +70,14 @@ const UploadVersionDialog = ({
     setValue,
   } = form;
 
-  const onSubmit: SubmitHandler<EditAppFormInputs> = async (values) => {
-    if (!app?.id) {
-      return;
-    }
+  const onSubmit: SubmitHandler<UploadVersionFormInputs> = async (values) => {
+    if (!app?.id) return;
+
     try {
-      const apiKeyResult = await API.app.getAPIKey(app!.id);
+      const apiKeyResult = await API.app.getAPIKey(app.id);
       const { data: apiKey } = apiKeyResult.data;
-      const res = await API.app.uploadAppVersion(app!.id, {
+
+      const res = await API.app.uploadAppVersion(app.id, {
         name: values.name.trim(),
         description: values.description.trim(),
         file: values.file[0] ?? null,
@@ -88,9 +89,8 @@ const UploadVersionDialog = ({
         installPassword: values.installPassword.trim(),
         jiraIssues: values.jiraIssues?.map((i) => i.trim()).join(",") ?? null,
       });
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const { status }: { data: any; status: any } = res.data;
-      if (status.code === 1000) {
+
+      if (res.data.status.code === 1000) {
         onClose(true);
         reset();
         toast.success(t("Update Successfully"));
@@ -104,15 +104,11 @@ const UploadVersionDialog = ({
   };
 
   const searchJiraIssues = async (inputValue: string) => {
-    if (!app?.id) {
-      return;
-    }
+    if (!app?.id || !inputValue) return [];
+
     try {
-      const res = await API.app.searchJiraIssues(app!.id, inputValue);
-      const {
-        data: { items },
-      } = res.data;
-      return items;
+      const res = await API.app.searchJiraIssues(app.id, inputValue);
+      return res.data.data.items;
     } catch (error) {
       console.error(error);
       return [];
@@ -120,25 +116,20 @@ const UploadVersionDialog = ({
   };
 
   const promiseOptions = async (inputValue: string) => {
-    if (inputValue.length === 0) {
-      return [];
-    }
     const issues = await searchJiraIssues(inputValue);
     return (
-      issues?.map((i) => {
-        return {
-          value: i.key,
-          label: (
-            <span className="flex">
-              <div
-                className="min-w-fit w-fit"
-                dangerouslySetInnerHTML={{ __html: i.keyHtml }}
-              />
-              <p className="ml-2 whitespace-pre-wrap">{i.summaryText}</p>
-            </span>
-          ),
-        };
-      }) ?? []
+      issues?.map((i) => ({
+        value: i.key,
+        label: (
+          <span className="flex items-center gap-2">
+            <div
+              className="min-w-fit w-fit"
+              dangerouslySetInnerHTML={{ __html: i.keyHtml }}
+            />
+            <p className="truncate">{i.summaryText}</p>
+          </span>
+        ),
+      })) ?? []
     );
   };
 
@@ -149,7 +140,7 @@ const UploadVersionDialog = ({
   return (
     <>
       {isSubmitting && (
-        <div className="absolute top-0 bottom-0 left-0 right-0 z-[99999] bg-blue-gray-400/20">
+        <div className="fixed inset-0 z-[99999] bg-background/80 backdrop-blur-sm">
           <Loading fullScreen />
         </div>
       )}
@@ -162,94 +153,86 @@ const UploadVersionDialog = ({
           }
         }}
       >
-        <DialogContent
-          onEscapeKeyDown={(e) => {
-            if (isSubmitting) {
-              e.preventDefault();
-            }
-          }}
-          onInteractOutside={(e) => {
-            if (isSubmitting) {
-              e.preventDefault();
-            }
-          }}
-          className="!w-full max-h-[85%] overflow-scroll"
-        >
+        <DialogContent className="max-w-2xl">
           <DialogHeader>
-            <DialogTitle>{title}</DialogTitle>
+            <DialogTitle className="text-xl font-semibold">{title}</DialogTitle>
             <DialogDescription>{description}</DialogDescription>
           </DialogHeader>
+
           <Form {...form}>
             <form
-              id="edit-form"
+              id="upload-form"
               onSubmit={handleSubmit(onSubmit)}
-              className="max-w-screen-sm mx-auto mt-8 mb-2"
+              className="space-y-6"
             >
-              <div className="flex flex-col gap-2 mb-4">
+              <div className="space-y-4">
                 <FormField
                   name="name"
                   control={control}
                   rules={{
                     required: t("Version Name is required"),
                   }}
-                  render={({ field }) => {
-                    return (
-                      <FormItem>
-                        <FormLabel className="font-bold" color="blue-gray">
-                          {t("Version Name")}
-                        </FormLabel>
-                        <Input {...field} disabled={isSubmitting} />
-                        <FormDescription>
-                          {t("eg")}: &apos;Version 1.0.0&apos;
-                        </FormDescription>
-                        <FormMessage />
-                      </FormItem>
-                    );
-                  }}
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>{t("Version Name")}</FormLabel>
+                      <Input
+                        {...field}
+                        disabled={isSubmitting}
+                        placeholder="e.g., Version 1.0.0"
+                      />
+                      <FormDescription>
+                        {t("eg")}: 'Version 1.0.0'
+                      </FormDescription>
+                      <FormMessage />
+                    </FormItem>
+                  )}
                 />
+
                 <FormField
                   name="description"
                   control={control}
                   rules={{
                     required: t("Version Description is required"),
                   }}
-                  render={({ field }) => {
-                    return (
-                      <FormItem>
-                        <FormLabel className="font-bold" color="blue-gray">
-                          {t("Description")}
-                        </FormLabel>
-                        <Textarea {...field} disabled={isSubmitting} />
-                        <FormDescription>
-                          {t("This is the description of the version")}
-                        </FormDescription>
-                        <FormMessage />
-                      </FormItem>
-                    );
-                  }}
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>{t("Description")}</FormLabel>
+                      <Textarea
+                        {...field}
+                        disabled={isSubmitting}
+                        placeholder={t("Describe this version")}
+                        className="min-h-[100px]"
+                      />
+                      <FormDescription>
+                        {t("This is the description of the version")}
+                      </FormDescription>
+                      <FormMessage />
+                    </FormItem>
+                  )}
                 />
               </div>
-              <div className="grid grid-cols-2 gap-6 mb-6">
+
+              <div className="grid gap-6 sm:grid-cols-2">
                 <FormField
                   name="tags"
                   control={control}
                   rules={{
                     required: t("Tags is required"),
                   }}
-                  render={({ field }) => {
-                    return (
-                      <FormItem>
-                        <FormLabel className="font-bold" color="blue-gray">
-                          {t("Tags")}
-                        </FormLabel>
-                        <Input {...field} disabled={isSubmitting} />
-                        <FormDescription>
-                          {t("eg")}: &apos;Android,UAT,APK&apos;
-                        </FormDescription>
-                        <FormMessage />
-                      </FormItem>
-                    );
-                  }}
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>{t("Version Tags")}</FormLabel>
+                      <Input
+                        {...field}
+                        disabled={isSubmitting}
+                        placeholder="e.g., stable,production"
+                      />
+                      <FormDescription>
+                        {t("eg")}: 'Android,UAT,APK'
+                      </FormDescription>
+                      <FormMessage />
+                    </FormItem>
+                  )}
                 />
 
                 <FormField
@@ -258,57 +241,61 @@ const UploadVersionDialog = ({
                   rules={{
                     required: t("Install Password is required"),
                   }}
-                  render={({ field }) => {
-                    return (
-                      <FormItem>
-                        <FormLabel>{t("Install Password")}</FormLabel>
-                        <Input {...field} disabled={isSubmitting} />
-                        <FormDescription>
-                          {t("This is the password for the install page")}
-                        </FormDescription>
-                        <FormMessage />
-                      </FormItem>
-                    );
-                  }}
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>{t("Install Password")}</FormLabel>
+                      <Input
+                        {...field}
+                        type="password"
+                        disabled={isSubmitting}
+                        placeholder="Set install password"
+                      />
+                      <FormDescription>
+                        {t("This is the password for the install page")}
+                      </FormDescription>
+                      <FormMessage />
+                    </FormItem>
+                  )}
                 />
               </div>
+
               {app?.extra?.jiraCredential && (
-                <div className="py-2 my-2 border-y">
-                  <div className="my-2">
-                    <FormField
-                      name="jiraIssues"
-                      control={control}
-                      rules={{
-                        required: false,
-                      }}
-                      render={({ field }) => {
-                        return (
-                          <FormItem>
-                            <FormLabel className="font-bold" color="blue-gray">
-                              {t("Jira Issues Connect")}
-                            </FormLabel>
-                            <AsyncSelect
-                              ref={field.ref}
-                              cacheOptions
-                              defaultOptions
-                              isMulti
-                              loadOptions={promiseOptions}
-                              onChange={(e) => {
-                                setValue(
-                                  "jiraIssues",
-                                  e.map((i) => i.value),
-                                );
-                              }}
-                            />
-                            <FormMessage />
-                          </FormItem>
-                        );
-                      }}
-                    />
-                  </div>
+                <div className="space-y-4 p-4 border rounded-lg bg-muted/50">
+                  <FormField
+                    name="jiraIssues"
+                    control={control}
+                    rules={{
+                      required: false,
+                    }}
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>{t("Jira Issues Connect")}</FormLabel>
+                        <AsyncSelect
+                          ref={field.ref}
+                          cacheOptions
+                          defaultOptions
+                          isMulti
+                          loadOptions={promiseOptions}
+                          onChange={(e) => {
+                            setValue(
+                              "jiraIssues",
+                              e.map((i) => i.value),
+                            );
+                          }}
+                          classNames={{
+                            control: () => "!min-h-10",
+                          }}
+                          placeholder="Search Jira issues..."
+                        />
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
                 </div>
               )}
-              <div className="mt-4">
+
+              <div className="space-y-4">
+                <FormLabel>{t("Upload File")}</FormLabel>
                 <FileUpload
                   {...register("file", {
                     required: t("File is required"),
@@ -320,15 +307,29 @@ const UploadVersionDialog = ({
               </div>
             </form>
           </Form>
-          <DialogFooter>
+
+          <DialogFooter className="gap-2">
             <Button
+              variant="outline"
               onClick={() => {
                 if (!isSubmitting) {
-                  form.handleSubmit(onSubmit)();
+                  reset();
+                  onClose(false);
                 }
               }}
+              disabled={isSubmitting}
             >
-              <span>{t("Done")}</span>
+              {t("Cancel")}
+            </Button>
+            <Button type="submit" form="upload-form" disabled={isSubmitting}>
+              {isSubmitting ? (
+                <>
+                  <Icons.spinner className="mr-2 h-4 w-4 animate-spin" />
+                  {t("Uploading_dot")}
+                </>
+              ) : (
+                t("Upload Version")
+              )}
             </Button>
           </DialogFooter>
         </DialogContent>

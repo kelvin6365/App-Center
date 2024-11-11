@@ -1,5 +1,6 @@
 "use client";
 import CodeBlock from "@/components/codeBlock/codeBlock";
+import { Icons } from "@/components/icons";
 import { App } from "@/types/App";
 import { Button } from "@repo/ui/components/ui/button";
 import {
@@ -14,7 +15,7 @@ import { Input } from "@repo/ui/components/ui/input";
 import { Label } from "@repo/ui/components/ui/label";
 import { useTranslations } from "next-intl";
 import { useState } from "react";
-import { MdOpenInNew } from "react-icons/md";
+
 type Props = {
   title: string;
   description?: string;
@@ -37,6 +38,7 @@ const GitLabCICodeDialog = ({
   const [tags, setTags] = useState("Tag1,Tag2,Tag3");
   const [jiraIssues, setJiraIssues] = useState("JIRA-001,JIRA-002,JIRA-003");
   const [filePath, setFilePath] = useState("/PATH-TO-FILE/FILE.{ipa/apk}");
+
   const reset = () => {
     setName("APP_VERSION_NAME");
     setDescription("APP_VERSION_DESCRIPTION");
@@ -47,31 +49,31 @@ const GitLabCICodeDialog = ({
       setJiraIssues("JIRA-001,JIRA-002,JIRA-003");
     }
   };
+
   const codeString = () => {
-    if (!app) {
-      return "";
-    }
-    return `##Upload To App Center Stage
-    upload_to_app_center:
-        stage: app_center
-        image: curlimages/curl:latest
-        script: 
-          - |
-            curl -f --location '${process.env.NEXT_PUBLIC_API_HOST}/v1/app/${
-              app?.id
-            }/version'  \\
-            --form 'name="${name}"'  \\
-            --form 'description="${description}"'  \\
-            --form 'file=@"${filePath}"'  \\
-            --form 'apiKey="${app?.apiKey}"'  \\
-            ${
-              app?.extra?.jiraCredential
-                ? `--form 'tags="${tags}"'  \\
-            --form 'jiraIssues="${jiraIssues ?? ""}"'  \\`
-                : `--form 'tags="${tags}"'  \\`
-            }
-            --form 'installPassword="${installPassword}"'`;
+    if (!app) return "";
+
+    return `# Upload To App Center Stage
+upload_to_app_center:
+  stage: app_center
+  image: curlimages/curl:latest
+  script: 
+    - |
+      curl -f --location '${process.env.NEXT_PUBLIC_API_HOST}/v1/app/${app?.id}/version' \\
+        --form 'name="${name}"' \\
+        --form 'description="${description}"' \\
+        --form 'file=@"${filePath}"' \\
+        --form 'apiKey="${app?.apiKey}"' \\${
+          app?.extra?.jiraCredential
+            ? `
+        --form 'tags="${tags}"' \\
+        --form 'jiraIssues="${jiraIssues ?? ""}"' \\`
+            : `
+        --form 'tags="${tags}"' \\`
+        }
+        --form 'installPassword="${installPassword}"'`;
   };
+
   return (
     <Dialog
       open={open}
@@ -79,108 +81,107 @@ const GitLabCICodeDialog = ({
         onClose();
         reset();
       }}
-      // className="!max-w-[70%] !w-full max-h-[85%] overflow-scroll"
     >
-      <DialogContent className="sm:max-w-[70%] w-full max-h-[85%] overflow-scroll">
+      <DialogContent className="max-w-4xl max-h-[85vh]">
         <DialogHeader>
-          <DialogTitle>{title}</DialogTitle>
+          <DialogTitle className="text-xl font-semibold">{title}</DialogTitle>
           <DialogDescription>{modelDescription}</DialogDescription>
         </DialogHeader>
-        <div className="relative">
-          <div className="grid grid-cols-2 gap-4 py-2">
-            <div className="grid w-full max-w-sm items-center gap-1.5">
+
+        <div className="space-y-6 py-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="space-y-2">
               <Label>{t("Version Name")}</Label>
               <Input
-                onChange={(e) => {
-                  setName(e.target.value);
-                }}
-                defaultValue={name}
-                autoFocus={false}
+                onChange={(e) => setName(e.target.value)}
+                value={name}
+                placeholder="e.g., 1.0.0"
               />
             </div>
-            <div className="grid w-full max-w-sm items-center gap-1.5">
+            <div className="space-y-2">
               <Label>{t("Description")}</Label>
               <Input
-                onChange={(e) => {
-                  setDescription(e.target.value);
-                }}
-                defaultValue={description}
-                autoFocus={false}
+                onChange={(e) => setDescription(e.target.value)}
+                value={description}
+                placeholder="Version description"
               />
             </div>
-            <div className="grid w-full max-w-sm items-center gap-1.5">
+            <div className="space-y-2">
               <Label>{t("Install Password")}</Label>
               <Input
-                onChange={(e) => {
-                  setInstallPassword(e.target.value);
-                }}
-                defaultValue={installPassword}
-                autoFocus={false}
+                onChange={(e) => setInstallPassword(e.target.value)}
+                value={installPassword}
+                type="password"
+                placeholder="Set install password"
               />
             </div>
-            <div className="grid w-full max-w-sm items-center gap-1.5">
+            <div className="space-y-2">
               <Label>{t("Version Tags")}</Label>
               <Input
-                onChange={(e) => {
-                  setTags(e.target.value);
-                }}
-                defaultValue={tags}
-                autoFocus={false}
+                onChange={(e) => setTags(e.target.value)}
+                value={tags}
+                placeholder="e.g., stable,production"
               />
             </div>
             {app?.extra?.jiraCredential && (
-              <div className="grid w-full max-w-sm items-center gap-1.5">
+              <div className="space-y-2">
                 <Label>{t("Jira Issues")}</Label>
                 <Input
-                  onChange={(e) => {
-                    setJiraIssues(e.target.value);
-                  }}
-                  defaultValue={jiraIssues}
-                  autoFocus={false}
+                  onChange={(e) => setJiraIssues(e.target.value)}
+                  value={jiraIssues}
+                  placeholder="e.g., PROJ-123,PROJ-456"
                 />
               </div>
             )}
-            <div className="grid w-full max-w-sm items-center gap-1.5">
+            <div className="space-y-2">
               <Label>{t("File Path")}</Label>
               <Input
-                onChange={(e) => {
-                  setFilePath(e.target.value);
-                }}
-                defaultValue={filePath}
-                autoFocus={false}
+                onChange={(e) => setFilePath(e.target.value)}
+                value={filePath}
+                placeholder="/path/to/your/app.{ipa/apk}"
               />
             </div>
           </div>
-          <div className="py-2">
-            <div className="text-base font-bold text-black">gitlab-ci.yml</div>
-            <span className="pb-4 text-xs font-thin text-purple-800">
+
+          <div className="space-y-2">
+            <div className="flex items-center justify-between">
+              <Label>gitlab-ci.yml</Label>
               <a
-                target="_blank"
                 href="https://docs.gitlab.com/ee/ci/triggers/#use-a-cicd-job"
+                target="_blank"
                 rel="noreferrer"
-                className="flex"
+                className="text-sm text-muted-foreground hover:text-primary flex items-center gap-1"
               >
-                <p className="my-auto">
-                  - {t("How to use cURL in a CI/CD job")}
-                </p>{" "}
-                <MdOpenInNew className="my-auto ml-1" />
+                {t("How to use cURL in a CI/CD job")}
+                <Icons.externalLink className="h-3 w-3" />
               </a>
-            </span>
-          </div>
-          <div className="h-[420px]"></div>
-          <div className="absolute bottom-0 left-0 right-0 p-6">
-            <CodeBlock text={codeString()} language={"yaml"} />
+            </div>
+            <div className="relative rounded-lg border bg-muted overflow-hidden">
+              <div className="absolute right-2 top-2 z-10">
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="h-6 w-6"
+                  onClick={() => {
+                    navigator.clipboard.writeText(codeString());
+                  }}
+                >
+                  <Icons.copy className="h-3 w-3" />
+                </Button>
+              </div>
+              <CodeBlock text={codeString()} language="yaml" />
+            </div>
           </div>
         </div>
 
-        <DialogFooter>
+        <DialogFooter className="p-6 border-t">
           <Button
             onClick={() => {
               onClose();
               reset();
             }}
           >
-            <span>{t("Done")}</span>
+            {t("Done")}
           </Button>
         </DialogFooter>
       </DialogContent>

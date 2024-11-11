@@ -7,12 +7,14 @@
     "type-check": "turbo type-check",
     "clean": "turbo clean",
     "format": "prettier --write \"**/*.{ts,tsx,md}\"",
-    "ui": "pnpm --filter @repo/ui ui"
+    "ui": "pnpm --filter @repo/ui ui",
+    "prepare": "husky install"
   },
   "devDependencies": {
     "prettier": "^3.2.5",
     "prettier-plugin-tailwindcss": "^0.5.11",
-    "turbo": "^2.2.3"
+    "turbo": "^2.2.3",
+    "husky": "^8.0.0"
   },
   "packageManager": "pnpm@8.15.6",
   "engines": {

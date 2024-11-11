@@ -14,7 +14,7 @@ import {
 import { Skeleton } from "@repo/ui/components/ui/skeleton";
 import { cn } from "@repo/ui/lib/utils";
 import { useTranslations } from "next-intl";
-import { Dispatch, SetStateAction } from "react";
+import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { buttonVariants } from "@repo/ui/components/ui/button";
 
 interface DashboardNavProps {
@@ -30,6 +30,22 @@ export function DashboardNav({
 }: DashboardNavProps) {
   const path = usePathname();
   const t = useTranslations("Common");
+  const [openItem, setOpenItem] = useState<string | undefined>(undefined);
+
+  // Helper function to check if any subitem's path matches current path
+  const isPathInSubItems = (item: NavItemWithOptionalChildren) => {
+    return item.items?.some(
+      (subItem) => subItem.href && path.includes(item.href + subItem.href),
+    );
+  };
+
+  // Set initial open item based on current path
+  useEffect(() => {
+    const initialIndex = items.findIndex((item) => isPathInSubItems(item));
+    if (initialIndex !== -1) {
+      setOpenItem(`item-${initialIndex}`);
+    }
+  }, [path, items]);
 
   return (
     <nav className="grid items-start gap-2">
@@ -49,6 +65,8 @@ export function DashboardNav({
                 key={`${item}-${index}`}
                 type="single"
                 collapsible
+                value={openItem}
+                onValueChange={setOpenItem}
                 className="w-full"
               >
                 <AccordionItem value={`item-${index}`} className="border-b-0">

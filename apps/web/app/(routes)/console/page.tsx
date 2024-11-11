@@ -1,7 +1,7 @@
 "use client";
 
-// import CustomBreadcrumb from '@/components/breadcrumb/breadcrumb';
 import PageTitle from "@/components/content/pageTitle";
+import DashboardCard from "@/components/card/dashboard-card";
 import {
   Card,
   CardContent,
@@ -10,125 +10,29 @@ import {
   CardTitle,
 } from "@repo/ui/components/ui/card";
 import { useTranslations } from "next-intl";
+import { Users, Activity } from "lucide-react";
 
 const ConsolePage = () => {
   const t = useTranslations("Dashboard");
   return (
     <div>
-      {/* <CustomBreadcrumb
-        items={[
-          {
-            label: t('Dashboard'),
-            href: '/console',
-          },
-        ]}
-      /> */}
       <PageTitle title={t("Dashboard")} description="" />
-      {/* <Tabs defaultValue="overview" className="space-y-4">
-        <TabsList>
-          <TabsTrigger value="overview">Overview</TabsTrigger>
-          <TabsTrigger value="analytics">Analytics</TabsTrigger>
-          <TabsTrigger value="reports">Reports</TabsTrigger>
-          <TabsTrigger value="notifications">Notifications</TabsTrigger>
-        </TabsList>
-        <TabsContent value="overview" className="space-y-4"> */}
       <div className="space-y-4">
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
-              <CardTitle className="text-sm font-medium">
-                Active Users
-              </CardTitle>
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth="2"
-                className="w-4 h-4 text-muted-foreground"
-              >
-                <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
-                <circle cx="9" cy="7" r="4" />
-                <path d="M22 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75" />
-              </svg>
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">0</div>
-              <p className="text-xs text-muted-foreground">
-                +0 since last hour
-              </p>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
-              <CardTitle className="text-sm font-medium">Total Users</CardTitle>
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth="2"
-                className="w-4 h-4 text-muted-foreground"
-              >
-                <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
-                <circle cx="9" cy="7" r="4" />
-                <path d="M22 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75" />
-              </svg>
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">+0</div>
-              <p className="text-xs text-muted-foreground">
-                +0 from last month
-              </p>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
-              <CardTitle className="text-sm font-medium">-</CardTitle>
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth="2"
-                className="w-4 h-4 text-muted-foreground"
-              >
-                <rect width="20" height="14" x="2" y="5" rx="2" />
-                <path d="M2 10h20" />
-              </svg>
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">-</div>
-              <p className="text-xs text-muted-foreground">-</p>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
-              <CardTitle className="text-sm font-medium">-</CardTitle>
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth="2"
-                className="w-4 h-4 text-muted-foreground"
-              >
-                <path d="M22 12h-4l-3 9L9 3l-3 9H2" />
-              </svg>
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">-</div>
-              <p className="text-xs text-muted-foreground">-</p>
-            </CardContent>
-          </Card>
+          <DashboardCard
+            title="Active Users"
+            value={0}
+            description="+0 since last hour"
+            icon={Users}
+          />
+          <DashboardCard
+            title="Total Users"
+            value={"+0"}
+            description="+0 from last month"
+            icon={Users}
+          />
+          <DashboardCard title="-" value="-" description="-" icon={Activity} />
+          <DashboardCard title="-" value="-" description="-" icon={Activity} />
         </div>
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-7">
           <Card className="col-span-4">
@@ -146,8 +50,6 @@ const ConsolePage = () => {
           </Card>
         </div>
       </div>
-      {/* </TabsContent>
-      </Tabs> */}
     </div>
   );
 };

@@ -35,36 +35,36 @@ const QRCodeDialog = ({
       }}
       // className="!max-w-[70%] !w-full max-h-[85%] overflow-scroll"
     >
-      <DialogContent>
+      <DialogContent className="max-w-md">
         <DialogHeader>
-          <DialogTitle>{title}</DialogTitle>
+          <DialogTitle className="text-xl font-semibold">{title}</DialogTitle>
           <DialogDescription>{description}</DialogDescription>
         </DialogHeader>
 
-        <center>
+        <div className="p-6 flex flex-col items-center space-y-4 bg-white rounded-lg border">
           {qrCodeValue ? (
-            <QRCode
-              size={256}
-              style={{
-                height: "auto",
-                maxWidth: "300px",
-                width: "100%",
-              }}
-              value={qrCodeValue}
-              viewBox={`0 0 256 256`}
-            />
+            <>
+              <QRCode
+                size={256}
+                style={{
+                  height: "auto",
+                  maxWidth: "256px",
+                  width: "100%",
+                }}
+                value={qrCodeValue}
+                viewBox={`0 0 256 256`}
+              />
+              <p className="text-sm text-muted-foreground text-center">
+                {t("Scan this QR code to install this app")}
+              </p>
+            </>
           ) : (
-            <Skeleton className="max-w-[300px] w-full aspect-square" />
+            <Skeleton className="h-64 w-64" />
           )}
-        </center>
+        </div>
+
         <DialogFooter>
-          <Button
-            onClick={() => {
-              onClose();
-            }}
-          >
-            <span>{t("Done")}</span>
-          </Button>
+          <Button onClick={() => onClose()}>{t("Done")}</Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>

@@ -1,7 +1,7 @@
-import React from "react";
-
+import { redirect } from "next/navigation";
 const AppsPage = () => {
-  return <div>AppsPage</div>;
+  //redirect to /all
+  redirect("/apps/all");
 };
 
 export default AppsPage;

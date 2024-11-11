@@ -9,16 +9,16 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@repo/ui/components/ui/dialog";
-import { Form } from "@repo/ui/components/ui/form";
 
+import { Icons } from "@/components/icons";
 import axios from "axios";
 import { useTranslations } from "next-intl";
 import { useEffect } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import toast from "react-hot-toast";
 import useAvailableCredentialComponentsQuery from "../../queries/useAvailableCredentialComponentsQuery";
-import { Credential } from "../../types/Credential";
 import useTeamSelectionStore from "../../stores/useTeamSelectionStore";
+import { Credential } from "../../types/Credential";
 
 type Props = {
   title: string;
@@ -104,51 +104,53 @@ const DeleteCredentialDialog = ({
         }}
         // className="!max-w-[70%] !w-full max-h-[85%] overflow-scroll"
       >
-        <DialogContent>
+        <DialogContent className="max-w-md">
           <DialogHeader>
-            <DialogTitle>{title}</DialogTitle>
+            <DialogTitle className="text-xl font-semibold text-red-500">
+              {title}
+            </DialogTitle>
             <DialogDescription>{description}</DialogDescription>
           </DialogHeader>
-          <Form {...form}>
-            <form
-              id="form"
-              onSubmit={handleSubmit(onSubmit)}
-              className="max-w-screen-sm mx-auto mt-8 mb-8"
-            >
-              <input {...register("id")} hidden />
 
-              <div className="flex">
-                <div className="m-auto">
-                  <h2 className="text-xl font-bold text-red-500">
-                    {t("Are your sure to delete this credential")}{" "}
-                  </h2>
-                  <br />
-                  <div className="text-left">
-                    <div className="grid grid-cols-1 text-lg font-bold">
-                      <div className="flex mx-auto">
-                        <img
-                          src={target?.icon}
-                          alt={credential?.credentialName + " icon"}
-                          className="object-cover w-12 h-12 p-2 border rounded-full group-hover:bg-white"
-                        />
-                        <span className="my-auto ml-2">{credential?.name}</span>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </form>
-          </Form>
-          <DialogFooter>
+          <div className="p-6 space-y-4 bg-red-50 rounded-lg border border-red-100">
+            <div className="flex items-center gap-3 text-red-600">
+              <Icons.alertTriangle className="h-5 w-5" />
+              <p className="font-medium">
+                {t("Are your sure to delete this credential")}
+              </p>
+            </div>
+
+            <div className="flex items-center gap-3 p-3 bg-white rounded-lg border">
+              <img
+                src={target?.icon}
+                alt={credential?.credentialName + " icon"}
+                className="w-10 h-10 p-2 border rounded-full"
+              />
+              <span className="font-medium">{credential?.name}</span>
+            </div>
+          </div>
+
+          <DialogFooter className="gap-2 sm:gap-0">
             <Button
-              onClick={() => {
-                if (!isSubmitting) {
-                  handleSubmit(onSubmit)();
-                }
-              }}
+              variant="ghost"
+              onClick={() => onClose(false)}
               disabled={isSubmitting}
             >
-              <span>{t("Confirm to Delete")}</span>
+              {t("Cancel")}
+            </Button>
+            <Button
+              variant="destructive"
+              onClick={() => handleSubmit(onSubmit)()}
+              disabled={isSubmitting}
+            >
+              {isSubmitting ? (
+                <>
+                  <Icons.spinner className="mr-2 h-4 w-4 animate-spin" />
+                  {t("Deleting_dot")}
+                </>
+              ) : (
+                t("Delete")
+              )}
             </Button>
           </DialogFooter>
         </DialogContent>

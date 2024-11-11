@@ -1,4 +1,5 @@
 import FileUpload from "@/components/fileUpload/fileUpload";
+import { Icons } from "@/components/icons";
 import Loading from "@/components/loading";
 import API from "@/services/api";
 import { App } from "@/types/App";
@@ -13,15 +14,14 @@ import {
 } from "@repo/ui/components/ui/dialog";
 import {
   Form,
+  FormDescription,
   FormField,
   FormItem,
   FormLabel,
   FormMessage,
-  FormDescription,
 } from "@repo/ui/components/ui/form";
 import { Input } from "@repo/ui/components/ui/input";
 import { Textarea } from "@repo/ui/components/ui/textarea";
-import { cn } from "@repo/ui/lib/utils";
 import axios from "axios";
 import { useTranslations } from "next-intl";
 import { useEffect } from "react";
@@ -38,7 +38,6 @@ type Props = {
 type EditAppFormInputs = {
   name: string;
   description: string;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   icon: any;
   playStoreURL: string;
   appStoreURL: string;
@@ -51,11 +50,11 @@ const EditAppDialog = ({ title, onClose, open, app, description }: Props) => {
   const t = useTranslations("Apps");
 
   const form = useForm<EditAppFormInputs>({
-    // resolver: yupResolver<Inputs>(schema),
     defaultValues: {
       icon: undefined,
     },
   });
+
   const {
     register,
     handleSubmit,
@@ -65,7 +64,6 @@ const EditAppDialog = ({ title, onClose, open, app, description }: Props) => {
   } = form;
 
   const onSubmit: SubmitHandler<EditAppFormInputs> = async (values) => {
-    //deep compare before call api
     if (
       JSON.stringify({
         name: app?.name,
@@ -93,6 +91,7 @@ const EditAppDialog = ({ title, onClose, open, app, description }: Props) => {
       );
       return;
     }
+
     try {
       const res = await API.app.updateApp(app!.id, {
         name: values.name,
@@ -106,9 +105,8 @@ const EditAppDialog = ({ title, onClose, open, app, description }: Props) => {
           confluenceURL: values.confluenceURL,
         },
       });
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const { status } = res.data;
-      if (status.code === 1000) {
+
+      if (res.data.status.code === 1000) {
         onClose(true);
         toast.success(t("Update Successfully"));
       }
@@ -138,7 +136,7 @@ const EditAppDialog = ({ title, onClose, open, app, description }: Props) => {
   return (
     <>
       {isSubmitting && (
-        <div className="absolute top-0 bottom-0 left-0 right-0 z-[99999] bg-blue-gray-400/20">
+        <div className="fixed inset-0 z-[99999] bg-background/80 backdrop-blur-sm">
           <Loading fullScreen />
         </div>
       )}
@@ -151,205 +149,221 @@ const EditAppDialog = ({ title, onClose, open, app, description }: Props) => {
           }
         }}
       >
-        <DialogContent
-          className={cn("sm:max-w-[60%] !w-full max-h-[85%] overflow-scroll")}
-          onEscapeKeyDown={(e) => {
-            if (isSubmitting) {
-              e.preventDefault();
-            }
-          }}
-          onInteractOutside={(e) => {
-            if (isSubmitting) {
-              e.preventDefault();
-            }
-          }}
-        >
+        <DialogContent className="max-w-3xl !w-full max-h-[85vh] overflow-y-auto">
           <DialogHeader>
-            <DialogTitle>{title}</DialogTitle>
-            <DialogDescription>{description}</DialogDescription>
+            <DialogTitle className="text-2xl font-bold">{title}</DialogTitle>
+            <DialogDescription className="text-muted-foreground">
+              {description}
+            </DialogDescription>
           </DialogHeader>
+
+          <div className="h-px bg-border" />
+
           <Form {...form}>
             <form
               id="edit-form"
               onSubmit={handleSubmit(onSubmit)}
-              className="relative max-w-screen-sm mx-auto mt-8 mb-2"
+              className="space-y-6 py-4"
             >
-              <div className="flex flex-col gap-2 mb-4">
-                <FormField
-                  name="name"
-                  control={control}
-                  rules={{
-                    required: t("App Name is required"),
-                  }}
-                  render={({ field }) => {
-                    return (
+              {/* Basic Information Section */}
+              <div className="space-y-4">
+                <h3 className="text-lg font-semibold">
+                  {t("Basic Information")}
+                </h3>
+                <div className="grid gap-4">
+                  <FormField
+                    name="name"
+                    control={control}
+                    rules={{
+                      required: t("App Name is required"),
+                    }}
+                    render={({ field }) => (
                       <FormItem>
-                        <FormLabel className="font-bold" color="blue-gray">
-                          {t("App Name")}
-                        </FormLabel>
-                        <Input {...field} disabled={isSubmitting} />
-
+                        <FormLabel>{t("App Name")}</FormLabel>
+                        <Input
+                          {...field}
+                          disabled={isSubmitting}
+                          placeholder={t("Enter app name")}
+                          className="w-full"
+                        />
                         <FormMessage />
                       </FormItem>
-                    );
-                  }}
-                />
-                <FormField
-                  name="description"
-                  control={control}
-                  rules={{
-                    required: t("Description is required"),
-                  }}
-                  render={({ field }) => {
-                    return (
+                    )}
+                  />
+
+                  <FormField
+                    name="description"
+                    control={control}
+                    rules={{
+                      required: t("Description is required"),
+                    }}
+                    render={({ field }) => (
                       <FormItem>
-                        <FormLabel className="font-bold" color="blue-gray">
-                          {t("Description")}
-                        </FormLabel>
-                        <Textarea {...field} disabled={isSubmitting} />
-                        <FormDescription className="break-words">
+                        <FormLabel>{t("Description")}</FormLabel>
+                        <Textarea
+                          {...field}
+                          disabled={isSubmitting}
+                          placeholder={t("Describe your app")}
+                          className="min-h-[100px]"
+                        />
+                        <FormDescription>
                           {t("This is the description of the app")}
                         </FormDescription>
                         <FormMessage />
                       </FormItem>
-                    );
-                  }}
-                />
-              </div>
-              <div className="grid grid-cols-2 gap-6 mb-6">
-                <FormField
-                  name="playStoreURL"
-                  control={control}
-                  rules={{}}
-                  render={({ field }) => {
-                    return (
-                      <FormItem>
-                        <FormLabel className="font-bold" color="blue-gray">
-                          {t("Play Store URL")}
-                        </FormLabel>
-                        <Input {...field} disabled={isSubmitting} />
-                        <FormDescription className="break-words">
-                          {t("eg")}:{" "}
-                          {
-                            "https://play.google.com/store/apps/details?id=<package_name>"
-                          }
-                        </FormDescription>
-                        <FormMessage />
-                      </FormItem>
-                    );
-                  }}
-                />
-
-                <FormField
-                  name="appStoreURL"
-                  control={control}
-                  rules={{}}
-                  render={({ field }) => {
-                    return (
-                      <FormItem>
-                        <FormLabel>{t("App Store URL")}</FormLabel>
-                        <Input {...field} disabled={isSubmitting} />
-                        <FormDescription className="break-words">
-                          {t("eg")}:{" "}
-                          {
-                            "https://apps.apple.com/<country>/app/<app–name>/id<app-ID>"
-                          }
-                        </FormDescription>
-                        <FormMessage />
-                      </FormItem>
-                    );
-                  }}
-                />
-              </div>
-              <div className="grid grid-cols-2 gap-6 mb-6">
-                <FormField
-                  name="repoURL"
-                  control={control}
-                  rules={{}}
-                  render={({ field }) => {
-                    return (
-                      <FormItem>
-                        <FormLabel className="font-bold" color="blue-gray">
-                          {t("Git Repository URL")}
-                        </FormLabel>
-                        <Input {...field} disabled={isSubmitting} />
-                        <FormDescription className="break-words">
-                          {t("eg")}: {"https://gitlab.com/username/project"}
-                        </FormDescription>
-                        <FormMessage />
-                        <FormMessage />
-                      </FormItem>
-                    );
-                  }}
-                />
-              </div>
-              <div className="grid grid-cols-2 gap-6 mb-6">
-                <FormField
-                  name="jiraURL"
-                  control={control}
-                  rules={{}}
-                  render={({ field }) => {
-                    return (
-                      <FormItem>
-                        <FormLabel className="font-bold" color="blue-gray">
-                          {t("Jira URL")}
-                        </FormLabel>
-                        <Input {...field} disabled={isSubmitting} />
-                        <FormDescription className="break-words">
-                          {t("eg")}:{" "}
-                          {
-                            "https://<COMPANY>.atlassian.net/jira/software/c/project/<Project code>/board/<ID>"
-                          }
-                        </FormDescription>
-                        <FormMessage />
-                        <FormMessage />
-                      </FormItem>
-                    );
-                  }}
-                />
-                <FormField
-                  name="confluenceURL"
-                  control={control}
-                  rules={{}}
-                  render={({ field }) => {
-                    return (
-                      <FormItem>
-                        <FormLabel className="font-bold" color="blue-gray">
-                          {t("Confluence URL")}
-                        </FormLabel>
-                        <Input {...field} disabled={isSubmitting} />
-                        <FormDescription className="break-words">
-                          {t("eg")}:{" "}
-                          {
-                            "https://<COMPANY>.atlassian.net/wiki/spaces/<Project code>"
-                          }
-                        </FormDescription>
-                        <FormMessage />
-                        <FormMessage />
-                      </FormItem>
-                    );
-                  }}
-                />
-              </div>
-              {app?.iconFileURL && (
-                <div className="pointer-events-none relative mx-auto my-2 flex w-[180px]">
-                  <img
-                    src={app?.iconFileURL}
-                    alt="preview"
-                    className="mx-auto"
+                    )}
                   />
                 </div>
-              )}
-              <FileUpload
-                {...register("icon", {})}
-                loading={isSubmitting}
-                errors={errors}
-              />
+              </div>
+
+              <div className="h-px bg-border" />
+
+              {/* Store Links Section */}
+              <div className="space-y-4">
+                <h3 className="text-lg font-semibold">{t("Store Links")}</h3>
+                <div className="grid gap-6 sm:grid-cols-2">
+                  <FormField
+                    name="playStoreURL"
+                    control={control}
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>{t("Play Store URL")}</FormLabel>
+                        <Input
+                          {...field}
+                          disabled={isSubmitting}
+                          placeholder="https://play.google.com/store/apps/..."
+                          className="w-full"
+                        />
+                        <FormDescription className="text-xs">
+                          {t("eg")}:
+                          https://play.google.com/store/apps/details?id=package_name
+                        </FormDescription>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    name="appStoreURL"
+                    control={control}
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>{t("App Store URL")}</FormLabel>
+                        <Input
+                          {...field}
+                          disabled={isSubmitting}
+                          placeholder="https://apps.apple.com/..."
+                          className="w-full"
+                        />
+                        <FormDescription className="text-xs">
+                          {t("eg")}: https://apps.apple.com/country/app/name/id
+                        </FormDescription>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+              </div>
+
+              <div className="h-px bg-border" />
+
+              {/* Development Links Section */}
+              <div className="space-y-4">
+                <h3 className="text-lg font-semibold">
+                  {t("Development Resources")}
+                </h3>
+                <div className="grid gap-6">
+                  <FormField
+                    name="repoURL"
+                    control={control}
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>{t("Git Repository URL")}</FormLabel>
+                        <Input
+                          {...field}
+                          disabled={isSubmitting}
+                          placeholder="https://gitlab.com/..."
+                          className="w-full"
+                        />
+                        <FormDescription className="text-xs">
+                          {t("eg")}: https://gitlab.com/username/project
+                        </FormDescription>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  <div className="grid gap-6 sm:grid-cols-2">
+                    <FormField
+                      name="jiraURL"
+                      control={control}
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>{t("Jira URL")}</FormLabel>
+                          <Input
+                            {...field}
+                            disabled={isSubmitting}
+                            placeholder="https://company.atlassian.net/..."
+                            className="w-full"
+                          />
+                          <FormDescription className="text-xs">
+                            {t("eg")}: https://company.atlassian.net/jira/...
+                          </FormDescription>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+
+                    <FormField
+                      name="confluenceURL"
+                      control={control}
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>{t("Confluence URL")}</FormLabel>
+                          <Input
+                            {...field}
+                            disabled={isSubmitting}
+                            placeholder="https://company.atlassian.net/wiki/..."
+                            className="w-full"
+                          />
+                          <FormDescription className="text-xs">
+                            {t("eg")}:
+                            https://company.atlassian.net/wiki/spaces/...
+                          </FormDescription>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  </div>
+                </div>
+              </div>
+
+              <div className="h-px bg-border" />
+
+              {/* App Icon Section */}
+              <div className="space-y-4">
+                <h3 className="text-lg font-semibold">{t("App Icon")}</h3>
+                {app?.iconFileURL && (
+                  <div className="pointer-events-none relative mx-auto my-2 flex w-[180px]">
+                    <img
+                      src={app?.iconFileURL}
+                      alt="preview"
+                      className="mx-auto rounded-lg"
+                    />
+                  </div>
+                )}
+                <FileUpload
+                  {...register("icon", {})}
+                  loading={isSubmitting}
+                  errors={errors}
+                />
+              </div>
             </form>
           </Form>
-          <DialogFooter>
+
+          <DialogFooter className="gap-2">
             <Button
-              variant={"secondary"}
+              variant="outline"
               onClick={() => {
                 if (!isSubmitting) {
                   form.reset({
@@ -364,8 +378,9 @@ const EditAppDialog = ({ title, onClose, open, app, description }: Props) => {
                   });
                 }
               }}
+              disabled={isSubmitting}
             >
-              <span>{t("Reset")}</span>
+              {t("Reset")}
             </Button>
             <Button
               onClick={() => {
@@ -373,8 +388,16 @@ const EditAppDialog = ({ title, onClose, open, app, description }: Props) => {
                   form.handleSubmit(onSubmit)();
                 }
               }}
+              disabled={isSubmitting}
             >
-              <span>{t("Done")}</span>
+              {isSubmitting ? (
+                <>
+                  <Icons.spinner className="mr-2 h-4 w-4 animate-spin" />
+                  {t("Saving_dot")}
+                </>
+              ) : (
+                t("Save Changes")
+              )}
             </Button>
           </DialogFooter>
         </DialogContent>

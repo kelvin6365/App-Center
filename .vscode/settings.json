@@ -3,5 +3,8 @@
     {
       "mode": "auto"
     }
-  ]
+  ],
+  "i18n-ally.localesPaths": ["apps/web/locales"],
+  "i18n-ally.sourceLanguage": "en",
+  "i18n-ally.keystyle": "nested"
 }

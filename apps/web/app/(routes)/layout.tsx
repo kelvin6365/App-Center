@@ -61,7 +61,6 @@ interface LayoutProps {
 export default async function Layout({ children }: LayoutProps) {
   const session = await getServerSession(authOptions);
   console.log("=============[Private Layout]============");
-  console.log("session", session);
 
   if (session?.user?.status === UserStatus.Pending) {
     redirect("/onboarding");

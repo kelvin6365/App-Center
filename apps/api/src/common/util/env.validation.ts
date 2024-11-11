@@ -5,8 +5,6 @@ import {
   IsNumber,
   IsOptional,
   IsString,
-  Max,
-  Min,
   validateSync,
 } from 'class-validator';
 

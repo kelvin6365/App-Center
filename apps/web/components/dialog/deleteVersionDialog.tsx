@@ -1,3 +1,4 @@
+import { Icons } from "@/components/icons";
 import Loading from "@/components/loading";
 import API from "@/services/api";
 import { AppVersion } from "@/types/AppVersion";
@@ -10,7 +11,6 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@repo/ui/components/ui/dialog";
-import { Form } from "@repo/ui/components/ui/form";
 import axios from "axios";
 import { useTranslations } from "next-intl";
 import { useEffect } from "react";
@@ -92,39 +92,48 @@ const DeleteAppVersionDialog = ({
         }}
         // className="!max-w-[70%] !w-full max-h-[85%] overflow-scroll"
       >
-        <DialogContent>
+        <DialogContent className="max-w-md">
           <DialogHeader>
-            <DialogTitle>{title}</DialogTitle>
+            <DialogTitle className="text-xl font-semibold text-red-500">
+              {title}
+            </DialogTitle>
             <DialogDescription>{description}</DialogDescription>
           </DialogHeader>
-          <Form {...form}>
-            <form
-              id="form"
-              onSubmit={handleSubmit(onSubmit)}
-              className="max-w-screen-sm mx-auto mt-8 mb-8"
-            >
-              <input {...register("id")} hidden />
-              <input {...register("versionId")} hidden />
-              <div className="flex">
-                <div className="m-auto">
-                  <h2 className="text-xl font-bold text-red-500">
-                    {t("Are you sure you want to delete this version") + "?"}
-                  </h2>
-                  <br />
-                  <div className="text-left">
-                    <p className="grid grid-cols-2 text-lg font-bold ">
-                      <p>{t("Name")}:</p> <p>{version?.name}</p>
-                    </p>
-                    <p className="grid grid-cols-2 text-lg font-bold ">
-                      <p>{t("Description")}:</p> <p>{version?.description}</p>
-                    </p>
-                  </div>
-                </div>
+
+          <div className="p-6 space-y-4 bg-red-50 rounded-lg border border-red-100">
+            <div className="flex items-center gap-3 text-red-600">
+              <Icons.alertTriangle className="h-5 w-5" />
+              <p className="font-medium">
+                {t("Are you sure you want to delete this version") + "?"}
+              </p>
+            </div>
+
+            <div className="space-y-3 text-sm">
+              <div className="grid grid-cols-3 gap-2">
+                <span className="font-medium text-muted-foreground">
+                  {t("Name")}:
+                </span>
+                <span className="col-span-2">{version?.name}</span>
               </div>
-            </form>
-          </Form>
-          <DialogFooter>
+              <div className="grid grid-cols-3 gap-2">
+                <span className="font-medium text-muted-foreground">
+                  {t("Description")}:
+                </span>
+                <span className="col-span-2">{version?.description}</span>
+              </div>
+            </div>
+          </div>
+
+          <DialogFooter className="gap-2 sm:gap-0">
             <Button
+              variant="ghost"
+              onClick={() => onClose(false)}
+              disabled={isSubmitting}
+            >
+              {t("Cancel")}
+            </Button>
+            <Button
+              variant="destructive"
               onClick={() => {
                 if (!isSubmitting) {
                   handleSubmit(onSubmit)();
@@ -132,7 +141,14 @@ const DeleteAppVersionDialog = ({
               }}
               disabled={isSubmitting}
             >
-              <span>{t("Confirm to Delete")}</span>
+              {isSubmitting ? (
+                <>
+                  <Icons.spinner className="mr-2 h-4 w-4 animate-spin" />
+                  {t("Deleting_dot")}
+                </>
+              ) : (
+                t("Delete")
+              )}
             </Button>
           </DialogFooter>
         </DialogContent>

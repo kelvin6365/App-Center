@@ -1,3 +1,4 @@
+import { Icons } from "@/components/icons";
 import Loading from "@/components/loading";
 import { Button } from "@repo/ui/components/ui/button";
 import {
@@ -10,11 +11,11 @@ import {
 } from "@repo/ui/components/ui/dialog";
 import {
   Form,
+  FormControl,
   FormField,
   FormItem,
   FormLabel,
   FormMessage,
-  FormControl,
 } from "@repo/ui/components/ui/form";
 import { Input } from "@repo/ui/components/ui/input";
 import {
@@ -24,14 +25,13 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@repo/ui/components/ui/select";
-import { cn } from "@repo/ui/lib/utils";
+import axios from "axios";
 import { useTranslations } from "next-intl";
 import { useEffect } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import toast from "react-hot-toast";
-import { RoleIdType } from "../../types/RoleIdType";
 import API from "../../services/api";
-import axios from "axios";
+import { RoleIdType } from "../../types/RoleIdType";
 
 type Props = {
   title: string;
@@ -55,9 +55,8 @@ const InviteUserDialog = ({ title, onClose, open, description }: Props) => {
     },
   });
   const {
-    register,
     handleSubmit,
-    formState: { errors, isSubmitting },
+    formState: { isSubmitting },
     control,
     reset,
   } = form;
@@ -102,113 +101,97 @@ const InviteUserDialog = ({ title, onClose, open, description }: Props) => {
           <Loading fullScreen />
         </div>
       )}
-      <Dialog
-        open={open}
-        onOpenChange={() => {
-          if (!isSubmitting) {
-            cleanUp();
-            onClose(false);
-          }
-        }}
-      >
-        <DialogContent
-          className={cn("overflow-scroll")}
-          onEscapeKeyDown={(e) => {
-            if (isSubmitting) {
-              e.preventDefault();
-            }
-          }}
-          onInteractOutside={(e) => {
-            if (isSubmitting) {
-              e.preventDefault();
-            }
-          }}
-        >
+      <Dialog open={open} onOpenChange={() => !isSubmitting && onClose(false)}>
+        <DialogContent className="max-w-md">
           <DialogHeader>
-            <DialogTitle>{title}</DialogTitle>
+            <DialogTitle className="text-xl font-semibold">{title}</DialogTitle>
             <DialogDescription>{description}</DialogDescription>
           </DialogHeader>
+
           <Form {...form}>
             <form
-              id="edit-form"
+              id="invite-form"
               onSubmit={handleSubmit(onSubmit)}
-              className="relative mt-8 mb-2"
+              className="space-y-4 py-4"
             >
-              <div className="flex flex-col gap-2 mb-4">
-                <FormField
-                  name="email"
-                  control={control}
-                  rules={{
-                    required: t("Email is required"),
-                  }}
-                  render={({ field }) => {
-                    return (
-                      <FormItem>
-                        <FormLabel className="font-bold" color="blue-gray">
-                          {t("Email")}
-                        </FormLabel>
-                        <Input {...field} disabled={isSubmitting} />
+              <FormField
+                name="email"
+                control={control}
+                rules={{
+                  required: t("Email is required"),
+                  pattern: {
+                    value: /\S+@\S+\.\S+/,
+                    message: t("Email is invalid"),
+                  },
+                }}
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>{t("Email")}</FormLabel>
+                    <Input
+                      {...field}
+                      type="email"
+                      disabled={isSubmitting}
+                      placeholder="user@example.com"
+                    />
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
 
-                        <FormMessage />
-                      </FormItem>
-                    );
-                  }}
-                />
-                <FormField
-                  name="role"
-                  control={control}
-                  rules={{
-                    required: t("Role is required"),
-                  }}
-                  render={({ field }) => {
-                    return (
-                      <FormItem>
-                        <FormLabel className="font-bold" color="blue-gray">
-                          {t("Role")}
-                        </FormLabel>
-                        <Select
-                          onValueChange={field.onChange}
-                          defaultValue={field.value}
-                          value={field.value}
-                        >
-                          <FormControl>
-                            <SelectTrigger>
-                              <SelectValue
-                                placeholder={t("Please select a role")}
-                              />
-                            </SelectTrigger>
-                          </FormControl>
-
-                          <SelectContent>
-                            {Object.keys(RoleIdType).map((key, i) => {
-                              return (
-                                <SelectItem value={key} key={i}>
-                                  <p className="capitalize">
-                                    {key.toLowerCase()}
-                                  </p>
-                                </SelectItem>
-                              );
-                            })}
-                          </SelectContent>
-                        </Select>
-
-                        <FormMessage />
-                      </FormItem>
-                    );
-                  }}
-                />
-              </div>
+              <FormField
+                name="role"
+                control={control}
+                rules={{
+                  required: t("Role is required"),
+                }}
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>{t("Role")}</FormLabel>
+                    <Select
+                      onValueChange={field.onChange}
+                      defaultValue={field.value}
+                    >
+                      <FormControl>
+                        <SelectTrigger>
+                          <SelectValue
+                            placeholder={t("Please select a role")}
+                          />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        {Object.keys(RoleIdType).map((key) => (
+                          <SelectItem key={key} value={key}>
+                            <span className="capitalize">
+                              {key.toLowerCase()}
+                            </span>
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
             </form>
           </Form>
-          <DialogFooter>
+
+          <DialogFooter className="gap-2">
             <Button
-              onClick={() => {
-                if (!isSubmitting) {
-                  form.handleSubmit(onSubmit)();
-                }
-              }}
+              variant="outline"
+              onClick={() => onClose(false)}
+              disabled={isSubmitting}
             >
-              <span>{t("Invite")}</span>
+              {t("Cancel")}
+            </Button>
+            <Button type="submit" form="invite-form" disabled={isSubmitting}>
+              {isSubmitting ? (
+                <>
+                  <Icons.spinner className="mr-2 h-4 w-4 animate-spin" />
+                  {t("Inviting_dot")}
+                </>
+              ) : (
+                t("Invite")
+              )}
             </Button>
           </DialogFooter>
         </DialogContent>

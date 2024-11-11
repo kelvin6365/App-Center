@@ -1,7 +1,7 @@
 import { Skeleton } from "@repo/ui/components/ui/skeleton";
 import { useQuery } from "@tanstack/react-query";
 import { type LottieComponentProps } from "lottie-react";
-import { Suspense, lazy, useEffect, useRef, useState } from "react";
+import { Suspense, lazy } from "react";
 
 const LazyLottieComponent = lazy(() => import("lottie-react"));
 

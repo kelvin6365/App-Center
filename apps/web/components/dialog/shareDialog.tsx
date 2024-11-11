@@ -18,6 +18,9 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@repo/ui/components/ui/tooltip";
+import { Icons } from "@/components/icons";
+import { Input } from "@repo/ui/components/ui/input";
+import { Label } from "@repo/ui/components/ui/label";
 
 type Props = {
   title: string;
@@ -38,67 +41,56 @@ const ShareDialog = ({ title, onClose, open, data, description }: Props) => {
       }}
       // className="!max-w-[70%] !w-full max-h-[85%] overflow-scroll"
     >
-      <DialogContent>
+      <DialogContent className="max-w-2xl">
         <DialogHeader>
-          <DialogTitle>{title}</DialogTitle>
+          <DialogTitle className="text-xl font-semibold">{title}</DialogTitle>
           <DialogDescription>{description}</DialogDescription>
         </DialogHeader>
 
-        <div className="flex my-2 mt-4">
-          <span
-            className="inline-flex text-sm text-gray-900 bg-gray-200 border border-r-0 border-gray-300 cursor-pointer rounded-l-md dark:bg-gray-600 dark:text-gray-400 dark:border-gray-600"
-            onClick={() => {
-              if (!copied) {
-                setCopied(true);
-                navigator.clipboard.writeText(
-                  `${window.location.origin}/install/${data?.appId}?versionId=${data?.id}`,
-                );
-                setTimeout(() => {
-                  setCopied(false);
-                }, 3000);
-              }
-            }}
-          >
-            {!copied ? (
-              <div className="relative flex">
-                <IoIosCopy className="m-auto mx-3" />
+        <div className="space-y-4">
+          <div className="space-y-2">
+            <Label>{t("Public Share URL")}</Label>
+            <div className="flex gap-2">
+              <div className="relative flex-1">
+                <Input
+                  readOnly
+                  value={
+                    data
+                      ? `${window.location.origin}/install/${data.appId}?versionId=${data.id}`
+                      : ""
+                  }
+                  className="pr-10"
+                />
+                <Button
+                  size="sm"
+                  variant="ghost"
+                  className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
+                  onClick={() => {
+                    if (!copied) {
+                      setCopied(true);
+                      navigator.clipboard.writeText(
+                        `${window.location.origin}/install/${data?.appId}?versionId=${data?.id}`,
+                      );
+                      setTimeout(() => setCopied(false), 3000);
+                    }
+                  }}
+                >
+                  {copied ? (
+                    <Icons.check className="h-4 w-4 text-green-500" />
+                  ) : (
+                    <Icons.copy className="h-4 w-4 text-muted-foreground" />
+                  )}
+                </Button>
               </div>
-            ) : (
-              <div className="m-auto">
-                <TooltipProvider>
-                  <Tooltip defaultOpen>
-                    <TooltipTrigger>
-                      <div className="relative">
-                        <IoIosCopy className="mx-3" />
-                        <TiTick className="absolute right-[0px] bottom-[-8px] text-green-400" />
-                      </div>
-                    </TooltipTrigger>
-                    <TooltipContent>{t("Copied")}</TooltipContent>
-                  </Tooltip>
-                </TooltipProvider>
-              </div>
-            )}
-          </span>
-          <input
-            type="text"
-            id="website-admin"
-            className="rounded-none rounded-r-lg bg-gray-50 border text-gray-900 focus:ring-blue-500 focus:border-blue-500 block flex-1 min-w-0 w-full text-sm border-gray-300 p-2.5  dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-            value={
-              data != null
-                ? `${window.location.origin}/install/${data.appId}?versionId=${data.id}`
-                : ""
-            }
-            readOnly
-          />
+            </div>
+            <p className="text-sm text-muted-foreground">
+              {t("Anyone who has this link will be able to view this")}
+            </p>
+          </div>
         </div>
+
         <DialogFooter>
-          <Button
-            onClick={() => {
-              onClose();
-            }}
-          >
-            <span>{t("Done")}</span>
-          </Button>
+          <Button onClick={() => onClose()}>{t("Done")}</Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>

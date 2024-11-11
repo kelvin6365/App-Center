@@ -7,6 +7,9 @@ import "@repo/ui/globals.css";
 import { NextIntlClientProvider } from "next-intl";
 import { getLocale, getMessages } from "next-intl/server";
 import { Suspense } from "react";
+import { Inter } from "next/font/google";
+
+const inter = Inter({ subsets: ["latin"] });
 
 export const metadata = {
   title: "App Center",
@@ -22,7 +25,7 @@ export default async function LocaleLayout({
   return (
     <html className="h-screen" lang={locale} suppressHydrationWarning>
       <NextIntlClientProvider locale={locale} messages={messages}>
-        <body className="h-full">
+        <body className={`h-full ${inter.className}`}>
           <ThemeProvider
             attribute="class"
             defaultTheme="system"
